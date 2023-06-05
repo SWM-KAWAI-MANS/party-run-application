@@ -13,8 +13,8 @@ import java.lang.reflect.Type
  */
 class ApiResultCallAdapterFactory private constructor() : CallAdapter.Factory() {
     /**
-     * get 메서드는 ApiService interface 메서드의 리턴 타입을 보고 적절한 CallAdapter를 리턴한다.
-     * 위의 NetworkResultCallAdapterFactory 클래스는 서비스 인터페이스 메서드의 반환 유형이 이면 NetworkResultCallAdapter 의 인스턴스를 생성 합니다 .Call<NetworkResult<T>>
+     * get 메서드는 ApiService interface 메서드의 리턴 타입을 보고 적절한 CallAdapter 리턴
+     * 위 NetworkResultCallAdapterFactory 클래스는 서비스 인터페이스 메서드의 반환 유형이면 NetworkResultCallAdapter 인스턴스 생성 [Call<NetworkResult<T>>]
      * ApiResultCallAdapterFactory 클래스는 ApiService interface 메서드의 리턴타입이 Call<ApiResult<T>>이면 ApiResultCallAdapter의 인스턴스 생성
      */
     override fun get(

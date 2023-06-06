@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".PartyRunApp"
+        android:name=".presentation.PartyRunApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,15 +16,20 @@
         android:theme="@style/Theme.PartyRunApplication"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.OnBoardingActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.PartyRunApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PartyRunApplication">
         </activity>
     </application>
 

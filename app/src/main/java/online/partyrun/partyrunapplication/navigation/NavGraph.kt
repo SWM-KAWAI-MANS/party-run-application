@@ -13,15 +13,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import online.partyrun.partyrunapplication.presentation.main.nav_test_screen.Test1Screen
-import online.partyrun.partyrunapplication.presentation.main.nav_test_screen.Test2Screen
-import online.partyrun.partyrunapplication.presentation.main.nav_test_screen.Test3Screen
-import online.partyrun.partyrunapplication.presentation.main.nav_test_screen.Test4Screen
+import online.partyrun.partyrunapplication.presentation.main.Test1Screen
+import online.partyrun.partyrunapplication.presentation.main.Test2Screen
+import online.partyrun.partyrunapplication.presentation.main.Test3Screen
+import online.partyrun.partyrunapplication.presentation.main.Test4Screen
 
 @Composable
 fun SetUpNavGraph(
     navController: NavHostController,
     startDestination: String,
+    onSignOut: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -31,7 +32,10 @@ fun SetUpNavGraph(
             navigateToTest2 = {
                 navController.navigate(NavRoutes.Test2.route)
             },
-            // 선택적 매개변수는 URL이 "/arg1=$value1/arg2=$value2" 형식이 아닌 "?arg1=$value1&arg2=$value2" 형식을 사용하는 경우에만 작동
+            /**
+             * 선택적 매개변수는 URL이 "/arg1=$value1/arg2=$value2" 형식이 아닌
+             * "?arg1=$value1&arg2=$value2" 형식을 사용하는 경우에만 작동
+             */
             navigateToTest2WithArgs = { it ->
                 navController.navigate("${NavRoutes.Test2.route}?userName=$it")
             }
@@ -43,7 +47,9 @@ fun SetUpNavGraph(
                 }
             }
         )
-        test3Route()
+        test3Route(
+            onSignOut = onSignOut
+        )
         test4Route()
     }
 }
@@ -84,9 +90,13 @@ fun NavGraphBuilder.test2Route(
     }
 }
 
-fun NavGraphBuilder.test3Route() {
+fun NavGraphBuilder.test3Route(
+    onSignOut: () -> Unit
+) {
     composable(route = NavRoutes.Test3.route) {
-        Test3Screen()
+        Test3Screen(
+            onSignOut = onSignOut
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.main.nav_test_screen
+package online.partyrun.partyrunapplication.presentation.main
 
 import androidx.compose.runtime.Composable
 

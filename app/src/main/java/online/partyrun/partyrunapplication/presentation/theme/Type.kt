@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.ui.theme
+package online.partyrun.partyrunapplication.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

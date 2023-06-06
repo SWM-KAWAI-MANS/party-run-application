@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.screens.test
+package online.partyrun.partyrunapplication.presentation.test
 
 import online.partyrun.partyrunapplication.data.model.TestQuestionItem
 

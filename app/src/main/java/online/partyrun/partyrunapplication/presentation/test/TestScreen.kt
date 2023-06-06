@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.screens.test
+package online.partyrun.partyrunapplication.presentation.test
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

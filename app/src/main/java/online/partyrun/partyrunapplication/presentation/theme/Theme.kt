@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.ui.theme
+package online.partyrun.partyrunapplication.presentation.theme
 
 import android.app.Activity
 import android.os.Build

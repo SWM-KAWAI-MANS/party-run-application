@@ -6,6 +6,7 @@ import android.content.IntentSender
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -72,6 +73,18 @@ class GoogleAuthUiClient(
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
+            val mUser = FirebaseAuth.getInstance().currentUser
+            /* TODO: null 처리 */
+            mUser?.getIdToken(true)
+                ?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val idToken: String? = task.result.token
+                        Timber.tag("OB_GoogleAuth_IdToken").e(idToken)
+                        /* TODO : Send token to your backend via HTTPS Retrofit */
+                    } else {
+                        // Handle error -> task.getException()
+                    }
+                }
             SignInGoogleResult(
                 userData = user?.run {
                     UserGoogleData(

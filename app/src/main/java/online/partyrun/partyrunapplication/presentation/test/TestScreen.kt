@@ -41,7 +41,7 @@ fun Content(
 
         LazyColumn {
             item {
-                Text(text = "Ready Screen")
+                Text(text = "Test Screen")
             }
             items(dataSet) { item ->
                 QuestionCard(item = item)

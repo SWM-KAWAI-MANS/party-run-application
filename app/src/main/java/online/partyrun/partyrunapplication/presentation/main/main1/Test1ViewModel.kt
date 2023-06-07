@@ -1,11 +1,11 @@
-package online.partyrun.partyrunapplication.presentation.splash
+package online.partyrun.partyrunapplication.presentation.main.main1
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class Test1ViewModel @Inject constructor(
 
 ): ViewModel() {
 

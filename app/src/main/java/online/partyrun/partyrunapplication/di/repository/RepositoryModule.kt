@@ -4,7 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import online.partyrun.partyrunapplication.data.repository.SignInRepositoryImpl
 import online.partyrun.partyrunapplication.data.repository.TestRepositoryImpl
+import online.partyrun.partyrunapplication.domain.repository.SignInRepository
 import online.partyrun.partyrunapplication.domain.repository.TestRepository
 import javax.inject.Singleton
 
@@ -22,11 +24,10 @@ abstract class RepositoryModule {
         testRepositoryImpl: TestRepositoryImpl
     ): TestRepository
 
-    /*
     @Singleton
     @Binds
-    abstract fun bindAuthRepository (
-        AuthRepositoryImpl: AuthRepositoryImpl
-    ): AuthRepository
-     */
+    abstract fun bindSignInRepository (
+        signInRepositoryImpl: SignInRepositoryImpl
+    ): SignInRepository
+
 }

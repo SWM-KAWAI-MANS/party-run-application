@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.main
+package online.partyrun.partyrunapplication.presentation.main.main3
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

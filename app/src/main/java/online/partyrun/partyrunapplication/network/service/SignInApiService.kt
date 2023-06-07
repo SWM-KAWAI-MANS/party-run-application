@@ -1,0 +1,27 @@
+package online.partyrun.partyrunapplication.network.service
+
+import online.partyrun.partyrunapplication.data.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.data.model.GoogleIdToken
+import online.partyrun.partyrunapplication.network.ApiResult
+import online.partyrun.partyrunapplication.network.BaseResponse
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+
+/**
+ *  Call 클래스 => 명시적으로 Success / Fail을 나눠서 처리
+ *  Response 클래스 => 서버에서 Status Code를 받아서 케이스를 나눠 처리
+ */
+interface SignInApiService {
+
+    @POST("/auth/sign")
+    suspend fun signInWithGoogle(
+        @Body body: GoogleIdToken
+    ): ApiResult<BaseResponse<SignInTokenResponse>>
+
+    @GET("auth/refresh")
+    suspend fun replaceToken(
+        @Header("Authorization") token: String,
+    ): ApiResult<BaseResponse<SignInTokenResponse>>
+}

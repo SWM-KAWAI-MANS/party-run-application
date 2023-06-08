@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
                             /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
                             setIntentActivity(AuthActivity::class.java) {
-                                putString("fromSignOut", "sign_in")
+                                putString("fromMain", "sign_in")
                             }
                             overridePendingTransition(0, 0) // 전환 애니메이션 생략
                             finish()

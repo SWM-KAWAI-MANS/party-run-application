@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.presentation.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -64,8 +65,8 @@ class AuthActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
 
-                    /* 프로세스 절차 중 유저가 로그아웃 한 경우, Splash 생략 */
-                    val fromSignOut = intent.getStringExtra("fromSignOut")?: "splash"
+                    /* 프로세스 절차 중 유저가 로그아웃 한 경우 혹은 refresh가 만료된 경우 Splash 생략하고 바로 sign_in으로 */
+                    val fromSignOut = intent.getStringExtra("fromMain")?: "splash"
 
                     NavHost(navController = navController, startDestination = fromSignOut) {
                         composable("splash") {
@@ -73,7 +74,10 @@ class AuthActivity : ComponentActivity() {
                             LaunchedEffect(key1 = Unit) {
                                 delay(1500L) // Splash 딜레이
                                 if (googleAuthUiClient.getGoogleAuthUser() != null) {
-                                    setIntentActivity(MainActivity::class.java)
+                                    setIntentActivity(
+                                        MainActivity::class.java,
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    )
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                                     finish()
                                 } else { // 유저가 로그아웃 상태라면 로그인부터 진행
@@ -124,7 +128,10 @@ class AuthActivity : ComponentActivity() {
                                     /* TODO: Toast 메시지 변경 요 */
                                     Toast.makeText(applicationContext, "Sign in successful", Toast.LENGTH_LONG).show()
                                     viewModel.resetState()
-                                    setIntentActivity(MainActivity::class.java)
+                                    setIntentActivity(
+                                        MainActivity::class.java,
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    )
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left) // 화면 전환 애니메이션
                                     finish()
                                 }

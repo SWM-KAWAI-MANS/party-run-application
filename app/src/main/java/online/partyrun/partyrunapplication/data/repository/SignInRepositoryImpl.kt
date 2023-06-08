@@ -12,7 +12,7 @@ class SignInRepositoryImpl @Inject constructor(
     private val signInDataSource: SignInDataSource
 ): SignInRepository {
 
-    override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken) = apiBaseRequestFlow {
+    override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken) = apiRequestFlow {
         signInDataSource.invoke(idToken)
     }
 }

@@ -4,6 +4,7 @@ import online.partyrun.partyrunapplication.data.model.SignInTokenResponse
 import online.partyrun.partyrunapplication.data.model.GoogleIdToken
 import online.partyrun.partyrunapplication.network.ApiResult
 import online.partyrun.partyrunapplication.network.BaseResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -15,13 +16,16 @@ import retrofit2.http.POST
  */
 interface SignInApiService {
 
-    @POST("/auth/sign")
+    /* ApiBaseRespose를 넣는 경우 :
+     * ApiResult<BaseResponse<SignInTokenResponse>>
+     */
+    @POST("/api/auth")
     suspend fun signInWithGoogle(
         @Body body: GoogleIdToken
-    ): ApiResult<BaseResponse<SignInTokenResponse>>
+    ): ApiResult<SignInTokenResponse>
 
-    @GET("auth/refresh")
+    @POST("/api/auth/access")
     suspend fun replaceToken(
-        @Header("Authorization") token: String,
-    ): ApiResult<BaseResponse<SignInTokenResponse>>
+        @Header("Refresh-Token") token: String,
+    ): Response<SignInTokenResponse>
 }

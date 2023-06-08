@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.splash
+package online.partyrun.partyrunapplication.presentation.auth.splash
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

@@ -13,10 +13,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
-import online.partyrun.partyrunapplication.presentation.main.Test1Screen
-import online.partyrun.partyrunapplication.presentation.main.Test2Screen
-import online.partyrun.partyrunapplication.presentation.main.Test3Screen
-import online.partyrun.partyrunapplication.presentation.main.Test4Screen
+import online.partyrun.partyrunapplication.presentation.main.main1.Test1Screen
+import online.partyrun.partyrunapplication.presentation.main.main2.Test2Screen
+import online.partyrun.partyrunapplication.presentation.main.main3.Test3Screen
+import online.partyrun.partyrunapplication.presentation.main.main4.Test4Screen
 
 @Composable
 fun SetUpNavGraph(

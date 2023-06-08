@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.main
+package online.partyrun.partyrunapplication.presentation.main.main2
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button

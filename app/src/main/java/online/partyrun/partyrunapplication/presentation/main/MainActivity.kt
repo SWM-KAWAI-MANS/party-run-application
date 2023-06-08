@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation
+package online.partyrun.partyrunapplication.presentation.main
 
 import android.os.Bundle
 import android.widget.Toast
@@ -22,7 +22,8 @@ import online.partyrun.partyrunapplication.utils.extension.setIntentActivity
 import online.partyrun.partyrunapplication.navigation.BottomNavigationBar
 import online.partyrun.partyrunapplication.navigation.NavRoutes
 import online.partyrun.partyrunapplication.navigation.SetUpNavGraph
-import online.partyrun.partyrunapplication.presentation.signin.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.presentation.auth.AuthActivity
+import online.partyrun.partyrunapplication.presentation.auth.signin.GoogleAuthUiClient
 import online.partyrun.partyrunapplication.presentation.theme.PartyRunApplicationTheme
 
 @AndroidEntryPoint
@@ -53,8 +54,8 @@ class MainActivity : ComponentActivity() {
                             Toast.makeText(applicationContext, "Signed out", Toast.LENGTH_LONG).show()
 
                             /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
-                            setIntentActivity(OnBoardingActivity::class.java) {
-                                putString("fromSignOut", "sign_in")
+                            setIntentActivity(AuthActivity::class.java) {
+                                putString("fromMain", "sign_in")
                             }
                             overridePendingTransition(0, 0) // 전환 애니메이션 생략
                             finish()

@@ -1,8 +1,10 @@
-package online.partyrun.partyrunapplication.presentation.signin
+package online.partyrun.partyrunapplication.presentation.auth.signin
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import androidx.activity.viewModels
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -10,10 +12,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
+import online.partyrun.partyrunapplication.data.model.GoogleIdToken
+import online.partyrun.partyrunapplication.domain.use_case.SignInUseCase
 import online.partyrun.partyrunapplication.utils.Constants.FB_GOOGLE_WEB_CLIENT_ID
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  *  GoogleAuthUiClient Class: Google 로그인 동작 수행
@@ -21,7 +27,7 @@ import timber.log.Timber
  */
 class GoogleAuthUiClient(
     private val context: Context,
-    private val oneTapClient: SignInClient // Google One-Tap 로그인을 위한 SignInClient 객체
+    private val oneTapClient: SignInClient, // Google One-Tap 로그인을 위한 SignInClient 객체
 ) {
     private val auth = Firebase.auth // Firebase 인증을 위한 auth 객체
 
@@ -67,24 +73,16 @@ class GoogleAuthUiClient(
      * 추출한 자격 증명으로 GoogleAuthProvider를 사용하여 Firebase에 대한 자격 증명 생성
      * auth 객체의 signInWithCredential() 호출해 사용자 인증 -> val user = ~
      */
-    suspend fun signInGoogleWithIntent(intent: Intent): SignInGoogleResult {
+    suspend fun signInGoogleWithIntent(
+        intent: Intent,
+        signInGoogleLoadingIndicator: () -> Unit
+    ): SignInGoogleResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
+        signInGoogleLoadingIndicator()
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            val mUser = FirebaseAuth.getInstance().currentUser
-            /* TODO: null 처리 */
-            mUser?.getIdToken(true)
-                ?.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val idToken: String? = task.result.token
-                        Timber.tag("OB_GoogleAuth_IdToken").e(idToken)
-                        /* TODO : Send token to your backend via HTTPS Retrofit */
-                    } else {
-                        // Handle error -> task.getException()
-                    }
-                }
             SignInGoogleResult(
                 userData = user?.run {
                     UserGoogleData(

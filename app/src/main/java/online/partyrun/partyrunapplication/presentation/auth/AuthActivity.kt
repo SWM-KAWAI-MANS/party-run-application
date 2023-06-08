@@ -1,5 +1,6 @@
-package online.partyrun.partyrunapplication.presentation
+package online.partyrun.partyrunapplication.presentation.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -20,19 +21,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.R
+import online.partyrun.partyrunapplication.data.model.GoogleIdToken
+import online.partyrun.partyrunapplication.presentation.auth.signin.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.presentation.auth.signin.SignInScreen
+import online.partyrun.partyrunapplication.presentation.auth.signin.SignInViewModel
+import online.partyrun.partyrunapplication.presentation.main.MainActivity
 import online.partyrun.partyrunapplication.utils.extension.setIntentActivity
-import online.partyrun.partyrunapplication.presentation.signin.GoogleAuthUiClient
-import online.partyrun.partyrunapplication.presentation.signin.SignInScreen
-import online.partyrun.partyrunapplication.presentation.signin.SignInViewModel
-import online.partyrun.partyrunapplication.presentation.splash.SplashScreen
+import online.partyrun.partyrunapplication.presentation.auth.splash.SplashScreen
 import online.partyrun.partyrunapplication.presentation.theme.PartyRunApplicationTheme
+import timber.log.Timber
 
 @AndroidEntryPoint
-class OnBoardingActivity : ComponentActivity() {
+class AuthActivity : ComponentActivity() {
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
@@ -52,18 +58,26 @@ class OnBoardingActivity : ComponentActivity() {
                     val viewModel by viewModels<SignInViewModel>()
                     val state by viewModel.signInGoogleState.collectAsStateWithLifecycle()
 
+                    /* TODO: 1. 스타트 프로세스 기준 Navigation Architecture Component 설계
+                             2. 각 Screen별 그래프 분할을 위한 NavBuilder 구축
+                             3. Screen별 로직들 각 Screen Composable 안으로 리팩토링 필요
+                     */
+
                     val navController = rememberNavController()
 
-                    /* 프로세스 절차 중 유저가 로그아웃 한 경우, Splash 생략 */
-                    val fromSignOut = intent.getStringExtra("fromSignOut")?: "splash"
+                    /* 프로세스 절차 중 유저가 로그아웃 한 경우 혹은 refresh가 만료된 경우 Splash 생략하고 바로 sign_in으로 */
+                    val fromSignOut = intent.getStringExtra("fromMain")?: "splash"
 
                     NavHost(navController = navController, startDestination = fromSignOut) {
                         composable("splash") {
                             SplashScreen()
                             LaunchedEffect(key1 = Unit) {
-                                delay(2000L) // Splash 딜레이
+                                delay(1500L) // Splash 딜레이
                                 if (googleAuthUiClient.getGoogleAuthUser() != null) {
-                                    setIntentActivity(MainActivity::class.java)
+                                    setIntentActivity(
+                                        MainActivity::class.java,
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    )
                                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                                     finish()
                                 } else { // 유저가 로그아웃 상태라면 로그인부터 진행
@@ -77,10 +91,12 @@ class OnBoardingActivity : ComponentActivity() {
                                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                                 onResult = { result ->
                                     if (result.resultCode == RESULT_OK) {
-                                        lifecycleScope.launch {
+                                        lifecycleScope.launch(Dispatchers.IO) {
                                             val signInResult = googleAuthUiClient.signInGoogleWithIntent(
-                                                intent = result.data ?: return@launch
-                                            )
+                                                intent = result.data ?: return@launch,
+                                            ) {
+                                                viewModel.signInGoogleLoadingIndicator()
+                                            }
                                             viewModel.onSignInGoogleResult(signInResult)
                                         }
                                     }
@@ -88,13 +104,35 @@ class OnBoardingActivity : ComponentActivity() {
                             )
 
                             LaunchedEffect(key1 = state.isSignInSuccessful) {
-                                if (state.isSignInSuccessful) {
+                                if(state.isSignInSuccessful) {
+                                    val mUser = FirebaseAuth.getInstance().currentUser
+                                    /* TODO: null 처리 */
+                                    mUser?.getIdToken(true)
+                                        ?.addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                val idToken: String? = task.result.token
+                                                Timber.tag("idToken").e(idToken)
+                                                /* Send token to backend via HTTPS Retrofit */
+                                                viewModel.signInGoogleTokenToServer(
+                                                    GoogleIdToken(idToken = idToken)
+                                                )
+                                            }else {
+                                                // Handle error -> task.getException()
+                                            }
+                                        }
+                                }
+                            }
+
+                            LaunchedEffect(key1 = state.sendIdTokenToServer) {
+                                if(state.sendIdTokenToServer) {
                                     /* TODO: Toast 메시지 변경 요 */
                                     Toast.makeText(applicationContext, "Sign in successful", Toast.LENGTH_LONG).show()
-
-                                    setIntentActivity(MainActivity::class.java)
-                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left) // 화면 전환 애니메이션
                                     viewModel.resetState()
+                                    setIntentActivity(
+                                        MainActivity::class.java,
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    )
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left) // 화면 전환 애니메이션
                                     finish()
                                 }
                             }
@@ -102,7 +140,7 @@ class OnBoardingActivity : ComponentActivity() {
                             SignInScreen(
                                 state = state,
                                 onSignInClick = {
-                                    lifecycleScope.launch {
+                                    lifecycleScope.launch(Dispatchers.IO) {
                                         val signInIntentSender = googleAuthUiClient.signInGoogle()
                                         launcher.launch(
                                             IntentSenderRequest.Builder(

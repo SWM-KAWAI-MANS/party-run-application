@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.presentation.signin
+package online.partyrun.partyrunapplication.presentation.auth.signin
 
 data class SignInGoogleResult(
     val userData: UserGoogleData?,

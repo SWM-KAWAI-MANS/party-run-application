@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import online.partyrun.partyrunapplication.network.service.SignInApiService
 import online.partyrun.partyrunapplication.network.service.TestApiService
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -13,13 +14,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiServiceModule {
 
+    /* Interceptor를 붙이지 않을 경우, okHttpClient 넣지 않고 Retrofit build 수행*/
+    @Singleton
+    @Provides
+    fun provideSignInApiService(retrofit: Retrofit.Builder): SignInApiService =
+        retrofit
+            .build()
+            .create(SignInApiService::class.java)
+
     /*
     @Singleton
     @Provides
-    fun provideAuthAPIService(retrofit: Retrofit.Builder): AuthApiService =
+    fun provideSignInApiService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): SignInApiService =
         retrofit
+            .client(okHttpClient)
             .build()
-            .create(AuthApiService::class.java)
+            .create(SignInApiService::class.java)
      */
 
     @Provides

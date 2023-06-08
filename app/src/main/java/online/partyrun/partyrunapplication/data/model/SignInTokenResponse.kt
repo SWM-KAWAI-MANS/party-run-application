@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class SignInTokenResponse(
     /* TODO : Name 변경 요 */
-    @SerializedName("access_token")
+    @SerializedName("accessToken")
     val accessToken: String,
-    @SerializedName("refresh_token")
-    val refreshToken: String
+    @SerializedName("refreshToken")
+    val refreshToken: String = ""
 )

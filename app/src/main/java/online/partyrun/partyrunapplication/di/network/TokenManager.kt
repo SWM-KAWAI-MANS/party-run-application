@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.di.network
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import androidx.datastore.preferences.core.edit
@@ -55,4 +56,5 @@ class TokenManager(
         }
     }
     */
+
 }

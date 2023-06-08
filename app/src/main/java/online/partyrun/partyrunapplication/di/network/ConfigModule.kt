@@ -19,7 +19,6 @@ import javax.inject.Singleton
 
 val Context.accessDataStore: DataStore<Preferences> by preferencesDataStore(name = "access_token")
 val Context.refreshDataStore: DataStore<Preferences> by preferencesDataStore(name = "refresh_token")
-
 @Module
 @InstallIn(SingletonComponent::class)
 object ConfigModule {
@@ -35,8 +34,11 @@ object ConfigModule {
 
     @Singleton
     @Provides
-    fun provideAuthAuthenticator(tokenManager: TokenManager): AuthAuthenticator =
-        AuthAuthenticator(tokenManager)
+    fun provideAuthAuthenticator(
+        tokenManager: TokenManager,
+        @ApplicationContext context: Context
+    ): AuthAuthenticator =
+        AuthAuthenticator(tokenManager, context)
 
     @Singleton
     @Provides

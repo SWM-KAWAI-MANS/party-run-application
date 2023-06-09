@@ -12,6 +12,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FB_GOOGLE_WEB_CLIENT_ID
+import online.partyrun.partyrunapplication.core.model.SignInGoogleResult
+import online.partyrun.partyrunapplication.core.model.UserGoogleData
 import timber.log.Timber
 
 /**

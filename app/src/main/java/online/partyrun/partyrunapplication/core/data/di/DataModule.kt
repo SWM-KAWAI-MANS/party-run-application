@@ -6,8 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.TestRepositoryImpl
-import online.partyrun.partyrunapplication.core.domain.repository.SignInRepository
-import online.partyrun.partyrunapplication.core.domain.repository.TestRepository
+import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
+import online.partyrun.partyrunapplication.core.data.repository.TestRepository
 import javax.inject.Singleton
 
 /*

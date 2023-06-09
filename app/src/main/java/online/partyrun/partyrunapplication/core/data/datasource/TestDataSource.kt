@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.network.datasource
+package online.partyrun.partyrunapplication.core.data.datasource
 
 import online.partyrun.partyrunapplication.core.common.network.ApiResult
 import online.partyrun.partyrunapplication.core.network.service.TestApiService

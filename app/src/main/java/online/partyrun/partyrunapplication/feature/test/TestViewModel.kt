@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.network.TokenManager
-import online.partyrun.partyrunapplication.core.domain.usecase.TestUseCase
+import online.partyrun.partyrunapplication.core.domain.TestUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import timber.log.Timber
 import javax.inject.Inject

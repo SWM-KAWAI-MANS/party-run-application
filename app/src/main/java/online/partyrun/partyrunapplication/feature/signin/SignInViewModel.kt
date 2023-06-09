@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.model.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.TokenManager
-import online.partyrun.partyrunapplication.core.domain.usecase.SignInUseCase
+import online.partyrun.partyrunapplication.core.domain.SignInUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.model.SignInGoogleResult
 import timber.log.Timber
 import javax.inject.Inject
 

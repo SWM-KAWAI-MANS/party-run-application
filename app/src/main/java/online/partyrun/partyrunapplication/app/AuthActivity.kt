@@ -42,11 +42,11 @@ class AuthActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     /* 프로세스 절차 중 유저가 로그아웃 한 경우 혹은 refresh가 만료된 경우 Splash 생략하고 바로 sign_in으로 */
-                    val fromSignOut = intent.getStringExtra("fromMain")?: "splash"
+                    val fromMain = intent.getStringExtra("fromMain")?: "splash"
 
                     NavHost(
                         navController = navController,
-                        startDestination = fromSignOut
+                        startDestination = fromMain
                     ) {
                         splashRoute(
                             setIntentMainActivity = {

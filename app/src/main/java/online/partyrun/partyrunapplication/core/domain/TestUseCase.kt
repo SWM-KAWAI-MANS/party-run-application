@@ -1,9 +1,9 @@
-package online.partyrun.partyrunapplication.core.domain.usecase
+package online.partyrun.partyrunapplication.core.domain
 
 import kotlinx.coroutines.flow.Flow
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.model.TestQuestionItem
-import online.partyrun.partyrunapplication.core.domain.repository.TestRepository
+import online.partyrun.partyrunapplication.core.data.repository.TestRepository
 import javax.inject.Inject
 
 class TestUseCase @Inject constructor(

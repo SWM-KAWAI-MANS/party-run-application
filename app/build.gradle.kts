@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "online.partyrun.partyrunapplication"
-    compileSdk = 33
+    compileSdk = Configurations.COMPILE_SDK_VERSION
 
     defaultConfig {
         applicationId = "online.partyrun.partyrunapplication"
-        minSdk = 26
-        targetSdk = 33
-        versionCode = 1
-        versionName  = "1.0"
+        minSdk = Configurations.MIN_SDK_VERSION
+        targetSdk = Configurations.TARGET_SDK_VERSION
+        versionCode = Configurations.VERSION_CODE
+        versionName  = Configurations.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.AndroidEntryPoint
+import online.partyrun.partyrunapplication.BuildConfig
 import online.partyrun.partyrunapplication.R
 import online.partyrun.partyrunapplication.feature.signin.GoogleAuthUiClient
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
@@ -20,6 +21,7 @@ import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunAppli
 import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
+import timber.log.Timber
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
@@ -32,6 +34,7 @@ class AuthActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.tag("CHECK BUILD TYPE").d("Debug ? : ${BuildConfig.IS_DEBUG_TYPE}")
         super.onCreate(savedInstanceState)
         setContent {
             PartyRunApplicationTheme {

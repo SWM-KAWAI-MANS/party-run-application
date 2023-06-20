@@ -1,3 +1,7 @@
+import java.io.File
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
@@ -6,6 +10,20 @@ plugins {
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id ("kotlin-kapt")
 }
+
+val localProperties = Properties()
+val localPropertiesFile = File(rootProject.rootDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
+/*
+val keystoreProperties = Properties()
+val keystorePropertiesFile = File(rootProject.rootDir, "keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+*/
 
 android {
     namespace = "online.partyrun.partyrunapplication"
@@ -24,13 +42,31 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
+    }
+
     buildTypes {
-        named("release") {
+        getByName("release") {
+            /*
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs["release"]
+            }
+            */
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("boolean", "IS_DEBUG_TYPE", "false")
+            buildConfigField("String", "BASE_URL", "\"${localProperties["RELEASE_BASE_URL"] as String?}\"")
+        }
+
+        getByName("debug") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+            buildConfigField("boolean", "IS_DEBUG_TYPE", "true")
+            buildConfigField("String", "BASE_URL", "\"${localProperties["DEBUG_BASE_URL"] as String?}\"")
         }
     }
 
@@ -46,12 +82,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.5"
-    }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        kotlinCompilerExtensionVersion = Configurations.COMPOSE
     }
     kapt {
         correctErrorTypes = true
@@ -142,5 +173,6 @@ dependencies {
 
     // Lottie
     implementation (libs.lottie.compose)
+
 }
 tasks.register("prepareKotlinBuildScriptModel"){}

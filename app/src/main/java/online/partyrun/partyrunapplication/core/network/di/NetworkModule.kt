@@ -11,11 +11,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
-import online.partyrun.partyrunapplication.core.common.Constants.SERVER_BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -47,7 +47,7 @@ object ConfigModule {
     @Provides
     fun provideRetrofitBuilder(): Retrofit.Builder =
         Retrofit.Builder()
-            .baseUrl(SERVER_BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(ApiResultCallAdapterFactory.create()) // 빌더에 ApiResultCallAdapterFactory 적용
 

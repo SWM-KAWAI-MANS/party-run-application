@@ -11,8 +11,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.app.AuthActivity
+import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.feature.signin.GoogleAuthUiClient
-import online.partyrun.partyrunapplication.core.common.Constants.SERVER_BASE_URL
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -76,7 +76,7 @@ class AuthAuthenticator @Inject constructor(
                 .addInterceptor(loggingInterceptor)
                 .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl(SERVER_BASE_URL) /* SERVER BASE URL */
+            .baseUrl(BASE_URL) /* SERVER BASE URL */
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

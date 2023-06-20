@@ -3,7 +3,7 @@ package online.partyrun.partyrunapplication.core.common
 import online.partyrun.partyrunapplication.BuildConfig
 
 object Constants {
-    const val TEST_BASE_URL = BuildConfig.TEST_BASE_URL
     const val FB_GOOGLE_WEB_CLIENT_ID = BuildConfig.FB_GOOGLE_WEB_CLIENT_ID
-    const val SERVER_BASE_URL = BuildConfig.SERVER_BASE_URL
+    // App 모듈의 Build.gradle.kts -> BuildType에 따른 BASE_URL 분기 처리
+    const val BASE_URL = BuildConfig.BASE_URL
 }

@@ -14,6 +14,14 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PartyRunApplication"
 include(":app")
+include(":core:network")
+include(":core:common")
+include(":core:designsystem")
+include(":core:data")
+include(":core:model")
+include(":core:domain")
+include(":core:navigation")
+
 include(":feature:splash")
 include(":feature:battle")
 include(":feature:sign_in")

@@ -14,3 +14,9 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PartyRunApplication"
 include(":app")
+include(":feature:splash")
+include(":feature:battle")
+include(":feature:sign_in")
+include(":feature:single")
+include(":feature:my_page")
+include(":feature:challenge")

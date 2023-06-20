@@ -24,7 +24,7 @@ class TestViewModel @Inject constructor(
     val uiState: StateFlow<TestState> = _uiState.asStateFlow()
 
     init {
-        getAllQuestions()
+        //getAllQuestions()
     }
 
     private fun getAllQuestions() = viewModelScope.launch {

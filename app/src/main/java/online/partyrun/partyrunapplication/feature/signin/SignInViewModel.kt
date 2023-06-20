@@ -51,6 +51,8 @@ class SignInViewModel @Inject constructor(
                             onSignInIndicator = false
                         )
                     }
+                    Timber.tag("TEST ACCESS TOKEN").e(it.data.accessToken)
+                    Timber.tag("TEST REFRESH TOKEN").e(it.data.refreshToken)
                     tokenManager.saveAccessToken(it.data.accessToken)
                     tokenManager.saveRefreshToken(it.data.refreshToken)
                 }

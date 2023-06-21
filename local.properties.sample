@@ -13,4 +13,5 @@ sdk.dir=
 FB_GOOGLE_WEB_CLIENT_ID=
 
 # Obtain credentials to access PartyRun API:
-SERVER_BASE_URL=
+DEBUG_BASE_URL =
+RELEASE_BASE_URL =

@@ -1,10 +1,19 @@
+import java.io.File
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("com.google.gms.google-services")
-    id ("dagger.hilt.android.plugin")
-    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id ("kotlin-kapt")
+    id("nohjunh.android.application")
+    id("nohjunh.android.application.compose")
+    id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("nohjunh.android.hilt")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = File(rootProject.rootDir, "local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -24,13 +33,23 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
+    }
+
     buildTypes {
-        named("release") {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String", "BASE_URL", "\"${localProperties["RELEASE_BASE_URL"] as String?}\"")
+        }
+
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+            buildConfigField("String", "BASE_URL", "\"${localProperties["DEBUG_BASE_URL"] as String?}\"")
         }
     }
 
@@ -46,12 +65,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.5"
-    }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        kotlinCompilerExtensionVersion = Configurations.COMPOSE
     }
     kapt {
         correctErrorTypes = true
@@ -59,18 +73,40 @@ android {
 }
 
 dependencies {
-    implementation (libs.androidx.core.ktx)
+    // core modules
+    implementation(project(":core:common"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:network"))
+
+    // feature modules
+    implementation(project(":feature:sign_in"))
+    implementation(project(":feature:my_page"))
+    implementation(project(":feature:battle"))
+    implementation(project(":feature:single"))
+    implementation(project(":feature:splash"))
+    implementation(project(":feature:challenge"))
+
+    // androidx
+    implementation(libs.androidx.appcompat)
     implementation (libs.androidx.core.ktx)
     implementation (platform(libs.kotlin.bom))
     implementation (libs.androidx.lifecycle.runtime.ktx)
+
+    // compose
     implementation (libs.androidx.activity.compose)
+    implementation (libs.androidx.lifecycle.runtimeCompose)
+    implementation (libs.androidx.compose.ui.tooling.preview)
     implementation (platform(libs.androidx.compose.bom))
     implementation (libs.androidx.compose.ui.core)
     implementation (libs.androidx.compose.ui.graphics)
-    implementation (libs.androidx.compose.ui.tooling.preview)
     implementation (libs.androidx.compose.material3)
-    implementation (libs.google.auth)
+    // Compose Navigation
+    implementation (libs.androidx.navigation.compose)
 
+    // test
     testImplementation (libs.junit)
     androidTestImplementation (libs.androidx.test.ext)
     androidTestImplementation (libs.androidx.test.espresso.core)
@@ -79,22 +115,11 @@ dependencies {
     debugImplementation (libs.androidx.compose.ui.tooling)
     debugImplementation (libs.androidx.compose.ui.testManifest)
 
+    // Google
+    implementation (libs.google.auth)
+
     // Timber
     implementation (libs.timber)
-
-    // DataStore
-    implementation (libs.androidx.dataStore.core)
-
-    // Compose Navigation
-    implementation (libs.androidx.navigation.compose)
-    // BottomNavigation 및 BottomNavigationItem 구성요소 사용
-    implementation (libs.androidx.compose.material.core)
-
-    // Retrofit
-    implementation (libs.retrofit.core)
-    implementation (libs.retrofit.gson)
-    implementation (libs.kotlinx.serialization.json)
-    implementation (libs.retrofit.kotlin.serialization)
 
     // firebase / firestore
     // Import the Firebase BoM
@@ -103,11 +128,6 @@ dependencies {
     implementation (libs.firebase.analytics)
     implementation (libs.firebase.auth)
     implementation (libs.firebase.storage)
-
-    // Room components
-    implementation (libs.room.runtime)
-    implementation (libs.room.ktx)
-    annotationProcessor (libs.room.compiler)
 
     // Coroutines
     implementation (libs.kotlinx.coroutines.core)
@@ -119,28 +139,16 @@ dependencies {
     implementation (libs.androidx.lifecycle.runtime.ktx)
     implementation (libs.androidx.lifecycle.viwemodel.savedstate)
 
-    // Runtime Compose
-    implementation (libs.androidx.lifecycle.runtimeCompose)
-
-    // OkHttp
-    implementation (libs.okhttp.core)
-    implementation (libs.okhttp.logging)
-
-    // splash api
-    implementation (libs.androidx.core.splashscreen)
-
-    // Dagger - Hilt
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.compiler)
-    kapt (libs.hilt.ext.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
-
     // Coil
     implementation (libs.coil.kt)
     implementation (libs.coil.kt.compose)
     implementation (libs.coil.kt.gif)
 
+    // hilt ext
+    kapt (libs.hilt.ext.compiler)
+
     // Lottie
     implementation (libs.lottie.compose)
+
 }
 tasks.register("prepareKotlinBuildScriptModel"){}

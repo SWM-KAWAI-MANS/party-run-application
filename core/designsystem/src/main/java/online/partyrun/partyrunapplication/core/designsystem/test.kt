@@ -1,1 +1,0 @@
-package online.partyrun.partyrunapplication.core.designsystem

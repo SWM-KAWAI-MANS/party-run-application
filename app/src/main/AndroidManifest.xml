@@ -6,7 +6,7 @@
 
     <!-- usesCleartextTraffic 추후 제거 필요 -->
     <application
-        android:name=".app.PartyRunApp"
+        android:name=".PartyRunApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +18,7 @@
         android:theme="@style/Theme.PartyRunApplication"
         tools:targetApi="31">
         <activity
-            android:name=".app.AuthActivity"
+            android:name=".AuthActivity"
             android:exported="true"
             android:theme="@style/Theme.PartyRunApplication">
             <intent-filter>
@@ -29,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".app.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PartyRunApplication">
         </activity>

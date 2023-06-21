@@ -1,7 +1,6 @@
 package online.partyrun.partyrunapplication.core.network
 
 import android.content.Context
-import android.content.Intent
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -9,9 +8,8 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
-//import online.partyrun.partyrunapplication.app.AuthActivity
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
+import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
@@ -25,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
-    private val context: Context
+    private val context: Context,
+    private val tokenExpirationNotifier: TokenExpirationNotifier
 ): Authenticator {
 
     private val googleAuthUiClient by lazy {
@@ -47,21 +46,17 @@ class AuthAuthenticator @Inject constructor(
             if (!newAccessToken.isSuccessful || newAccessToken.body() == null) {
                 googleAuthUiClient.signOutGoogleAuth() // Google 로그아웃
                 tokenManager.deleteAccessToken()
-                /*
-                context.setIntentActivity(
-                    AuthActivity::class.java,
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                ) {
-                    putString("fromMain", "sign_in")
+                // Token 만료 알림 -> 이벤트 브로드캐스팅
+                tokenExpirationNotifier.onTokenExpired()
+                return@runBlocking null
+            }else {
+                /* 정상적으로 Access Token을 받아온 경우 */
+                newAccessToken.body()?.let {
+                    tokenManager.saveAccessToken(it.accessToken)
+                    response.request.newBuilder()
+                        .header("Authorization", "Bearer ${it.accessToken}")
+                        .build()
                 }
-                */
-            }
-            /* 정상적으로 Access Token을 받아온 경우 */
-            newAccessToken.body()?.let {
-                tokenManager.saveAccessToken(it.accessToken)
-                response.request.newBuilder()
-                    .header("Authorization", "Bearer ${it.accessToken}")
-                    .build()
             }
         }
     }

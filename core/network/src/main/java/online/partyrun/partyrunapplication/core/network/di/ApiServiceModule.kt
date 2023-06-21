@@ -4,9 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
-import online.partyrun.partyrunapplication.core.network.service.TestApiService
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -32,11 +30,4 @@ object ApiServiceModule {
             .create(SignInApiService::class.java)
      */
 
-    @Provides
-    @Singleton
-    fun provideTestApiService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): TestApiService =
-        retrofit
-            .client(okHttpClient)
-            .build()
-            .create(TestApiService::class.java)
 }

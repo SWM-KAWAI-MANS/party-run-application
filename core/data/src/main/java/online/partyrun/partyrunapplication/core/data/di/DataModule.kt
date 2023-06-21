@@ -5,9 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepositoryImpl
-import online.partyrun.partyrunapplication.core.data.repository.TestRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
-import online.partyrun.partyrunapplication.core.data.repository.TestRepository
 import javax.inject.Singleton
 
 /*
@@ -18,13 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface DataModule {
-
-    @Singleton
-    @Binds
-    fun bindTestRepository (
-        testRepository: TestRepositoryImpl
-    ): TestRepository
-
     @Singleton
     @Binds
     fun bindSignInRepository (

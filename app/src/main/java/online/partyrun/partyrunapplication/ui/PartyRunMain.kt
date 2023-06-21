@@ -22,13 +22,9 @@ fun PartyRunMain(
     onSignOut: () -> Unit
 ) {
     PartyRunApplicationTheme {
-        /**
-         * Navigation Architecture Component
-         * 메인 기준 NavHostController 인스턴스 생성
-         */
-        /**
-         * Navigation Architecture Component
-         * 메인 기준 NavHostController 인스턴스 생성
+        /*
+         Navigation Architecture Component
+         메인 기준 NavHostController 인스턴스 생성
          */
         val navController = rememberNavController() // 백 스택 관리 및 현재 목적지가 어떤 Composable인지 추적
 

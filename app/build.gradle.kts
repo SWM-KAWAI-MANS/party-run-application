@@ -3,12 +3,11 @@ import java.io.FileInputStream
 import java.util.*
 
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("com.google.gms.google-services")
-    id ("dagger.hilt.android.plugin")
-    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id ("kotlin-kapt")
+    id("nohjunh.android.application")
+    id("nohjunh.android.application.compose")
+    id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("nohjunh.android.hilt")
 }
 
 val localProperties = Properties()
@@ -106,7 +105,6 @@ dependencies {
     implementation (libs.androidx.compose.material3)
     // Compose Navigation
     implementation (libs.androidx.navigation.compose)
-    implementation(project(mapOf("path" to ":core:network")))
 
     // test
     testImplementation (libs.junit)
@@ -141,16 +139,13 @@ dependencies {
     implementation (libs.androidx.lifecycle.runtime.ktx)
     implementation (libs.androidx.lifecycle.viwemodel.savedstate)
 
-    // Dagger - Hilt
-    implementation (libs.hilt.android)
-    kapt (libs.hilt.compiler)
-    kapt (libs.hilt.ext.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
-
     // Coil
     implementation (libs.coil.kt)
     implementation (libs.coil.kt.compose)
     implementation (libs.coil.kt.gif)
+
+    // hilt ext
+    kapt (libs.hilt.ext.compiler)
 
     // Lottie
     implementation (libs.lottie.compose)

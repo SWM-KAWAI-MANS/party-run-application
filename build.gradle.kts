@@ -6,6 +6,8 @@ buildscript {
     }
     dependencies {
         classpath(libs.google.service)
+        classpath(libs.android.gradlePlugin)
+        classpath(libs.kotlin.gradlePlugin)
     }
 }
 // Top-level build file where you can add configuration options common to all sub-projects/modules.

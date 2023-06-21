@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "online.partyrun.partyrunapplication.core.designsystem"
+    namespace = "online.partyrun.partyrunapplication.core.ui"
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,7 +22,5 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.kt.compose)
-
     implementation(libs.lottie.compose)
-
 }

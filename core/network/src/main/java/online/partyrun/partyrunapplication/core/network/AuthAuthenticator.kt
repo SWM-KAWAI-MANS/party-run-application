@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
@@ -42,17 +43,18 @@ class AuthAuthenticator @Inject constructor(
 
         return runBlocking(Dispatchers.IO) {
             val newAccessToken = getNewAccessToken(refreshToken)
-            /* Refresh Token 만료 시 */
             if (!newAccessToken.isSuccessful || newAccessToken.body() == null) {
+                /* Refresh Token 만료 시 */
                 googleAuthUiClient.signOutGoogleAuth() // Google 로그아웃
                 tokenManager.deleteAccessToken()
                 // Token 만료 알림 -> 이벤트 브로드캐스팅
                 tokenExpirationNotifier.onTokenExpired()
                 return@runBlocking null
             }else {
-                /* 정상적으로 Access Token을 받아온 경우 */
+                /* 정상적으로 새로운 Token Set을 받아온 경우 */
                 newAccessToken.body()?.let {
                     tokenManager.saveAccessToken(it.accessToken)
+                    tokenManager.saveRefreshToken(it.refreshToken)
                     response.request.newBuilder()
                         .header("Authorization", "Bearer ${it.accessToken}")
                         .build()
@@ -76,7 +78,7 @@ class AuthAuthenticator @Inject constructor(
             .client(okHttpClient)
             .build()
 
-        val service = retrofit.create(online.partyrun.partyrunapplication.core.network.service.SignInApiService::class.java)
+        val service = retrofit.create(SignInApiService::class.java)
         return service.replaceToken("Bearer $refreshToken")
     }
 }

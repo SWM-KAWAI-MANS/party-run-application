@@ -18,7 +18,6 @@ import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint

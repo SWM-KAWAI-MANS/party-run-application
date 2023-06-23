@@ -14,6 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
+import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
@@ -42,9 +43,10 @@ object ConfigModule {
     @Provides
     fun provideAuthAuthenticator(
         tokenManager: TokenManager,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        tokenExpirationNotifier: TokenExpirationNotifier
     ): AuthAuthenticator =
-        AuthAuthenticator(tokenManager, context)
+        AuthAuthenticator(tokenManager, context, tokenExpirationNotifier)
 
     /* SignInClient 인스턴스 생성 */
     @Provides

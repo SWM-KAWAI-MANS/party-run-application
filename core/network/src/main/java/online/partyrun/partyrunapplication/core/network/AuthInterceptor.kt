@@ -25,7 +25,7 @@ class AuthInterceptor @Inject constructor(
         Timber.tag("AuthInterceptor").e("$accessToken")
         val originalRequest = chain.request()
         val requestBuilder = originalRequest.newBuilder() //  현재 request에 대한 빌더 생성
-        requestBuilder.addHeader("Authorization", "Bearer $accessToken") // 빌더에 Authorization 헤더 추가해 토큰 포함
+        requestBuilder.addHeader("Authorization", "$accessToken") // 빌더에 Authorization 헤더 추가해 토큰 포함
         val request = requestBuilder.build()
         return chain.proceed(request) // 변경된 request를 다음 인터셉터로 전달, response 반환
     }

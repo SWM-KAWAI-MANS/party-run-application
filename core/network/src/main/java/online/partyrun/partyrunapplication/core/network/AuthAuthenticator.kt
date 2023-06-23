@@ -56,7 +56,7 @@ class AuthAuthenticator @Inject constructor(
                     tokenManager.saveAccessToken(it.accessToken)
                     tokenManager.saveRefreshToken(it.refreshToken)
                     response.request.newBuilder()
-                        .header("Authorization", "Bearer ${it.accessToken}")
+                        .header("Authorization", it.accessToken)
                         .build()
                 }
             }
@@ -79,6 +79,6 @@ class AuthAuthenticator @Inject constructor(
             .build()
 
         val service = retrofit.create(SignInApiService::class.java)
-        return service.replaceToken("Bearer $refreshToken")
+        return service.replaceToken("$refreshToken")
     }
 }

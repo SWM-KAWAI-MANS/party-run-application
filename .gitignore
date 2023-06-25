@@ -39,6 +39,9 @@ google-services.json
 ### Android Patch ###
 gen-external-apklibs
 
+# Mac
+*.DS_Store
+
 # Replacement of .externalNativeBuild directories introduced
 # with Android Studio 3.5.
 

@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:model"))
 
+    testImplementation(libs.junit)
+
     implementation(libs.timber)
 
     implementation(libs.coil.kt)

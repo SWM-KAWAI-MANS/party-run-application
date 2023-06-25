@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)

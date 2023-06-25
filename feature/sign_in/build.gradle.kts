@@ -12,6 +12,8 @@ android {
 dependencies {
     implementation(project(":core:network"))
 
+    testImplementation(libs.junit)
+
     // Timber
     implementation (libs.timber)
 

@@ -7,5 +7,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
+
     implementation(libs.retrofit.gson)
 }

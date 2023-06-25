@@ -10,8 +10,10 @@ android {
 }
 
 dependencies {
-
     // Timber
     implementation (libs.timber)
+
+    testImplementation(libs.junit)
+
 
 }

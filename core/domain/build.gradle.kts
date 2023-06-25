@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
 
     implementation(project(":core:data"))
     implementation(project(":core:common"))

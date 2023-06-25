@@ -18,6 +18,8 @@ dependencies {
     implementation(project(":feature:single"))
     implementation(project(":feature:splash"))
     implementation(project(":feature:challenge"))
+    
+    testImplementation(libs.junit)
 
     // BottomNavigation 및 BottomNavigationItem 구성요소 사용
     implementation (libs.androidx.compose.material.core)

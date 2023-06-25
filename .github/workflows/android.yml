@@ -24,7 +24,7 @@ jobs:
         FIREBASE_GOOGLE_CLIENT_ID: ${{ secrets.FIREBASE_GOOGLE_CLIENT_ID }}
       run: |
         echo BASE_URL=\"$BASE_URL\" >> ./local.properties
-        echo FIREBASE_WEB_CLIENT=\"$FIREBASE_GOOGLE_CLIENT_ID\" >> ./local.properties
+        echo FIREBASE_GOOGLE_CLIENT_ID=\"$FIREBASE_GOOGLE_CLIENT_ID\" >> ./local.properties
 
     - name: Create google-services.json
       env:

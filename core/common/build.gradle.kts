@@ -4,7 +4,6 @@ import java.util.*
 
 plugins {
     id("nohjunh.android.library")
-    id("nohjunh.android.hilt")
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 

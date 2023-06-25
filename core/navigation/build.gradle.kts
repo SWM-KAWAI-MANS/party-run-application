@@ -1,7 +1,6 @@
 plugins {
     id("nohjunh.android.library")
     id("nohjunh.android.library.compose")
-    id("nohjunh.android.hilt")
 }
 
 android {

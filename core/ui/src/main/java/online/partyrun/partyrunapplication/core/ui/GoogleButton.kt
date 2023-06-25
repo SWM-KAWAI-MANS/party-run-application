@@ -19,7 +19,7 @@ import androidx.compose.material3.Surface
 
 @Composable
 fun GoogleButton(
-    modifier: Modifier = Modifier,
+    //modifier: Modifier = Modifier,
     loadingState: Boolean = false,
     primaryText: String = "Sign in with Google",
     secondaryText: String = "Please wait...",
@@ -28,7 +28,7 @@ fun GoogleButton(
     borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     borderStrokeWidth: Dp = 1.dp,
-    progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
+    //progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit
 ) {
     var btnText by remember {mutableStateOf(primaryText)}

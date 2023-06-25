@@ -12,7 +12,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
-import online.partyrun.partyrunapplication.core.common.Constants.FB_GOOGLE_WEB_CLIENT_ID
+import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
 import online.partyrun.partyrunapplication.core.model.SignInGoogleResult
 import online.partyrun.partyrunapplication.core.model.UserGoogleData
 import timber.log.Timber
@@ -59,7 +59,7 @@ class GoogleAuthUiClient @Inject constructor(
                 GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(FB_GOOGLE_WEB_CLIENT_ID) // Constants FB_GOOGLE_WEB_CLIENT_ID
+                    .setServerClientId(FIREBASE_GOOGLE_CLIENT_ID) // Constants FB_GOOGLE_WEB_CLIENT_ID
                     .build()
             )
             .setAutoSelectEnabled(true)

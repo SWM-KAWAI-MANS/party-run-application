@@ -19,6 +19,7 @@ androidxTestRunner = "1.5.2"
 androidxMeterialCore = "1.4.3"
 timber = "5.0.1"
 lottie = "6.0.0"
+mock = "4.10.0"
 coil = "2.2.2"
 kotlinBom = "1.8.0"
 firebaseBom = "31.2.3"
@@ -129,6 +130,9 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializationJson" }
+
+# mock server
+mockserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref ="mock"}
 
 # room
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

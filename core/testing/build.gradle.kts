@@ -1,7 +1,6 @@
 plugins {
     id("nohjunh.android.library")
     id("nohjunh.android.library.compose")
-    id("nohjunh.android.hilt")
 }
 
 android {
@@ -13,9 +12,11 @@ dependencies {
     api(libs.androidx.test.core)
     api(libs.androidx.test.espresso.core)
     api(libs.androidx.test.runner)
+    api(libs.androidx.test.truth)
     api(libs.androidx.test.ext)
     api(libs.hilt.android.testing)
     api(libs.junit)
+    api(libs.mockserver)
     api(libs.kotlinx.coroutines.test)
 
     debugApi(libs.androidx.compose.ui.testManifest)

@@ -2,7 +2,6 @@ plugins {
     id("nohjunh.android.feature")
     id("nohjunh.android.library")
     id("nohjunh.android.library.compose")
-    id("nohjunh.android.hilt")
 }
 
 android {
@@ -12,7 +11,5 @@ android {
 dependencies {
     // Timber
     implementation (libs.timber)
-
-    testImplementation(libs.junit)
 
 }

@@ -14,6 +14,19 @@ fun<T : Any> apiRequestFlow(call: suspend () -> ApiResult<T>): Flow<ApiResponse<
             .onSuccess {
                 emit(ApiResponse.Success(it))
             }
+            .onError { code, message ->
+                when (code) {
+                    400 -> {
+                        emit(ApiResponse.Failure(message ?: "Bad Request", code))
+                    }
+                    404 -> {
+                        emit(ApiResponse.Failure(message ?: "Not Found", code))
+                    }
+                    else -> {
+                        emit(ApiResponse.Failure(message ?: "Error", code))
+                    }
+                }
+            }
             .onException { it ->
                 emit(ApiResponse.Failure(it.message ?: it.toString(), 400))
             }

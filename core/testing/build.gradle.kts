@@ -17,6 +17,8 @@ dependencies {
     api(libs.hilt.android.testing)
     api(libs.junit)
     api(libs.mockserver)
+    api(libs.mockito.core)
+    api(libs.mockito.inline)
     api(libs.kotlinx.coroutines.test)
 
     debugApi(libs.androidx.compose.ui.testManifest)

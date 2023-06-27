@@ -53,4 +53,6 @@ dependencies {
     api(libs.retrofit.core)
     api(libs.retrofit.gson)
     api(libs.retrofit.kotlin.serialization)
+
+    testImplementation(project(":core:testing"))
 }

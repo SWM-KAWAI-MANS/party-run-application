@@ -18,6 +18,8 @@ androidxTestTruth = "1.5.0"
 androidxTestRunner = "1.5.2"
 androidxMeterialCore = "1.4.3"
 timber = "5.0.1"
+mockito = "4.11.0"
+mockk = "1.13.54"
 lottie = "6.0.0"
 mock = "4.10.0"
 coil = "2.2.2"
@@ -133,6 +135,10 @@ retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "re
 
 # mock server
 mockserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref ="mock"}
+
+# mockito
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito"}
+mockito-inline = { group = 'org.mockito', name = 'mockito-inline', version.ref = "mockito"}
 
 # room
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

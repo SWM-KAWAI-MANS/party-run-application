@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.testing
+package online.partyrun.partyrunapplication.core.testing
 
 import org.junit.Test
 

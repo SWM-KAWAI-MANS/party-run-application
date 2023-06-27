@@ -26,4 +26,5 @@ dependencies {
 
     implementation(libs.lottie.compose)
 
+    testImplementation(project(":core:testing"))
 }

@@ -25,6 +25,7 @@ include(":core:data")
 include(":core:model")
 include(":core:domain")
 include(":core:ui")
+include(":core:testing")
 include(":core:navigation")
 
 include(":feature:splash")

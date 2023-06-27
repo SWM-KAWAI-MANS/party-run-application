@@ -41,7 +41,7 @@ class SignInViewModel @Inject constructor(
             )
         }
     }
-    fun signInGoogleTokenToServer(idToken: GoogleIdToken) = viewModelScope.launch(Dispatchers.IO) {
+    fun signInGoogleTokenToServer(idToken: GoogleIdToken) = viewModelScope.launch() {
         signInUseCase.signInGoogleTokenToServer(idToken).collect() {
             when(it) {
                 is ApiResponse.Success -> {
@@ -57,6 +57,11 @@ class SignInViewModel @Inject constructor(
                     tokenManager.saveRefreshToken(it.data.refreshToken)
                 }
                 is ApiResponse.Failure -> {
+                    _signInGoogleState.update { state ->
+                        state.copy(
+                            isSignInSuccessful = false
+                        )
+                    }
                     Timber.tag("SignInGoogleTokenToServer").e("${it.code} ${it.errorMessage}")
                 }
                 ApiResponse.Loading ->  {

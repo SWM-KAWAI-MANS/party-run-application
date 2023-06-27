@@ -50,6 +50,7 @@ dependencies {
 
 
     api(libs.okhttp.logging)
+    api(libs.okhttp.sse)
     api(libs.retrofit.core)
     api(libs.retrofit.gson)
     api(libs.retrofit.kotlin.serialization)

@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:common"))
     implementation(project(":core:model"))
+    implementation(project(":core:network"))
 
     implementation(libs.kotlinx.coroutines.android)
 

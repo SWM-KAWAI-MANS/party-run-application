@@ -35,6 +35,7 @@ secrets {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.okhttp.sse)
 
     testImplementation(project(":core:testing"))
 }

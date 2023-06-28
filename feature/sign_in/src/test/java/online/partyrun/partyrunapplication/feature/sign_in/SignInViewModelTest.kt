@@ -42,7 +42,7 @@ class SignInViewModelTest {
         val response = SignInTokenResponse("test", "test")
         signInRepository.emit(ApiResponse.Success(response))
         viewModel.signInGoogleTokenToServer(idToken)
-        signInUseCase.signInGoogleTokenToServer(idToken)
+        signInUseCase(idToken)
         val data = viewModel.signInGoogleState.value
         assertThat(data.sendIdTokenToServer).isTrue()
     }
@@ -54,7 +54,7 @@ class SignInViewModelTest {
         )
         signInRepository.emit(ApiResponse.Failure("잘못된 요청입니다.", 400))
         viewModel.signInGoogleTokenToServer(idToken)
-        signInUseCase.signInGoogleTokenToServer(idToken)
+        signInUseCase(idToken)
         val data = viewModel.signInGoogleState.value
         assertThat(data.isSignInSuccessful).isFalse()
     }

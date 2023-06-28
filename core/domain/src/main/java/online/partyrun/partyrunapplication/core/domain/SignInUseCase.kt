@@ -10,6 +10,6 @@ import javax.inject.Inject
 class SignInUseCase @Inject constructor(
     private val signInRepository: SignInRepository
 ) {
-    suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInTokenResponse>> =
+    suspend operator fun invoke(idToken: GoogleIdToken): Flow<ApiResponse<SignInTokenResponse>> =
         signInRepository.signInGoogleTokenToServer(idToken)
 }

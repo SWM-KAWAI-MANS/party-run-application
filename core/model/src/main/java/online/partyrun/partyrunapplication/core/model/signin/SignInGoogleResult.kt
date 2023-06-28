@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.model
+package online.partyrun.partyrunapplication.core.model.signin
 
 data class SignInGoogleResult(
     val userData: UserGoogleData?,

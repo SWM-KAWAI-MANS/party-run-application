@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.SignInUseCase
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import org.junit.Before

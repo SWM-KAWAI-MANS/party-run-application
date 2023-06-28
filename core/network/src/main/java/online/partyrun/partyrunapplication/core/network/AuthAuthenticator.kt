@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
@@ -36,7 +36,7 @@ class AuthAuthenticator @Inject constructor(
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        Timber.tag("Authenticate()").e("newAccessToken")
+        Timber.tag("AuthAuthenticator").d("getNewAccessToken")
         val refreshToken = runBlocking(Dispatchers.IO) {
             tokenManager.getRefreshToken().first()
         }

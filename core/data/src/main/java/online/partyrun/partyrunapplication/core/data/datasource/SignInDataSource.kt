@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.data.datasource
 
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.common.network.ApiResult
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import javax.inject.Inject

@@ -13,8 +13,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
-import online.partyrun.partyrunapplication.core.model.SignInGoogleResult
-import online.partyrun.partyrunapplication.core.model.UserGoogleData
+import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
+import online.partyrun.partyrunapplication.core.model.signin.UserGoogleData
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton

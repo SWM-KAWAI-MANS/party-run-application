@@ -1,8 +1,8 @@
 package online.partyrun.partyrunapplication.core.domain
 
 import kotlinx.coroutines.flow.Flow
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import javax.inject.Inject

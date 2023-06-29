@@ -10,6 +10,6 @@ class SignInRepositoryImpl @Inject constructor(
 ): SignInRepository {
 
     override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken) = apiRequestFlow {
-        signInDataSource.invoke(idToken)
+        signInDataSource(idToken)
     }
 }

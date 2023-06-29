@@ -4,6 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import online.partyrun.partyrunapplication.core.data.repository.MatchRepository
+import online.partyrun.partyrunapplication.core.data.repository.MatchRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import javax.inject.Singleton
@@ -21,5 +23,11 @@ internal interface DataModule {
     fun bindSignInRepository (
         signInRepository: SignInRepositoryImpl
     ): SignInRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindMatchRepository (
+        matchRepositoryImpl: MatchRepositoryImpl
+    ): MatchRepository
 
 }

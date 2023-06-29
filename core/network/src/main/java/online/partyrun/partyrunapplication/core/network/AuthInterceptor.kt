@@ -22,7 +22,7 @@ class AuthInterceptor @Inject constructor(
         val accessToken = runBlocking(Dispatchers.IO) {
             tokenManager.getAccessToken().first() // 액세스 토큰 값을 Flow 형태로 반환 -> first(): Flow의 첫 번째 값을 동기적으로 반환
         }
-        Timber.tag("AuthInterceptor").e("$accessToken")
+        Timber.tag("AuthInterceptor").d("$accessToken")
         val originalRequest = chain.request()
         val requestBuilder = originalRequest.newBuilder() //  현재 request에 대한 빌더 생성
         requestBuilder.addHeader("Authorization", "$accessToken") // 빌더에 Authorization 헤더 추가해 토큰 포함

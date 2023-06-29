@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
 
 class TestSignInRepository : SignInRepository {
     private val tokenSet = MutableSharedFlow<ApiResponse<SignInTokenResponse>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)

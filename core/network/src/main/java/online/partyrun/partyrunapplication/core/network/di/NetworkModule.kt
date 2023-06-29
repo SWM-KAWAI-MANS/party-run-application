@@ -12,23 +12,27 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
+import online.partyrun.partyrunapplication.core.common.network.MatchSourceManager
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.core.network.MatchSourceManagerImpl
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 val Context.accessDataStore: DataStore<Preferences> by preferencesDataStore(name = "access_token")
 val Context.refreshDataStore: DataStore<Preferences> by preferencesDataStore(name = "refresh_token")
 @Module
 @InstallIn(SingletonComponent::class)
-object ConfigModule {
+object NetworkModule {
 
     @Singleton
     @Provides
@@ -61,6 +65,11 @@ object ConfigModule {
     ): GoogleAuthUiClient =
         GoogleAuthUiClient(context, oneTapClient)
 
+    @Provides
+    fun provideMatchSourceManager(): MatchSourceManager {
+        return MatchSourceManagerImpl()
+    }
+
     @Singleton
     @Provides
     fun provideRetrofitBuilder(): Retrofit.Builder =
@@ -69,6 +78,7 @@ object ConfigModule {
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(ApiResultCallAdapterFactory.create()) // 빌더에 ApiResultCallAdapterFactory 적용
 
+    @RESTOkHttpClient
     @Singleton
     @Provides
     fun provideOkHttpClient(
@@ -84,4 +94,27 @@ object ConfigModule {
             .authenticator(authAuthenticator)
             .build()
     }
+
+    @SSEOkHttpClient
+    @Provides
+    @Singleton
+    fun provideSSEOkHttpClient(
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.MINUTES)
+        .writeTimeout(10, TimeUnit.MINUTES)
+        .addInterceptor(authInterceptor)
+        .build()
+
+
+    @SSERequestBuilder
+    @Provides
+    @Singleton
+    fun provideRequestBuilder(): Request.Builder =
+        Request.Builder()
+            .addHeader("Content-Type", "text/event-stream")
+
+
 }
+

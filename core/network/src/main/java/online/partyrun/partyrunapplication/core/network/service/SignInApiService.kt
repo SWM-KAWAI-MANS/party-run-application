@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.service
 
-import online.partyrun.partyrunapplication.core.model.SignInTokenResponse
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.common.network.ApiResult
 import retrofit2.Response
 import retrofit2.http.Body

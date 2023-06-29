@@ -3,17 +3,16 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.domain.SignInUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.model.SignInGoogleResult
+import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -51,8 +50,8 @@ class SignInViewModel @Inject constructor(
                             onSignInIndicator = false
                         )
                     }
-                    Timber.tag("TEST ACCESS TOKEN").e(it.data.accessToken)
-                    Timber.tag("TEST REFRESH TOKEN").e(it.data.refreshToken)
+                    Timber.tag("SignInViewModel").i("Access: ${it.data.accessToken}")
+                    Timber.tag("SignInViewModel").i("Refresh: ${it.data.refreshToken}")
                     tokenManager.saveAccessToken(it.data.accessToken)
                     tokenManager.saveRefreshToken(it.data.refreshToken)
                 }
@@ -62,10 +61,10 @@ class SignInViewModel @Inject constructor(
                             isSignInSuccessful = false
                         )
                     }
-                    Timber.tag("SignInGoogleTokenToServer").e("${it.code} ${it.errorMessage}")
+                    Timber.tag("SignInViewModel").e("${it.code} ${it.errorMessage}")
                 }
                 ApiResponse.Loading ->  {
-                    Timber.tag("SignInGoogleTokenToServer").e("Loading")
+                    Timber.tag("SignInViewModel").e("Loading")
                 }
             }
         }

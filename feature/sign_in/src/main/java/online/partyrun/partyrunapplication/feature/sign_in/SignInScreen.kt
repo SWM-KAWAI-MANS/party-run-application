@@ -26,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.designsystem.component.CenterCircularProgressIndicator
-import online.partyrun.partyrunapplication.core.model.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 import timber.log.Timber
 
@@ -70,7 +70,7 @@ fun SignInScreen (
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val idToken: String? = task.result.token
-                        Timber.tag("idToken").e(idToken)
+                        Timber.tag("SignInScreen").i("IDToken: $idToken")
                         /* Send token to backend via HTTPS Retrofit */
                         viewModel.signInGoogleTokenToServer(
                             GoogleIdToken(idToken = idToken)

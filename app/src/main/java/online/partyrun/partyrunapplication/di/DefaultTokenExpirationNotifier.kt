@@ -11,7 +11,7 @@ class DefaultTokenExpirationNotifier(
     private val context: Context
 ): TokenExpirationNotifier {
     override fun onTokenExpired() {
-        Timber.tag("TokenExpirationNotifier").e("refresh token Expired")
+        Timber.tag("DefaultTokenExpirationNotifier").d("refresh token Expired")
         /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
         context.setIntentActivity(
             AuthActivity::class.java,

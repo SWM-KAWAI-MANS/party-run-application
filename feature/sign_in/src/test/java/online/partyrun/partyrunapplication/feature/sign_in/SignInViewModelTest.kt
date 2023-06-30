@@ -3,9 +3,9 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.domain.SignInUseCase
+import online.partyrun.partyrunapplication.core.domain.SendSignInIdTokenUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import org.junit.Before
@@ -17,7 +17,7 @@ class SignInViewModelTest {
 
     private val signInRepository = TestSignInRepository()
     private val tokenManager = mock(TokenManager::class.java)
-    private val signInUseCase = SignInUseCase(
+    private val signInUseCase = SendSignInIdTokenUseCase(
         signInRepository = signInRepository
     )
 
@@ -29,7 +29,7 @@ class SignInViewModelTest {
     @Before
     fun setUp() {
         viewModel = SignInViewModel(
-            signInUseCase = signInUseCase,
+            sendSignInIdTokenUseCase = signInUseCase,
             tokenManager = tokenManager
         )
     }
@@ -39,7 +39,7 @@ class SignInViewModelTest {
         val idToken = GoogleIdToken(
             idToken = "valid token value"
         )
-        val response = SignInTokenResponse("test", "test")
+        val response = SignInTokenResult("test", "test")
         signInRepository.emit(ApiResponse.Success(response))
         viewModel.signInGoogleTokenToServer(idToken)
         signInUseCase(idToken)

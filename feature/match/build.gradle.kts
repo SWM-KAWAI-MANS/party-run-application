@@ -14,6 +14,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.okhttp.sse)
     implementation("com.google.code.gson:gson:2.10.1")
-    
 
+    implementation(libs.exo.player)
 }

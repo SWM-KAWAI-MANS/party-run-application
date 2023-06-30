@@ -11,7 +11,9 @@ android {
 }
 
 dependencies {
-    testImplementation(libs.junit)
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:model"))
 
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.foundation.layout)
@@ -21,7 +23,12 @@ dependencies {
     api(libs.androidx.compose.ui.tooling)
     api(libs.androidx.compose.ui.tooling.preview)
 
+    debugApi(libs.androidx.compose.ui.tooling)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.kt.compose)
     implementation(libs.lottie.compose)
+
+    androidTestImplementation(project(":core:testing"))
+
 }

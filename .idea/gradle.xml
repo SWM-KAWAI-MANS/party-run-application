@@ -39,6 +39,7 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/battle" />
             <option value="$PROJECT_DIR$/feature/challenge" />
+            <option value="$PROJECT_DIR$/feature/match" />
             <option value="$PROJECT_DIR$/feature/my_page" />
             <option value="$PROJECT_DIR$/feature/sign_in" />
             <option value="$PROJECT_DIR$/feature/single" />

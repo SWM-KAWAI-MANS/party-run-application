@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "online.partyrun.partyrunapplication.feature.battle"
+    namespace = "online.partyrun.partyrunapplication.feature.match"
 }
 
 dependencies {
@@ -14,6 +14,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.okhttp.sse)
     implementation("com.google.code.gson:gson:2.10.1")
+    
 
-    implementation(project(":feature:match"))
 }

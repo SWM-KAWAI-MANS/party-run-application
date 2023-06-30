@@ -29,6 +29,5 @@ dependencies {
     implementation(libs.coil.kt.compose)
     implementation(libs.lottie.compose)
 
-    androidTestImplementation(project(":core:testing"))
-
+    testImplementation(project(":core:testing"))
 }

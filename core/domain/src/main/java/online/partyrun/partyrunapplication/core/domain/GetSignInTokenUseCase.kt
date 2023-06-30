@@ -7,7 +7,7 @@ import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import javax.inject.Inject
 
-class SendSignInIdTokenUseCase @Inject constructor(
+class GetSignInTokenUseCase @Inject constructor(
     private val signInRepository: SignInRepository
 ) {
     suspend operator fun invoke(idToken: GoogleIdToken): Flow<ApiResponse<SignInTokenResult>> =

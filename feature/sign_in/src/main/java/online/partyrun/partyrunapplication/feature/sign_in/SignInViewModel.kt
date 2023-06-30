@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.TokenManager
-import online.partyrun.partyrunapplication.core.domain.SendSignInIdTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
 import timber.log.Timber
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val sendSignInIdTokenUseCase: SendSignInIdTokenUseCase,
+    private val getSignInTokenUseCase: GetSignInTokenUseCase,
     private val tokenManager: TokenManager
 ): ViewModel() {
 
@@ -41,7 +41,7 @@ class SignInViewModel @Inject constructor(
         }
     }
     fun signInGoogleTokenToServer(idToken: GoogleIdToken) = viewModelScope.launch {
-        sendSignInIdTokenUseCase(idToken).collect() {
+        getSignInTokenUseCase(idToken).collect() {
             when(it) {
                 is ApiResponse.Success -> {
                     _signInGoogleState.update { state ->

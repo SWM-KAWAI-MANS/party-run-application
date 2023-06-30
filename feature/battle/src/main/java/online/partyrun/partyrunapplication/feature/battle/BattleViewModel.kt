@@ -8,6 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 class BattleViewModel @Inject constructor(
 
-): ViewModel() {
+) : ViewModel() {
 
 }

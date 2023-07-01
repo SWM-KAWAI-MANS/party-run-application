@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +110,7 @@ fun Content(
                 )
             }
         ) {
-            Text("배틀 매칭 시작")
+            Text(stringResource(id = R.string.battle_matching_start))
         }
     }
 }

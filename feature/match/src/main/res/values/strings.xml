@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- common resource -->
+    <string name="cancel_button_title">취소</string>
+
+    <!-- MatchDecisionDialog -->
+    <string name="completed_matching">매칭 완료</string>
+    <string name="ready_to_run_desc">뛰실 준비 되었나요?</string>
+    <string name="accept_button_title">수락</string>
+    <string name="decline_button_title">거절</string>
+
+    <!-- MatchResultDialog -->
+    <string name="waiting_for_other_desc">다른 유저 매칭 여부 확인 중</string>
+    <string name="waiting_for_user">수락 여부 대기 중</string>
+    <string name="accept_matching_status">수락</string>
 
 </resources>

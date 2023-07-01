@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
+import online.partyrun.partyrunapplication.feature.match.R
 import online.partyrun.partyrunapplication.feature.match.buildPlayerView
 
 @Composable
@@ -133,7 +135,7 @@ fun MatchWaitingDialog(
                             .width(100.dp)
                             .height(50.dp)
                     ) {
-                        Text(text = "취소")
+                        Text(text = stringResource(id = R.string.cancel_button_title))
                     }
                 }
             }

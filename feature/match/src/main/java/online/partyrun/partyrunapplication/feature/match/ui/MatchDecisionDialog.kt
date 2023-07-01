@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import online.partyrun.partyrunapplication.feature.match.AnimationGaugeBar
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
+import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchDecisionDialog(
@@ -80,8 +82,8 @@ fun MatchDecisionDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "매칭 완료", fontSize = 20.sp)
-                    Text(text = "뛰실 준비 되었나요?", fontSize = 20.sp)
+                    Text(text = stringResource(id = R.string.completed_matching), fontSize = 20.sp)
+                    Text(text = stringResource(id = R.string.ready_to_run_desc), fontSize = 20.sp)
                     Spacer(modifier = Modifier.height(30.dp))
                     AnimationGaugeBar(Color.Red)
                 }
@@ -98,7 +100,7 @@ fun MatchDecisionDialog(
                         modifier = Modifier
                             .size(width = 100.dp, height = 50.dp)
                     ) {
-                        Text(text = "수락")
+                        Text(text = stringResource(id = R.string.accept_button_title))
                     }
                     Button(
                         onClick = { onDecline() },
@@ -106,7 +108,7 @@ fun MatchDecisionDialog(
                         modifier = Modifier
                             .size(width = 100.dp, height = 50.dp)
                     ) {
-                        Text(text = "거절")
+                        Text(text = stringResource(id = R.string.decline_button_title))
                     }
                 }
             }

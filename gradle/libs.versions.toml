@@ -17,6 +17,7 @@ androidxTestExt = "1.1.5"
 androidxTestTruth = "1.5.0"
 androidxTestRunner = "1.5.2"
 androidxMeterialCore = "1.4.3"
+exoplayer = "2.18.7"
 timber = "5.0.1"
 mockito = "4.11.0"
 mockk = "1.13.54"
@@ -102,6 +103,9 @@ coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-kt-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
+
+# ExoPlayer
+exo-player = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer"}
 
 # Lottie
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie"}

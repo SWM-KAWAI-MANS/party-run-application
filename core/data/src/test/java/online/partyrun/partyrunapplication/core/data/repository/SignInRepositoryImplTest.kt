@@ -9,7 +9,7 @@ import okhttp3.mockwebserver.MockWebServer
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.data.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import org.junit.Assert.fail
@@ -42,7 +42,7 @@ class SignInRepositoryImplTest {
 
     @Test
     fun `Login Success, api return 201 created`() = runTest {
-        val tokenSet = SignInTokenResponse(
+        val tokenSet = SignInTokenResult(
             accessToken = "access token test",
             refreshToken = "refresh token test"
         )

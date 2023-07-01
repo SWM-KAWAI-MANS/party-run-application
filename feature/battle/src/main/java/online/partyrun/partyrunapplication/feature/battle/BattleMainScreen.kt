@@ -17,24 +17,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
+import online.partyrun.partyrunapplication.feature.match.MatchDialog
+import online.partyrun.partyrunapplication.feature.match.MatchUiState
+import online.partyrun.partyrunapplication.feature.match.MatchViewModel
 
 @Composable
 fun BattleMainScreen(
     battleViewModel: BattleViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel()
 ) {
-    val waitingRunnerEventState by matchViewModel.waitingRunnerEventState.collectAsState()
-    val matchResultEventState by matchViewModel.matchResultEventState.collectAsState()
+    val matchUiState by matchViewModel.matchUiState.collectAsState()
 
-    Content(matchViewModel, waitingRunnerEventState, matchResultEventState)
+    Content(matchViewModel, matchUiState)
 }
 
 @Composable
 fun Content(
-    viewModel: MatchViewModel,
-    waitingRunnerState: WaitingRunnerState,
-    matchResultEventState: MatchResultState
+    matchViewModel: MatchViewModel,
+    matchUiState: MatchUiState
 ) {
+    if (matchUiState.isOpen) {
+        MatchDialog(
+            setShowDialog = {
+                matchViewModel.closeMatchDialog()
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,29 +59,58 @@ fun Content(
             mainTitle = "매치 인원 탐색",
             connectTitle = "인원 탐색 시작",
             closeTitle = "인원 탐색 종료",
-            connectEvent = { viewModel.connectMatchEventSource() },
-            closeEvent = { viewModel.closeMatchEventSource() }
+            connectEvent = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    matchViewModel.connectMatchEventSource()
+                }
+           },
+            closeEvent = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    matchViewModel.closeMatchEventSource()
+                }
+            }
         )
         Text(
-            text = "연결 여부: " + waitingRunnerState.isSuccess
+            text = "연결 여부: ${matchUiState.waitingEventState.isSuccess}"
         )
         Text(
-            text = "메세지: " + waitingRunnerState.message
+            text = "메세지: ${matchUiState.waitingEventState.message}"
         )
         Spacer(modifier = Modifier.size(50.dp))
         MatchContent(
             mainTitle = "파티 생성",
             connectTitle = "파티 생성 수락",
             closeTitle = "파티 생성 거절",
-            connectEvent = { viewModel.connectMatchResultEventSource() },
-            closeEvent = { viewModel.closeMatchResultEventSource() }
+            connectEvent = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    matchViewModel.connectMatchResultEventSource()
+                }
+           },
+            closeEvent = {
+                CoroutineScope(Dispatchers.IO).launch {
+                    matchViewModel.closeMatchResultEventSource()
+                }
+            }
         )
         Text(
-            text = "상태: " + matchResultEventState.status
+            text = "상태: ${matchUiState.matchResultEventState.status.name}"
         )
         Text(
-            text = "생성된 방 엔드포인트: " + matchResultEventState.location
+            text = "생성된 방 엔드포인트: ${matchUiState.matchResultEventState.location}"
         )
+        Spacer(modifier = Modifier.size(30.dp))
+        Button(
+            onClick = {
+                matchViewModel.openMatchDialog()
+                matchViewModel.beginBattleMatchingProcess(
+                    UserSelectedMatchDistance(
+                        distance = "M1000"
+                    )
+                )
+            }
+        ) {
+            Text("배틀 매칭 시작")
+        }
     }
 }
 
@@ -80,30 +122,16 @@ fun MatchContent(
     connectEvent: () -> Unit,
     closeEvent: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-    ) {
-        Column(
-            modifier = Modifier
-        ) {
-            Text(
-                text = mainTitle
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Row(
-                modifier = Modifier
-            ) {
-                Button(
-                    onClick = { connectEvent() }
-                ) {
-                    Text(connectTitle)
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Button(
-                    onClick = { closeEvent() }
-                ) {
-                    Text(closeTitle)
-                }
+    Column {
+        Text(text = mainTitle)
+        Spacer(modifier = Modifier.size(10.dp))
+        Row {
+            Button(onClick = { connectEvent() }) {
+                Text(connectTitle)
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Button(onClick = { closeEvent() }) {
+                Text(closeTitle)
             }
         }
     }

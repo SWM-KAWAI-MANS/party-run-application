@@ -17,9 +17,8 @@ dependencies {
     implementation(project(":feature:battle"))
     implementation(project(":feature:single"))
     implementation(project(":feature:splash"))
+    implementation(project(":feature:match"))
     implementation(project(":feature:challenge"))
-    
-    testImplementation(libs.junit)
 
     // BottomNavigation 및 BottomNavigationItem 구성요소 사용
     implementation (libs.androidx.compose.material.core)
@@ -30,4 +29,6 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.android)
     api(libs.androidx.navigation.compose)
+
+    testImplementation(project(":core:testing"))
 }

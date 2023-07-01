@@ -3,9 +3,9 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.domain.SignInUseCase
+import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import org.junit.Before
@@ -17,7 +17,7 @@ class SignInViewModelTest {
 
     private val signInRepository = TestSignInRepository()
     private val tokenManager = mock(TokenManager::class.java)
-    private val signInUseCase = SignInUseCase(
+    private val getSignInTokenUseCase = GetSignInTokenUseCase(
         signInRepository = signInRepository
     )
 
@@ -29,7 +29,7 @@ class SignInViewModelTest {
     @Before
     fun setUp() {
         viewModel = SignInViewModel(
-            signInUseCase = signInUseCase,
+            getSignInTokenUseCase = getSignInTokenUseCase,
             tokenManager = tokenManager
         )
     }
@@ -39,10 +39,10 @@ class SignInViewModelTest {
         val idToken = GoogleIdToken(
             idToken = "valid token value"
         )
-        val response = SignInTokenResponse("test", "test")
+        val response = SignInTokenResult("test", "test")
         signInRepository.emit(ApiResponse.Success(response))
         viewModel.signInGoogleTokenToServer(idToken)
-        signInUseCase(idToken)
+        getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value
         assertThat(data.sendIdTokenToServer).isTrue()
     }
@@ -54,7 +54,7 @@ class SignInViewModelTest {
         )
         signInRepository.emit(ApiResponse.Failure("잘못된 요청입니다.", 400))
         viewModel.signInGoogleTokenToServer(idToken)
-        signInUseCase(idToken)
+        getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value
         assertThat(data.isSignInSuccessful).isFalse()
     }

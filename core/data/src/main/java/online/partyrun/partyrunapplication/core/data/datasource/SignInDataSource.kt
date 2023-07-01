@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.data.datasource
 
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.common.network.ApiResult
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import javax.inject.Inject
@@ -14,6 +14,6 @@ class SignInDataSource @Inject constructor(
         signApi.signInWithGoogle(idToken)
      */
 
-    suspend operator fun invoke(idToken: GoogleIdToken): ApiResult<SignInTokenResponse> =
+    suspend operator fun invoke(idToken: GoogleIdToken): ApiResult<SignInTokenResult> =
         signApi.signInWithGoogle(idToken)
 }

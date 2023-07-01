@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
@@ -64,7 +64,7 @@ class AuthAuthenticator @Inject constructor(
     }
 
     /* 리턴타입에 BaseResponse를 붙이지 않는 경우 */
-    private suspend fun getNewAccessToken(refreshToken: String?): retrofit2.Response<SignInTokenResponse> {
+    private suspend fun getNewAccessToken(refreshToken: String?): retrofit2.Response<SignInTokenResult> {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             this.setLevel(HttpLoggingInterceptor.Level.BODY)
         }

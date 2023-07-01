@@ -1,8 +1,6 @@
 package online.partyrun.partyrunapplication.di
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

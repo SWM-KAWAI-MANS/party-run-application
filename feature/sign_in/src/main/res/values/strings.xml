@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- common resource -->
+    <string name="sign_in_button_title">로그인</string>
+
+
+</resources>

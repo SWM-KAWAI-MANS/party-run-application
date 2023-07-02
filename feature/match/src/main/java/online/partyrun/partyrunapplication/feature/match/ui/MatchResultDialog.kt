@@ -22,12 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
+import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchResultDialog(
@@ -78,11 +80,11 @@ fun MatchResultDialog(
                         .width(300.dp)
                         .height(350.dp),
                 ) {
-                    Text(text = "다른 유저 매칭 여부 확인 중 ")
+                    Text(text = stringResource(id = R.string.waiting_for_other_desc))
                     Spacer(modifier = Modifier.size(30.dp))
-                    Text(text = "박현준 : 수락 여부 대기 중")
-                    Text(text = "박성우 : 수락")
-                    Text(text = "노준혁 : 수락 여부 대기 중")
+                    Text(text = "박현준 : ${stringResource(id = R.string.waiting_for_user)}")
+                    Text(text = "박성우 : ${stringResource(id = R.string.accept_matching_status)}")
+                    Text(text = "노준혁 : ${stringResource(id = R.string.waiting_for_user)}")
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(text = "트랙 생성 여부: ${matchUiState.matchResultEventState.status.name}")
@@ -102,7 +104,7 @@ fun MatchResultDialog(
                             .width(100.dp)
                             .height(50.dp)
                     ) {
-                        Text(text = "취소")
+                        Text(text = stringResource(id = R.string.cancel_button_title))
                     }
                 }
             }

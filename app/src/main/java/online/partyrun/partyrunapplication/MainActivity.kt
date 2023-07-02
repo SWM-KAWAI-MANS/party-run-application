@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.common.ExtraConstants.EXTRA_FROM_MAIN
+import online.partyrun.partyrunapplication.core.common.ExtraConstants.SIGN_IN
 import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
 
                             /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
                             setIntentActivity(AuthActivity::class.java) {
-                                putString("fromMain", "sign_in")
+                                putString(EXTRA_FROM_MAIN, SIGN_IN)
                             }
                             overridePendingTransition(0, 0) // 전환 애니메이션 생략
                             finish()

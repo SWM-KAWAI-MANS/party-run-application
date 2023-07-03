@@ -1,8 +1,7 @@
 package online.partyrun.partyrunapplication.feature.match
 
 import android.content.Context
-import android.net.Uri
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,8 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,14 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kotlinx.coroutines.delay
@@ -43,37 +38,15 @@ import online.partyrun.partyrunapplication.feature.match.ui.MatchWaitingDialog
 fun MatchDialog(
     setShowDialog: (Boolean) -> Unit,
     matchViewModel: MatchViewModel = viewModel(),
+    exoPlayer: ExoPlayer,
+    isBuffering: MutableState<Boolean>
 ) {
-    val context = LocalContext.current
     val matchState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
-    val exoPlayer = remember { context.buildExoPlayer(getVideoUri()) }
-    // 로딩 상태를 관리하기 위한 MutableState
-    val isBuffering = remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         while (true) {
             delay(6000L)
             matchViewModel.cycleMatchProgressType() // ViewModel에 정의된 상태 업데이트 함수
-        }
-    }
-
-    /**
-     * ExoPlayer 상태 변경 리스너 등록
-     */
-    DisposableEffect(exoPlayer) {
-        val listener = object : Player.Listener {
-            override fun onPlaybackStateChanged(state: Int) {
-                if (state == Player.STATE_BUFFERING) {
-                    isBuffering.value = true
-                } else if (state == Player.STATE_READY) {
-                    isBuffering.value = false
-                }
-            }
-        }
-        exoPlayer.addListener(listener)
-        onDispose {
-            exoPlayer.removeListener(listener)
-            exoPlayer.release()
         }
     }
 
@@ -103,28 +76,6 @@ fun MatchDialog(
             )
     }
 }
-
-private fun getVideoUri(): Uri {
-    val videoUri = "https://cdn.pixabay.com/vimeo/462182247/trning-50884.mp4?width=3840&hash=b62785592f7d9ca46a0af26e9883996278ac2483"
-    return Uri.parse(videoUri)
-}
-
-private fun Context.buildExoPlayer(uri: Uri) =
-    ExoPlayer.Builder(this).build().apply {
-        setMediaItem(MediaItem.fromUri(uri))
-        repeatMode = Player.REPEAT_MODE_ALL
-        playWhenReady = true
-        prepare()
-    }
-
-fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
-    StyledPlayerView(this).apply {
-        player = exoPlayer
-        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-        useController = false
-        resizeMode = RESIZE_MODE_ZOOM
-        setBackgroundColor(Color.Transparent.hashCode()) // 배경을 투명하게 설정
-    }
 
 @Composable
 fun AnimationGaugeBar(
@@ -164,3 +115,17 @@ fun AnimationGaugeBar(
         )
     }
 }
+
+
+fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
+    StyledPlayerView(this).apply {
+        player = exoPlayer
+        layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        useController = false
+        resizeMode = RESIZE_MODE_ZOOM
+        setBackgroundColor(Color.Transparent.hashCode()) // 배경을 투명하게 설정
+    }
+

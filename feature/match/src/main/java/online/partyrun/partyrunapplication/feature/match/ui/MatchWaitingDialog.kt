@@ -108,10 +108,10 @@ fun MatchWaitingDialog(
                             factory = { it.buildPlayerView(exoPlayer) },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .alpha(if (visible.value) 1f else 0f)
+                                .alpha(if (visible.value) 1f else 0.2f)
                         ) {
                             scope.launch {
-                                delay(100L)
+                                delay(500L)
                                 visible.value = true
                             }
                         }

@@ -1,5 +1,7 @@
 package online.partyrun.partyrunapplication.feature.battle
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,14 +12,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,21 +41,49 @@ fun BattleMainScreen(
     battleViewModel: BattleViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val matchUiState by matchViewModel.matchUiState.collectAsState()
+    val exoPlayer = remember { context.buildExoPlayer(getVideoUri()) }
+    // 로딩 상태를 관리하기 위한 MutableState
+    val isBuffering = remember { mutableStateOf(true) }
 
-    Content(matchViewModel, matchUiState)
+    /**
+     * ExoPlayer 상태 변경 리스너 등록
+     */
+    DisposableEffect(exoPlayer) {
+        val listener = object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                if (state == Player.STATE_BUFFERING) {
+                    isBuffering.value = true
+                } else if (state == Player.STATE_READY) {
+                    isBuffering.value = false
+                }
+            }
+        }
+        exoPlayer.addListener(listener)
+        onDispose {
+            exoPlayer.removeListener(listener)
+            exoPlayer.release()
+        }
+    }
+
+    Content(matchViewModel, matchUiState, exoPlayer, isBuffering)
 }
 
 @Composable
 fun Content(
     matchViewModel: MatchViewModel,
-    matchUiState: MatchUiState
+    matchUiState: MatchUiState,
+    exoPlayer: ExoPlayer,
+    isBuffering: MutableState<Boolean>
 ) {
     if (matchUiState.isOpen) {
         MatchDialog(
             setShowDialog = {
                 matchViewModel.closeMatchDialog()
-            }
+            },
+            exoPlayer = exoPlayer,
+            isBuffering = isBuffering
         )
     }
 
@@ -138,3 +176,17 @@ fun MatchContent(
     }
     Spacer(modifier = Modifier.size(20.dp))
 }
+
+
+private fun getVideoUri(): Uri {
+    val videoUri = "https://cdn.pixabay.com/vimeo/462182247/trning-50884.mp4?width=3840&hash=b62785592f7d9ca46a0af26e9883996278ac2483"
+    return Uri.parse(videoUri)
+}
+
+private fun Context.buildExoPlayer(uri: Uri) =
+    ExoPlayer.Builder(this).build().apply {
+        setMediaItem(MediaItem.fromUri(uri))
+        repeatMode = Player.REPEAT_MODE_ALL
+        playWhenReady = true
+        prepare()
+    }

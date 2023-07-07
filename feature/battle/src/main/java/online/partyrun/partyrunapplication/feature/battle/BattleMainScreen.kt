@@ -110,7 +110,7 @@ fun Content(
             }
         )
         Text(
-            text = "연결 여부: ${matchUiState.waitingEventState.isSuccess}"
+            text = "연결 여부: ${matchUiState.waitingEventState.status}"
         )
         Text(
             text = "메세지: ${matchUiState.waitingEventState.message}"
@@ -179,7 +179,7 @@ fun MatchContent(
 
 
 private fun getVideoUri(): Uri {
-    val videoUri = "https://cdn.pixabay.com/vimeo/462182247/trning-50884.mp4?width=3840&hash=b62785592f7d9ca46a0af26e9883996278ac2483"
+    val videoUri = "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
     return Uri.parse(videoUri)
 }
 

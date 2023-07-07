@@ -118,7 +118,7 @@ fun MatchWaitingDialog(
                     }
                 }
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(text = "연결 여부: ${matchUiState.waitingEventState.isSuccess}")
+                    Text(text = "연결 여부: ${matchUiState.waitingEventState.status}")
                     Text(text = "메세지: ${matchUiState.waitingEventState.message}")
                 }
                 Column(

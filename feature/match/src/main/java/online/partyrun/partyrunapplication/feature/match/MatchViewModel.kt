@@ -40,7 +40,8 @@ class MatchViewModel @Inject constructor(
     private val _matchUiState = MutableStateFlow(MatchUiState())
     val matchUiState: StateFlow<MatchUiState> = _matchUiState.asStateFlow()
 
-    private val sseState = CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
+    private var matchEventSSEstate = CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
+    private var matchResultEventSSEstate = CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
     private val gson = Gson()
     private var userDecision = MutableStateFlow<Boolean?>(null)
 
@@ -55,6 +56,8 @@ class MatchViewModel @Inject constructor(
     }
 
     fun closeMatchDialog() {
+        matchEventSSEstate = CompletableDeferred()
+        matchResultEventSSEstate = CompletableDeferred()
         _matchUiState.value = MatchUiState()
     }
 
@@ -205,14 +208,22 @@ class MatchViewModel @Inject constructor(
     private fun handleMatchResultEvent(data: String) {
         val eventData = gson.fromJson(data, MatchResultEventResult::class.java)
         Timber.tag("Event").d("Event Received: status -: ${eventData.status}")
-        Timber.tag("Event").d("Event Received: location -: ${eventData.location}")
+        Timber.tag("Event").d("Event Received: members -: ${eventData.members}")
         val status = MatchResultStatus.fromString(eventData.status)
         status?.let { resultStatus ->
+            /*
+            * TODO: 7월 7일자 수정 사항, 확인 요망  215~219 라인
+            *   한명이 거절할 경우, 정상적으로 CANCEL 응답이 오고 초기화 되는지 검증
+            */
+            if (resultStatus == MatchResultStatus.CANCEL) {
+                Timber.tag("Event").d("Event Cancelled: SSE should be terminated.")
+                cancelBattleMatchingProcess()
+            }
             _matchUiState.update {
                 it.copy(
                     matchResultEventState = MatchResultEventState(
                         status = resultStatus,
-                        location = eventData.location
+                        members = eventData.members
                     )
                 )
             }
@@ -226,37 +237,39 @@ class MatchViewModel @Inject constructor(
      * onClosed 콜백은 SSE 스트림이 종료되었을 때 호출되며, 이 때 sseState의 상태를 완료(complete)로 변경
      * sseState.await(): 현재 스트림의 상태(sseState)가 완료 상태가 될 때까지 대기
      */
-    suspend fun connectMatchEventSource() {
+    private suspend fun connectMatchEventSource() {
         val listener = MatchSourceManager.getMatchEventSourceListener(
             onEvent = ::handleMatchEvent,
             onClosed = {
-                sseState.complete(Unit)
+                matchEventSSEstate.complete(Unit)
             }
         )
         MatchSourceManager.connectMatchEventSource(getWaitingEventUseCase(listener))
-        sseState.await()
+        matchEventSSEstate.await()
     }
 
-    suspend fun connectMatchResultEventSource() {
+    private suspend fun connectMatchResultEventSource() {
         val listener = MatchSourceManager.getMatchEventSourceListener(
             onEvent = ::handleMatchResultEvent,
             onClosed = {
-                sseState.complete(Unit)
+                matchResultEventSSEstate.complete(Unit)
             }
         )
         MatchSourceManager.connectMatchResultEventSource(getMatchResultEventUseCase(listener))
-        sseState.await()
+        matchResultEventSSEstate.await()
     }
 
     fun closeMatchEventSource() {
         viewModelScope.launch {
             MatchSourceManager.closeMatchEventSource()
+            cancelBattleMatchingProcess()
         }
     }
 
     fun closeMatchResultEventSource() {
         viewModelScope.launch {
             MatchSourceManager.closeMatchResultEventSource()
+            cancelBattleMatchingProcess()
         }
     }
 }

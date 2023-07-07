@@ -42,10 +42,10 @@ class MatchViewModel @Inject constructor(
 
     private val sseState = CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
     private val gson = Gson()
-    private var userDecision: Boolean? = null
+    private var userDecision = MutableStateFlow<Boolean?>(null)
 
     fun onUserDecision(isAccepted: Boolean) {
-        userDecision = isAccepted
+        userDecision.value = isAccepted
     }
 
     fun openMatchDialog() {
@@ -177,12 +177,13 @@ class MatchViewModel @Inject constructor(
 
     private suspend fun waitForUserDecision(): Boolean? {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(10)) {
-            while (userDecision == null) {
+            while (userDecision.value == null) {
                 delay(100) // delay a little bit
             }
-            return@withTimeoutOrNull userDecision
         }
-        cancelBattleMatchingProcess()
+        return userDecision.value?.also { decision ->
+            if (!decision) cancelBattleMatchingProcess()
+        }
     }
 
     /* SSE */

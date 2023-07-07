@@ -1,10 +1,10 @@
 package online.partyrun.partyrunapplication.feature.match
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +23,7 @@ import online.partyrun.partyrunapplication.core.model.match.MatchDecisionRequest
 import online.partyrun.partyrunapplication.core.model.match.MatchResultEventResult
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import online.partyrun.partyrunapplication.core.model.match.WaitingEventResult
+import online.partyrun.partyrunapplication.core.model.match.WaitingMatchStatus
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -39,9 +40,10 @@ class MatchViewModel @Inject constructor(
     private val _matchUiState = MutableStateFlow(MatchUiState())
     val matchUiState: StateFlow<MatchUiState> = _matchUiState.asStateFlow()
 
+    private val sseState = CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
     private val gson = Gson()
-
     private var userDecision: Boolean? = null
+
     fun onUserDecision(isAccepted: Boolean) {
         userDecision = isAccepted
     }
@@ -56,18 +58,6 @@ class MatchViewModel @Inject constructor(
         _matchUiState.value = MatchUiState()
     }
 
-    fun cycleMatchProgressType() {
-        _matchUiState.update { state ->
-            state.copy(
-                matchProgress = when (state.matchProgress) {
-                    MatchProgress.WAITING -> MatchProgress.DECISION
-                    MatchProgress.DECISION -> MatchProgress.RESULT
-                    MatchProgress.RESULT -> MatchProgress.WAITING
-                }
-            )
-        }
-    }
-
     /**
      * Battle 과정에 대한 전체 프로세스 수행
      * 1. 배틀 매칭 큐에 사용자 등록
@@ -79,35 +69,38 @@ class MatchViewModel @Inject constructor(
         try {
             registerToBattleMatchingQueue(userSelectedMatchDistance)
             connectMatchEventSource()
-
-            if (matchUiState.value.waitingEventState.isSuccess) {
-                val decision = waitForUserDecision() // (수락 = true, 거절 = false)
-                decision?.let {
-                    if (it) {
-                        sendAcceptBattleMatchingQueue(MatchDecisionRequest(isJoin = true))
-                    } else {
-                        sendDeclineBattleMatchingQueue(MatchDecisionRequest(isJoin = false))
-                        cancelBattleMatchingProcess()
-                    }
-                }
-            } else {
-                cancelBattleMatchingProcess()
-            }
-
+            handleUserMatchDecision()
             connectMatchResultEventSource()
-
-            val matchStatus = matchUiState.value.matchResultEventState.status
-            if (matchStatus == MatchResultStatus.SUCCESS) {
-                Timber.tag("MatchViewModel").d("${matchUiState.value.matchResultEventState.location}")
-                Timber.tag("MatchViewModel").d("웹소켓 연결 과정 진행")
-            } else {
-                cancelBattleMatchingProcess()
-            }
+            verifyMatchSuccess()
         } catch(e: Exception) {
             /* 예외 발생 시 배틀 매칭 과정을 종료하고 상태 초기화 과정 수행 */
-            Timber.tag("MatchViewModel").e(e, "battleMatchProcess")
-            // closeMatchDialog()  /* TODO: 백엔드 서버 연결 후 주석 해제 필요 */
+            closeMatchDialog()
             return@launch
+        }
+    }
+
+    private fun verifyMatchSuccess() {
+        val matchStatus = matchUiState.value.matchResultEventState.status
+        if (matchStatus == MatchResultStatus.SUCCESS) {
+            Timber.tag("MatchViewModel").d("웹소켓 연결 과정 진행")
+        } else {
+            cancelBattleMatchingProcess()
+        }
+    }
+
+    private suspend fun handleUserMatchDecision() {
+        val status = matchUiState.value.waitingEventState.status
+        if (status != WaitingMatchStatus.MATCHED) {
+            cancelBattleMatchingProcess()
+        }
+        val decision = waitForUserDecision() // (수락 = true, 거절 = false)
+        decision?.let {
+            if (it) {
+                sendAcceptBattleMatchingQueue(MatchDecisionRequest(isJoin = true))
+            } else {
+                sendDeclineBattleMatchingQueue(MatchDecisionRequest(isJoin = false))
+                cancelBattleMatchingProcess()
+            }
         }
     }
 
@@ -182,24 +175,26 @@ class MatchViewModel @Inject constructor(
             }
         }
 
-    private suspend fun waitForUserDecision(): Boolean? =
+    private suspend fun waitForUserDecision(): Boolean? {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(10)) {
             while (userDecision == null) {
                 delay(100) // delay a little bit
             }
-            userDecision
+            return@withTimeoutOrNull userDecision
         }
+        cancelBattleMatchingProcess()
+    }
 
     /* SSE */
     private fun handleMatchEvent(data: String) {
         val eventData = gson.fromJson(data, WaitingEventResult::class.java)
-        Timber.tag("Event").d("Event Received: isSuccess -: ${eventData.isSuccess}")
+        Timber.tag("Event").d("Event Received: status -: ${eventData.status}")
         Timber.tag("Event").d("Event Received: message -: ${eventData.message}")
         _matchUiState.update {
             it.copy(
-                matchProgress = if (eventData.isSuccess) MatchProgress.DECISION else it.matchProgress,
+                matchProgress = if (eventData.status == WaitingMatchStatus.MATCHED) MatchProgress.DECISION else it.matchProgress,
                 waitingEventState = WaitingEventState(
-                    isSuccess = eventData.isSuccess,
+                    status = eventData.status,
                     message = eventData.message
                 )
             )
@@ -223,18 +218,33 @@ class MatchViewModel @Inject constructor(
         }
     }
 
+    /**
+     * connectMatch____EventSource() =
+     * SSE 스트림에 연결하고, 스트림에서 매치 결과 이벤트를 받아 처리하며, 스트림이 종료될 때까지 대기하는 역할 수행
+     * onEvent 콜백은 매치 결과 이벤트가 발생할 때 호출
+     * onClosed 콜백은 SSE 스트림이 종료되었을 때 호출되며, 이 때 sseState의 상태를 완료(complete)로 변경
+     * sseState.await(): 현재 스트림의 상태(sseState)가 완료 상태가 될 때까지 대기
+     */
     suspend fun connectMatchEventSource() {
         val listener = MatchSourceManager.getMatchEventSourceListener(
-            onEvent = ::handleMatchEvent
+            onEvent = ::handleMatchEvent,
+            onClosed = {
+                sseState.complete(Unit)
+            }
         )
         MatchSourceManager.connectMatchEventSource(getWaitingEventUseCase(listener))
+        sseState.await()
     }
 
     suspend fun connectMatchResultEventSource() {
         val listener = MatchSourceManager.getMatchEventSourceListener(
-            onEvent = ::handleMatchResultEvent
+            onEvent = ::handleMatchResultEvent,
+            onClosed = {
+                sseState.complete(Unit)
+            }
         )
         MatchSourceManager.connectMatchResultEventSource(getMatchResultEventUseCase(listener))
+        sseState.await()
     }
 
     fun closeMatchEventSource() {

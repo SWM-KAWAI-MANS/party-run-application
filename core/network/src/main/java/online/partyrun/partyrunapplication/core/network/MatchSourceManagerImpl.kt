@@ -12,9 +12,10 @@ class MatchSourceManagerImpl: MatchSourceManager {
     private lateinit var connectMatchResultSource: EventSource
 
     override fun getMatchEventSourceListener(
-        onEvent: (data: String) -> Unit
+        onEvent: (data: String) -> Unit,
+        onClosed: () -> Unit
     ): EventSourceListener {
-        return createEventListener(onEvent)
+        return createEventListener(onEvent, onClosed)
     }
 
     override fun connectMatchEventSource(eventSource: EventSource) {
@@ -34,7 +35,8 @@ class MatchSourceManagerImpl: MatchSourceManager {
     }
 
     private fun createEventListener(
-        onEvent: (data: String) -> Unit
+        onEvent: (data: String) -> Unit,
+        onClosed: () -> Unit
     ): EventSourceListener {
         return object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
@@ -43,6 +45,7 @@ class MatchSourceManagerImpl: MatchSourceManager {
 
             override fun onClosed(eventSource: EventSource) {
                 Timber.tag("Event").d("Connection closed")
+                onClosed()
             }
 
             override fun onEvent(

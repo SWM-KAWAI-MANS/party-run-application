@@ -43,13 +43,6 @@ fun MatchDialog(
 ) {
     val matchState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(6000L)
-            matchViewModel.cycleMatchProgressType() // ViewModel에 정의된 상태 업데이트 함수
-        }
-    }
-
     when (matchState.matchProgress.name) {
         MatchProgress.WAITING.name ->
             MatchWaitingDialog(
@@ -128,4 +121,3 @@ fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
         resizeMode = RESIZE_MODE_ZOOM
         setBackgroundColor(Color.Transparent.hashCode()) // 배경을 투명하게 설정
     }
-

@@ -3,6 +3,10 @@
     <!-- common resource -->
     <string name="cancel_button_title">취소</string>
 
+   <!-- MatchWaitingDialog -->
+    <string name="elapsed_time">소요 대기 시간 : </string>
+    <string name="waiting_match_title">매칭 찾는 중</string>
+
     <!-- MatchDecisionDialog -->
     <string name="completed_matching">매칭 완료</string>
     <string name="ready_to_run_desc">뛰실 준비 되었나요?</string>
@@ -11,7 +15,10 @@
 
     <!-- MatchResultDialog -->
     <string name="waiting_for_other_desc">다른 유저 매칭 여부 확인 중</string>
-    <string name="waiting_for_user">수락 여부 대기 중</string>
+    <string name="waiting_for_user">수락 전</string>
     <string name="accept_matching_status">수락</string>
+    <string name="decline_matching_status">취소</string>
+    <string name="else_status">알 수 없는 상태</string>
+
 
 </resources>

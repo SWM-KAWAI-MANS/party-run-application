@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.feature.match
 
+import online.partyrun.partyrunapplication.core.model.match.MatchMember
 import online.partyrun.partyrunapplication.core.model.match.WaitingMatchStatus
 
 enum class MatchProgress {
@@ -40,6 +41,6 @@ data class MatchResultRestState(
     val message: String = ""
 )
 data class MatchResultEventState(
-    val status: MatchResultStatus = MatchResultStatus.WAIT,
-    val location: String? = null
+    val members: List<MatchMember> = emptyList(),
+    val status: MatchResultStatus = MatchResultStatus.WAIT
 )

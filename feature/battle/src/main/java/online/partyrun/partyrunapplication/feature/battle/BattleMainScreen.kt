@@ -3,6 +3,7 @@ package online.partyrun.partyrunapplication.feature.battle
 import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -28,9 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
@@ -90,54 +89,12 @@ fun Content(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(
+                brush = Brush.verticalGradient(colors = listOf(Color(0xFFAE2BDE), Color(0xFF5618B5)))
+            ),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.size(50.dp))
-        MatchContent(
-            mainTitle = "매치 인원 탐색",
-            connectTitle = "인원 탐색 시작",
-            closeTitle = "인원 탐색 종료",
-            connectEvent = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    matchViewModel.connectMatchEventSource()
-                }
-           },
-            closeEvent = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    matchViewModel.closeMatchEventSource()
-                }
-            }
-        )
-        Text(
-            text = "연결 여부: ${matchUiState.waitingEventState.status}"
-        )
-        Text(
-            text = "메세지: ${matchUiState.waitingEventState.message}"
-        )
-        Spacer(modifier = Modifier.size(50.dp))
-        MatchContent(
-            mainTitle = "파티 생성",
-            connectTitle = "파티 생성 수락",
-            closeTitle = "파티 생성 거절",
-            connectEvent = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    matchViewModel.connectMatchResultEventSource()
-                }
-           },
-            closeEvent = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    matchViewModel.closeMatchResultEventSource()
-                }
-            }
-        )
-        Text(
-            text = "상태: ${matchUiState.matchResultEventState.status.name}"
-        )
-        Text(
-            text = "생성된 방 엔드포인트: ${matchUiState.matchResultEventState.location}"
-        )
-        Spacer(modifier = Modifier.size(30.dp))
         Button(
             onClick = {
                 matchViewModel.openMatchDialog()

@@ -7,6 +7,7 @@ enum class MatchProgress {
     WAITING,
     DECISION,
     RESULT,
+    CANCEL
 }
 enum class MatchResultStatus {
     WAIT,

@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.feature.match.ui.MatchCancelDialog
 import online.partyrun.partyrunapplication.feature.match.ui.MatchDecisionDialog
 import online.partyrun.partyrunapplication.feature.match.ui.MatchResultDialog
 import online.partyrun.partyrunapplication.feature.match.ui.MatchWaitingDialog
@@ -47,6 +47,9 @@ fun MatchDialog(
         MatchProgress.WAITING.name ->
             MatchWaitingDialog(
                 setShowDialog = setShowDialog,
+                disConnectSSE = {
+                    matchViewModel.closeMatchEventSource()
+                },
                 matchUiState = matchState,
                 exoPlayer = exoPlayer,
                 isBuffering = isBuffering
@@ -66,6 +69,11 @@ fun MatchDialog(
             MatchResultDialog(
                 setShowDialog = setShowDialog,
                 matchUiState = matchState,
+            )
+        MatchProgress.CANCEL.name ->
+            MatchCancelDialog(
+                setShowDialog = setShowDialog,
+                matchUiState = matchState
             )
     }
 }
@@ -118,6 +126,6 @@ fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         useController = false
-        resizeMode = RESIZE_MODE_ZOOM
+        resizeMode = RESIZE_MODE_FILL
         setBackgroundColor(Color.Transparent.hashCode()) // 배경을 투명하게 설정
     }

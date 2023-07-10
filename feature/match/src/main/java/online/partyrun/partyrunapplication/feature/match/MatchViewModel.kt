@@ -58,6 +58,7 @@ class MatchViewModel @Inject constructor(
     fun closeMatchDialog() {
         matchEventSSEstate = CompletableDeferred()
         matchResultEventSSEstate = CompletableDeferred()
+        userDecision.value = null
         _matchUiState.value = MatchUiState()
     }
 
@@ -77,6 +78,7 @@ class MatchViewModel @Inject constructor(
             verifyMatchSuccess()
         } catch(e: Exception) {
             /* 예외 발생 시 배틀 매칭 과정을 종료하고 상태 초기화 과정 수행 */
+            Timber.tag("MatchViewModel").e(e, "매칭 거절")
             closeMatchDialog()
             return@launch
         }
@@ -97,12 +99,11 @@ class MatchViewModel @Inject constructor(
             cancelBattleMatchingProcess()
         }
         val decision = waitForUserDecision() // (수락 = true, 거절 = false)
-        decision?.let {
+        decision.let {
             if (it) {
                 sendAcceptBattleMatchingQueue(MatchDecisionRequest(isJoin = true))
             } else {
                 sendDeclineBattleMatchingQueue(MatchDecisionRequest(isJoin = false))
-                cancelBattleMatchingProcess()
             }
         }
     }
@@ -162,6 +163,7 @@ class MatchViewModel @Inject constructor(
                 is ApiResponse.Success -> {
                     _matchUiState.update { state ->
                         state.copy(
+                            matchProgress = MatchProgress.CANCEL,
                             matchResultRestState = MatchResultRestState(
                                 message = it.data.message
                             )
@@ -178,15 +180,13 @@ class MatchViewModel @Inject constructor(
             }
         }
 
-    private suspend fun waitForUserDecision(): Boolean? {
+    private suspend fun waitForUserDecision(): Boolean {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(10)) {
             while (userDecision.value == null) {
                 delay(100) // delay a little bit
             }
         }
-        return userDecision.value?.also { decision ->
-            if (!decision) cancelBattleMatchingProcess()
-        }
+        return userDecision.value ?: false // 10초 동안 무응답이면 거절이라 판단
     }
 
     /* SSE */
@@ -211,14 +211,6 @@ class MatchViewModel @Inject constructor(
         Timber.tag("Event").d("Event Received: members -: ${eventData.members}")
         val status = MatchResultStatus.fromString(eventData.status)
         status?.let { resultStatus ->
-            /*
-            * TODO: 7월 7일자 수정 사항, 확인 요망  215~219 라인
-            *   한명이 거절할 경우, 정상적으로 CANCEL 응답이 오고 초기화 되는지 검증
-            */
-            if (resultStatus == MatchResultStatus.CANCEL) {
-                Timber.tag("Event").d("Event Cancelled: SSE should be terminated.")
-                cancelBattleMatchingProcess()
-            }
             _matchUiState.update {
                 it.copy(
                     matchResultEventState = MatchResultEventState(

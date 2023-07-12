@@ -6,17 +6,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
-import online.partyrun.partyrunapplication.feature.battle.BattleMainScreen
-import online.partyrun.partyrunapplication.feature.single.SingleScreen
-import online.partyrun.partyrunapplication.feature.challenge.ChallengeScreen
-import online.partyrun.partyrunapplication.feature.my_page.MyPageScreen
+import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
+import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
+import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
+import online.partyrun.partyrunapplication.core.navigation.single.singleRoute
 
 @Composable
 fun SetUpMainNavGraph(
@@ -51,55 +47,6 @@ fun SetUpMainNavGraph(
             onSignOut = onSignOut
         )
         myPageRoute()
-    }
-}
-
-/**
- *그래프의 크기가 커질수록 관리가 필요함 ->
- * 그래프를 여러 메서드로 분할할 수 있도록 Navigation Builder 구축
- */
-fun NavGraphBuilder.battleRoute(
-    navigateToSingle: () -> Unit,
-    navigateToSingleWithArgs: (String) -> Unit
-) {
-    composable(route = MainNavRoutes.Battle.route) {
-        BattleMainScreen()
-    }
-}
-
-fun NavGraphBuilder.singleRoute(
-    navigateToMyPage: () -> Unit,
-) {
-    /**
-     * 선택적 매개변수는 URL이 "/arg1=$value1/arg2=$value2" 형식이 아닌
-     * "?arg1=$value1&arg2=$value2" 형식을 사용하는 경우에만 작동
-     */
-    composable(
-        route = "${MainNavRoutes.Single.route}?userName={userName}",
-        arguments = listOf(navArgument("userName") {
-            type = NavType.StringType
-            defaultValue = ""
-        })
-    ) { backStackEntry ->
-        SingleScreen(
-            userName = backStackEntry.arguments?.getString("userName")
-        )
-    }
-}
-
-fun NavGraphBuilder.challengeRoute(
-    onSignOut: () -> Unit
-) {
-    composable(route = MainNavRoutes.Challenge.route) {
-        ChallengeScreen(
-            onSignOut = onSignOut
-        )
-    }
-}
-
-fun NavGraphBuilder.myPageRoute() {
-    composable(route = MainNavRoutes.MyPage.route) {
-        MyPageScreen()
     }
 }
 

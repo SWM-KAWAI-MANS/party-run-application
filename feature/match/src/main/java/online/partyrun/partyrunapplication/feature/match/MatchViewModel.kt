@@ -24,6 +24,7 @@ import online.partyrun.partyrunapplication.core.model.match.MatchResultEventResu
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import online.partyrun.partyrunapplication.core.model.match.WaitingEventResult
 import online.partyrun.partyrunapplication.core.model.match.WaitingMatchStatus
+import online.partyrun.partyrunapplication.feature.match.exception.MatchingProcessException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -76,7 +77,7 @@ class MatchViewModel @Inject constructor(
             handleUserMatchDecision()
             connectMatchResultEventSource()
             verifyMatchSuccess()
-        } catch(e: Exception) {
+        } catch(e: MatchingProcessException) {
             /* 예외 발생 시 배틀 매칭 과정을 종료하고 상태 초기화 과정 수행 */
             Timber.tag("MatchViewModel").e(e, "매칭 거절")
             closeMatchDialog()
@@ -109,7 +110,7 @@ class MatchViewModel @Inject constructor(
     }
 
     private fun cancelBattleMatchingProcess(): Nothing {
-        throw RuntimeException("Closing match dialog and End of the matching coroutine process")
+        throw MatchingProcessException("Closing match dialog and End of the matching coroutine process")
     }
 
     /* REST */

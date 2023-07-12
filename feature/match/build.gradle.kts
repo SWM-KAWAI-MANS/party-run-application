@@ -13,7 +13,7 @@ dependencies {
     // Timber
     implementation(libs.timber)
     implementation(libs.okhttp.sse)
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson.code)
 
     implementation(libs.exo.player)
 }

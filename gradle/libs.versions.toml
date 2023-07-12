@@ -19,9 +19,11 @@ androidxTestRunner = "1.5.2"
 androidxMeterialCore = "1.4.3"
 exoplayer = "2.18.7"
 timber = "5.0.1"
+stomp = "2.0.5"
 mockito = "4.11.0"
 mockk = "1.13.54"
 lottie = "6.0.0"
+gson = "2.10.1"
 mock = "4.10.0"
 coil = "2.2.2"
 kotlinBom = "1.8.0"
@@ -31,6 +33,7 @@ firebasePerfPlugin = "1.4.2"
 firebaseAuth = "22.0.0"
 firebaseStroage ="20.2.0"
 gmsPlugin = "4.3.15"
+gmsLocation = "21.0.1"
 gmsAuth = "20.5.0"
 hilt = "2.44"
 hiltExt = "1.0.0"
@@ -120,13 +123,16 @@ firebase-auth = { module = "com.google.firebase:firebase-auth-ktx", version.ref 
 firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStroage" }
 google-service = { group = "com.google.gms", name = "google-services", version.ref = "gmsPlugin" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "gmsAuth" }
-
+google-location = {group = "com.google.android.gms", name = "play-services-location", version.ref = "gmsLocation"}
 
 # coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-playservices = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
+
+# gson
+gson-code = { group = "com.google.code.gson", name = "gson", version.ref = "gson"}
 
 # serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
@@ -138,6 +144,9 @@ okhttp-sse = { group = "com.squareup.okhttp3", name = "okhttp-sse", version.ref 
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializationJson" }
+
+# stomp
+stomp-github = { module = "com.github.bishoybasily:stomp", version.ref = "stomp"}
 
 # mock server
 mockserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref ="mock"}

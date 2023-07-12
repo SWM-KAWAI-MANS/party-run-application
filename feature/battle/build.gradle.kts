@@ -17,5 +17,6 @@ dependencies {
 
     implementation(libs.exo.player)
 
+    implementation(libs.google.location)
     implementation(project(":feature:match"))
 }

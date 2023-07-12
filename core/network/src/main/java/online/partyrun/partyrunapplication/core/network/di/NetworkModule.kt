@@ -21,6 +21,7 @@ import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 import online.partyrun.partyrunapplication.core.network.MatchSourceManagerImpl
+import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import retrofit2.Retrofit
@@ -107,6 +108,25 @@ object NetworkModule {
         .addInterceptor(authInterceptor)
         .build()
 
+    @WSOkHttpClient
+    @Singleton
+    @Provides
+    fun provideWSOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        authAuthenticator: AuthAuthenticator,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.MINUTES)
+        .writeTimeout(10, TimeUnit.MINUTES)
+        .addInterceptor(authInterceptor)
+        .authenticator(authAuthenticator)
+        .build()
+
+    @Singleton
+    @Provides
+    fun provideRealtimeBattleClient(@WSOkHttpClient httpClient: OkHttpClient): RealtimeBattleClient {
+        return RealtimeBattleClient(httpClient)
+    }
 
     @SSERequestBuilder
     @Provides
@@ -117,4 +137,3 @@ object NetworkModule {
 
 
 }
-

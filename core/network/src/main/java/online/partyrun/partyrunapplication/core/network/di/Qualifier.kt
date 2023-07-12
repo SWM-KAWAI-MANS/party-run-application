@@ -12,4 +12,8 @@ annotation class RESTOkHttpClient
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class WSOkHttpClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class SSERequestBuilder

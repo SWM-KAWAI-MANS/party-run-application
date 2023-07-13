@@ -6,17 +6,16 @@ plugins {
 }
 
 android {
-    namespace = "online.partyrun.partyrunapplication.feature.battle"
+    namespace = "online.partyrun.partyrunapplication.feature.match"
 }
 
 dependencies {
     // Timber
     implementation(libs.timber)
-    implementation(libs.okhttp.sse)
     implementation(libs.gson.code)
 
-    implementation(libs.exo.player)
-
+    // stomp
+    implementation(libs.stomp.github)
+    // google Location
     implementation(libs.google.location)
-    implementation(project(":feature:match"))
 }

@@ -9,5 +9,6 @@ android {
 dependencies {
     testImplementation(libs.junit)
 
+    implementation(libs.kotlinx.datetime)
     implementation(libs.retrofit.gson)
 }

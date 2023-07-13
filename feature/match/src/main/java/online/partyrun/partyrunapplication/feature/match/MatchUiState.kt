@@ -23,11 +23,12 @@ enum class MatchResultStatus {
 
 data class MatchUiState(
     val isOpen: Boolean = false,
+    val isAllRunnersAccepted: Boolean = false,
     val matchProgress: MatchProgress = MatchProgress.WAITING,
     val WaitingRestState: WaitingRestState = WaitingRestState(),
     val waitingEventState: WaitingEventState = WaitingEventState(),
     val matchResultRestState: MatchResultRestState = MatchResultRestState(),
-    val matchResultEventState: MatchResultEventState = MatchResultEventState()
+    val matchResultEventState: MatchResultEventState = MatchResultEventState(),
 )
 
 data class WaitingRestState(

@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -12,6 +13,7 @@ import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
+import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -56,18 +58,8 @@ class SignInRepositoryImplTest {
             .setBody(Gson().toJson(tokenSet))
         mockWebServer.enqueue(expectedResponse)
 
-        val actualResponse = repository.signInGoogleTokenToServer(idToken)
-        actualResponse.collect() {
-            when (it) {
-                is ApiResponse.Success -> {
-                    assertThat(it.data).isEqualTo(tokenSet)
-                }
-                is ApiResponse.Failure -> {
-                    fail("Expected Success, got Failure")
-                }
-                else -> {}
-            }
-        }
+        val actualResponse = repository.signInGoogleTokenToServer(idToken).last()
+        assertEquals(ApiResponse.Success(tokenSet), actualResponse)
     }
 
     @Test

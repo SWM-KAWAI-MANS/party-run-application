@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":feature:single"))
     implementation(project(":feature:splash"))
     implementation(project(":feature:match"))
+    implementation(project(":feature:running"))
     implementation(project(":feature:challenge"))
 
     // BottomNavigation 및 BottomNavigationItem 구성요소 사용

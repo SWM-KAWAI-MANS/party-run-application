@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_websocket_title">웹소켓 연결</string>
+    <string name="comment_before_starts">잠시 뒤 배틀이 시작 됩니다 !</string>
+    <string name="configuring_tracks">트랙 구성 중...</string>
+
+</resources>

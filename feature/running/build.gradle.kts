@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "online.partyrun.partyrunapplication.feature.match"
+    namespace = "online.partyrun.partyrunapplication.feature.running"
 }
 
 dependencies {
@@ -18,4 +18,6 @@ dependencies {
     implementation(libs.stomp.github)
     // google Location
     implementation(libs.google.location)
+
+    implementation(project(":core:network"))
 }

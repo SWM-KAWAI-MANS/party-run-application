@@ -41,6 +41,7 @@ junit4 = "4.13.2"
 kotlin = "1.8.20"
 kotlinxCoroutines = "1.6.4"
 kotlinxSerializationJson = "1.5.1"
+kotlinxDatetime = "0.4.0"
 ksp = "1.8.20-1.0.11"
 okhttp = "4.11.0"
 sse = "4.9.3"
@@ -136,6 +137,9 @@ gson-code = { group = "com.google.code.gson", name = "gson", version.ref = "gson
 
 # serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
+# dateTime
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 # okhttp, retrofit
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }

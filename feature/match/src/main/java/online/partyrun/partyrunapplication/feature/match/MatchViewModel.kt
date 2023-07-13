@@ -88,7 +88,11 @@ class MatchViewModel @Inject constructor(
     private fun verifyMatchSuccess() {
         val matchStatus = matchUiState.value.matchResultEventState.status
         if (matchStatus == MatchResultStatus.SUCCESS) {
-            Timber.tag("MatchViewModel").d("웹소켓 연결 과정 진행")
+            _matchUiState.update { state ->
+                state.copy(
+                    isAllRunnersAccepted = true
+                )
+            }
         } else {
             cancelBattleMatchingProcess()
         }

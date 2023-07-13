@@ -5,11 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +21,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.gson.Gson
+import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
@@ -37,9 +34,16 @@ import online.partyrun.partyrunapplication.feature.match.MatchViewModel
 
 @Composable
 fun BattleMainScreen(
-    battleViewModel: BattleViewModel = hiltViewModel(),
-    matchViewModel: MatchViewModel = hiltViewModel()
+    battleViewModel: BattleMainViewModel = hiltViewModel(),
+    matchViewModel: MatchViewModel = hiltViewModel(),
+    navigateToBattleRunningWithArgs: (String, String) -> Unit
 ) {
+    /* Mock Data */
+    val gson = Gson()
+    val runnerIds = RunnerIds(listOf("123", "456"))
+    val runnerIdsJson = gson.toJson(runnerIds)
+    val battleId = "64ae682dd780770fab6dca5d"
+
     val context = LocalContext.current
     val matchUiState by matchViewModel.matchUiState.collectAsState()
     val exoPlayer = remember { context.buildExoPlayer(getVideoUri()) }
@@ -64,6 +68,11 @@ fun BattleMainScreen(
             exoPlayer.removeListener(listener)
             exoPlayer.release()
         }
+    }
+
+    // matchUiState.isAllRunnersAccepted
+    if (matchUiState.isAllRunnersAccepted) {
+        navigateToBattleRunningWithArgs(battleId, runnerIdsJson)
     }
 
     Content(matchViewModel, matchUiState, exoPlayer, isBuffering)
@@ -109,31 +118,6 @@ fun Content(
         }
     }
 }
-
-@Composable
-fun MatchContent(
-    mainTitle: String,
-    connectTitle: String,
-    closeTitle: String,
-    connectEvent: () -> Unit,
-    closeEvent: () -> Unit
-) {
-    Column {
-        Text(text = mainTitle)
-        Spacer(modifier = Modifier.size(10.dp))
-        Row {
-            Button(onClick = { connectEvent() }) {
-                Text(connectTitle)
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(onClick = { closeEvent() }) {
-                Text(closeTitle)
-            }
-        }
-    }
-    Spacer(modifier = Modifier.size(20.dp))
-}
-
 
 private fun getVideoUri(): Uri {
     val videoUri = "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"

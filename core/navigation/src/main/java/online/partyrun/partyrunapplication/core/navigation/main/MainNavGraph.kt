@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
+import online.partyrun.partyrunapplication.core.navigation.battle.battleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
 import online.partyrun.partyrunapplication.core.navigation.single.singleRoute
@@ -25,17 +26,11 @@ fun SetUpMainNavGraph(
         startDestination = startDestination,
     ) {
         battleRoute(
-            navigateToSingle = {
-                navController.navigate(MainNavRoutes.Single.route)
-            },
-            /**
-             * 선택적 매개변수는 URL이 "/arg1=$value1/arg2=$value2" 형식이 아닌
-             * "?arg1=$value1&arg2=$value2" 형식을 사용하는 경우에만 작동
-             */
-            navigateToSingleWithArgs = { it ->
-                navController.navigate("${MainNavRoutes.Single.route}?userName=$it")
+            navigateToBattleRunningWithArgs = { battleId, runnerIdsJson ->
+                navController.navigate("${MainNavRoutes.BattleRunning.route}?battleId=$battleId&runnerIdsJson=$runnerIdsJson")
             }
         )
+
         singleRoute(
             navigateToMyPage = {
                 navController.navigate(MainNavRoutes.Challenge.route) {
@@ -43,10 +38,23 @@ fun SetUpMainNavGraph(
                 }
             }
         )
+
         challengeRoute(
             onSignOut = onSignOut
         )
+
         myPageRoute()
+
+        battleRunningRoute(
+            navigateToBattleOnWebSocketError = {
+                navController.navigate(MainNavRoutes.Battle.route) {
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+
     }
 }
 

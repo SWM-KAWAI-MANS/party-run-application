@@ -3,7 +3,7 @@ package online.partyrun.partyrunapplication.core.network
 import android.annotation.SuppressLint
 import com.gmail.bishoybasily.stomp.lib.Event
 import com.gmail.bishoybasily.stomp.lib.StompClient
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.channels.ProducerScope
@@ -14,9 +14,11 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.concurrent.TaskRunner
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.model.battle.BattleEvent
-import online.partyrun.partyrunapplication.core.model.running.GpsData
+import online.partyrun.partyrunapplication.core.model.util.LocalDateTimeAdapter
+import online.partyrun.partyrunapplication.core.model.running.GpsDatas
 import online.partyrun.partyrunapplication.core.network.di.WSOkHttpClient
 import timber.log.Timber
+import java.time.LocalDateTime
 import java.util.logging.Level
 
 class RealtimeBattleClient(
@@ -25,11 +27,17 @@ class RealtimeBattleClient(
 
     private lateinit var stompConnection: Disposable
     private lateinit var topic: Disposable
-    private val gson = Gson()
+
+    /**
+     * LocalDateTimeAdapter를 Gson 인스턴스에 등록한 후, GpsData 객체를 Gson을 사용하여 JSON 문자열로 직렬화
+     */
+    private val gson = GsonBuilder()
+        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+        .create()
 
     private val stomp: StompClient by lazy {
         StompClient(okHttpClient, 3000L).apply {
-            url = "ws://$BASE_URL/api/battle/connection"
+            url = "ws://$BASE_URL.removePrefix(\"http://\")/api/battle/connection"
         }
     }
 
@@ -57,17 +65,17 @@ class RealtimeBattleClient(
             }
 
             Event.Type.CLOSED -> {
-                Timber.tag("BattleClient").e("CLOSED")
+                Timber.tag("RealtimeBattleClient").e("CLOSED")
                 stompConnection.dispose()
             }
 
             Event.Type.ERROR -> {
-                Timber.tag("BattleClient").e("ERROR")
+                Timber.tag("RealtimeBattleClient").e("ERROR")
                 stompConnection.dispose()
                 close(it.exception) // exception 전달
             }
             else -> {
-                Timber.tag("BattleClient").e("ELSE")
+                Timber.tag("RealtimeBattleClient").e("ELSE")
                 disposeTopic()
                 stompConnection.dispose()
             }
@@ -104,8 +112,8 @@ class RealtimeBattleClient(
     }
 
     @SuppressLint("CheckResult")
-    suspend fun sendGPS(battleId: String, gpsData: GpsData) {
-        val jsonData = gson.toJson(gpsData)
+    suspend fun sendGPS(battleId: String, gpsDatas: GpsDatas) {
+        val jsonData = gson.toJson(gpsDatas)
         stomp.send("/pub/battle/$battleId/record", jsonData).subscribe { isSent ->
             if (isSent) {
                 Timber.tag("Sent").d("sent to $battleId: $jsonData")

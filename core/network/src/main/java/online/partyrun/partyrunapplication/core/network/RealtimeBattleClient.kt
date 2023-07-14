@@ -37,7 +37,7 @@ class RealtimeBattleClient(
 
     private val stomp: StompClient by lazy {
         StompClient(okHttpClient, 3000L).apply {
-            url = "ws://$BASE_URL.removePrefix(\"http://\")/api/battle/connection"
+            url = "ws://${BASE_URL.removePrefix("http://")}/api/battle/connection"
         }
     }
 

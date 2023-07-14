@@ -28,7 +28,7 @@ import online.partyrun.partyrunapplication.core.model.battle.BattleState
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.model.battle.RunnerState
 import online.partyrun.partyrunapplication.core.model.running.GpsData
-import online.partyrun.partyrunapplication.core.model.running.GpsDatas
+import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import timber.log.Timber
 import java.net.ConnectException
@@ -87,14 +87,14 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun onStartBattleStream() {
-        Timber.tag("BattleViewModel").e("Start")
+        Timber.tag("BattleContentViewModel").i("Start")
         _battleUiState.update { state ->
             state.copy(isConnecting = true)
         }
     }
 
     private fun onEachBattleStream() {
-        Timber.tag("BattleViewModel").e("Each")
+        Timber.tag("BattleContentViewModel").i("Each")
         _battleUiState.update { state ->
             state.copy(isConnecting = false)
         }
@@ -102,7 +102,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun handleBattleStreamError(t: Throwable, navigateToBattleOnWebSocketError: () -> Unit) {
-        Timber.tag("BattleViewModel").e("Catch")
+        Timber.tag("BattleContentViewModel").e("Catch")
         _battleUiState.update { state ->
             state.copy(showConnectionError = t is ConnectException)
         }
@@ -177,13 +177,13 @@ class BattleContentViewModel @Inject constructor(
 
     private fun sendBatchedGPS(battleId: String) {
         val batchedGPSData = batchGpsData()
-        sendGPS(battleId, batchedGPSData) // send the batched GPS data
+        sendRecordData(battleId, batchedGPSData) // send the batched GPS data
         locationUpdateList.clear() // clear the location update list
     }
 
-    private fun batchGpsData(): GpsDatas {
-        return GpsDatas(
-            gpsDatas = locationUpdateList.map { location ->
+    private fun batchGpsData(): RecordData {
+        return RecordData(
+            record = locationUpdateList.map { location ->
                 GpsData(
                     latitude = location.latitude,
                     longitude = location.longitude,
@@ -194,9 +194,9 @@ class BattleContentViewModel @Inject constructor(
         )
     }
 
-    private fun sendGPS(battleId: String, gpsDatas: GpsDatas) {
+    private fun sendRecordData(battleId: String, recordData: RecordData) {
         viewModelScope.launch {
-            realtimeBattleClient.sendGPS(battleId, gpsDatas)
+            realtimeBattleClient.sendRecordData(battleId, recordData)
         }
     }
 

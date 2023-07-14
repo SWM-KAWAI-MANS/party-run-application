@@ -58,20 +58,24 @@ class MainActivity : ComponentActivity() {
                 PartyRunMain(
                     onSignOut = {
                         lifecycleScope.launch {
-                            googleAuthUiClient.signOutGoogleAuth()
-                            /*TODO: Toast 메세지 변경 요*/
-                            Toast.makeText(applicationContext, "Signed out", Toast.LENGTH_LONG).show()
-
-                            /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
-                            setIntentActivity(AuthActivity::class.java) {
-                                putString(EXTRA_FROM_MAIN, SIGN_IN)
-                            }
-                            overridePendingTransition(0, 0) // 전환 애니메이션 생략
-                            finish()
+                            performSignOutProcess()
                         }
                     }
                 )
             }
+
         }
+    }
+
+    private suspend fun performSignOutProcess() {
+        googleAuthUiClient.signOutGoogleAuth()
+        Toast.makeText(applicationContext, resources.getString(R.string.sign_out_message), Toast.LENGTH_LONG).show()
+
+        /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
+        setIntentActivity(AuthActivity::class.java) {
+            putString(EXTRA_FROM_MAIN, SIGN_IN)
+        }
+        overridePendingTransition(0, 0) // 전환 애니메이션 생략
+        finish()
     }
 }

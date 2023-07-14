@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">PartyRunApplication</string>
+
+    <string name="sign_in_message">로그인 성공!</string>
+    <string name="sign_out_message">로그아웃!</string>
 </resources>

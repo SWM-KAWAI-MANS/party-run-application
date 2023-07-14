@@ -32,8 +32,8 @@ import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import timber.log.Timber
 import java.net.ConnectException
-import java.time.Duration
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -50,16 +50,14 @@ class BattleContentViewModel @Inject constructor(
 
     private lateinit var locationCallback: LocationCallback
     private val locationRequest: LocationRequest
+    private var isFirstBattleStreamCall = true // onEach 분기를 위한 boolean
 
     private val _battleUiState = MutableStateFlow(BattleUiState())
     val battleUiState: StateFlow<BattleUiState> = _battleUiState
 
-    private val _battleScreenState = MutableStateFlow<BattleScreenState>(BattleScreenState.Ready)
-    val battleScreenState: StateFlow<BattleScreenState> = _battleScreenState
-
     private lateinit var resultResult: StateFlow<BattleEvent>
 
-    private val locationUpdateList = mutableListOf<Location>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
+    private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
 
     init {
         val priority = Priority.PRIORITY_HIGH_ACCURACY
@@ -75,54 +73,57 @@ class BattleContentViewModel @Inject constructor(
         resultResult = realtimeBattleClient
             .getBattleStream(battleId = battleId)
             .onStart { onStartBattleStream() }
-            .onEach { onEachBattleStream() } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
+            .onEach { onEachBattleStream(it) } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
             .catch { t -> handleBattleStreamError(t, navigateToBattleOnWebSocketError) }
             .stateIn(
                 scope = viewModelScope, // ViewModel의 수명 주기에 맞게 관리
                 started = SharingStarted.WhileSubscribed(STATE_SHARE_SUBSCRIPTION_TIMEOUT),
                 initialValue = BattleEvent.BattleDefaultResult()
             )
+    }
 
-        collectRunnerResult()
+    private suspend fun onEachBattleStream(it: BattleEvent) {
+        if (isFirstBattleStreamCall) {
+            onWebSocketConnected()
+        } else {
+            collectRunnerResult(it)
+        }
+    }
+
+    private fun onWebSocketConnected() {
+        _battleUiState.update { state ->
+            state.copy(
+                isConnecting = false
+            )
+        }
+        isFirstBattleStreamCall = false
+    }
+
+    private suspend fun collectRunnerResult(it: BattleEvent) {
+        when (it) {
+            is BattleEvent.BattleReadyResult -> {
+                countDownWhenReady(it.startTime)
+            }
+            is BattleEvent.BattleRunnerResult -> {
+                updateBattleStateWithRunnerResult(it)
+            }
+            else -> {} // Handle other cases as needed
+        }
     }
 
     private fun onStartBattleStream() {
-        Timber.tag("BattleContentViewModel").i("Start")
         _battleUiState.update { state ->
-            state.copy(isConnecting = true)
+            state.copy(
+                isConnecting = true
+            )
         }
-    }
-
-    private fun onEachBattleStream() {
-        Timber.tag("BattleContentViewModel").i("Each")
-        _battleUiState.update { state ->
-            state.copy(isConnecting = false)
-        }
-        _battleScreenState.value = BattleScreenState.Running
     }
 
     private fun handleBattleStreamError(t: Throwable, navigateToBattleOnWebSocketError: () -> Unit) {
-        Timber.tag("BattleContentViewModel").e("Catch")
         _battleUiState.update { state ->
             state.copy(showConnectionError = t is ConnectException)
         }
         if (t is ConnectException) { navigateToBattleOnWebSocketError() }
-    }
-
-    private fun collectRunnerResult() {
-        viewModelScope.launch {
-            resultResult.collect { result ->
-                when(result) {
-                    is BattleEvent.BattleReadyResult -> {
-                        countDownWhenReady(result.startTime)
-                    }
-                    is BattleEvent.BattleRunnerResult -> {
-                        updateBattleStateWithRunnerResult(result)
-                    }
-                    else -> {} // Handle other cases as needed
-                }
-            }
-        }
     }
 
     private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunnerResult) {
@@ -153,19 +154,36 @@ class BattleContentViewModel @Inject constructor(
     fun startLocationUpdates(
         battleId: String
     ) {
+        setLocationCallback(battleId)
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.getMainLooper(),
+        )
+    }
+
+    private fun setLocationCallback(battleId: String) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
-                    locationUpdateList.add(location)
-                    if (locationUpdateList.size >= 3) {
-                        sendBatchedGPS(battleId)
+
+                    addGpsDataToRecordData(location)
+                    if (recordData.size >= 3) {
+                        sendRecordData(battleId, RecordData(recordData))
+                        recordData.clear() // clear the location update list
                     }
                 }
             }
         }
+    }
 
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper(),
+    private fun addGpsDataToRecordData(location: Location) {
+        recordData.add(
+            GpsData(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                altitude = location.altitude,
+                gpsTime = LocalDateTime.now()
+            )
         )
     }
 
@@ -173,25 +191,6 @@ class BattleContentViewModel @Inject constructor(
         if (::locationCallback.isInitialized) { // 초기화 여부 판단
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         }
-    }
-
-    private fun sendBatchedGPS(battleId: String) {
-        val batchedGPSData = batchGpsData()
-        sendRecordData(battleId, batchedGPSData) // send the batched GPS data
-        locationUpdateList.clear() // clear the location update list
-    }
-
-    private fun batchGpsData(): RecordData {
-        return RecordData(
-            record = locationUpdateList.map { location ->
-                GpsData(
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    altitude = location.altitude,
-                    gpsTime = LocalDateTime.now()
-                )
-            }
-        )
     }
 
     private fun sendRecordData(battleId: String, recordData: RecordData) {
@@ -231,18 +230,26 @@ class BattleContentViewModel @Inject constructor(
         }
 
         withContext(Dispatchers.Main) {
+            changeScreenToRunning()
             countDown()
         }
     }
 
+    private fun changeScreenToRunning() {
+        _battleUiState.update { state ->
+            state.copy(
+                screenState = BattleScreenState.Running
+            )
+        }
+    }
+
     private suspend fun checkAgainstStartTime(battleStartTime: LocalDateTime) {
-        Timber.tag("checkAgainstStartTime").e("시간 비교 시작")
         var remainingTimeInSeconds: Long
 
         do {
             val currentTime = LocalDateTime.now()
-            val remainingTime = Duration.between(currentTime, battleStartTime)
-            remainingTimeInSeconds = remainingTime.seconds
+            val remainingTime = ChronoUnit.SECONDS.between(currentTime, battleStartTime)
+            remainingTimeInSeconds = remainingTime
             delay(1000) // Check every 1 second
         } while (remainingTimeInSeconds > COUNTDOWN_SECONDS)
     }

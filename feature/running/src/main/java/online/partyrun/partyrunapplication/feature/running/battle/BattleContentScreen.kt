@@ -21,7 +21,6 @@ fun BattleContentScreen(
     runnerIds: RunnerIds,
     viewModel: BattleContentViewModel = hiltViewModel()
 ) {
-    val battleScreenState by viewModel.battleScreenState.collectAsState()
     val battleUiState by viewModel.battleUiState.collectAsState()
 
     LaunchedEffect(battleId) {
@@ -35,19 +34,18 @@ fun BattleContentScreen(
 
     CheckStartTime(battleUiState, battleId, viewModel, runnerIds)
 
-    Content(battleScreenState, battleUiState)
+    Content(battleUiState)
 }
 
 @Composable
 fun Content(
-    battleScreenState: BattleScreenState,
     battleUiState: BattleUiState
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        when (battleScreenState) {
+        when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
             is BattleScreenState.Running -> BattleRunningScreen(battleState = battleUiState.battleState)
         }
@@ -62,7 +60,7 @@ private fun CheckStartTime(
     runnerIds: RunnerIds
 ) {
     when (battleUiState.timeRemaining) {
-        in 1..Int.MAX_VALUE -> CountdownDialog(battleUiState.timeRemaining)
+        in 1..5 -> CountdownDialog(battleUiState.timeRemaining)
         0 -> battleId?.let {
             // 위치 업데이트 시작 및 정지 로직
             StartBattleRunning(battleId, viewModel, runnerIds)
@@ -77,8 +75,8 @@ private fun StartBattleRunning(
     runnerIds: RunnerIds
 ) {
     DisposableEffect(Unit) {
+        viewModel.initBattleState(runnerIds) // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
         battleId?.let {
-            viewModel.initBattleState(runnerIds) // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
             viewModel.startLocationUpdates(battleId = it)
         }
 

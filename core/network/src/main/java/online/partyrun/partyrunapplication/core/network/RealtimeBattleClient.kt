@@ -15,7 +15,7 @@ import okhttp3.internal.concurrent.TaskRunner
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.model.battle.BattleEvent
 import online.partyrun.partyrunapplication.core.model.util.LocalDateTimeAdapter
-import online.partyrun.partyrunapplication.core.model.running.GpsDatas
+import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.core.network.di.WSOkHttpClient
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -106,14 +106,14 @@ class RealtimeBattleClient(
     private fun parseBattleEvent(message: String): BattleEvent {
         val jsonObject = JsonParser.parseString(message).asJsonObject
         return when(jsonObject.get("type").asString) {
-            "start" -> gson.fromJson(message, BattleEvent.BattleReadyResult::class.java)
+            "BATTLE_START_TIME" -> gson.fromJson(message, BattleEvent.BattleReadyResult::class.java)
             else -> gson.fromJson(message, BattleEvent.BattleRunnerResult::class.java)
         }
     }
 
     @SuppressLint("CheckResult")
-    suspend fun sendGPS(battleId: String, gpsDatas: GpsDatas) {
-        val jsonData = gson.toJson(gpsDatas)
+    suspend fun sendRecordData(battleId: String, recordData: RecordData) {
+        val jsonData = gson.toJson(recordData)
         stomp.send("/pub/battle/$battleId/record", jsonData).subscribe { isSent ->
             if (isSent) {
                 Timber.tag("Sent").d("sent to $battleId: $jsonData")

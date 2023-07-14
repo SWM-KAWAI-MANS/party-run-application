@@ -36,7 +36,7 @@ class MatchViewModel @Inject constructor(
     private val sendWaitingBattleUseCase: SendWaitingBattleUseCase,
     private val sendAcceptMatchUseCase: SendAcceptMatchUseCase,
     private val sendDeclineMatchUseCase: SendDeclineMatchUseCase,
-    private val MatchSourceManager: MatchSourceManager
+    private val matchSourceManager: MatchSourceManager
 ) : ViewModel() {
     private val _matchUiState = MutableStateFlow(MatchUiState())
     val matchUiState: StateFlow<MatchUiState> = _matchUiState.asStateFlow()
@@ -235,37 +235,37 @@ class MatchViewModel @Inject constructor(
      * sseState.await(): 현재 스트림의 상태(sseState)가 완료 상태가 될 때까지 대기
      */
     private suspend fun connectMatchEventSource() {
-        val listener = MatchSourceManager.getMatchEventSourceListener(
+        val listener = matchSourceManager.getMatchEventSourceListener(
             onEvent = ::handleMatchEvent,
             onClosed = {
                 matchEventSSEstate.complete(Unit)
             }
         )
-        MatchSourceManager.connectMatchEventSource(getWaitingEventUseCase(listener))
+        matchSourceManager.connectMatchEventSource(getWaitingEventUseCase(listener))
         matchEventSSEstate.await()
     }
 
     private suspend fun connectMatchResultEventSource() {
-        val listener = MatchSourceManager.getMatchEventSourceListener(
+        val listener = matchSourceManager.getMatchEventSourceListener(
             onEvent = ::handleMatchResultEvent,
             onClosed = {
                 matchResultEventSSEstate.complete(Unit)
             }
         )
-        MatchSourceManager.connectMatchResultEventSource(getMatchResultEventUseCase(listener))
+        matchSourceManager.connectMatchResultEventSource(getMatchResultEventUseCase(listener))
         matchResultEventSSEstate.await()
     }
 
     fun closeMatchEventSource() {
         viewModelScope.launch {
-            MatchSourceManager.closeMatchEventSource()
+            matchSourceManager.closeMatchEventSource()
             cancelBattleMatchingProcess()
         }
     }
 
     fun closeMatchResultEventSource() {
         viewModelScope.launch {
-            MatchSourceManager.closeMatchResultEventSource()
+            matchSourceManager.closeMatchResultEventSource()
             cancelBattleMatchingProcess()
         }
     }

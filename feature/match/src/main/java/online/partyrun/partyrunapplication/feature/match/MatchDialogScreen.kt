@@ -47,7 +47,7 @@ fun MatchDialog(
         MatchProgress.WAITING.name ->
             MatchWaitingDialog(
                 setShowDialog = setShowDialog,
-                disConnectSSE = {
+                disconnectSSE = {
                     matchViewModel.closeMatchEventSource()
                 },
                 matchUiState = matchState,

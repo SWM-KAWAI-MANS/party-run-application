@@ -54,14 +54,14 @@ object Dimensions {
 @Composable
 fun MatchWaitingDialog(
     setShowDialog: (Boolean) -> Unit,
-    disConnectSSE: () -> Unit,
+    disconnectSSE: () -> Unit,
     matchUiState: MatchUiState,
     exoPlayer: ExoPlayer,
     isBuffering: MutableState<Boolean>
 ) {
     Dialog(
         onDismissRequest = {
-            disConnectSSE()
+            disconnectSSE()
             setShowDialog(false)
         }
     ) {
@@ -133,7 +133,7 @@ fun MatchWaitingDialog(
                 Spacer(modifier = Modifier.size(20.dp))
                 IconButton(
                     onClick = {
-                        disConnectSSE()
+                        disconnectSSE()
                         setShowDialog(false)
                     },
                     modifier = Modifier.size(40.dp) // IconButton의 전체 크기 조절

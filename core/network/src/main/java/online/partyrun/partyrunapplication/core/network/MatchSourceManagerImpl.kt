@@ -1,17 +1,16 @@
 package online.partyrun.partyrunapplication.core.network
 
-import com.google.gson.Gson
 import okhttp3.Response
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.network.MatchSourceManager
 import timber.log.Timber
 
-class MatchSourceManagerImpl: MatchSourceManager {
+class MatchSourceManagerImpl : MatchSourceManager {
     private lateinit var connectMatchEventSource: EventSource
     private lateinit var connectMatchResultSource: EventSource
 
-    override fun getMatchEventSourceListener(
+    override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit
     ): EventSourceListener {
@@ -26,11 +25,11 @@ class MatchSourceManagerImpl: MatchSourceManager {
         connectMatchResultSource = eventSource
     }
 
-    override fun closeMatchEventSource() {
+    override fun disconnectMatchEventSource() {
         connectMatchEventSource.cancel()
     }
 
-    override fun closeMatchResultEventSource() {
+    override fun disconnectMatchResultEventSource() {
         connectMatchResultSource.cancel()
     }
 

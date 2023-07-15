@@ -235,7 +235,7 @@ class MatchViewModel @Inject constructor(
      * sseState.await(): 현재 스트림의 상태(sseState)가 완료 상태가 될 때까지 대기
      */
     private suspend fun connectMatchEventSource() {
-        val listener = matchSourceManager.getMatchEventSourceListener(
+        val listener = matchSourceManager.createMatchEventSourceListener(
             onEvent = ::handleMatchEvent,
             onClosed = {
                 matchEventSSEstate.complete(Unit)
@@ -246,7 +246,7 @@ class MatchViewModel @Inject constructor(
     }
 
     private suspend fun connectMatchResultEventSource() {
-        val listener = matchSourceManager.getMatchEventSourceListener(
+        val listener = matchSourceManager.createMatchEventSourceListener(
             onEvent = ::handleMatchResultEvent,
             onClosed = {
                 matchResultEventSSEstate.complete(Unit)
@@ -256,16 +256,16 @@ class MatchViewModel @Inject constructor(
         matchResultEventSSEstate.await()
     }
 
-    fun closeMatchEventSource() {
+    fun disconnectMatchEventSource() {
         viewModelScope.launch {
-            matchSourceManager.closeMatchEventSource()
+            matchSourceManager.disconnectMatchEventSource()
             cancelBattleMatchingProcess()
         }
     }
 
-    fun closeMatchResultEventSource() {
+    fun disconnectMatchResultEventSource() {
         viewModelScope.launch {
-            matchSourceManager.closeMatchResultEventSource()
+            matchSourceManager.disconnectMatchResultEventSource()
             cancelBattleMatchingProcess()
         }
     }

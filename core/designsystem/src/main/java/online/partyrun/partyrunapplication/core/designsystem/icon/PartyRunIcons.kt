@@ -1,20 +1,63 @@
 package online.partyrun.partyrunapplication.core.designsystem.icon
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import online.partyrun.partyrunapplication.core.designsystem.R
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.ArrowCircleUp
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.Step
 
 object PartyRunIcons {
-    val Add = Icons.Rounded.Add
-    val ArrowBack = Icons.Rounded.ArrowBack
-    val Person = Icons.Rounded.Person
-    val Search = Icons.Rounded.Search
-    val Settings = Icons.Rounded.Settings
-    val Check = Icons.Rounded.Check
-    val Close = Icons.Rounded.Close
+    val ArrowBack = R.drawable.ic_round_arrow_back_24
+    val Search = R.drawable.ic_round_search_24
+    val ArrowBackIos = R.drawable.ic_round_arrow_back_ios_new_24
+    val ArrowForwardIos = R.drawable.ic_round_arrow_forward_ios_24
+    val ExpandMore = R.drawable.ic_round_expand_more_24
+    val ExpandLess = R.drawable.ic_round_expand_less_24
+    val Menu = R.drawable.ic_round_menu_24
+    val Close = R.drawable.ic_round_close_24
+    val Add = R.drawable.ic_round_add_24
+    val CheckCircle = R.drawable.ic_round_check_circle_outline_24
+    val AddCircle = R.drawable.ic_round_add_circle_outline_24
+    val RemoveCircle = R.drawable.ic_round_remove_circle_outline_24
+    val ErrorOutline = R.drawable.ic_round_error_outline_24
+    val Circle = R.drawable.ic_outline_circle_24
+    val RadioButtonChecked = R.drawable.ic_radio_button_checked
+    val VolumeOn = R.drawable.ic_outline_volume_up_24
+    val VolumeOff = R.drawable.ic_outline_volume_off_24
+    val Settings = R.drawable.ic_outline_settings_24
+    val Step = R.drawable.ic_outline_step
+    val Pace = R.drawable.ic_outline_pace
+    val Schedule = R.drawable.ic_outline_schedule
+    val CheckCircleFilled = R.drawable.ic_round_check_circle_24
+    val PauseCircleFilled = R.drawable.ic_round_pause_circle_filled_24
+    val PlayCircleFilled = R.drawable.ic_round_play_circle_filled_24
+    val CancelFilled = R.drawable.ic_round_cancel_24
+    val VolumeOnFilled = R.drawable.ic_baseline_volume_up_24
+    val VolumeOffFilled = R.drawable.ic_baseline_volume_off_24
+    val ArrowCircleUp = R.drawable.ic_round_arrow_circle_up_24
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PartyRunMainPreview() {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        ImagePreview(image = Step)
+        ImagePreview(image = ArrowCircleUp)
+    }
+}
+
+@Composable
+private fun ImagePreview(
+    image: Int
+) {
+    val painter: Painter = painterResource(image)
+    Image(painter = painter, contentDescription = null)
 }

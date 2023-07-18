@@ -1,14 +1,11 @@
 package online.partyrun.partyrunapplication.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import online.partyrun.partyrunapplication.core.common.ExtraConstants
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
@@ -26,7 +23,6 @@ fun PartyRunAuth(
 
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
         ) {
             SetUpAuthNavGraph(
                 navController = navController,

@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,6 +16,7 @@ import online.partyrun.partyrunapplication.core.common.ExtraConstants.EXTRA_FROM
 import online.partyrun.partyrunapplication.core.common.ExtraConstants.SIGN_IN
 import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 import timber.log.Timber
@@ -54,16 +56,21 @@ class MainActivity : ComponentActivity() {
         askPermissions() // 권한 확인 및 요청
 
         setContent {
-            PartyRunApplicationTheme {
-                PartyRunMain(
-                    onSignOut = {
-                        lifecycleScope.launch {
-                            performSignOutProcess()
+            PartyRunApplicationTheme(
+                darkTheme = isSystemInDarkTheme(),
+                androidTheme = false,
+                disableDynamicTheming = true,
+            ) {
+                PartyRunBackground {
+                    PartyRunMain(
+                        onSignOut = {
+                            lifecycleScope.launch {
+                                performSignOutProcess()
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
-
         }
     }
 

@@ -47,13 +47,15 @@ internal val PartyRunTypography = Typography(
         letterSpacing = 0.sp,
     ),
     headlineLarge = TextStyle(
+        color = White10,
         fontFamily = PartyRunProjectFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
     ),
     headlineMedium = TextStyle(
+        color = White10,
         fontFamily = PartyRunProjectFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 28.sp,
@@ -61,6 +63,7 @@ internal val PartyRunTypography = Typography(
         letterSpacing = 0.sp,
     ),
     headlineSmall = TextStyle(
+        color = White10,
         fontFamily = PartyRunProjectFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,

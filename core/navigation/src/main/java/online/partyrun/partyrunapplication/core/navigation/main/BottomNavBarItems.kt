@@ -1,31 +1,39 @@
 package online.partyrun.partyrunapplication.core.navigation.main
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.BattleIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.ChallengeIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.MyPageIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedBattleIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedChallengeIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedMyPageIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedSingleIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SingleIcon
+import online.partyrun.partyrunapplication.core.navigation.R
 
 object BottomNavBarItems {
     val BottomBarItems = listOf(
         BottomBarItem(
-            title = "Battle",
-            image = Icons.Filled.Home,
+            title = R.string.battle_title,
+            image = BattleIcon,
+            selectedImage = SelectedBattleIcon,
             route = MainNavRoutes.Battle.route
         ),
         BottomBarItem(
-            title = "Single",
-            image = Icons.Filled.Face,
+            title = R.string.single_title,
+            image = SingleIcon,
+            selectedImage = SelectedSingleIcon,
             route = MainNavRoutes.Single.route
         ),
         BottomBarItem(
-            title = "Challenge",
-            image = Icons.Filled.Person,
+            title = R.string.challenge_title,
+            image = ChallengeIcon,
+            selectedImage = SelectedChallengeIcon,
             route = MainNavRoutes.Challenge.route
         ),
         BottomBarItem(
-            title = "MyPage",
-            image = Icons.Filled.Settings,
+            title = R.string.my_page_title,
+            image = MyPageIcon,
+            selectedImage = SelectedMyPageIcon,
             route = MainNavRoutes.MyPage.route
         ),
     )

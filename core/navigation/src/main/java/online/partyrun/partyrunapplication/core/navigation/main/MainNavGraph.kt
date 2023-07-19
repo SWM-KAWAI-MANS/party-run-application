@@ -1,14 +1,18 @@
 package online.partyrun.partyrunapplication.core.navigation.main
 
 import androidx.compose.material.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBar
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBarItem
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
@@ -62,12 +66,14 @@ fun SetUpMainNavGraph(
 fun BottomNavigationBar(
     navController: NavHostController
 ) {
-    NavigationBar  {
+    PartyRunNavigationBar(
+        modifier = Modifier,
+    )  {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
 
         BottomNavBarItems.BottomBarItems.forEach { navItem ->
-            NavigationBarItem(
+            PartyRunNavigationBarItem(
                 selected = currentRoute == navItem.route,
                 onClick = {
                     navController.navigate(navItem.route) {
@@ -75,19 +81,30 @@ fun BottomNavigationBar(
                         popUpTo(navController.graph.findStartDestination().id) {
                     	    saveState = true
                         }
-                         */
+                        */
                         launchSingleTop = true // 자기 자신이 또 스택 푸시가 되지 않도록 방지
                         restoreState = true
                     }
                 },
                 icon = {
                     Icon(
-                        imageVector = navItem.image,
-                        contentDescription = navItem.title
+                        painter = painterResource(navItem.image),
+                        contentDescription = stringResource(navItem.title),
+                        tint = Color.Unspecified
+                    )
+                },
+                selectedIcon = {
+                    Icon(
+                        painter = painterResource(navItem.selectedImage),
+                        contentDescription = stringResource(navItem.title),
+                        tint = Color.Unspecified
                     )
                 },
                 label = {
-                    Text(text = navItem.title)
+                    Text(
+                        text = stringResource(navItem.title),
+                        color = if (currentRoute == navItem.route) Color.White else Color.Black
+                    )
                 }
             )
         }

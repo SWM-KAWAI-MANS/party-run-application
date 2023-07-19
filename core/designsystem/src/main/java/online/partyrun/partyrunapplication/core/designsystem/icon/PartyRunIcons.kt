@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import online.partyrun.partyrunapplication.core.designsystem.R
-import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.ArrowCircleUp
-import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.Step
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.BattleIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SingleIcon
 
 object PartyRunIcons {
     val ArrowBack = R.drawable.ic_round_arrow_back_24
@@ -41,6 +41,15 @@ object PartyRunIcons {
     val VolumeOnFilled = R.drawable.ic_baseline_volume_up_24
     val VolumeOffFilled = R.drawable.ic_baseline_volume_off_24
     val ArrowCircleUp = R.drawable.ic_round_arrow_circle_up_24
+
+    val BattleIcon = R.drawable.ic_battle
+    val SelectedBattleIcon = R.drawable.ic_selected_battle
+    val SingleIcon = R.drawable.ic_single
+    val SelectedSingleIcon = R.drawable.ic_selected_single
+    val ChallengeIcon = R.drawable.ic_challenge
+    val SelectedChallengeIcon = R.drawable.ic_selected_challenge
+    val MyPageIcon = R.drawable.ic_my_page
+    val SelectedMyPageIcon = R.drawable.ic_selected_my_page
 }
 
 @Preview(showBackground = true)
@@ -49,8 +58,8 @@ fun PartyRunMainPreview() {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        ImagePreview(image = Step)
-        ImagePreview(image = ArrowCircleUp)
+        ImagePreview(image = BattleIcon)
+        ImagePreview(image = SingleIcon)
     }
 }
 

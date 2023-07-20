@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
+import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
+import online.partyrun.partyrunapplication.core.navigation.auth.agreementRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
@@ -20,7 +22,6 @@ fun PartyRunAuth(
     intentToMainActivity: () -> Unit
 ) {
     PartyRunApplicationTheme() {
-
         Surface(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -48,7 +49,21 @@ fun SetUpAuthNavGraph(
         startDestination = startDestination
     ) {
         splashRoute(
-            setIntentMainActivity = handleLoginState
+            setIntentMainActivity = handleLoginState,
+            navigationToAgreement = {
+                navController.navigate(AuthNavRoutes.Agreement.route)
+            }
+        )
+
+        agreementRoute(
+            navController = navController,
+            setIntentMainActivity = handleLoginState,
+            navigationToTermsOfService = {
+                navController.navigate(AuthNavRoutes.TermsOfService.route)
+            },
+            navigationToPrivacyPolicy = {
+                navController.navigate(AuthNavRoutes.PrivacyPolicy.route)
+            }
         )
 
         signInRoute(

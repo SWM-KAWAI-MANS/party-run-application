@@ -6,5 +6,9 @@ package online.partyrun.partyrunapplication.core.navigation.auth
  */
 sealed class AuthNavRoutes(val route: String) {
     object Splash: AuthNavRoutes("splash")
+    object Agreement: AuthNavRoutes("agreement")
     object SignIn: AuthNavRoutes("sign_in")
+    object TermsOfService: AuthNavRoutes("terms_services")
+    object PrivacyPolicy: AuthNavRoutes("privacy_policy")
+
 }

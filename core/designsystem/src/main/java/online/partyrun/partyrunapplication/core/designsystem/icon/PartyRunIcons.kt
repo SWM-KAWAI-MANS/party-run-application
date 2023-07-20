@@ -41,6 +41,8 @@ object PartyRunIcons {
     val VolumeOnFilled = R.drawable.ic_baseline_volume_up_24
     val VolumeOffFilled = R.drawable.ic_baseline_volume_off_24
     val ArrowCircleUp = R.drawable.ic_round_arrow_circle_up_24
+    val Checked = R.drawable.ic_checked
+    val UnChecked = R.drawable.ic_unchecked
 }
 
 @Preview(showBackground = true)

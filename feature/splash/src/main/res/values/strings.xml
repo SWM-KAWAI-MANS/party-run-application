@@ -1,5 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="logo_content_desc">Logo Image</string>
+    <string name="headline_title">약관내용에 동의해주세요!</string>
+    <string name="read_detail">보기</string>
+    <string name="next_step">다음 단계로</string>
+    <string name="all_agree">전체 동의</string>
 
+    <!-- [서비스 이용약관] -->
+    <string name="terms_of_services_subject">[필수] 서비스 이용약관</string>
+    <string name="terms_of_services_title">서비스 이용 약관</string>
+    <string name="term_of_service_title_1">목적</string>
+    <string name="term_of_service_content_1">본 약관은 \'파티런(Party Run)\' 앱(이하 \'본 서비스\')의 이용 조건 및 절차, 이용자와 서비스 제공자의 권리•의무 및 책임 사항 등을 규정함을 목적으로 합니다.</string>
+    <string name="term_of_service_title_2">용어의 정의</string>
+    <string name="term_of_service_content_2">본 약관에서 사용하는 용어의 정의는 다음과 같습니다. \'본 서비스\'란 구글 플레이스토어를 통해 제공되는 \'파티런(Party Run)\' 앱을 의미합니다. \'사용자\'란 \'본 서비스\'에 접속하여 본 약관에 따라 \'본 서비스\'를 이용하는 자를 의미합니다.</string>
+    <string name="term_of_service_title_3">약관 동의 및 변경</string>
+    <string name="term_of_service_content_3">사용자는 본 서비스를 이용함으로써 본 약관에 동의한 것으로 간주됩니다. \'본 서비스\'는 필요한 경우 약관을 변경할 수 있으며, 변경된 약관은 앱 내에서 공지됩니다.</string>
+    <string name="term_of_service_title_4">회원에 대한 통지</string>
+    <string name="term_of_service_content_4">\'본 서비스\'는 필요에 따라 사용자에게 서비스 이용에 필요한 각종 공지를 앱 내, 또는 사용자가 등록한 이메일 등으로 통지할 수 있습니다.</string>
+    <string name="term_of_service_title_5">구글 계정</string>
+    <string name="term_of_service_content_5">\'본 서비스\'의 이용은 구글 계정을 통해 이루어집니다. 사용자의 구글 계정 관리와 보안은 사용자 자신의 책임입니다.</string>
+    <string name="term_of_service_title_6">서비스의 이용</string>
+    <string name="term_of_service_content_6">\'본 서비스\'는 사용자의 위치 정보를 수집하여 실시간 달리기 정보를 제공하는 서비스입니다. 위치 정보는 서비스 제공을 위한 목적으로만 사용됩니다.</string>
+    <string name="term_of_service_title_7">저작권 귀속</string>
+    <string name="term_of_service_content_7">\'본 서비스\'에서 제공되는 모든 콘텐츠의 저작권은 \'파티런(Party Run)\'에 귀속됩니다. 사용자는 서비스에서 제공하는 정보를 무단으로 복제, 배포할 수 없습니다.</string>
+    <string name="term_of_service_title_8">개인정보 보안</string>
+    <string name="term_of_service_content_8">\'본 서비스\'는 사용자의 개인정보 및 위치 정보를 안전하게 보호하기 위해 모든 합당한 보안 조치를 취하고 있습니다.</string>
+    <string name="term_of_service_title_9">광고 게재</string>
+    <string name="term_of_service_content_9">\'본 서비스\'는 사용자에게 맞춤화된 광고를 제공하기 위해 광고를 게재할 수 있습니다. 광고의 내용과 관련된 책임은 광고 제공자에게 있습니다.</string>
+    <string name="term_of_service_title_10">제휴 서비스</string>
+    <string name="term_of_service_content_10">\'본 서비스\'는 제휴사와의 협력을 통해 추가 서비스를 제공할 수 있습니다. 제휴사가 제공하는 서비스에 대한 약관 및 개인정보 처리방침은 해당 서비스에서 확인할 수 있습니다.</string>
+    <string name="term_of_service_title_11">위치정보 목적</string>
+    <string name="term_of_service_content_11">\'본 서비스\'는 서비스 제공을 위해 사용자의 위치 정보를 수집합니다. 이 정보는 실시간 달리기 정보 제공 등의 목적으로만 사용되며, 이 외의 목적으로는 활용되지 않습니다.</string>
+    <string name="term_of_service_title_12">서비스 이용 제한</string>
+    <string name="term_of_service_content_12">\'본 서비스\'는 약관의 내용을 준수하지 않는 사용자에게 서비스 이용을 제한하거나 중단할 수 있습니다.</string>
+    <string name="term_of_service_title_13">법적 책임</string>
+    <string name="term_of_service_content_13">본 약관의 내용을 준수하지 않아 발생하는 법적 책임은 전적으로 사용자에게 있습니다. \'본 서비스\'는 사용자의 약관 위반 행위로 인해 발생하는 책임을 지지 않습니다.</string>
+
+    <!-- 개인정보 처리방침 -->
+    <string name="privacy_policy_subject">[필수] 개인정보 처리방침</string>
+    <string name="privacy_policy_title">개인정보 처리방침</string>
+    <string name="privacy_policy_title_1">개인정보 수집 및 이용의 목적</string>
+    <string name="privacy_policy_content_1">\'파티런(Party Run)\'은 사용자의 개인정보를 서비스 제공, 서비스 이용에 따른 본인 식별/인증, 고객문의 처리 등을 위해 수집하고 이용합니다.</string>
+
+    <string name="privacy_policy_title_2">수집하는 개인정보의 항목</string>
+    <string name="privacy_policy_content_2">\'파티런(Party Run)\'은 사용자의 동의 하에 서비스 제공을 위해 필요한 최소한의 개인정보만을 수집하며, 해당 정보는 사용자의 구글 계정 정보, 위치 정보 등을 포함합니다.</string>
+
+    <string name="privacy_policy_title_3">개인정보의 보유 및 이용기간</string>
+    <string name="privacy_policy_content_3">\'파티런(Party Run)\'은 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 단, 관련법령 또는 서비스 정책에 의해 보존할 필요성이 있는 경우에는 일정 기간 동안 개인정보를 보관할 수 있습니다.</string>
+
+    <string name="privacy_policy_title_4">개인정보의 파기 절차 및 방법</string>
+    <string name="privacy_policy_content_4">\'파티런(Party Run)\'은 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제하며, 종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각을 통해 파기합니다.</string>
+
+    <string name="privacy_policy_title_5">개인정보 자동 수집 장치의 설치/운영 및 거부에 관한 사항</string>
+    <string name="privacy_policy_content_5">\'파티런(Party Run)\'은 개인화되고 맞춤화된 서비스를 제공하기 위해 사용자의 정보를 저장하고 수시로 불러오는 쿠키를 사용할 수 있습니다. 사용자는 쿠키 설치에 대한 선택권을 가지고 있으며, 웹브라우저에서 옵션을 설정함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의 저장을 거부할 수도 있습니다.</string>
+
+    <string name="privacy_policy_title_6">개인정보의 제3자 제공</string>
+    <string name="privacy_policy_content_6">\'파티런(Party Run)\'은 이용자들의 개인정보를 \'개인정보의 수집목적 및 이용목적\'에서 고지한 범위 내에서 사용하며, 원칙적으로 이용자의 사전 동의 없이는 동 범위를 초과하여 이용하거나 원칙적으로 이용자의 개인정보를 외부에 공개하지 않습니다.</string>
+
+    <string name="privacy_policy_title_7">이용자 및 법정대리인의 권리와 그 행사방법</string>
+    <string name="privacy_policy_content_7">이용자는 언제든지 등록되어 있는 자신의 개인정보를 조회하거나 수정할 수 있으며 가입해지를 요청할 수도 있습니다. 이용자의 개인정보 조회, 수정을 위해서는 \'개인정보 변경\'(또는 \'회원정보 수정\' 등)을, 가입해지(동의철회)를 위해서는 \'회원탈퇴\'를 클릭하여 직접 열람, 정정 또는 탈퇴가 가능합니다.</string>
+
+    <string name="privacy_policy_title_8">개인정보 보호를 위한 기술적/관리적 대책</string>
+    <string name="privacy_policy_content_8">\'파티런(Party Run)\'은 개인정보의 안전한 처리를 위해 내부 관리 계획을 수립하고, 개인정보 처리자를 지정하여 이를 감독하고 있습니다. 또한, 시스템적으로 개인정보가 유출, 손상되거나 훼손되지 않도록 안전성 확보를 위해 필요한 기술적 대책을 강구하고 있습니다.</string>
+
+    <string name="privacy_policy_title_9">개인정보 보호책임자</string>
+    <string name="privacy_policy_content_9">\'파티런(Party Run)\'은 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보의 처리를 관리하는 개인정보 보호책임자를 지정하여 이용자의 개인정보를 보호하고 있습니다.</string>
+
+    <string name="privacy_policy_title_10">기타 사항</string>
+    <string name="privacy_policy_content_10">\'파티런(Party Run)\'은 법률 또는 정부의 시행령이 정하는 바에 따라서는 이용자의 개인정보를 제3자에게 제공할 수 있습니다. 이 경우 \'파티런(Party Run)\'은 이용자에게 이를 사전에 알리고 필요한 동의를 받습니다.</string>
 </resources>

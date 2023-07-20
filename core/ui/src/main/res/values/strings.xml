@@ -3,4 +3,6 @@
     <string name="checked_icon">선택된 아이콘</string>
     <string name="unchecked_icon">선택되지 않은 아이콘</string>
     <string name="arrow_back">뒤로 가기</string>
+    <string name="arrow_forward">앞으로 가기</string>
+
 </resources>

@@ -2,11 +2,11 @@ package online.partyrun.partyrunapplication.feature.battle
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -17,9 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
@@ -28,6 +27,10 @@ import com.google.android.exoplayer2.Player
 import com.google.gson.Gson
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
+import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
+import online.partyrun.partyrunapplication.core.ui.HeadLine
+import online.partyrun.partyrunapplication.core.ui.KmInfoCard
+import online.partyrun.partyrunapplication.core.ui.MatchStartButtonLayout
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
@@ -47,8 +50,7 @@ fun BattleMainScreen(
     val context = LocalContext.current
     val matchUiState by matchViewModel.matchUiState.collectAsState()
     val exoPlayer = remember { context.buildExoPlayer(getVideoUri()) }
-    // 로딩 상태를 관리하기 위한 MutableState
-    val isBuffering = remember { mutableStateOf(true) }
+    val isBuffering = remember { mutableStateOf(true) } // 로딩 상태를 관리하기 위한 MutableState
 
     /**
      * ExoPlayer 상태 변경 리스너 등록
@@ -70,7 +72,6 @@ fun BattleMainScreen(
         }
     }
 
-    // matchUiState.isAllRunnersAccepted
     if (matchUiState.isAllRunnersAccepted) {
         navigateToBattleRunningWithArgs(battleId, runnerIdsJson)
     }
@@ -94,17 +95,28 @@ fun Content(
             isBuffering = isBuffering
         )
     }
+    Box(modifier = Modifier.fillMaxSize()) {
+        BackgroundBlurImage(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        )
+        HeadLine(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = stringResource(id = R.string.battle_head_line_1),
+                style = MaterialTheme.typography.headlineLarge,
+            )
+            Text(
+                text = stringResource(id = R.string.battle_head_line_2),
+                style = MaterialTheme.typography.headlineLarge,
+            )
+        }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(colors = listOf(Color(0xFFAE2BDE), Color(0xFF5618B5)))
-            ),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
+        MatchStartButtonLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
             onClick = {
                 matchViewModel.openMatchDialog()
                 matchViewModel.beginBattleMatchingProcess(
@@ -114,7 +126,24 @@ fun Content(
                 )
             }
         ) {
-            Text(stringResource(id = R.string.battle_matching_start))
+            Text(
+                text = stringResource(id = R.string.battle_matching_start),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        KmInfoCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            onLeftClick = { /*TODO*/ },
+            onRightClick = { /*TODO*/ }
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = R.drawable.track_1km),
+                contentDescription = null
+            )
         }
     }
 }

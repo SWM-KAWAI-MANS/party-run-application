@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="battle_title">대결 모드</string>
+    <string name="single_title">싱글 모드</string>
+    <string name="challenge_title">챌린지</string>
+    <string name="my_page_title">마이페이지</string>
+
+</resources>

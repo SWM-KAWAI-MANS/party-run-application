@@ -10,6 +10,7 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:network"))
+    implementation(project(":core:designsystem"))
     
     // feature modules
     implementation(project(":feature:sign_in"))

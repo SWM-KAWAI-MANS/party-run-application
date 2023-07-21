@@ -3,7 +3,6 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.IconButton
@@ -73,7 +72,6 @@ fun PartyRunCircularIconButton(
 ) {
     Box(
         modifier = modifier
-            .size(56.dp) // 원형 크기 설정
             .background(
                 color = containerColor,
                 shape = CircleShape // 원형 모양으로 설정
@@ -90,6 +88,7 @@ fun PartyRunCircularIconButton(
             enabled = enabled,
             colors = IconButtonDefaults.filledIconButtonColors(
                 contentColor = contentColor,
+                containerColor = Color.Transparent,
                 disabledContainerColor = disabledContainerColor,
                 disabledContentColor = disabledContentColor,
             )

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="battle_matching_start">배틀 매칭 시작</string>
+    <string name="battle_matching_start">매칭 잡기</string>
+    <string name="battle_head_line_1">지금 바로</string>
+    <string name="battle_head_line_2">매칭을 잡아보세요!</string>
 
 </resources>

@@ -15,7 +15,7 @@ fun FormatElapsedTimer() {
     LaunchedEffect(key1 = elapsedTime) {
         while (true) {
             delay(1000L) // 1초 대기
-            elapsedTime.value++ // elapsedTime을 증가시킴
+            elapsedTime.value++ // elapsedTime 증가
         }
     }
 
@@ -28,6 +28,29 @@ fun FormatElapsedTimer() {
         text = displayTime,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+fun FormatRemainingTimer(totalTime: Int) {
+    val remainingTime = remember { mutableStateOf(totalTime) }
+
+    LaunchedEffect(key1 = remainingTime) {
+        while (remainingTime.value > 0) {
+            delay(1000L) // 1초 대기
+            remainingTime.value-- // remainingTime 감소
+        }
+    }
+
+    val hours = remainingTime.value / 3600
+    val minutes = (remainingTime.value % 3600) / 60
+    val seconds = remainingTime.value % 60
+
+    val displayTime = formatTime(hours, minutes, seconds)
+    Text(
+        text = displayTime,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.onPrimary
     )
 }
 

@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,9 +23,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.theme.DarkNavy30
+import online.partyrun.partyrunapplication.core.designsystem.theme.Purple50
+import online.partyrun.partyrunapplication.core.designsystem.theme.Purple80
 import online.partyrun.partyrunapplication.core.designsystem.theme.Purple90
 
 /**
@@ -37,8 +45,11 @@ fun PartyRunOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    shape: Shape = CircleShape,
+    borderStrokeWidth: Dp = 5.dp,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    textColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     enabledColor: Color = MaterialTheme.colorScheme.outline,
     disabledColor: Color = MaterialTheme.colorScheme.onSurface,
     content: @Composable RowScope.() -> Unit,
@@ -47,11 +58,13 @@ fun PartyRunOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        shape = shape,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = textColor,
+            containerColor = containerColor,
         ),
         border = BorderStroke(
-            width = 10.dp,
+            width = borderStrokeWidth,
             color = if (enabled) enabledColor else disabledColor,
         ),
         contentPadding = contentPadding,
@@ -64,6 +77,7 @@ fun PartyRunOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    shape: Shape = CircleShape,
     text: @Composable () -> Unit,
     leadingIcon: @Composable (() -> Unit)? = null,
 ) {
@@ -71,6 +85,7 @@ fun PartyRunOutlinedButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        shape = shape,
         contentPadding = if (leadingIcon != null) {
             ButtonDefaults.ButtonWithIconContentPadding
         } else {
@@ -173,6 +188,37 @@ fun PartyRunAnimatedButton(
                 content()
             }
         }
+    }
+}
+@Composable
+fun PartyRunGradientButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    containerColor: Color = Color.Transparent,
+    disabledContainerColor: Color = MaterialTheme.colorScheme.onBackground,
+    disabledContentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    content: @Composable () -> Unit
+) {
+    Button(
+        modifier = modifier
+            .background(
+                brush = Brush.linearGradient( // 그라디언트 적용
+                    listOf(Purple80, Purple50)
+                ),
+                shape = RoundedCornerShape(35.dp)
+            ),
+        onClick = onClick,
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = contentColor,
+            containerColor = containerColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor,
+        )
+    ) {
+        content()
     }
 }
 

@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 val LightDefaultColorScheme = lightColorScheme(
     primary = Purple60, // 앱의 주요 부분에서 사용되며, 앱의 브랜드 색상
     onPrimary = White10, // 주요 색상 위에 그려지는 콘텐츠(텍스트, 아이콘 등)의 색상
-    primaryContainer = Purple30, // 주요 색상을 사용하는 컨테이너의 배경 색상 // Text 컴포넌트를 포함하는 Box 컴포넌트는 "컨테이너"
-    onPrimaryContainer = Purple20, // primaryContainer 색상 위에 그려지는 콘텐츠의 색상
+    primaryContainer = White10, // 주요 색상을 사용하는 컨테이너의 배경 색상 // Text 컴포넌트를 포함하는 Box 컴포넌트는 "컨테이너"
+    onPrimaryContainer = Purple40, // primaryContainer 색상 위에 그려지는 콘텐츠의 색상
     secondary = DarkNavy10, // 보조 색상
     onSecondary = Gray90, // 보조 색상 위에 그려지는 콘텐츠의 색상
     secondaryContainer = DarkNavy40,
@@ -40,7 +40,7 @@ val LightDefaultColorScheme = lightColorScheme(
     onSurfaceVariant = Purple80,
     inverseSurface = DarkNavy70, // Surface 색상의 반대색
     inverseOnSurface = DarkNavy70, // onSurface 색상의 반대색
-    outline = Purple10, // 외곽선 색상
+    outline = Purple40, // 외곽선 색상
 )
 
 /**
@@ -50,8 +50,8 @@ val LightDefaultColorScheme = lightColorScheme(
 val DarkDefaultColorScheme = darkColorScheme(
     primary = Purple60, // 앱의 주요 부분에서 사용되며, 앱의 브랜드 색상
     onPrimary = White10, // 주요 색상 위에 그려지는 콘텐츠(텍스트, 아이콘 등)의 색상
-    primaryContainer = Purple30, // 주요 색상을 사용하는 컨테이너의 배경 색상 // Text 컴포넌트를 포함하는 Box 컴포넌트는 "컨테이너"
-    onPrimaryContainer = Purple20, // primaryContainer 색상 위에 그려지는 콘텐츠의 색상
+    primaryContainer = White10, // 주요 색상을 사용하는 컨테이너의 배경 색상 // Text 컴포넌트를 포함하는 Box 컴포넌트는 "컨테이너"
+    onPrimaryContainer = Purple40, // primaryContainer 색상 위에 그려지는 콘텐츠의 색상
     secondary = DarkNavy10, // 보조 색상
     onSecondary = Gray90, // 보조 색상 위에 그려지는 콘텐츠의 색상
     secondaryContainer = DarkNavy40,
@@ -67,7 +67,7 @@ val DarkDefaultColorScheme = darkColorScheme(
     onSurfaceVariant = Purple80,
     inverseSurface = DarkNavy70, // Surface 색상의 반대색
     inverseOnSurface = DarkNavy70, // onSurface 색상의 반대색
-    outline = Purple10, // 외곽선 색상
+    outline = Purple40, // 외곽선 색상
 )
 
 /**

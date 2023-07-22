@@ -81,7 +81,6 @@ class MatchViewModel @Inject constructor(
             /* 예외 발생 시 배틀 매칭 과정을 종료하고 상태 초기화 과정 수행 */
             Timber.tag("MatchViewModel").e(e, "매칭 거절")
             closeMatchDialog()
-            return@launch
         }
     }
 
@@ -119,7 +118,7 @@ class MatchViewModel @Inject constructor(
 
     /* REST */
     private suspend fun registerToBattleMatchingQueue(userSelectedMatchDistance: UserSelectedMatchDistance) =
-        sendWaitingBattleUseCase(userSelectedMatchDistance).collect() {
+        sendWaitingBattleUseCase(userSelectedMatchDistance).collect {
             when(it) {
                 is ApiResponse.Success -> {
                     _matchUiState.update { state ->
@@ -132,7 +131,7 @@ class MatchViewModel @Inject constructor(
                 }
                 is ApiResponse.Failure -> {
                     Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    throw RuntimeException("Failure from API: ${it.errorMessage}")
+                    throw MatchingProcessException("Failure from API: ${it.errorMessage}")
                 }
                 ApiResponse.Loading ->  {
                     Timber.tag("MatchViewModel").d("Loading")
@@ -258,15 +257,23 @@ class MatchViewModel @Inject constructor(
 
     fun disconnectMatchEventSource() {
         viewModelScope.launch {
-            matchSourceManager.disconnectMatchEventSource()
-            cancelBattleMatchingProcess()
+            try {
+                matchSourceManager.disconnectMatchEventSource()
+                cancelBattleMatchingProcess()
+            } catch (e: MatchingProcessException) {
+                Timber.e("${e.message}")
+            }
         }
     }
 
     fun disconnectMatchResultEventSource() {
         viewModelScope.launch {
-            matchSourceManager.disconnectMatchResultEventSource()
-            cancelBattleMatchingProcess()
+            try {
+                matchSourceManager.disconnectMatchResultEventSource()
+                cancelBattleMatchingProcess()
+            } catch (e: MatchingProcessException) {
+                Timber.e("${e.message}")
+            }
         }
     }
 }

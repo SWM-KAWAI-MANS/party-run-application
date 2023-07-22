@@ -7,8 +7,8 @@ import online.partyrun.partyrunapplication.core.common.network.MatchSourceManage
 import timber.log.Timber
 
 class MatchSourceManagerImpl : MatchSourceManager {
-    private lateinit var connectMatchEventSource: EventSource
-    private lateinit var connectMatchResultSource: EventSource
+    private lateinit var matchEventSource: EventSource
+    private lateinit var matchResultSource: EventSource
 
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,
@@ -18,19 +18,23 @@ class MatchSourceManagerImpl : MatchSourceManager {
     }
 
     override fun connectMatchEventSource(eventSource: EventSource) {
-        connectMatchEventSource = eventSource
+        matchEventSource = eventSource
     }
 
     override fun connectMatchResultEventSource(eventSource: EventSource) {
-        connectMatchResultSource = eventSource
+        matchResultSource = eventSource
     }
 
     override fun disconnectMatchEventSource() {
-        connectMatchEventSource.cancel()
+        if (::matchEventSource.isInitialized) {
+            matchEventSource.cancel()
+        }
     }
 
     override fun disconnectMatchResultEventSource() {
-        connectMatchResultSource.cancel()
+        if (::matchResultSource.isInitialized) {
+            matchResultSource.cancel()
+        }
     }
 
     private fun createEventListener(

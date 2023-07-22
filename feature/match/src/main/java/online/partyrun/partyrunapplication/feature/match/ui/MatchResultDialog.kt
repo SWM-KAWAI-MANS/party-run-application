@@ -50,44 +50,69 @@ fun MatchResultDialog(
             /* TODO: 취소가 불가능하게 */
             // setShowDialog(false)
         },
-        modifier = Modifier
-            .width(300.dp)
-            .height(600.dp)
+        modifier = Modifier.fillMaxSize()
+    ) {
+        ResultDialogContent(
+            statusContent = { DisplayMatchStatusBox(matchUiState) },
+            infoContent = { MatchAcceptanceInfo() }
+        )
+    }
+}
+
+@Composable
+private fun ResultDialogContent(
+    statusContent: @Composable () -> Unit,
+    infoContent: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
+                .height(500.dp)
+                .padding(
+                    top = 80.dp, // 흰 배경 탑패딩
+                    start = 30.dp,
+                    end = 30.dp
+                )
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Column(
-                modifier = Modifier
-                    .width(300.dp)
-                    .weight(2f),
-            ) {
-                DisplayMatchStatusBox(matchUiState)
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .clip(RoundedCornerShape(25.dp))
-                    .background(
-                        color = MaterialTheme.colorScheme.surface
-                    ),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                MatchAcceptanceInfo()
-            }
+            statusContent()
+        }
+        Spacer(modifier = Modifier.height(50.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                .background(color = MaterialTheme.colorScheme.surface)
+                .align(Alignment.BottomCenter),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            infoContent()
         }
     }
 }
 
 @Composable
+private fun DisplayMatchStatusBox(matchUiState: MatchUiState) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .shadow(4.dp, shape = RoundedCornerShape(8.dp))
+            .background(Color.White, shape = RoundedCornerShape(25.dp))
+            .padding(
+                top = 50.dp,
+                start = 20.dp,
+                end = 20.dp
+            )
+    ) {
+        DisplayMatchStatus(matchUiState = matchUiState)
+    }
+}
+
+@Composable
 private fun MatchAcceptanceInfo() {
-    Spacer(modifier = Modifier.size(5.dp))
+    Spacer(modifier = Modifier.size(10.dp))
     Divider(
         modifier = Modifier
             .width(100.dp)
@@ -98,7 +123,7 @@ private fun MatchAcceptanceInfo() {
     Text(
         modifier = Modifier.padding(10.dp),
         text = stringResource(id = R.string.completed_match),
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.headlineLarge,
         color = MaterialTheme.colorScheme.onPrimary
     )
     Spacer(modifier = Modifier.size(10.dp))
@@ -107,36 +132,24 @@ private fun MatchAcceptanceInfo() {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(30.dp),
-            strokeWidth = 2.dp
+            strokeWidth = 3.dp
         )
         Text(
-            modifier = Modifier.padding(start = 10.dp),
+            modifier = Modifier.padding(start = 20.dp),
             text = stringResource(id = R.string.Determining_acceptance),
-            color = MaterialTheme.colorScheme.onSurface
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
     Row(
-        modifier = Modifier.height(50.dp)
     ) {
         Text(
+            modifier = Modifier.padding(bottom = 50.dp),
             text = stringResource(id = R.string.time_remaining_acceptance),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
         FormatRemainingTimer(totalTime = 60)
-    }
-}
-
-@Composable
-private fun DisplayMatchStatusBox(matchUiState: MatchUiState) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .shadow(4.dp, shape = RoundedCornerShape(8.dp))
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(10.dp)
-    ) {
-        DisplayMatchStatus(matchUiState = matchUiState)
     }
 }
 
@@ -160,7 +173,7 @@ fun MatchStatusItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(5.dp),
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -49,7 +49,7 @@ fun FormatRemainingTimer(totalTime: Int) {
     val displayTime = formatTime(hours, minutes, seconds)
     Text(
         text = displayTime,
-        style = MaterialTheme.typography.titleSmall,
+        style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onPrimary
     )
 }

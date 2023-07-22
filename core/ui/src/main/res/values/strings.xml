@@ -5,4 +5,6 @@
     <string name="arrow_back">뒤로 가기</string>
     <string name="arrow_forward">앞으로 가기</string>
 
+    <string name="google_signin_button_desc">구글 로그인</string>
+
 </resources>

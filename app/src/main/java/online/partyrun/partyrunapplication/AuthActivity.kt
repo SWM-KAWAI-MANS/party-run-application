@@ -58,7 +58,8 @@ class AuthActivity : ComponentActivity() {
     }
 
     private fun intentToMainActivity(toastText: String) {
-        Toast.makeText(applicationContext, toastText, Toast.LENGTH_LONG).show()
+        /* TODO: ToastMesseage를 마지막 접속 시간으로 */
+        // Toast.makeText(applicationContext, toastText, Toast.LENGTH_LONG).show()
         setIntentActivity(
             MainActivity::class.java,
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

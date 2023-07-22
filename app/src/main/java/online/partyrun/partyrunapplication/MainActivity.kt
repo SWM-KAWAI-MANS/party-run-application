@@ -76,7 +76,8 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun performSignOutProcess() {
         googleAuthUiClient.signOutGoogleAuth()
-        Toast.makeText(applicationContext, resources.getString(R.string.sign_out_message), Toast.LENGTH_LONG).show()
+        /* TODO: 로그아웃 Toast Message 변경 필요 */
+        //Toast.makeText(applicationContext, resources.getString(R.string.sign_out_message), Toast.LENGTH_LONG).show()
 
         /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
         setIntentActivity(AuthActivity::class.java) {

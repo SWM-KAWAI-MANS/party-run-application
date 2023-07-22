@@ -1,67 +1,49 @@
 package online.partyrun.partyrunapplication.core.ui
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 
 @Composable
-fun GoogleButton(
-    //modifier: Modifier = Modifier,
-    loadingState: Boolean = false,
-    primaryText: String = "Sign in with Google",
-    secondaryText: String = "Please wait...",
-    //icon: Int = R.drawable.google_logo,
-    shape: Shape = Shapes().extraSmall,
-    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderStrokeWidth: Dp = 1.dp,
-    //progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
-    onClick: () -> Unit
+fun GoogleSignInButton(
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
 ) {
-    var btnText by remember {mutableStateOf(primaryText)}
-
-    LaunchedEffect(key1 = loadingState) {
-        btnText = if (loadingState) secondaryText else primaryText
-    }
-
-    Surface(
+    TextButton(
+        onClick = { onClick() },
+        shape = RoundedCornerShape(50.dp),
         modifier = Modifier
-            .clickable(
-                enabled = !loadingState
-            ) {
-                onClick()
-            },
-        shape = shape,
-        border = BorderStroke(width = borderStrokeWidth, color = borderColor),
-        color = backgroundColor
+            .fillMaxWidth()
+            .height(56.dp),
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.background,
+            containerColor = MaterialTheme.colorScheme.onPrimary
+        )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-                .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    )
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.google_logo),
+                contentDescription = stringResource(id = R.string.google_signin_button_desc),
+                modifier = Modifier.size(24.dp),
+                tint = Color.Unspecified
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            content()
         }
     }
 }

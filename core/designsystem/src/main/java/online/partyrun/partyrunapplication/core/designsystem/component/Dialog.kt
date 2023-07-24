@@ -121,7 +121,7 @@ fun DialogContent(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Column(
-            modifier = if (isResultDialog) Modifier else Modifier
+            modifier = Modifier
         ) {
             Spacer(modifier = Modifier.height(30.dp))
             Surface(

@@ -14,7 +14,7 @@ class RefreshTokenExpirationNotifier(
 ): RefreshTokenExpirationNotifier {
 
     override fun notifyRefreshTokenExpired() {
-        Timber.tag("RefreshTokenExpirationNotifier").d("refresh token Expired")
+        Timber.tag("RefreshTokenExpirationNotifier").d("Refresh token expired")
         /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
         context.setIntentActivity(
             AuthActivity::class.java,

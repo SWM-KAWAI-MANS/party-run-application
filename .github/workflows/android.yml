@@ -16,7 +16,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
     - name: Setup local.properties
       env:
@@ -31,17 +30,10 @@ jobs:
         GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES }}
       run: echo "$GOOGLE_SERVICES_JSON" > ./app/google-services.json
 
-    - name: Cache Gradle
-      uses: actions/cache@v3
+    - name: Setup Gradle and Build
+      uses: gradle/gradle-build-action@v2
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-        
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+        arguments: build
+        # Only write to the cache for builds on the 'main' and 'develop' branches. (Default is 'main' only.)
+        # Builds on other branches will only read existing entries from the cache.
+        cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}

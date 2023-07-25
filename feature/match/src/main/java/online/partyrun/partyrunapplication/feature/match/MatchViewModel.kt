@@ -15,7 +15,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.MatchSourceManager
 import online.partyrun.partyrunapplication.core.domain.GetMatchResultEventUseCase
-import online.partyrun.partyrunapplication.core.domain.SendWaitingBattleUseCase
+import online.partyrun.partyrunapplication.core.domain.SendWaitingMatchUseCase
 import online.partyrun.partyrunapplication.core.domain.GetWaitingEventUseCase
 import online.partyrun.partyrunapplication.core.domain.SendAcceptMatchUseCase
 import online.partyrun.partyrunapplication.core.domain.SendDeclineMatchUseCase
@@ -33,7 +33,7 @@ import javax.inject.Inject
 class MatchViewModel @Inject constructor(
     private val getWaitingEventUseCase: GetWaitingEventUseCase,
     private val getMatchResultEventUseCase: GetMatchResultEventUseCase,
-    private val sendWaitingBattleUseCase: SendWaitingBattleUseCase,
+    private val sendWaitingMatchUseCase: SendWaitingMatchUseCase,
     private val sendAcceptMatchUseCase: SendAcceptMatchUseCase,
     private val sendDeclineMatchUseCase: SendDeclineMatchUseCase,
     private val matchSourceManager: MatchSourceManager
@@ -72,7 +72,7 @@ class MatchViewModel @Inject constructor(
      */
     fun beginBattleMatchingProcess(userSelectedMatchDistance: UserSelectedMatchDistance) = viewModelScope.launch {
         try {
-            registerToBattleMatchingQueue(userSelectedMatchDistance)
+            registerToBattleMatch(userSelectedMatchDistance)
             connectMatchEventSource()
             handleUserMatchDecision()
             connectMatchResultEventSource()
@@ -105,9 +105,9 @@ class MatchViewModel @Inject constructor(
         val decision = waitForUserDecision() // (수락 = true, 거절 = false)
         decision.let {
             if (it) {
-                sendAcceptBattleMatchingQueue(MatchDecisionRequest(isJoin = true))
+                acceptBattleMatch(MatchDecisionRequest(isJoin = true))
             } else {
-                sendDeclineBattleMatchingQueue(MatchDecisionRequest(isJoin = false))
+                declineBattleMatch(MatchDecisionRequest(isJoin = false))
             }
         }
     }
@@ -117,8 +117,8 @@ class MatchViewModel @Inject constructor(
     }
 
     /* REST */
-    private suspend fun registerToBattleMatchingQueue(userSelectedMatchDistance: UserSelectedMatchDistance) =
-        sendWaitingBattleUseCase(userSelectedMatchDistance).collect {
+    private suspend fun registerToBattleMatch(userSelectedMatchDistance: UserSelectedMatchDistance) =
+        sendWaitingMatchUseCase(userSelectedMatchDistance).collect {
             when(it) {
                 is ApiResponse.Success -> {
                     _matchUiState.update { state ->
@@ -138,7 +138,7 @@ class MatchViewModel @Inject constructor(
                 }
             }
         }
-    private suspend fun sendAcceptBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest) =
+    private suspend fun acceptBattleMatch(matchDecisionRequest: MatchDecisionRequest) =
         sendAcceptMatchUseCase(matchDecisionRequest).collect() {
             when(it) {
                 is ApiResponse.Success -> {
@@ -161,7 +161,7 @@ class MatchViewModel @Inject constructor(
             }
         }
 
-    private suspend fun sendDeclineBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest) =
+    private suspend fun declineBattleMatch(matchDecisionRequest: MatchDecisionRequest) =
         sendDeclineMatchUseCase(matchDecisionRequest).collect() {
             when(it) {
                 is ApiResponse.Success -> {

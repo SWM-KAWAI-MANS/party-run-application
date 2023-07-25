@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,7 +24,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class AuthAuthenticator @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val tokenDataSource: TokenDataSource,
     private val context: Context,
     private val tokenExpirationNotifier: TokenExpirationNotifier
 ): Authenticator {
@@ -38,7 +39,7 @@ class AuthAuthenticator @Inject constructor(
     override fun authenticate(route: Route?, response: Response): Request? {
         Timber.tag("AuthAuthenticator").d("getNewAccessToken")
         val refreshToken = runBlocking(Dispatchers.IO) {
-            tokenManager.getRefreshToken().first()
+            tokenDataSource.getRefreshToken().first()
         }
 
         return runBlocking(Dispatchers.IO) {
@@ -46,15 +47,15 @@ class AuthAuthenticator @Inject constructor(
             if (!newAccessToken.isSuccessful || newAccessToken.body() == null) {
                 /* Refresh Token 만료 시 */
                 googleAuthUiClient.signOutGoogleAuth() // Google 로그아웃
-                tokenManager.deleteAccessToken()
+                tokenDataSource.deleteAccessToken()
                 // Token 만료 알림 -> 이벤트 브로드캐스팅
                 tokenExpirationNotifier.onTokenExpired()
                 return@runBlocking null
             }else {
                 /* 정상적으로 새로운 Token Set을 받아온 경우 */
                 newAccessToken.body()?.let {
-                    tokenManager.saveAccessToken(it.accessToken)
-                    tokenManager.saveRefreshToken(it.refreshToken)
+                    tokenDataSource.saveAccessToken(it.accessToken)
+                    tokenDataSource.saveRefreshToken(it.refreshToken)
                     response.request.newBuilder()
                         .header("Authorization", it.accessToken)
                         .build()

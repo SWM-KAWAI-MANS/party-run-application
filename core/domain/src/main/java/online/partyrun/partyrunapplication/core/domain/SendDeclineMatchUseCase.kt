@@ -11,5 +11,5 @@ class SendDeclineMatchUseCase @Inject constructor(
     private val matchRepository: MatchRepository
 ) {
     suspend operator fun invoke(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>> =
-        matchRepository.sendDeclineBattleMatchingQueue(matchDecisionRequest)
+        matchRepository.declineMatch(matchDecisionRequest)
 }

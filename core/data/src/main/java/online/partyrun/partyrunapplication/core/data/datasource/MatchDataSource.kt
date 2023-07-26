@@ -10,7 +10,7 @@ import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDis
 interface MatchDataSource {
     fun connectEvent(url: String, listener: EventSourceListener): EventSource
 
-    suspend fun registerToBattleMatchingQueue(userSelectedMatchDistance: UserSelectedMatchDistance): ApiResult<MatchStatusResult>
-    suspend fun acceptBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult>
-    suspend fun declineBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult>
+    suspend fun registerMatch(userSelectedMatchDistance: UserSelectedMatchDistance): ApiResult<MatchStatusResult>
+    suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult>
+    suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult>
 }

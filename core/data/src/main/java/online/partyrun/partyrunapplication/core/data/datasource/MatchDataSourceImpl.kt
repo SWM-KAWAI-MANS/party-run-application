@@ -12,13 +12,13 @@ import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDis
 import online.partyrun.partyrunapplication.core.network.di.SSEOkHttpClient
 import online.partyrun.partyrunapplication.core.network.di.SSERequestBuilder
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
-import online.partyrun.partyrunapplication.core.network.service.WaitingBattleApiService
+import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import javax.inject.Inject
 
 class MatchDataSourceImpl @Inject constructor(
     @SSEOkHttpClient private val okHttpClient: OkHttpClient,
     @SSERequestBuilder private val request: Request.Builder,
-    private val waitingBattleApi: WaitingBattleApiService,
+    private val waitingMatchApi: WaitingMatchApiService,
     private val matchDecisionApiService: MatchDecisionApiService
 ) : MatchDataSource {
 
@@ -27,13 +27,13 @@ class MatchDataSourceImpl @Inject constructor(
         return EventSources.createFactory(okHttpClient).newEventSource(request, listener)
     }
 
-    override suspend fun registerToBattleMatchingQueue(userSelectedMatchDistance: UserSelectedMatchDistance): ApiResult<MatchStatusResult> =
-        waitingBattleApi.registerToBattleMatchingQueue(userSelectedMatchDistance)
+    override suspend fun registerMatch(userSelectedMatchDistance: UserSelectedMatchDistance): ApiResult<MatchStatusResult> =
+        waitingMatchApi.registerMatch(userSelectedMatchDistance)
 
-    override suspend fun acceptBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult> =
-        matchDecisionApiService.acceptBattleMatchingQueue(matchDecisionRequest)
+    override suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult> =
+        matchDecisionApiService.acceptMatch(matchDecisionRequest)
 
-    override suspend fun declineBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult> =
-        matchDecisionApiService.declineBattleMatchingQueue(matchDecisionRequest)
+    override suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResult> =
+        matchDecisionApiService.declineMatch(matchDecisionRequest)
 
 }

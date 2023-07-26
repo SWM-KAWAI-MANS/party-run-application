@@ -8,12 +8,12 @@ import retrofit2.http.POST
 
 interface MatchDecisionApiService {
     @POST("/api/match")
-    suspend fun acceptBattleMatchingQueue(
+    suspend fun acceptMatch(
         @Body body: MatchDecisionRequest
     ): ApiResult<MatchStatusResult>
 
     @POST("/api/match")
-    suspend fun declineBattleMatchingQueue(
+    suspend fun declineMatch(
         @Body body: MatchDecisionRequest
     ): ApiResult<MatchStatusResult>
 }

@@ -7,9 +7,9 @@ import online.partyrun.partyrunapplication.core.model.match.MatchStatusResult
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import javax.inject.Inject
 
-class SendWaitingBattleUseCase @Inject constructor(
+class SendWaitingMatchUseCase @Inject constructor(
     private val matchRepository: MatchRepository
 ) {
     suspend operator fun invoke(userSelectedMatchDistance: UserSelectedMatchDistance): Flow<ApiResponse<MatchStatusResult>> =
-        matchRepository.registerToBattleMatchingQueue(userSelectedMatchDistance)
+        matchRepository.registerMatch(userSelectedMatchDistance)
 }

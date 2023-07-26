@@ -11,9 +11,9 @@ import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDis
 interface MatchRepository {
 
     /* REST */
-    suspend fun registerToBattleMatchingQueue(userSelectedMatchDistance: UserSelectedMatchDistance): Flow<ApiResponse<MatchStatusResult>>
-    suspend fun sendAcceptBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
-    suspend fun sendDeclineBattleMatchingQueue(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
+    suspend fun registerMatch(userSelectedMatchDistance: UserSelectedMatchDistance): Flow<ApiResponse<MatchStatusResult>>
+    suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
+    suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
 
     /* SSE */
     fun connectWaitingEventSource(listener: EventSourceListener): EventSource

@@ -6,9 +6,9 @@ import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDis
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface WaitingBattleApiService {
+interface WaitingMatchApiService {
     @POST("/api/waiting")
-    suspend fun registerToBattleMatchingQueue(
+    suspend fun registerMatch(
         @Body body: UserSelectedMatchDistance
     ): ApiResult<MatchStatusResult>
 }

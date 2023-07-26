@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
-import online.partyrun.partyrunapplication.feature.running.battle.ready.CountdownDialog
+import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.battle.ready.BattleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.battle.running.BattleRunningScreen
 
@@ -60,7 +60,7 @@ private fun CheckStartTime(
     runnerIds: RunnerIds
 ) {
     when (battleUiState.timeRemaining) {
-        in 1..5 -> CountdownDialog(battleUiState.timeRemaining)
+        in 1..5 -> CountdownDialog(timeRemaining = battleUiState.timeRemaining)
         0 -> battleId?.let {
             // 위치 업데이트 시작 및 정지 로직
             StartBattleRunning(battleId, viewModel, runnerIds)

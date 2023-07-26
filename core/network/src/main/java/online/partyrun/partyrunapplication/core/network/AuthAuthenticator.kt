@@ -9,7 +9,7 @@ import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,8 +25,8 @@ import javax.inject.Singleton
 class AuthAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
     private val context: Context,
-    private val tokenExpirationNotifier: TokenExpirationNotifier
-): Authenticator {
+    private val refreshTokenExpirationNotifier: RefreshTokenExpirationNotifier
+) : Authenticator {
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
@@ -48,7 +48,7 @@ class AuthAuthenticator @Inject constructor(
                 googleAuthUiClient.signOutGoogleAuth() // Google 로그아웃
                 tokenManager.deleteAccessToken()
                 // Token 만료 알림 -> 이벤트 브로드캐스팅
-                tokenExpirationNotifier.onTokenExpired()
+                refreshTokenExpirationNotifier.notifyRefreshTokenExpired()
                 return@runBlocking null
             }else {
                 /* 정상적으로 새로운 Token Set을 받아온 경우 */

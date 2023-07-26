@@ -6,14 +6,15 @@ import online.partyrun.partyrunapplication.AuthActivity
 import online.partyrun.partyrunapplication.core.common.ExtraConstants.EXTRA_FROM_MAIN
 import online.partyrun.partyrunapplication.core.common.ExtraConstants.SIGN_IN
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
-import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
 import timber.log.Timber
 
-class DefaultTokenExpirationNotifier(
+class RefreshTokenExpirationNotifier(
     private val context: Context
-): TokenExpirationNotifier {
-    override fun onTokenExpired() {
-        Timber.tag("DefaultTokenExpirationNotifier").d("refresh token Expired")
+): RefreshTokenExpirationNotifier {
+
+    override fun notifyRefreshTokenExpired() {
+        Timber.tag("RefreshTokenExpirationNotifier").d("Refresh token expired")
         /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
         context.setIntentActivity(
             AuthActivity::class.java,
@@ -22,4 +23,5 @@ class DefaultTokenExpirationNotifier(
             putString(EXTRA_FROM_MAIN, SIGN_IN)
         }
     }
+
 }

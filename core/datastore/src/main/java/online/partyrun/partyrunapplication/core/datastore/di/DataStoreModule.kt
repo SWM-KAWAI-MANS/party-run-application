@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Module
 object DataStoreModule {
 
-    private const val AGREEMENT_PREFERENCES = "terms_conditions_pref"
+    private const val AGREEMENT_PREFERENCES = "agreement_pref"
     private const val TOKEN_PREFERENCES = "token_pref"
 
     @Singleton

@@ -15,7 +15,7 @@ class AgreementDataSource @Inject constructor(
     private val agreementDataStore: DataStore<Preferences>
 ) {
     companion object {
-        private val AGREEMENT_KEY = booleanPreferencesKey("terms_conditions_agree")
+        private val AGREEMENT_KEY = booleanPreferencesKey("agree")
     }
 
     suspend fun saveAgreementState(checked: Boolean) {

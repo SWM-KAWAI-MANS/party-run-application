@@ -50,8 +50,10 @@ class SignInViewModel @Inject constructor(
                             onSignInIndicator = false
                         )
                     }
-                    saveTokensUseCase.saveAccessToken(it.data.accessToken)
-                    saveTokensUseCase.saveRefreshToken(it.data.refreshToken)
+                    saveTokensUseCase(
+                        accessToken = it.data.accessToken,
+                        refreshToken = it.data.refreshToken
+                    )
                 }
                 is ApiResponse.Failure -> {
                     _signInGoogleState.update { state ->

@@ -68,12 +68,5 @@ class TokenDataSource @Inject constructor(
             preferences.remove(ACCESS_TOKEN_KEY)
         }
     }
-    /*
-    suspend fun deleteRefreshToken() {
-        tokenDataStore.edit { preferences ->
-            preferences.remove(REFRESH_TOKEN_KEY)
-        }
-    }
-    */
 
 }

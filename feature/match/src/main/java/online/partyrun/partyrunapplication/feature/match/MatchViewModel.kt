@@ -72,7 +72,7 @@ class MatchViewModel @Inject constructor(
      */
     fun beginBattleMatchingProcess(userSelectedMatchDistance: UserSelectedMatchDistance) = viewModelScope.launch {
         try {
-            registerToBattleMatch(userSelectedMatchDistance)
+            registerMatch(userSelectedMatchDistance)
             connectMatchEventSource()
             handleUserMatchDecision()
             connectMatchResultEventSource()
@@ -93,31 +93,31 @@ class MatchViewModel @Inject constructor(
                 )
             }
         } else {
-            cancelBattleMatchingProcess()
+            cancelMatchingProcess()
         }
     }
 
     private suspend fun handleUserMatchDecision() {
         val status = matchUiState.value.waitingEventState.status
         if (status != WaitingMatchStatus.MATCHED) {
-            cancelBattleMatchingProcess()
+            cancelMatchingProcess()
         }
         val decision = waitForUserDecision() // (수락 = true, 거절 = false)
         decision.let {
             if (it) {
-                acceptBattleMatch(MatchDecisionRequest(isJoin = true))
+                acceptMatch(MatchDecisionRequest(isJoin = true))
             } else {
-                declineBattleMatch(MatchDecisionRequest(isJoin = false))
+                declineMatch(MatchDecisionRequest(isJoin = false))
             }
         }
     }
 
-    private fun cancelBattleMatchingProcess(): Nothing {
+    private fun cancelMatchingProcess(): Nothing {
         throw MatchingProcessException("Closing match dialog and End of the matching coroutine process")
     }
 
     /* REST */
-    private suspend fun registerToBattleMatch(userSelectedMatchDistance: UserSelectedMatchDistance) =
+    private suspend fun registerMatch(userSelectedMatchDistance: UserSelectedMatchDistance) =
         sendWaitingMatchUseCase(userSelectedMatchDistance).collect {
             when(it) {
                 is ApiResponse.Success -> {
@@ -138,7 +138,7 @@ class MatchViewModel @Inject constructor(
                 }
             }
         }
-    private suspend fun acceptBattleMatch(matchDecisionRequest: MatchDecisionRequest) =
+    private suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest) =
         sendAcceptMatchUseCase(matchDecisionRequest).collect() {
             when(it) {
                 is ApiResponse.Success -> {
@@ -161,7 +161,7 @@ class MatchViewModel @Inject constructor(
             }
         }
 
-    private suspend fun declineBattleMatch(matchDecisionRequest: MatchDecisionRequest) =
+    private suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest) =
         sendDeclineMatchUseCase(matchDecisionRequest).collect() {
             when(it) {
                 is ApiResponse.Success -> {
@@ -259,7 +259,7 @@ class MatchViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 matchSourceManager.disconnectMatchEventSource()
-                cancelBattleMatchingProcess()
+                cancelMatchingProcess()
             } catch (e: MatchingProcessException) {
                 Timber.e("${e.message}")
             }
@@ -270,7 +270,7 @@ class MatchViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 matchSourceManager.disconnectMatchResultEventSource()
-                cancelBattleMatchingProcess()
+                cancelMatchingProcess()
             } catch (e: MatchingProcessException) {
                 Timber.e("${e.message}")
             }

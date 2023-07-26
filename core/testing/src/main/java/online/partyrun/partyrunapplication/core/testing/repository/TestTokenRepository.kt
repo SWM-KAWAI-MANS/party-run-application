@@ -10,19 +10,17 @@ import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
  */
 class TestTokenRepository: TokenRepository {
 
-    private val accessTokenFlow = MutableStateFlow<String?>(null)
-    private val refreshTokenFlow = MutableStateFlow<String?>(null)
+    private var accessToken: String? = null
+    private var refreshToken: String? = null
 
-    fun getAccessToken() = accessTokenFlow.value
-    fun getRefreshToken() = refreshTokenFlow.value
+    fun getAccessToken() = accessToken
+    fun getRefreshToken() = refreshToken
 
     override suspend fun saveAccessToken(accessToken: String) {
-        // Update the state when saveAccessToken is called
-        accessTokenFlow.emit(accessToken)
+        this.accessToken = accessToken
     }
 
     override suspend fun saveRefreshToken(refreshToken: String) {
-        // Update the state when saveRefreshToken is called
-        refreshTokenFlow.emit(refreshToken)
+        this.refreshToken = refreshToken
     }
 }

@@ -3,7 +3,6 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
@@ -13,7 +12,6 @@ import online.partyrun.partyrunapplication.core.testing.repository.TestTokenRepo
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class SignInViewModelTest {
 

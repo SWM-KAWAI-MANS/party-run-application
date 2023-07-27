@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.testing.repository
 
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 
 /**
@@ -13,14 +14,17 @@ class TestTokenRepository: TokenRepository {
     private var accessToken: String? = null
     private var refreshToken: String? = null
 
-    fun getAccessToken() = accessToken
-    fun getRefreshToken() = refreshToken
-
-    override suspend fun saveAccessToken(accessToken: String) {
+    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         this.accessToken = accessToken
+        this.refreshToken = refreshToken
     }
 
-    override suspend fun saveRefreshToken(refreshToken: String) {
-        this.refreshToken = refreshToken
+    /* accessToken과 refreshToken에 대한 Flow를 flowOf를 사용하여 반환 */
+    override fun getAccessToken(): Flow<String?> = flowOf(accessToken)
+
+    override fun getRefreshToken(): Flow<String?> = flowOf(refreshToken)
+
+    override suspend fun deleteAccessToken() {
+        this.accessToken = null // 단순히 accessToken을 null로 설정하여 구현 -> 토큰을 삭제하는 것과 같은 효과
     }
 }

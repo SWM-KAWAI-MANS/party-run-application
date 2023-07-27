@@ -9,8 +9,8 @@ import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

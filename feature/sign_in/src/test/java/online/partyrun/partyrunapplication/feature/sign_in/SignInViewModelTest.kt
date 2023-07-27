@@ -3,11 +3,13 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
-import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
+import online.partyrun.partyrunapplication.core.testing.repository.TestTokenRepository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,9 +18,12 @@ import org.mockito.Mockito.mock
 class SignInViewModelTest {
 
     private val signInRepository = TestSignInRepository()
-    private val tokenManager = mock(TokenManager::class.java)
+    private val tokenRepository = TestTokenRepository()
     private val getSignInTokenUseCase = GetSignInTokenUseCase(
         signInRepository = signInRepository
+    )
+    private val saveTokensUseCase = SaveTokensUseCase(
+        tokenRepository = tokenRepository
     )
 
     private lateinit var viewModel: SignInViewModel
@@ -30,7 +35,7 @@ class SignInViewModelTest {
     fun setUp() {
         viewModel = SignInViewModel(
             getSignInTokenUseCase = getSignInTokenUseCase,
-            tokenManager = tokenManager
+            saveTokensUseCase = saveTokensUseCase
         )
     }
 

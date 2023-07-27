@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,11 +17,11 @@ import javax.inject.Singleton
  */
 @Singleton
 class AuthInterceptor @Inject constructor(
-    private val tokenManager: TokenManager,
+    private val tokenDataSource: TokenDataSource,
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val accessToken = runBlocking(Dispatchers.IO) {
-            tokenManager.getAccessToken().first() // 액세스 토큰 값을 Flow 형태로 반환 -> first(): Flow의 첫 번째 값을 동기적으로 반환
+            tokenDataSource.getAccessToken().first() // 액세스 토큰 값을 Flow 형태로 반환 -> first(): Flow의 첫 번째 값을 동기적으로 반환
         }
         Timber.tag("AuthInterceptor").d("$accessToken")
         val originalRequest = chain.request()

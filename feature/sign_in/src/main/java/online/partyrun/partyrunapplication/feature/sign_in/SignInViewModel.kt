@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.network.TokenManager
 import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val getSignInTokenUseCase: GetSignInTokenUseCase,
-    private val tokenManager: TokenManager
+    private val saveTokensUseCase: SaveTokensUseCase
 ): ViewModel() {
 
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
@@ -50,10 +50,10 @@ class SignInViewModel @Inject constructor(
                             onSignInIndicator = false
                         )
                     }
-                    Timber.tag("SignInViewModel").i("Access: ${it.data.accessToken}")
-                    Timber.tag("SignInViewModel").i("Refresh: ${it.data.refreshToken}")
-                    tokenManager.saveAccessToken(it.data.accessToken)
-                    tokenManager.saveRefreshToken(it.data.refreshToken)
+                    saveTokensUseCase(
+                        accessToken = it.data.accessToken,
+                        refreshToken = it.data.refreshToken
+                    )
                 }
                 is ApiResponse.Failure -> {
                     _signInGoogleState.update { state ->

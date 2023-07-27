@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(libs.androidx.dataStore.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.timber)
 
     testImplementation(project(":core:testing"))
 }

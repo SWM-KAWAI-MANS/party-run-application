@@ -30,13 +30,13 @@ internal interface DataModule {
     @Singleton
     @Binds
     abstract fun bindMatchRepository (
-        matchRepositoryImpl: MatchRepositoryImpl
+        matchRepository: MatchRepositoryImpl
     ): MatchRepository
 
     @Singleton
     @Binds
     fun bindAgreementRepository (
-        agreementRepositoryImpl: AgreementRepositoryImpl
+        agreementRepository: AgreementRepositoryImpl
     ): AgreementRepository
 
     @Singleton

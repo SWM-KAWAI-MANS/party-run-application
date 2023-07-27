@@ -4,7 +4,7 @@ import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
-import online.partyrun.partyrunapplication.core.data.datasource.MatchDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSource
 import online.partyrun.partyrunapplication.core.model.match.MatchDecisionRequest
 import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
 import javax.inject.Inject

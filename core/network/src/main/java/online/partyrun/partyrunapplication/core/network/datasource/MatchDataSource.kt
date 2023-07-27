@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.data.datasource
+package online.partyrun.partyrunapplication.core.network.datasource
 
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener

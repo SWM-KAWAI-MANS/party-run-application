@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.data.datasource
+package online.partyrun.partyrunapplication.core.network.datasource
 
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult

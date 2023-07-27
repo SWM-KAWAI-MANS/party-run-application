@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
-import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
@@ -8,14 +7,13 @@ import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.data.datasource.SignInDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit

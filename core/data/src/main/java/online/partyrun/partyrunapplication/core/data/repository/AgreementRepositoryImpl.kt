@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import online.partyrun.partyrunapplication.core.datastore.di.AgreementDataSource
+import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSource
 import javax.inject.Inject
 
 class AgreementRepositoryImpl @Inject constructor(

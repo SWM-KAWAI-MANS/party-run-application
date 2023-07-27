@@ -7,8 +7,6 @@ class SaveTokensUseCase @Inject constructor(
     private val tokenRepository: TokenRepository
 ) {
     suspend operator fun invoke(accessToken: String, refreshToken: String) {
-        tokenRepository.saveAccessToken(accessToken)
-        tokenRepository.saveRefreshToken(refreshToken)
+        tokenRepository.saveTokens(accessToken, refreshToken)
     }
-
 }

@@ -8,9 +8,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSourceImpl
-import online.partyrun.partyrunapplication.core.network.di.SSEOkHttpClient
-import online.partyrun.partyrunapplication.core.network.di.SSERequestBuilder
+import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
+import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import javax.inject.Singleton
 
@@ -28,5 +29,11 @@ object DataSourceModule {
     ): MatchDataSource {
         return MatchDataSourceImpl(okHttpClient, request, waitingMatchApiService, matchDecisionApiService)
     }
+
+    @Singleton
+    @Provides
+    fun provideSignInDataSource(
+        signInApiService: SignInApiService
+    ): SignInDataSource = SignInDataSourceImpl(signInApiService)
 
 }

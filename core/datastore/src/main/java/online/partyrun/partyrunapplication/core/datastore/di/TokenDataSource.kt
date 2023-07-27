@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -27,6 +28,7 @@ class TokenDataSource @Inject constructor(
         return tokenDataStore.data
             .catch { exception ->
                 if (exception is IOException) {
+                    Timber.tag("TokenDataSource").e(exception, "Failed to get access token")
                     emit(emptyPreferences())
                 } else {
                     throw exception
@@ -41,6 +43,7 @@ class TokenDataSource @Inject constructor(
         return tokenDataStore.data
             .catch { exception ->
                 if (exception is IOException) {
+                    Timber.tag("TokenDataSource").e(exception, "Failed to get refresh token")
                     emit(emptyPreferences())
                 } else {
                     throw exception

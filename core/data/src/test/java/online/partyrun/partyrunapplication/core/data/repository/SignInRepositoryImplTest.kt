@@ -7,7 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
@@ -38,7 +38,7 @@ class SignInRepositoryImplTest {
             .addCallAdapterFactory(ApiResultCallAdapterFactory.create())
             .build()
             .create(SignInApiService::class.java)
-        repository = SignInRepositoryImpl(SignInDataSource(service))
+        repository = SignInRepositoryImpl(SignInDataSourceImpl(service))
     }
 
     @Test

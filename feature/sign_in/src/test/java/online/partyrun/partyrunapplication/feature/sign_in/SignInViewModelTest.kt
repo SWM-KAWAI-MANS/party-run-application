@@ -3,8 +3,8 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
-import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel

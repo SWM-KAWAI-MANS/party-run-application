@@ -12,13 +12,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.network.MatchSourceManager
 import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
-import online.partyrun.partyrunapplication.core.network.MatchSourceManagerImpl
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import retrofit2.Retrofit
@@ -56,11 +54,6 @@ object NetworkModule {
         oneTapClient: SignInClient
     ): GoogleAuthUiClient =
         GoogleAuthUiClient(context, oneTapClient)
-
-    @Provides
-    fun provideMatchSourceManager(): MatchSourceManager {
-        return MatchSourceManagerImpl()
-    }
 
     @Singleton
     @Provides

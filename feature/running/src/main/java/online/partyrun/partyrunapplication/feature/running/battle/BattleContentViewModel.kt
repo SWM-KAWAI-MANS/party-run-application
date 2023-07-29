@@ -23,14 +23,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import online.partyrun.partyrunapplication.core.model.battle.BattleEvent
-import online.partyrun.partyrunapplication.core.model.battle.BattleState
+import online.partyrun.partyrunapplication.core.domain.running.BattleStreamUseCase
+import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
+import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
-import online.partyrun.partyrunapplication.core.model.battle.RunnerState
+import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
+import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
-import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
-import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -39,7 +39,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BattleContentViewModel @Inject constructor(
-    private val realtimeBattleClient: RealtimeBattleClient,
+    private val battleStreamUseCase: BattleStreamUseCase,
+    private val sendRecordDataUseCase: SendRecordDataUseCase,
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ): ViewModel() {
     companion object {
@@ -70,7 +71,7 @@ class BattleContentViewModel @Inject constructor(
         battleId: String,
         navigateToBattleOnWebSocketError: () -> Unit
     ) {
-        resultResult = realtimeBattleClient
+        resultResult = battleStreamUseCase
             .getBattleStream(battleId = battleId)
             .onStart { onStartBattleStream() }
             .onEach { onEachBattleStream(it) } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
@@ -78,7 +79,7 @@ class BattleContentViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope, // ViewModel의 수명 주기에 맞게 관리
                 started = SharingStarted.WhileSubscribed(STATE_SHARE_SUBSCRIPTION_TIMEOUT),
-                initialValue = BattleEvent.BattleDefaultResult()
+                initialValue = BattleEvent.BattleDefault()
             )
     }
 
@@ -101,10 +102,10 @@ class BattleContentViewModel @Inject constructor(
 
     private suspend fun collectRunnerResult(it: BattleEvent) {
         when (it) {
-            is BattleEvent.BattleReadyResult -> {
+            is BattleEvent.BattleReady -> {
                 countDownWhenReady(it.startTime)
             }
-            is BattleEvent.BattleRunnerResult -> {
+            is BattleEvent.BattleRunner -> {
                 updateBattleStateWithRunnerResult(it)
             }
             else -> {} // Handle other cases as needed
@@ -126,7 +127,7 @@ class BattleContentViewModel @Inject constructor(
         if (t is ConnectException) { navigateToBattleOnWebSocketError() }
     }
 
-    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunnerResult) {
+    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunner) {
         val currentBattleState = _battleUiState.value.battleState.battleInfo.toMutableList()
         val existingRunnerState = currentBattleState.find { it.runnerId == result.runnerId }
 
@@ -145,7 +146,7 @@ class BattleContentViewModel @Inject constructor(
 
         _battleUiState.update { state ->
             state.copy(
-                battleState = BattleState(battleInfo = currentBattleState)
+                battleState = BattleStatus(battleInfo = currentBattleState)
             )
         }
     }
@@ -195,7 +196,7 @@ class BattleContentViewModel @Inject constructor(
 
     private fun sendRecordData(battleId: String, recordData: RecordData) {
         viewModelScope.launch {
-            realtimeBattleClient.sendRecordData(battleId, recordData)
+            sendRecordDataUseCase(battleId, recordData)
         }
     }
 
@@ -204,14 +205,14 @@ class BattleContentViewModel @Inject constructor(
         stopLocationUpdates()
 
         viewModelScope.launch {
-            realtimeBattleClient.close()
+            battleStreamUseCase.close()
         }
     }
 
     fun initBattleState(runnerIds: RunnerIds) {
         // RunnerIds 객체에서 각 id를 가져와 RunnerState 객체 생성
         val runnerStates = runnerIds.runnerIdData.map { id ->
-            RunnerState(
+            RunnerStatus(
                 runnerId = id,
                 runnerName = "테스트"
             )
@@ -219,7 +220,7 @@ class BattleContentViewModel @Inject constructor(
         // 생성된 RunnerState 객체들로 BattleState 객체 생성
         _battleUiState.update { state ->
             state.copy(
-                battleState = BattleState(battleInfo = runnerStates)
+                battleState = BattleStatus(battleInfo = runnerStates)
             )
         }
     }

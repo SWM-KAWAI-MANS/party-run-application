@@ -29,14 +29,14 @@ class SignInViewModel @Inject constructor(
         _signInGoogleState.update {
             it.copy(
                 isSignInSuccessful = result.userData != null,
-                signInError = result.errorMessage,
+                hasSignInError = result.errorMessage,
             )
         }
     }
     fun signInGoogleLoadingIndicator() {
         _signInGoogleState.update {
             it.copy(
-                onSignInIndicator = true
+                isSignInIndicatorOn = true
             )
         }
     }
@@ -46,8 +46,8 @@ class SignInViewModel @Inject constructor(
                 is ApiResponse.Success -> {
                     _signInGoogleState.update { state ->
                         state.copy(
-                            sendIdTokenToServer = true,
-                            onSignInIndicator = false
+                            isIdTokenSentToServer = true,
+                            isSignInIndicatorOn = false
                         )
                     }
                     saveTokensUseCase(

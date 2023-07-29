@@ -48,7 +48,7 @@ class SignInViewModelTest {
         viewModel.signInGoogleTokenToServer(idToken)
         getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value
-        assertThat(data.sendIdTokenToServer).isTrue()
+        assertThat(data.isIdTokenSentToServer).isTrue()
     }
 
     @Test

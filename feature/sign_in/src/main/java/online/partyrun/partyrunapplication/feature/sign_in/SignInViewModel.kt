@@ -12,7 +12,7 @@ import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
-import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
+import online.partyrun.partyrunapplication.core.network.model.response.SignInGoogleResponse
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class SignInViewModel @Inject constructor(
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
     val signInGoogleState: StateFlow<SignInGoogleState> = _signInGoogleState.asStateFlow()
 
-    fun onSignInGoogleResult(result: SignInGoogleResult) {
+    fun onSignInGoogleResult(result: SignInGoogleResponse) {
         _signInGoogleState.update {
             it.copy(
                 isSignInSuccessful = result.userData != null,
@@ -51,8 +51,8 @@ class SignInViewModel @Inject constructor(
                         )
                     }
                     saveTokensUseCase(
-                        accessToken = it.data.accessToken,
-                        refreshToken = it.data.refreshToken
+                        accessToken = it.data.accessToken ?: "",
+                        refreshToken = it.data.refreshToken ?: ""
                     )
                 }
                 is ApiResponse.Failure -> {

@@ -13,8 +13,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
-import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
-import online.partyrun.partyrunapplication.core.model.signin.UserGoogleData
+import online.partyrun.partyrunapplication.core.network.model.response.SignInGoogleResponse
+import online.partyrun.partyrunapplication.core.network.model.response.UserGoogleData
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -75,14 +75,14 @@ class GoogleAuthUiClient @Inject constructor(
     suspend fun signInGoogleWithIntent(
         intent: Intent,
         signInGoogleLoadingIndicator: () -> Unit
-    ): SignInGoogleResult {
+    ): SignInGoogleResponse {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         signInGoogleLoadingIndicator()
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            SignInGoogleResult(
+            SignInGoogleResponse(
                 userData = user?.run {
                     UserGoogleData(
                         userId = uid,
@@ -95,7 +95,7 @@ class GoogleAuthUiClient @Inject constructor(
         } catch(e: Exception) {
             Timber.tag("GoogleAuthUiClient").e(e, "Sign-in with Google failed")
             if(e is CancellationException) throw e
-            SignInGoogleResult(
+            SignInGoogleResponse(
                 userData = null,
                 errorMessage = e.message
             )

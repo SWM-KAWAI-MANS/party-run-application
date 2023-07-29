@@ -1,6 +1,6 @@
-package online.partyrun.partyrunapplication.core.model.signin
+package online.partyrun.partyrunapplication.core.network.model.response
 
-data class SignInGoogleResult(
+data class SignInGoogleResponse(
     val userData: UserGoogleData?,
     val errorMessage: String?
 )

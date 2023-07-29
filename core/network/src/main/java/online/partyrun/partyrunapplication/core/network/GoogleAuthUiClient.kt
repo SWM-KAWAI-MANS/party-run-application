@@ -13,8 +13,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
-import online.partyrun.partyrunapplication.core.network.model.response.SignInGoogleResponse
-import online.partyrun.partyrunapplication.core.network.model.response.UserGoogleData
+import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserInfoResponse
+import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserDataResponse
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -75,16 +75,16 @@ class GoogleAuthUiClient @Inject constructor(
     suspend fun signInGoogleWithIntent(
         intent: Intent,
         signInGoogleLoadingIndicator: () -> Unit
-    ): SignInGoogleResponse {
+    ): GoogleUserInfoResponse {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         signInGoogleLoadingIndicator()
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            SignInGoogleResponse(
+            GoogleUserInfoResponse(
                 userData = user?.run {
-                    UserGoogleData(
+                    GoogleUserDataResponse(
                         userId = uid,
                         username = displayName,
                         profilePictureUrl = photoUrl?.toString()
@@ -95,7 +95,7 @@ class GoogleAuthUiClient @Inject constructor(
         } catch(e: Exception) {
             Timber.tag("GoogleAuthUiClient").e(e, "Sign-in with Google failed")
             if(e is CancellationException) throw e
-            SignInGoogleResponse(
+            GoogleUserInfoResponse(
                 userData = null,
                 errorMessage = e.message
             )
@@ -121,8 +121,8 @@ class GoogleAuthUiClient @Inject constructor(
      * getGoogleAuthUser(): 현재 구글에 로그인된 사용자 정보를 UserData 객체로 반환
      * 현재 사용자가 로그인되어 있지 않으면 null 반환
      */
-    fun getGoogleAuthUser(): UserGoogleData? = auth.currentUser?.run {
-        UserGoogleData(
+    fun getGoogleAuthUser(): GoogleUserDataResponse? = auth.currentUser?.run {
+        GoogleUserDataResponse(
             userId = uid,
             username = displayName,
             profilePictureUrl = photoUrl?.toString()

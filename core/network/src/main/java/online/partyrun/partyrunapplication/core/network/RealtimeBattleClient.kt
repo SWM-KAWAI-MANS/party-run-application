@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.OkHttpClient
 import okhttp3.internal.concurrent.TaskRunner
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.model.battle.BattleEvent
+import online.partyrun.partyrunapplication.core.network.model.BattleEventResponse
 import online.partyrun.partyrunapplication.core.model.util.LocalDateTimeAdapter
-import online.partyrun.partyrunapplication.core.model.running.RecordData
+import online.partyrun.partyrunapplication.core.network.model.request.RecordDataRequest
 import online.partyrun.partyrunapplication.core.network.di.WSOkHttpClient
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -43,7 +43,7 @@ class RealtimeBattleClient(
 
     fun getBattleStream(
         battleId: String
-    ): Flow<BattleEvent> = callbackFlow {
+    ): Flow<BattleEventResponse> = callbackFlow {
         stompConnection = stomp.connect().subscribe {
             handleStompEvent(it, battleId)
         }
@@ -54,14 +54,17 @@ class RealtimeBattleClient(
         }
     }
 
-    private fun ProducerScope<BattleEvent>.handleStompEvent(
+    /*
+     * 배틀 스트림 연결 상태가 어떻게 진행되고 있는지 수집하고 type에 맞게 처리
+     */
+    private fun ProducerScope<BattleEventResponse>.handleStompEvent(
         it: Event,
         battleId: String
     ) {
         when (it.type) {
             Event.Type.OPENED -> {
                 subscribeToBattleTopic(battleId) // topic 구독 수행
-                sendReadyMessage(battleId) // 구독했음을 알리기 위한 Ready 메세지 전송
+                sendReadyMessage(battleId) // 구독했음을 알리기 위한 처음 Ready 메세지 전송
             }
 
             Event.Type.CLOSED -> {
@@ -82,13 +85,13 @@ class RealtimeBattleClient(
         }
     }
 
-    private fun ProducerScope<BattleEvent>.subscribeToBattleTopic(battleId: String) {
+    private fun ProducerScope<BattleEventResponse>.subscribeToBattleTopic(battleId: String) {
         topic = stomp.join("/topic/battle/$battleId")
-            .subscribe { message ->
+            .subscribe { message -> // 구독이 성공적으로 이루어지면, 새로운 메시지가 도착할 때마다 해당 람다 함수 호출
                 TaskRunner.logger.log(Level.INFO, message)
                 Timber.tag("BattleClient").d(message)
-                val battleEvent = parseBattleEvent(message)
-                trySend(battleEvent).isSuccess
+                val battleEvent = parseBattleEvent(message) // 서버로부터 받은 message를 파싱하여 BattleEvent 객체로 변환
+                trySend(battleEvent).isSuccess // battleEvent를 구독한 프로듀서 스코프에 전달
             }
     }
 
@@ -103,16 +106,22 @@ class RealtimeBattleClient(
         }
     }
 
-    private fun parseBattleEvent(message: String): BattleEvent {
+    /**
+     * 배틀정보를 받아올 때 처음 Response와 그 뒤에 오는 Response Type을 구분해 전송할 수 있게 한다.
+     */
+    private fun parseBattleEvent(message: String): BattleEventResponse {
         val jsonObject = JsonParser.parseString(message).asJsonObject
         return when(jsonObject.get("type").asString) {
-            "BATTLE_START_TIME" -> gson.fromJson(message, BattleEvent.BattleReadyResult::class.java)
-            else -> gson.fromJson(message, BattleEvent.BattleRunnerResult::class.java)
+            "BATTLE_START_TIME" -> gson.fromJson(message, BattleEventResponse.BattleReadyResponse::class.java)
+            else -> gson.fromJson(message, BattleEventResponse.BattleRunnerResponse::class.java)
         }
     }
 
+    /**
+     * 유저의 달리기 기록을 초 단위로 묶은 리스트 전송
+     */
     @SuppressLint("CheckResult")
-    suspend fun sendRecordData(battleId: String, recordData: RecordData) {
+    suspend fun sendRecordData(battleId: String, recordData: RecordDataRequest) {
         val jsonData = gson.toJson(recordData)
         stomp.send("/pub/battle/$battleId/record", jsonData).subscribe { isSent ->
             if (isSent) {

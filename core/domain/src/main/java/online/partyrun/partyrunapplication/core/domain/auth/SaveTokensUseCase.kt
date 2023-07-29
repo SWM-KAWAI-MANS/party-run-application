@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.domain
+package online.partyrun.partyrunapplication.core.domain.auth
 
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import javax.inject.Inject

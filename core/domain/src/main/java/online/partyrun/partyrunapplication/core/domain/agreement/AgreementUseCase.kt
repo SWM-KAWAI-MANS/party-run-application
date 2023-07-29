@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.domain
+package online.partyrun.partyrunapplication.core.domain.agreement
 
 import kotlinx.coroutines.flow.Flow
 import online.partyrun.partyrunapplication.core.data.repository.AgreementRepository

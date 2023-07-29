@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.domain
+package online.partyrun.partyrunapplication.core.domain.auth
 
 import kotlinx.coroutines.flow.Flow
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken

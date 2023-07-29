@@ -7,8 +7,8 @@ import javax.inject.Inject
 class AgreementRepositoryImpl @Inject constructor(
     private val agreementDataSource: AgreementDataSource
 ) : AgreementRepository {
-    override suspend fun saveAgreementState(checked: Boolean) {
-        agreementDataSource.saveAgreementState(checked)
+    override suspend fun saveAgreementState(isChecked: Boolean) {
+        agreementDataSource.saveAgreementState(isChecked)
     }
 
     override fun getAgreementState(): Flow<Boolean> {

@@ -4,6 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AgreementRepository {
 
-    suspend fun saveAgreementState(checked: Boolean)
+    suspend fun saveAgreementState(isChecked: Boolean)
     fun getAgreementState(): Flow<Boolean>
 }

@@ -10,6 +10,8 @@ import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.data.repository.AgreementRepository
 import online.partyrun.partyrunapplication.core.data.repository.AgreementRepositoryImpl
+import online.partyrun.partyrunapplication.core.data.repository.BattleRepository
+import online.partyrun.partyrunapplication.core.data.repository.BattleRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepositoryImpl
 import javax.inject.Singleton
@@ -44,5 +46,11 @@ internal interface DataModule {
     fun bindTokenRepository (
         tokenRepository: TokenRepositoryImpl
     ): TokenRepository
+
+    @Singleton
+    @Binds
+    fun bindBattleRepository (
+        battleRepository: BattleRepositoryImpl
+    ): BattleRepository
 
 }

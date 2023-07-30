@@ -24,7 +24,7 @@ import javax.inject.Singleton
  *  Firebase 인증 및 Google One-Tap API 사용 -> 사용자 로그인 및 로그아웃 로직 처리
  */
 @Singleton
-class GoogleAuthUiClient @Inject constructor(
+class GoogleAuthClient @Inject constructor(
     @ApplicationContext private val context: Context,
     private val oneTapClient: SignInClient, // Google One-Tap 로그인을 위한 SignInClient 객체
 ) {
@@ -73,13 +73,11 @@ class GoogleAuthUiClient @Inject constructor(
      * auth 객체의 signInWithCredential() 호출해 사용자 인증 -> val user = ~
      */
     suspend fun signInGoogleWithIntent(
-        intent: Intent,
-        signInGoogleLoadingIndicator: () -> Unit
+        intent: Intent
     ): GoogleUserInfoResponse {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
-        signInGoogleLoadingIndicator()
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
             GoogleUserInfoResponse(

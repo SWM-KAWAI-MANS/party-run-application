@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
-import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInToken
+import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.auth.SignInToken
 
 class TestSignInRepository : SignInRepository {
     private val tokenSet = MutableSharedFlow<ApiResponse<SignInToken>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
@@ -18,5 +18,5 @@ class TestSignInRepository : SignInRepository {
         tokenSet.emit(value)
     }
 
-    override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> = tokenSet
+    override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> = tokenSet
 }

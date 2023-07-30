@@ -11,14 +11,11 @@ import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.agreementRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 
 @Composable
 fun PartyRunAuth(
     navController: NavHostController,
     startDestination: String,
-    googleAuthUiClient: GoogleAuthUiClient,
-    handleLoginState: () -> Unit,
     intentToMainActivity: () -> Unit
 ) {
     PartyRunApplicationTheme() {
@@ -28,8 +25,6 @@ fun PartyRunAuth(
             SetUpAuthNavGraph(
                 navController = navController,
                 startDestination = startDestination,
-                googleAuthUiClient = googleAuthUiClient,
-                handleLoginState = handleLoginState,
                 intentToMainActivity = intentToMainActivity
             )
         }
@@ -40,8 +35,6 @@ fun PartyRunAuth(
 fun SetUpAuthNavGraph(
     navController: NavHostController,
     startDestination: String,
-    googleAuthUiClient: GoogleAuthUiClient,
-    handleLoginState: () -> Unit,
     intentToMainActivity: () -> Unit
 ) {
     NavHost(
@@ -49,7 +42,7 @@ fun SetUpAuthNavGraph(
         startDestination = startDestination
     ) {
         splashRoute(
-            setIntentMainActivity = handleLoginState,
+            setIntentMainActivity = intentToMainActivity,
             navigationToAgreement = {
                 navController.navigate(AuthNavRoutes.Agreement.route)
             }
@@ -57,7 +50,7 @@ fun SetUpAuthNavGraph(
 
         agreementRoute(
             navController = navController,
-            setIntentMainActivity = handleLoginState,
+            setIntentMainActivity = intentToMainActivity,
             navigationToTermsOfService = {
                 navController.navigate(AuthNavRoutes.TermsOfService.route)
             },
@@ -67,7 +60,6 @@ fun SetUpAuthNavGraph(
         )
 
         signInRoute(
-            googleAuthUiClient = googleAuthUiClient,
             setIntentMainActivity = intentToMainActivity
         )
     }

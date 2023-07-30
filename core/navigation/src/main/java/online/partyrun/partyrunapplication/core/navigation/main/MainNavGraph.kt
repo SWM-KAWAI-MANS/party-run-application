@@ -43,11 +43,11 @@ fun SetUpMainNavGraph(
             }
         )
 
-        challengeRoute(
+        challengeRoute()
+
+        myPageRoute(
             onSignOut = onSignOut
         )
-
-        myPageRoute()
 
         battleRunningRoute(
             navigateToBattleOnWebSocketError = {

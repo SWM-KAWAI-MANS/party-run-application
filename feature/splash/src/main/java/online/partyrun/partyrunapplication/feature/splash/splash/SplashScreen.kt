@@ -26,10 +26,11 @@ fun SplashScreen(
     navigationToAgreement: () -> Unit
 ) {
     val agreementState by splashViewModel.isAgreement.collectAsStateWithLifecycle()
+    val googleUserState by splashViewModel.googleUser.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = googleUserState) {
         delay(1500L)
-        if (agreementState) {
+        if (googleUserState != null) {
             setIntentMainActivity()
         } else {
             navigationToAgreement()

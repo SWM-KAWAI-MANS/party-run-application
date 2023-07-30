@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import online.partyrun.partyrunapplication.core.model.signin.SignInToken
+import online.partyrun.partyrunapplication.core.model.auth.SignInToken
 
 /**
  * Network representation of [SignInToken]

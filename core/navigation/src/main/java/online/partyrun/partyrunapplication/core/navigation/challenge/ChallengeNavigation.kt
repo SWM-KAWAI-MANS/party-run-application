@@ -5,12 +5,8 @@ import androidx.navigation.compose.composable
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.feature.challenge.ChallengeScreen
 
-fun NavGraphBuilder.challengeRoute(
-    onSignOut: () -> Unit
-) {
+fun NavGraphBuilder.challengeRoute() {
     composable(route = MainNavRoutes.Challenge.route) {
-        ChallengeScreen(
-            onSignOut = onSignOut
-        )
+        ChallengeScreen()
     }
 }

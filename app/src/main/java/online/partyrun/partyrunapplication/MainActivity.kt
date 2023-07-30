@@ -3,7 +3,6 @@ package online.partyrun.partyrunapplication
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,15 +17,10 @@ import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var googleAuthUiClient: GoogleAuthUiClient
 
     /**
      * 사용자로부터 위치 접근 권한을 요청하고 그 결과를 받아 처리하기 위한 코드
@@ -74,11 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun performSignOutProcess() {
-        googleAuthUiClient.signOutGoogleAuth()
-        /* TODO: 로그아웃 Toast Message 변경 필요 */
-        //Toast.makeText(applicationContext, resources.getString(R.string.sign_out_message), Toast.LENGTH_LONG).show()
-
+    private fun performSignOutProcess() {
         /* 로그아웃 한 경우 Splash 생략을 위한 Intent Extension Bundle String 제공*/
         setIntentActivity(AuthActivity::class.java) {
             putString(EXTRA_FROM_MAIN, SIGN_IN)

@@ -15,5 +15,5 @@ class SignInDataSourceImpl @Inject constructor(
      */
 
     override suspend operator fun invoke(idToken: GoogleIdTokenRequest): ApiResult<SignInTokenResponse> =
-        signApi.signInWithGoogle(idToken)
+        signApi.signInWithGoogleTokenViaServer(idToken)
 }

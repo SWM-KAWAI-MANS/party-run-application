@@ -3,7 +3,6 @@ package online.partyrun.partyrunapplication.core.navigation.auth
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
 import online.partyrun.partyrunapplication.feature.sign_in.SignInScreen
 import online.partyrun.partyrunapplication.feature.splash.agreement.AgreementScreen
 import online.partyrun.partyrunapplication.feature.splash.agreement.PrivacyPolicyScreen
@@ -52,12 +51,10 @@ fun NavGraphBuilder.agreementRoute(
 }
 
 fun NavGraphBuilder.signInRoute(
-    googleAuthUiClient: GoogleAuthUiClient,
     setIntentMainActivity: () -> Unit
 ) {
     composable(route = AuthNavRoutes.SignIn.route) {
         SignInScreen(
-            googleAuthUiClient = googleAuthUiClient,
             setIntentMainActivity = setIntentMainActivity
         )
     }

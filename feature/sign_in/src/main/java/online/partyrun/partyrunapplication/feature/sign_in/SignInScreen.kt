@@ -55,8 +55,8 @@ fun SignInScreen (
     val launcher = managedActivityResultLauncher(googleAuthUiClient, viewModel)
     var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 107
 
-    LaunchedEffect(key1 = state.signInError) {
-        state.signInError?.let { error ->
+    LaunchedEffect(key1 = state.hasSignInError) {
+        state.hasSignInError?.let { error ->
             /* TODO: Toast 메세지 변경 요 */
             Toast.makeText(context, error, Toast.LENGTH_LONG).show()
         }
@@ -82,8 +82,8 @@ fun SignInScreen (
         }
     }
 
-    LaunchedEffect(key1 = state.sendIdTokenToServer) {
-        if (state.sendIdTokenToServer) {
+    LaunchedEffect(key1 = state.isIdTokenSentToServer) {
+        if (state.isIdTokenSentToServer) {
             viewModel.resetState()
             setIntentMainActivity()
         }
@@ -94,7 +94,7 @@ fun SignInScreen (
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        if (state.onSignInIndicator) {
+        if (state.isSignInIndicatorOn) {
             modifierSignIn = Modifier.alpha(0.2f)
             CircularProgressIndicator(
                 modifier = Modifier.padding(bottom = 110.dp).align(Alignment.BottomCenter),

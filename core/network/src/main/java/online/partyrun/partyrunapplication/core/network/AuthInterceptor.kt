@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
+import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +17,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class AuthInterceptor @Inject constructor(
-    private val tokenDataSource: TokenDataSource,
+    private val tokenDataSource: TokenDataSource
 ): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val accessToken = runBlocking(Dispatchers.IO) {

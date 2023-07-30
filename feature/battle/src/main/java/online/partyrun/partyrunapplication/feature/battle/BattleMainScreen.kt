@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.gson.Gson
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
-import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
+import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.core.ui.KmInfoCard
@@ -120,8 +120,8 @@ fun Content(
             onClick = {
                 matchViewModel.openMatchDialog()
                 matchViewModel.beginBattleMatchingProcess(
-                    UserSelectedMatchDistance(
-                        distance = "M1000"
+                    RunningDistance(
+                        distance = 1000
                     )
                 )
             }

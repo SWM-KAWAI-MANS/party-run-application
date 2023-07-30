@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
-import online.partyrun.partyrunapplication.core.model.signin.SignInGoogleResult
+import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
+import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserInfoResponse
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,18 +25,18 @@ class SignInViewModel @Inject constructor(
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
     val signInGoogleState: StateFlow<SignInGoogleState> = _signInGoogleState.asStateFlow()
 
-    fun onSignInGoogleResult(result: SignInGoogleResult) {
+    fun onSignInGoogleResult(result: GoogleUserInfoResponse) {
         _signInGoogleState.update {
             it.copy(
                 isSignInSuccessful = result.userData != null,
-                signInError = result.errorMessage,
+                hasSignInError = result.errorMessage,
             )
         }
     }
     fun signInGoogleLoadingIndicator() {
         _signInGoogleState.update {
             it.copy(
-                onSignInIndicator = true
+                isSignInIndicatorOn = true
             )
         }
     }
@@ -46,13 +46,13 @@ class SignInViewModel @Inject constructor(
                 is ApiResponse.Success -> {
                     _signInGoogleState.update { state ->
                         state.copy(
-                            sendIdTokenToServer = true,
-                            onSignInIndicator = false
+                            isIdTokenSentToServer = true,
+                            isSignInIndicatorOn = false
                         )
                     }
                     saveTokensUseCase(
-                        accessToken = it.data.accessToken,
-                        refreshToken = it.data.refreshToken
+                        accessToken = it.data.accessToken ?: "",
+                        refreshToken = it.data.refreshToken ?: ""
                     )
                 }
                 is ApiResponse.Failure -> {

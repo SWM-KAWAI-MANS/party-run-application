@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
+import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
 import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -54,10 +54,10 @@ class AuthAuthenticator @Inject constructor(
             }else {
                 /* 정상적으로 새로운 Token Set을 받아온 경우 */
                 newAccessToken.body()?.let {
-                    tokenDataSource.saveAccessToken(it.accessToken)
-                    tokenDataSource.saveRefreshToken(it.refreshToken)
+                    tokenDataSource.saveAccessToken(it.accessToken ?: "")
+                    tokenDataSource.saveRefreshToken(it.refreshToken ?: "")
                     response.request.newBuilder()
-                        .header("Authorization", it.accessToken)
+                        .header("Authorization", it.accessToken ?: "")
                         .build()
                 }
             }
@@ -65,7 +65,7 @@ class AuthAuthenticator @Inject constructor(
     }
 
     /* 리턴타입에 BaseResponse를 붙이지 않는 경우 */
-    private suspend fun getNewAccessToken(refreshToken: String?): retrofit2.Response<SignInTokenResult> {
+    private suspend fun getNewAccessToken(refreshToken: String?): retrofit2.Response<SignInTokenResponse> {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             this.setLevel(HttpLoggingInterceptor.Level.BODY)
         }

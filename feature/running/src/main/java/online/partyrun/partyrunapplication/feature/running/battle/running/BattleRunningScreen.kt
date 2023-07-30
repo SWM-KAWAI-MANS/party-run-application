@@ -17,12 +17,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import online.partyrun.partyrunapplication.core.model.battle.BattleState
-import online.partyrun.partyrunapplication.core.model.battle.RunnerState
+import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
+import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 
 @Composable
 fun BattleRunningScreen(
-    battleState: BattleState,
+    battleState: BattleStatus,
 ) {
     Spacer(modifier = Modifier.size(30.dp))
     LazyColumn {
@@ -34,7 +34,7 @@ fun BattleRunningScreen(
 }
 
 @Composable
-fun RealtimeBattleScreenItem(runner: RunnerState) {
+fun RealtimeBattleScreenItem(runner: RunnerStatus) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,7 +48,7 @@ fun RealtimeBattleScreenItem(runner: RunnerState) {
 }
 
 @Composable
-fun RunnerStatsColumn(runner: RunnerState) {
+fun RunnerStatsColumn(runner: RunnerStatus) {
     Column {
         Text(text = "Runner: ${runner.runnerName}")
         Text(

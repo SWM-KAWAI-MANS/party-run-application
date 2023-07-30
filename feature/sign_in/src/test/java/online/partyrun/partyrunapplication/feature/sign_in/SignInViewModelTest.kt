@@ -3,17 +3,16 @@ package online.partyrun.partyrunapplication.feature.sign_in
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.datastore.di.TokenDataSource
-import online.partyrun.partyrunapplication.core.domain.GetSignInTokenUseCase
-import online.partyrun.partyrunapplication.core.domain.SaveTokensUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.model.signin.SignInTokenResult
+import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
+import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import online.partyrun.partyrunapplication.core.testing.repository.TestTokenRepository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class SignInViewModelTest {
 
@@ -44,12 +43,12 @@ class SignInViewModelTest {
         val idToken = GoogleIdToken(
             idToken = "valid token value"
         )
-        val response = SignInTokenResult("test", "test")
-        signInRepository.emit(ApiResponse.Success(response))
+        val response = SignInTokenResponse("test", "test")
+        signInRepository.emit(ApiResponse.Success(response.toDomainModel()))
         viewModel.signInGoogleTokenToServer(idToken)
         getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value
-        assertThat(data.sendIdTokenToServer).isTrue()
+        assertThat(data.isIdTokenSentToServer).isTrue()
     }
 
     @Test

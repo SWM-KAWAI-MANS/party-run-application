@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.domain.GetAgreementStateUseCase
+import online.partyrun.partyrunapplication.core.domain.agreement.GetAgreementStateUseCase
 import javax.inject.Inject
 
 @HiltViewModel

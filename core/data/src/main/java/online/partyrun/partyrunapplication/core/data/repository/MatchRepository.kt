@@ -4,18 +4,24 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.model.match.MatchDecisionRequest
-import online.partyrun.partyrunapplication.core.model.match.MatchStatusResult
-import online.partyrun.partyrunapplication.core.model.match.UserSelectedMatchDistance
+import online.partyrun.partyrunapplication.core.model.match.MatchDecision
+import online.partyrun.partyrunapplication.core.model.match.MatchStatus
+import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 
 interface MatchRepository {
 
     /* REST */
-    suspend fun registerMatch(userSelectedMatchDistance: UserSelectedMatchDistance): Flow<ApiResponse<MatchStatusResult>>
-    suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
-    suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): Flow<ApiResponse<MatchStatusResult>>
+    suspend fun registerMatch(runningDistance: RunningDistance): Flow<ApiResponse<MatchStatus>>
+    suspend fun acceptMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>>
+    suspend fun declineMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>>
 
     /* SSE */
-    fun connectWaitingEventSource(listener: EventSourceListener): EventSource
-    fun connectMatchResultEventSource(listener: EventSourceListener): EventSource
+    fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit): EventSourceListener
+    fun createWaitingEventSource(listener: EventSourceListener): EventSource
+    fun createMatchResultEventSource(listener: EventSourceListener): EventSource
+
+    fun connectWaitingEventSource(eventSource: EventSource)
+    fun connectMatchResultEventSource(eventSource: EventSource)
+    fun disconnectWaitingEventSource()
+    fun disconnectMatchResultEventSource()
 }

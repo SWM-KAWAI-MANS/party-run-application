@@ -13,9 +13,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSourceImpl
+import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSourceImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSource
+import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -58,11 +62,13 @@ object DataStoreModule {
     @Provides
     fun provideTokenDataSource(
         @Named("TokenPreferences") tokenPreferencesDataStore: DataStore<Preferences>
-    ): TokenDataSource = TokenDataSource(tokenPreferencesDataStore)
+    ) : TokenDataSource = TokenDataSourceImpl(tokenPreferencesDataStore)
+
 
     @Singleton
     @Provides
     fun provideAgreementDataSource(
         @Named("AgreementPreferences") agreementPreferencesDataStore: DataStore<Preferences>
-    ): AgreementDataSource = AgreementDataSource(agreementPreferencesDataStore)
+    ) : AgreementDataSource = AgreementDataSourceImpl(agreementPreferencesDataStore)
+
 }

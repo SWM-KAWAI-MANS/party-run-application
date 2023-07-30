@@ -14,15 +14,14 @@ data class GoogleUserDataResponse(
     val profilePictureUrl: String?
 )
 
-fun GoogleUserInfoResponse.toDomainModel() = this.userData?.let {
-    GoogleUserInfo(
-        userData = it.toDomainModel(),
-        errorMessage = this.errorMessage ?: ""
-    )
-}
+fun GoogleUserInfoResponse.toDomainModel() = GoogleUserInfo(
+    userData = this.userData?.toDomainModel(),
+    errorMessage = this.errorMessage
+)
+
 
 fun GoogleUserDataResponse.toDomainModel() = GoogleUserData(
     userId = this.userId,
-    username = this.username ?: "",
-    profilePictureUrl = this.profilePictureUrl ?: ""
+    username = this.username,
+    profilePictureUrl = this.profilePictureUrl
 )

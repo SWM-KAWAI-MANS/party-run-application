@@ -11,4 +11,5 @@ interface SignInRepository {
      */
     suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>>
 
+    suspend fun signOutGoogleAuth()
 }

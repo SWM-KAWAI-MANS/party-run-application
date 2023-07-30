@@ -6,13 +6,15 @@ import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.signin.SignInToken
+import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.network.model.request.toRequestModel
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import javax.inject.Inject
 
 class SignInRepositoryImpl @Inject constructor(
-    private val signInDataSource: SignInDataSource
+    private val signInDataSource: SignInDataSource,
+    private val googleAuthClient: GoogleAuthClient
 ) : SignInRepository {
     override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> {
         return apiRequestFlow { signInDataSource(idToken.toRequestModel()) }
@@ -24,5 +26,10 @@ class SignInRepositoryImpl @Inject constructor(
                 }
             }
     }
+
+    override suspend fun signOutGoogleAuth() {
+        googleAuthClient.signOutGoogleAuth()
+    }
+
 
 }

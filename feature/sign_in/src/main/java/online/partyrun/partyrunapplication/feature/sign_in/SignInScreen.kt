@@ -40,19 +40,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.core.ui.GoogleSignInButton
 import timber.log.Timber
 
 @Composable
 fun SignInScreen (
     viewModel: SignInViewModel = hiltViewModel(),
-    googleAuthUiClient: GoogleAuthUiClient,
+    googleAuthClient: GoogleAuthClient,
     setIntentMainActivity: () -> Unit,
 ) {
     val context = LocalContext.current
     val state by viewModel.signInGoogleState.collectAsStateWithLifecycle()
-    val launcher = managedActivityResultLauncher(googleAuthUiClient, viewModel)
+    val launcher = managedActivityResultLauncher(googleAuthClient, viewModel)
     var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 107
 
     LaunchedEffect(key1 = state.hasSignInError) {
@@ -141,7 +141,7 @@ fun SignInScreen (
                 /* Firebase Google SignIn process */
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val signInIntentSender = googleAuthUiClient.signInGoogle()
+                        val signInIntentSender = googleAuthClient.signInGoogle()
                         launcher.launch(
                             IntentSenderRequest.Builder(
                                 signInIntentSender ?: return@launch
@@ -161,7 +161,7 @@ fun SignInScreen (
 
 @Composable
 private fun managedActivityResultLauncher(
-    googleAuthUiClient: GoogleAuthUiClient,
+    googleAuthClient: GoogleAuthClient,
     viewModel: SignInViewModel
 ): ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult> {
     val launcher = rememberLauncherForActivityResult(
@@ -169,7 +169,7 @@ private fun managedActivityResultLauncher(
         onResult = { result ->
             if (result.resultCode == ComponentActivity.RESULT_OK) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val signInResult = googleAuthUiClient.signInGoogleWithIntent(
+                    val signInResult = googleAuthClient.signInGoogleWithIntent(
                         intent = result.data ?: return@launch,
                     ) {
                         viewModel.signInGoogleLoadingIndicator()

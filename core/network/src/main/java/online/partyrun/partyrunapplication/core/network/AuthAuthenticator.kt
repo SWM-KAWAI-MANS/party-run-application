@@ -30,7 +30,7 @@ class AuthAuthenticator @Inject constructor(
 ) : Authenticator {
 
     private val googleAuthUiClient by lazy {
-        GoogleAuthUiClient(
+        GoogleAuthClient(
             context = context,
             oneTapClient = Identity.getSignInClient(context)
         )

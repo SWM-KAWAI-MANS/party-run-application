@@ -16,7 +16,7 @@ import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpir
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
 import retrofit2.Retrofit
@@ -52,8 +52,8 @@ object NetworkModule {
     fun provideGoogleSignInClient(
         @ApplicationContext context: Context,
         oneTapClient: SignInClient
-    ): GoogleAuthUiClient =
-        GoogleAuthUiClient(context, oneTapClient)
+    ): GoogleAuthClient =
+        GoogleAuthClient(context, oneTapClient)
 
     @Singleton
     @Provides

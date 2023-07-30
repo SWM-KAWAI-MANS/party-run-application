@@ -11,13 +11,13 @@ import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.agreementRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.signInRoute
 import online.partyrun.partyrunapplication.core.navigation.auth.splashRoute
-import online.partyrun.partyrunapplication.core.network.GoogleAuthUiClient
+import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 
 @Composable
 fun PartyRunAuth(
     navController: NavHostController,
     startDestination: String,
-    googleAuthUiClient: GoogleAuthUiClient,
+    googleAuthClient: GoogleAuthClient,
     handleLoginState: () -> Unit,
     intentToMainActivity: () -> Unit
 ) {
@@ -28,7 +28,7 @@ fun PartyRunAuth(
             SetUpAuthNavGraph(
                 navController = navController,
                 startDestination = startDestination,
-                googleAuthUiClient = googleAuthUiClient,
+                googleAuthClient = googleAuthClient,
                 handleLoginState = handleLoginState,
                 intentToMainActivity = intentToMainActivity
             )
@@ -40,7 +40,7 @@ fun PartyRunAuth(
 fun SetUpAuthNavGraph(
     navController: NavHostController,
     startDestination: String,
-    googleAuthUiClient: GoogleAuthUiClient,
+    googleAuthClient: GoogleAuthClient,
     handleLoginState: () -> Unit,
     intentToMainActivity: () -> Unit
 ) {
@@ -67,7 +67,7 @@ fun SetUpAuthNavGraph(
         )
 
         signInRoute(
-            googleAuthUiClient = googleAuthUiClient,
+            googleAuthUiClient = googleAuthClient,
             setIntentMainActivity = intentToMainActivity
         )
     }

@@ -11,5 +11,5 @@ class GetSignInTokenUseCase @Inject constructor(
     private val signInRepository: SignInRepository
 ) {
     suspend operator fun invoke(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> =
-        signInRepository.signInGoogleTokenToServer(idToken)
+        signInRepository.signInWithGoogleTokenViaServer(idToken)
 }

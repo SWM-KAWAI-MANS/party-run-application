@@ -72,7 +72,7 @@ fun SignInScreen (
                         val idToken: String? = task.result.token
                         Timber.tag("SignInScreen").i("IDToken: $idToken")
                         /* Send token to backend via HTTPS Retrofit */
-                        viewModel.signInGoogleTokenToServer(
+                        viewModel.signInWithGoogleTokenViaServer(
                             GoogleIdToken(idToken = idToken)
                         )
                     } else {

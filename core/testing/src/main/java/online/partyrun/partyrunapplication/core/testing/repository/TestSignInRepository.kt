@@ -18,5 +18,5 @@ class TestSignInRepository : SignInRepository {
         tokenSet.emit(value)
     }
 
-    override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> = tokenSet
+    override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> = tokenSet
 }

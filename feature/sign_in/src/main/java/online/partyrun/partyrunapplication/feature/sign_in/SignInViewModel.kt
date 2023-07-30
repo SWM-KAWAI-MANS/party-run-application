@@ -40,7 +40,7 @@ class SignInViewModel @Inject constructor(
             )
         }
     }
-    fun signInGoogleTokenToServer(idToken: GoogleIdToken) = viewModelScope.launch {
+    fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken) = viewModelScope.launch {
         getSignInTokenUseCase(idToken).collect() {
             when(it) {
                 is ApiResponse.Success -> {

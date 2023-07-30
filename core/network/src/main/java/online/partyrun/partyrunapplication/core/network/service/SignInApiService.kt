@@ -18,7 +18,7 @@ interface SignInApiService {
      * ApiResult<BaseResponse<SignInTokenResponse>>
      */
     @POST("/api/auth")
-    suspend fun signInWithGoogle(
+    suspend fun signInWithGoogleTokenViaServer(
         @Body body: GoogleIdTokenRequest
     ): ApiResult<SignInTokenResponse>
 

@@ -14,7 +14,7 @@ import javax.inject.Inject
 class SignInRepositoryImpl @Inject constructor(
     private val signInDataSource: SignInDataSource
 ) : SignInRepository {
-    override suspend fun signInGoogleTokenToServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> {
+    override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> {
         return apiRequestFlow { signInDataSource(idToken.toRequestModel()) }
             .map { apiResponse ->
                 when (apiResponse) {

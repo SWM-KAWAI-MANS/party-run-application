@@ -12,6 +12,8 @@ import online.partyrun.partyrunapplication.core.data.repository.AgreementReposit
 import online.partyrun.partyrunapplication.core.data.repository.AgreementRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.BattleRepository
 import online.partyrun.partyrunapplication.core.data.repository.BattleRepositoryImpl
+import online.partyrun.partyrunapplication.core.data.repository.GoogleAuthRepository
+import online.partyrun.partyrunapplication.core.data.repository.GoogleAuthRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepositoryImpl
 import javax.inject.Singleton
@@ -28,6 +30,12 @@ internal interface DataModule {
     fun bindSignInRepository (
         signInRepository: SignInRepositoryImpl
     ): SignInRepository
+
+    @Singleton
+    @Binds
+    fun bindGoogleAuthRepository (
+        googleAuthRepository: GoogleAuthRepositoryImpl
+    ): GoogleAuthRepository
 
     @Singleton
     @Binds

@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.model.signin
+package online.partyrun.partyrunapplication.core.model.auth
 
 data class GoogleUserInfo(
     val userData: GoogleUserData,

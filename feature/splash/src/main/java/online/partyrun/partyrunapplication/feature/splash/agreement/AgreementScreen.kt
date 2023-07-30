@@ -30,9 +30,9 @@ import online.partyrun.partyrunapplication.feature.splash.R
 
 @Composable
 fun AgreementScreen(
-    setIntentMainActivity: () -> Unit,
     navigationToTermsOfService: () -> Unit,
     navigationToPrivacyPolicy: () -> Unit,
+    setIntentMainActivity: () -> Unit,
     agreementViewModel: AgreementViewModel = hiltViewModel()
 ) {
     val state by agreementViewModel.agreementUiState.collectAsStateWithLifecycle()

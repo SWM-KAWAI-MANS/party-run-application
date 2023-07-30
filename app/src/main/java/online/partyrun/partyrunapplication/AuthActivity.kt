@@ -12,16 +12,10 @@ import online.partyrun.partyrunapplication.core.common.ExtraConstants.SPLASH
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
-import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
-import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.ui.PartyRunAuth
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var googleAuthClient: GoogleAuthClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,14 +33,6 @@ class AuthActivity : ComponentActivity() {
                     PartyRunAuth(
                         navController = navController,
                         startDestination = fromMain,
-                        googleAuthClient = googleAuthClient,
-                        handleLoginState = {
-                            if (googleAuthClient.getGoogleAuthUser() != null) {
-                                intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
-                            } else { // 유저가 로그아웃 상태라면 로그인부터 진행
-                                navController.navigate(AuthNavRoutes.SignIn.route)
-                            }
-                        },
                         intentToMainActivity = {
                             intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
                         }

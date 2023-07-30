@@ -73,13 +73,11 @@ class GoogleAuthClient @Inject constructor(
      * auth 객체의 signInWithCredential() 호출해 사용자 인증 -> val user = ~
      */
     suspend fun signInGoogleWithIntent(
-        intent: Intent,
-        signInGoogleLoadingIndicator: () -> Unit
+        intent: Intent
     ): GoogleUserInfoResponse {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
-        signInGoogleLoadingIndicator()
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
             GoogleUserInfoResponse(

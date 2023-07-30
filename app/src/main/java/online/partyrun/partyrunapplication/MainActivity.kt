@@ -17,15 +17,10 @@ import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
-import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var googleAuthClient: GoogleAuthClient
 
     /**
      * 사용자로부터 위치 접근 권한을 요청하고 그 결과를 받아 처리하기 위한 코드

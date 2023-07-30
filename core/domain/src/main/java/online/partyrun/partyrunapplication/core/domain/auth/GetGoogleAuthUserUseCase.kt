@@ -1,13 +1,13 @@
 package online.partyrun.partyrunapplication.core.domain.auth
 
 import online.partyrun.partyrunapplication.core.data.repository.GoogleAuthRepository
+import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
 import javax.inject.Inject
 
-class GoogleSignOutUseCase @Inject constructor(
+class GetGoogleAuthUserUseCase @Inject constructor(
     private val googleAuthRepository: GoogleAuthRepository
 ) {
-    suspend operator fun invoke() {
-        googleAuthRepository.signOutGoogleAuth()
+    operator fun invoke(): GoogleUserData? {
+        return googleAuthRepository.getGoogleAuthUser()
     }
-
 }

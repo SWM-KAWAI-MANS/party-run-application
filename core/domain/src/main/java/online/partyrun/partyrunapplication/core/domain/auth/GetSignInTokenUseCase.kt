@@ -1,10 +1,10 @@
 package online.partyrun.partyrunapplication.core.domain.auth
 
 import kotlinx.coroutines.flow.Flow
-import online.partyrun.partyrunapplication.core.model.signin.GoogleIdToken
+import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
-import online.partyrun.partyrunapplication.core.model.signin.SignInToken
+import online.partyrun.partyrunapplication.core.model.auth.SignInToken
 import javax.inject.Inject
 
 class GetSignInTokenUseCase @Inject constructor(

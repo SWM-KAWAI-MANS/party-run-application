@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
-import online.partyrun.partyrunapplication.core.model.signin.GoogleUserData
-import online.partyrun.partyrunapplication.core.model.signin.GoogleUserInfo
+import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
+import online.partyrun.partyrunapplication.core.model.auth.GoogleUserInfo
 
 data class GoogleUserInfoResponse(
     val userData: GoogleUserDataResponse?,

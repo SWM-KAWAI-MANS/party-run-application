@@ -10,9 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ChallengeScreen(
-    onSignOut: () -> Unit
-) {
+fun ChallengeScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -21,8 +19,5 @@ fun ChallengeScreen(
         Text(
             text = "챌린지 모드"
         )
-        Button(onClick = onSignOut) {
-            Text(text = "Sign out")
-        }
     }
 }

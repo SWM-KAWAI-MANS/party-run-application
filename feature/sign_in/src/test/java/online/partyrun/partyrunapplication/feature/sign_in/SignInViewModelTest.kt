@@ -4,10 +4,12 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
+import online.partyrun.partyrunapplication.core.testing.repository.TestGoogleAuthRepository
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import online.partyrun.partyrunapplication.core.testing.repository.TestTokenRepository
 import org.junit.Before
@@ -18,11 +20,15 @@ class SignInViewModelTest {
 
     private val signInRepository = TestSignInRepository()
     private val tokenRepository = TestTokenRepository()
+    private val googleAuthRepository = TestGoogleAuthRepository()
     private val getSignInTokenUseCase = GetSignInTokenUseCase(
         signInRepository = signInRepository
     )
     private val saveTokensUseCase = SaveTokensUseCase(
         tokenRepository = tokenRepository
+    )
+    private val googleSignInUseCase = GoogleSignInUseCase(
+        googleAuthRepository = googleAuthRepository
     )
 
     private lateinit var viewModel: SignInViewModel
@@ -34,7 +40,8 @@ class SignInViewModelTest {
     fun setUp() {
         viewModel = SignInViewModel(
             getSignInTokenUseCase = getSignInTokenUseCase,
-            saveTokensUseCase = saveTokensUseCase
+            saveTokensUseCase = saveTokensUseCase,
+            googleSignInUseCase = googleSignInUseCase
         )
     }
 

@@ -10,12 +10,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import online.partyrun.partyrunapplication.core.navigation.main.BottomNavigationBar
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
@@ -47,9 +49,17 @@ fun SetUpMainGraph(
     navController: NavHostController,
     onSignOut: () -> Unit
 ) {
+    /**
+     * 현재 destination 가져와 arguments는 고려하지 않고 route만 비교 -> currentRoute
+     */
+    val currentDestination by navController.currentBackStackEntryAsState()
+    val currentRoute = currentDestination?.destination?.route?.substringBefore("?")
+
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(navController = navController)
+            if (currentRoute != MainNavRoutes.BattleRunning.route) {
+                BottomNavigationBar(navController = navController)
+            }
         },
     ) { paddingValues ->
         Box(
@@ -66,13 +76,15 @@ fun SetUpMainGraph(
                 onSignOut = onSignOut
             )
 
-            Divider( // 네비게이션바 border 상단 표현
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
-                color = Color(0xFFBD55F2)
-            )
+            if (currentRoute != MainNavRoutes.BattleRunning.route) {
+                Divider( // 네비게이션바 border 상단 표현
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
+                    color = Color(0xFFBD55F2)
+                )
+            }
         }
     }
 }

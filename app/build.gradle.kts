@@ -80,6 +80,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
+    implementation(project(":core:ui"))
 
     // feature modules
     implementation(project(":feature:sign_in"))

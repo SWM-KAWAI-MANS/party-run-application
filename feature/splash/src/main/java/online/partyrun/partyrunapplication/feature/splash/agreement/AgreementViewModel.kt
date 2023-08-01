@@ -18,8 +18,8 @@ class AgreementViewModel @Inject constructor(
     private val _agreementUiState = MutableStateFlow(AgreementUiState())
     val agreementUiState: StateFlow<AgreementUiState> = _agreementUiState.asStateFlow()
 
-    fun saveAgreementState() = viewModelScope.launch {
-        saveAgreementUseCase(true)
+    fun saveAgreementState(isChecked: Boolean) = viewModelScope.launch {
+        saveAgreementUseCase(isChecked)
     }
 
     fun onCheckedChangeAllAgreement(isChecked: Boolean) {

@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import online.partyrun.partyrunapplication.core.common.ExtraConstants.EXTRA_FROM_MAIN
 import online.partyrun.partyrunapplication.core.common.ExtraConstants.SPLASH
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
@@ -26,13 +25,11 @@ class AuthActivity : ComponentActivity() {
                 disableDynamicTheming = true,
             ) {
                 val navController = rememberNavController()
-                /* 프로세스 절차 중 유저가 로그아웃 한 경우 혹은 refresh가 만료된 경우 Splash 생략하고 바로 sign_in으로 */
-                val fromMain = intent.getStringExtra(EXTRA_FROM_MAIN)?: SPLASH
 
                 PartyRunBackground {
                     PartyRunAuth(
                         navController = navController,
-                        startDestination = fromMain,
+                        startDestination = SPLASH,
                         intentToMainActivity = {
                             intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
                         }

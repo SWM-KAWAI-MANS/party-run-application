@@ -32,7 +32,7 @@ import online.partyrun.partyrunapplication.feature.splash.R
 fun AgreementScreen(
     navigationToTermsOfService: () -> Unit,
     navigationToPrivacyPolicy: () -> Unit,
-    setIntentMainActivity: () -> Unit,
+    navigationToSignIn: () -> Unit,
     agreementViewModel: AgreementViewModel = hiltViewModel()
 ) {
     val state by agreementViewModel.agreementUiState.collectAsStateWithLifecycle()
@@ -105,8 +105,8 @@ fun AgreementScreen(
             PartyRunAnimatedButton(
                 modifier = Modifier.padding(horizontal = 40.dp),
                 onClick = {
-                    agreementViewModel.saveAgreementState()
-                    setIntentMainActivity()
+                    agreementViewModel.saveAgreementState(isChecked = true)
+                    navigationToSignIn()
                 },
                 visible = state.isAllChecked
             ) {

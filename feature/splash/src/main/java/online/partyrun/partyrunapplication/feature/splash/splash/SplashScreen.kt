@@ -25,12 +25,11 @@ fun SplashScreen(
     setIntentMainActivity: () -> Unit,
     navigationToAgreement: () -> Unit
 ) {
-    val agreementState by splashViewModel.isAgreement.collectAsStateWithLifecycle()
     val googleUserState by splashViewModel.googleUser.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = googleUserState) {
         delay(1500L)
-        if (googleUserState != null) {
+        if (googleUserState != null) { // Google 로그인이 되어있는 상태라면
             setIntentMainActivity()
         } else {
             navigationToAgreement()

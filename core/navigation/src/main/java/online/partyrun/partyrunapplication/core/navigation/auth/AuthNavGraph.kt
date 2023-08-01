@@ -23,13 +23,13 @@ fun NavGraphBuilder.splashRoute(
 
 fun NavGraphBuilder.agreementRoute(
     navController: NavHostController,
-    setIntentMainActivity: () -> Unit,
+    navigationToSignIn: () -> Unit,
     navigationToTermsOfService: () -> Unit,
     navigationToPrivacyPolicy: () -> Unit
 ) {
     composable(AuthNavRoutes.Agreement.route) {
         AgreementScreen(
-            setIntentMainActivity = setIntentMainActivity,
+            navigationToSignIn = navigationToSignIn,
             navigationToTermsOfService = navigationToTermsOfService,
             navigationToPrivacyPolicy = navigationToPrivacyPolicy
         )

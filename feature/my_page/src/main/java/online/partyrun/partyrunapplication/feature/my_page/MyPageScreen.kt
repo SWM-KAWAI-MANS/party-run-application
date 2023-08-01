@@ -26,6 +26,7 @@ fun MyPageScreen(
         Button(
             onClick = {
                 viewModel.signOutFromGoogle()
+                viewModel.saveAgreementState(isChecked = false)
                 onSignOut()
             }
         ) {

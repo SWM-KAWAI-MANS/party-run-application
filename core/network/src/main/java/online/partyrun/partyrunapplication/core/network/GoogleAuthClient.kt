@@ -11,6 +11,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
 import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserInfoResponse
@@ -119,11 +121,13 @@ class GoogleAuthClient @Inject constructor(
      * getGoogleAuthUser(): 현재 구글에 로그인된 사용자 정보를 UserData 객체로 반환
      * 현재 사용자가 로그인되어 있지 않으면 null 반환
      */
-    fun getGoogleAuthUser(): GoogleUserDataResponse? = auth.currentUser?.run {
-        GoogleUserDataResponse(
-            userId = uid,
-            username = displayName,
-            profilePictureUrl = photoUrl?.toString()
-        )
+    fun getGoogleAuthUser(): Flow<GoogleUserDataResponse?> = flow {
+        emit(auth.currentUser?.run {
+            GoogleUserDataResponse(
+                userId = uid,
+                username = displayName,
+                profilePictureUrl = photoUrl?.toString()
+            )
+        })
     }
 }

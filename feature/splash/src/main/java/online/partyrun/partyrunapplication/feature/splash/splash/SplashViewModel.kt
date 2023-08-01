@@ -29,7 +29,9 @@ class SplashViewModel @Inject constructor(
         getGoogleAuthUser()
     }
     private fun getGoogleAuthUser() = viewModelScope.launch {
-        _googleUser.value = getGoogleAuthUserUseCase()
+        getGoogleAuthUserUseCase().collect {
+            _googleUser.value = it
+        }
     }
 
     private fun getAgreementState() = viewModelScope.launch {

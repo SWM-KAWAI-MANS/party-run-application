@@ -2,6 +2,8 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import android.content.Intent
 import android.content.IntentSender
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserInfo
 import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
@@ -26,7 +28,7 @@ class GoogleAuthRepositoryImpl @Inject constructor(
         googleAuthClient.signOutGoogleAuth()
     }
 
-    override fun getGoogleAuthUser(): GoogleUserData? {
-        return googleAuthClient.getGoogleAuthUser()?.toDomainModel()
+    override fun getGoogleAuthUser(): Flow<GoogleUserData?> {
+        return googleAuthClient.getGoogleAuthUser().map { it?.toDomainModel() }
     }
 }

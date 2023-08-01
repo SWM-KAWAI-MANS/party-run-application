@@ -14,6 +14,6 @@ class GetAgreementStateUseCase @Inject constructor(
 class SaveAgreementStateUseCase @Inject constructor(
     private val agreementRepository: AgreementRepository
 ) {
-    suspend operator fun invoke(checked: Boolean) =
-        agreementRepository.saveAgreementState(checked)
+    suspend operator fun invoke(isChecked: Boolean) =
+        agreementRepository.saveAgreementState(isChecked)
 }

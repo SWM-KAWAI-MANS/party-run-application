@@ -18,9 +18,9 @@ class AgreementDataSourceImpl @Inject constructor(
         private val AGREEMENT_KEY = booleanPreferencesKey("agree")
     }
 
-    override suspend fun saveAgreementState(checked: Boolean) {
+    override suspend fun saveAgreementState(isChecked: Boolean) {
         agreementDataStore.edit { preferences ->
-            preferences[AGREEMENT_KEY] = checked
+            preferences[AGREEMENT_KEY] = isChecked
         }
     }
 

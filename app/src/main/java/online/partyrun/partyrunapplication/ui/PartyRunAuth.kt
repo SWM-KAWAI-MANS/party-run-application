@@ -50,7 +50,9 @@ fun SetUpAuthNavGraph(
 
         agreementRoute(
             navController = navController,
-            setIntentMainActivity = intentToMainActivity,
+            navigationToSignIn = {
+                 navController.navigate(AuthNavRoutes.SignIn.route)
+            },
             navigationToTermsOfService = {
                 navController.navigate(AuthNavRoutes.TermsOfService.route)
             },

@@ -25,6 +25,7 @@ fun PartyRunOutlinedText(
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
     contentColor: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = White10,
     borderStrokeWidth: Dp = 3.dp,
     borderStrokeColor: Color = MaterialTheme.colorScheme.outline,
     content: @Composable () -> Unit
@@ -36,7 +37,7 @@ fun PartyRunOutlinedText(
             width = borderStrokeWidth,
             color = borderStrokeColor,
         ),
-        color = White10,
+        color = containerColor,
         shadowElevation = 3.dp,
         contentColor = contentColor,
     ) {

@@ -8,14 +8,12 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,7 +44,7 @@ fun SignInScreen (
     val context = LocalContext.current
     val state by viewModel.signInGoogleState.collectAsStateWithLifecycle()
     val launcher = managedActivityResultLauncher(viewModel = viewModel)
-    var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 107
+    var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 84
 
     LaunchedEffect(key1 = state.hasSignInError) {
         state.hasSignInError?.let { error ->
@@ -83,50 +80,45 @@ fun SignInScreen (
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        if (state.isSignInIndicatorOn) {
-            modifierSignIn = Modifier.alpha(0.2f)
+    if (state.isSignInIndicatorOn) {
+        modifierSignIn = Modifier.alpha(0.2f)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             CircularProgressIndicator(
-                modifier = Modifier.padding(bottom = 110.dp).align(Alignment.BottomCenter),
+                modifier = Modifier.size(50.dp),
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+    }
 
+    Column(
+        modifier = modifierSignIn
+            .fillMaxSize()
+            .padding(30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.padding(top = 80.dp, bottom = 20.dp),
+            painter = painterResource(R.drawable.logo),
+            contentDescription = stringResource(R.string.logo_content_desc),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+        )
         Column(
-            modifier = modifierSignIn
-                .fillMaxSize()
-                .align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
         ) {
-            Box() {
-                LottieImage(
-                    modifier = Modifier
-                        .size(270.dp)
-                        .clip(RoundedCornerShape(35.dp)),
-                    rawAnimation = R.raw.background_effect
-                )
-                Image(
-                    modifier = Modifier.align(Alignment.Center),
-                    painter = painterResource(R.drawable.logo),
-                    contentDescription = stringResource(R.string.logo_content_desc),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                )
-            }
             LottieImage(
                 modifier = Modifier
-                    .size(300.dp)
-                    .clip(RoundedCornerShape(35.dp)),
+                    .size(300.dp),
                 rawAnimation = R.raw.running
             )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .padding(bottom = 30.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center

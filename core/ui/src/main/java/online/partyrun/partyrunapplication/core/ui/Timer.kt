@@ -6,10 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import kotlinx.coroutines.delay
 
 @Composable
-fun FormatElapsedTimer() {
+fun FormatElapsedTimer(
+    contentStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    contentColor: Color = MaterialTheme.colorScheme.primary
+) {
     val elapsedTime = remember { mutableStateOf(0) }
 
     LaunchedEffect(key1 = elapsedTime) {
@@ -26,8 +31,8 @@ fun FormatElapsedTimer() {
     val displayTime = formatTime(hours, minutes, seconds)
     Text(
         text = displayTime,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary
+        style = contentStyle,
+        color = contentColor
     )
 }
 

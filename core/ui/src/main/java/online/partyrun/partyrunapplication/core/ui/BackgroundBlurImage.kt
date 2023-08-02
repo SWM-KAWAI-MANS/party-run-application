@@ -6,17 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import online.partyrun.partyrunapplication.core.designsystem.R
 
 @Composable
 fun BackgroundBlurImage(
     modifier: Modifier = Modifier,
+    image: Int,
     contentAlignment: Alignment
 ) {
     Box(
         modifier = modifier,
         contentAlignment = contentAlignment
     ) {
-        Image(painter = painterResource(id = R.drawable.backgroundblur), contentDescription = null)
+        Image(painter = painterResource(id = image), contentDescription = null)
     }
 }

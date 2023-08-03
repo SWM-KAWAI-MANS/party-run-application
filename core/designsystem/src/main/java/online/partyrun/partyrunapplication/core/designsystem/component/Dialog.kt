@@ -2,13 +2,11 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -38,7 +36,6 @@ fun PartyRunMatchDialog(
             cornerRadius = 16.dp,
             strokeWidth = 10.dp,
             strokeColor = Purple60,
-            imageSize = 240.dp,
             imageContent = {
                 Image(
                     painter = painterResource(id = R.drawable.searching_for_match),
@@ -71,7 +68,6 @@ fun PartyRunResultDialog(
             cornerRadius = 25.dp,
             strokeWidth = 0.dp,
             strokeColor = Color.Transparent,
-            imageSize = 150.dp,
             imageContent = {
                 Image(
                     painter = painterResource(id = R.drawable.match_result),
@@ -99,7 +95,6 @@ fun PartyRunCancelDialog(
             cornerRadius = 25.dp,
             strokeWidth = 10.dp,
             strokeColor = Purple60,
-            imageSize = 150.dp,
             imageContent = {},
             isResultDialog = false
         ) {
@@ -114,12 +109,10 @@ fun DialogContent(
     cornerRadius: Dp,
     strokeWidth: Dp,
     strokeColor: Color,
-    imageSize: Dp,
     isResultDialog: Boolean,
     imageContent: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
         ) {
@@ -135,21 +128,17 @@ fun DialogContent(
         }
 
         if (isResultDialog) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(75.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(top = 70.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 imageContent()
             }
         } else {
             Column(
-                modifier = Modifier
-                    .size(imageSize)
-                    .align(Alignment.TopCenter)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 imageContent()
             }
         }
-    }
 }

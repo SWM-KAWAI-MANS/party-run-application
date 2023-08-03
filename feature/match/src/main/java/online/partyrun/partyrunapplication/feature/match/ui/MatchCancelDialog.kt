@@ -1,12 +1,9 @@
 package online.partyrun.partyrunapplication.feature.match.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,14 +24,10 @@ fun MatchCancelDialog(
     PartyRunCancelDialog(
         onDismissRequest = {
             setShowDialog(false)
-        },
-        modifier = Modifier
-            .width(300.dp)
-            .height(300.dp),
+        }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(20.dp),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(50.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(

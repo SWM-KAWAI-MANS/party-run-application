@@ -2,14 +2,12 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -25,24 +23,24 @@ fun PartyRunOutlinedText(
     modifier: Modifier = Modifier,
     shape: Shape = CircleShape,
     contentColor: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = White10,
     borderStrokeWidth: Dp = 3.dp,
     borderStrokeColor: Color = MaterialTheme.colorScheme.outline,
     content: @Composable () -> Unit
 ) {
     Surface(
-        modifier = modifier,
+        modifier = Modifier,
         shape = shape,
         border = BorderStroke(
             width = borderStrokeWidth,
             color = borderStrokeColor,
         ),
-        color = White10,
+        color = containerColor,
         shadowElevation = 3.dp,
         contentColor = contentColor,
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = modifier
         ) {
             content()
         }
@@ -55,7 +53,7 @@ fun PartyRunGradientText(
     content: @Composable () -> Unit
 ) {
     Surface(
-        modifier = modifier
+        modifier = Modifier
             .background(
                 brush = Brush.linearGradient( // 그라디언트 적용
                     listOf(Purple70, Purple10)
@@ -65,9 +63,8 @@ fun PartyRunGradientText(
         color = Color.Transparent,
         contentColor = White10,
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = modifier
         ) {
             content()
         }

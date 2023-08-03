@@ -98,6 +98,7 @@ fun Content(
     Box(modifier = Modifier.fillMaxSize()) {
         BackgroundBlurImage(
             modifier = Modifier.fillMaxSize(),
+            image = R.drawable.backgroundblur,
             contentAlignment = Alignment.BottomCenter
         )
         HeadLine(

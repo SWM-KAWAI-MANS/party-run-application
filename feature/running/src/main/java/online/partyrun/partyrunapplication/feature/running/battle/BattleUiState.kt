@@ -4,6 +4,7 @@ import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 
 data class BattleUiState(
     val isConnecting: Boolean = true,
+    val selectedDistance: Int = 1000,
     val screenState: BattleScreenState = BattleScreenState.Ready,
     val showConnectionError: Boolean = false,
     val battleState: BattleStatus = BattleStatus(),

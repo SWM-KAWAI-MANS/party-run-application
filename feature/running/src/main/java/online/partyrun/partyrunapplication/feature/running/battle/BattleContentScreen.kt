@@ -47,7 +47,7 @@ fun Content(
     ) {
         when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
-            is BattleScreenState.Running -> BattleRunningScreen(battleState = battleUiState.battleState)
+            is BattleScreenState.Running -> BattleRunningScreen(battleUiState)
         }
     }
 }

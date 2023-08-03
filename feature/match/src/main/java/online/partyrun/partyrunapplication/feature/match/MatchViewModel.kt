@@ -267,6 +267,9 @@ class MatchViewModel @Inject constructor(
             onEvent = ::handleWaitingEvent,
             onClosed = {
                 waitingEventSSEstate.complete(Unit)
+            },
+            onFailure = {
+                waitingEventSSEstate.complete(Unit)
             }
         )
         connectWaitingEventSourceUseCase(createWaitingEventSourceUseCase(listener))
@@ -277,6 +280,9 @@ class MatchViewModel @Inject constructor(
         val listener = createMatchEventSourceListenerUseCase(
             onEvent = ::handleMatchResultEvent,
             onClosed = {
+                matchResultEventSSEstate.complete(Unit)
+            },
+            onFailure = {
                 matchResultEventSSEstate.complete(Unit)
             }
         )

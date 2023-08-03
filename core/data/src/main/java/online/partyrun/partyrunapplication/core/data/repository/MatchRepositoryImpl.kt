@@ -15,7 +15,6 @@ import online.partyrun.partyrunapplication.core.network.model.request.toRequestM
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import javax.inject.Inject
 
-
 class MatchRepositoryImpl @Inject constructor(
     private val dataSource: MatchDataSource
 ) : MatchRepository {
@@ -52,8 +51,8 @@ class MatchRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit): EventSourceListener {
-        return dataSource.createMatchEventSourceListener(onEvent, onClosed)
+    override fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener {
+        return dataSource.createMatchEventSourceListener(onEvent, onClosed, onFailure)
     }
 
     /* SSE */

@@ -16,7 +16,7 @@ interface MatchRepository {
     suspend fun declineMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>>
 
     /* SSE */
-    fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit): EventSourceListener
+    fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener
     fun createWaitingEventSource(listener: EventSourceListener): EventSource
     fun createMatchResultEventSource(listener: EventSourceListener): EventSource
 

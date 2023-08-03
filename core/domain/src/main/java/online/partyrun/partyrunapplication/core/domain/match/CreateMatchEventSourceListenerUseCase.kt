@@ -7,7 +7,7 @@ import javax.inject.Inject
 class CreateMatchEventSourceListenerUseCase @Inject constructor(
     private val matchRepository: MatchRepository
 ) {
-    operator fun invoke(onEvent: (data: String) -> Unit, onClosed: () -> Unit): EventSourceListener {
-        return matchRepository.createMatchEventSourceListener(onEvent, onClosed)
+    operator fun invoke(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener {
+        return matchRepository.createMatchEventSourceListener(onEvent, onClosed, onFailure)
     }
 }

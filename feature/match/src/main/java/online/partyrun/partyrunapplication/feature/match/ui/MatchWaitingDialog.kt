@@ -52,14 +52,9 @@ fun MatchWaitingDialog(
             disconnectSSE()
             setShowDialog(false)
         },
-        modifier = Modifier
-            .width(300.dp)
-            .height(550.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
+            modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

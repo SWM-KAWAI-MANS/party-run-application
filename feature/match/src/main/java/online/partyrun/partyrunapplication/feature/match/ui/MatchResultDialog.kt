@@ -2,7 +2,6 @@ package online.partyrun.partyrunapplication.feature.match.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -64,14 +63,14 @@ private fun ResultDialogContent(
     statusContent: @Composable () -> Unit,
     infoContent: @Composable () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        Spacer(modifier = Modifier.size(80.dp))
         Column(
             modifier = Modifier
-                .height(500.dp)
+                .weight(2f)
                 .padding(
-                    top = 80.dp, // 흰 배경 탑패딩
                     start = 30.dp,
                     end = 30.dp
                 )
@@ -84,7 +83,7 @@ private fun ResultDialogContent(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                 .background(color = MaterialTheme.colorScheme.surface)
-                .align(Alignment.BottomCenter),
+                .weight(1f),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -112,44 +111,51 @@ private fun DisplayMatchStatusBox(matchUiState: MatchUiState) {
 
 @Composable
 private fun MatchAcceptanceInfo() {
-    Spacer(modifier = Modifier.size(10.dp))
-    Divider(
-        modifier = Modifier
-            .width(100.dp)
-            .height(4.dp)
-            .clip(RoundedCornerShape(20.dp)),
-        color = MaterialTheme.colorScheme.onSurface
-    )
-    Text(
-        modifier = Modifier.padding(10.dp),
-        text = stringResource(id = R.string.completed_match),
-        style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.onPrimary
-    )
-    Spacer(modifier = Modifier.size(10.dp))
-    Row(
-        modifier = Modifier.height(50.dp)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(30.dp),
-            strokeWidth = 3.dp
+        Divider(
+            modifier = Modifier
+                .width(100.dp)
+                .padding(top = 5.dp, bottom = 5.dp)
+                .height(4.dp)
+                .clip(RoundedCornerShape(20.dp)),
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            modifier = Modifier.padding(start = 20.dp),
-            text = stringResource(id = R.string.Determining_acceptance),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-    Row(
-    ) {
-        Text(
-            modifier = Modifier.padding(bottom = 50.dp),
-            text = stringResource(id = R.string.time_remaining_acceptance),
-            style = MaterialTheme.typography.titleMedium,
+            text = stringResource(id = R.string.completed_match),
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
-        FormatRemainingTimer(totalTime = 60)
+        Spacer(modifier = Modifier.size(5.dp))
+        Row(
+            modifier = Modifier.padding(bottom = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(30.dp),
+                strokeWidth = 3.dp
+            )
+            Text(
+                modifier = Modifier.padding(start = 20.dp),
+                text = stringResource(id = R.string.Determining_acceptance),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        Row(
+            modifier = Modifier.padding(bottom = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.time_remaining_acceptance),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+            FormatRemainingTimer(totalTime = 60)
+        }
     }
 }
 

@@ -4,8 +4,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,17 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.gson.Gson
+import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.core.ui.KmInfoCard
-import online.partyrun.partyrunapplication.core.ui.MatchStartButtonLayout
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
@@ -100,8 +106,19 @@ fun Content(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         )
+        BottomHalfOvalGradientShape(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .height(230.dp)
+        )
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         HeadLine(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
         ) {
             Text(
                 text = stringResource(id = R.string.battle_head_line_1),
@@ -112,11 +129,22 @@ fun Content(
                 style = MaterialTheme.typography.headlineLarge,
             )
         }
-
-        MatchStartButtonLayout(
+        Spacer(modifier = Modifier.weight(0.1f))
+        KmInfoCard(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
+                .fillMaxWidth().weight(1f),
+            onLeftClick = { /*TODO*/ },
+            onRightClick = { /*TODO*/ }
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = R.drawable.track_1km),
+                contentDescription = null
+            )
+        }
+        Spacer(modifier = Modifier.weight(0.1f))
+        PartyRunMatchButton(
+            modifier = Modifier.padding(bottom = 70.dp),
             onClick = {
                 matchViewModel.openMatchDialog()
                 matchViewModel.beginBattleMatchingProcess(
@@ -129,20 +157,6 @@ fun Content(
             Text(
                 text = stringResource(id = R.string.battle_matching_start),
                 style = MaterialTheme.typography.titleLarge,
-            )
-        }
-
-        KmInfoCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            onLeftClick = { /*TODO*/ },
-            onRightClick = { /*TODO*/ }
-        ) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(id = R.drawable.track_1km),
-                contentDescription = null
             )
         }
     }

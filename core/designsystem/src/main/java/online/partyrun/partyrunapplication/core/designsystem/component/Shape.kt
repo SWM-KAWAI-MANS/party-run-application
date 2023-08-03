@@ -22,7 +22,7 @@ import online.partyrun.partyrunapplication.core.designsystem.theme.White10
 @Composable
 fun BottomHalfOvalGradientShape(
     modifier: Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier

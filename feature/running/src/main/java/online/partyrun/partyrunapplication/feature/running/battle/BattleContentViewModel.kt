@@ -31,6 +31,7 @@ import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
+import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -264,5 +265,20 @@ class BattleContentViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    // 거리와 좌표를 매핑하는 로직
+    fun mapDistanceToCoordinates(
+        totalTrackDistance: Double,
+        distance: Double,
+        trackWidth: Double,
+        trackHeight: Double
+    ): Pair<Double, Double> {
+        return distanceToCoordinatesMapper(
+            totalTrackDistance = totalTrackDistance,
+            distance = distance,
+            trackWidth = trackWidth,
+            trackHeight = trackHeight
+        )
     }
 }

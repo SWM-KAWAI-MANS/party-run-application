@@ -56,15 +56,10 @@ fun ReadyInfo() {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        LottieImage(
-            modifier = Modifier.padding(top = 200.dp),
-            rawAnimation = R.raw.ready
-        )
-
         HeadLine(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 80.dp)
+                .padding(top = 50.dp)
                 .align(Alignment.TopCenter)
         ) {
             Text(
@@ -79,5 +74,9 @@ fun ReadyInfo() {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+        LottieImage(
+            modifier = Modifier.padding(top = 150.dp),
+            rawAnimation = R.raw.ready
+        )
     }
 }

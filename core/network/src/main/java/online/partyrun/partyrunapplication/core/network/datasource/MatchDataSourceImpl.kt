@@ -37,9 +37,10 @@ class MatchDataSourceImpl @Inject constructor(
 
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,
-        onClosed: () -> Unit
+        onClosed: () -> Unit,
+        onFailure: () -> Unit
     ) : EventSourceListener {
-        return createEventListener(onEvent, onClosed)
+        return createEventListener(onEvent, onClosed, onFailure)
     }
 
     override fun createEventSource(url: String, listener: EventSourceListener): EventSource {
@@ -69,7 +70,8 @@ class MatchDataSourceImpl @Inject constructor(
 
     private fun createEventListener(
         onEvent: (data: String) -> Unit,
-        onClosed: () -> Unit
+        onClosed: () -> Unit,
+        onFailure: () -> Unit
     ): EventSourceListener {
         return object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
@@ -97,6 +99,7 @@ class MatchDataSourceImpl @Inject constructor(
             ) {
                 Timber.tag("Event").d("On Failure -: $response")
                 Timber.tag("Event").d("On Failure -: ${response?.body?.string()}")
+                onFailure()
             }
         }
     }

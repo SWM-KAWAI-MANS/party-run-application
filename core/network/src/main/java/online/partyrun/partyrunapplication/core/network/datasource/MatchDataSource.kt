@@ -13,7 +13,7 @@ interface MatchDataSource {
     suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResponse>
     suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResponse>
 
-    fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit): EventSourceListener
+    fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener
     fun createEventSource(url: String, listener: EventSourceListener): EventSource
     fun connectWaitingEventSource(eventSource: EventSource)
     fun connectMatchResultEventSource(eventSource: EventSource)

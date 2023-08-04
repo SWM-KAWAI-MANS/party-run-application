@@ -32,6 +32,7 @@ import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
+import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -68,10 +69,11 @@ class BattleContentViewModel @Inject constructor(
         )).build()
     }
 
-    fun startBattleStream(
+    suspend fun startBattleStream(
         battleId: String,
         navigateToBattleOnWebSocketError: () -> Unit
     ) {
+        Timber.e("웹소켓 스트림")
         resultResult = battleStreamUseCase
             .getBattleStream(battleId = battleId)
             .onStart { onStartBattleStream() }
@@ -82,13 +84,14 @@ class BattleContentViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(STATE_SHARE_SUBSCRIPTION_TIMEOUT),
                 initialValue = BattleEvent.BattleDefault()
             )
+        collectRunnerResult()
     }
 
-    private suspend fun onEachBattleStream(it: BattleEvent) {
+    private fun onEachBattleStream(it: BattleEvent) {
         if (isFirstBattleStreamCall) {
             onWebSocketConnected()
         } else {
-            collectRunnerResult(it)
+            //collectRunnerResult()
         }
     }
 
@@ -101,15 +104,19 @@ class BattleContentViewModel @Inject constructor(
         isFirstBattleStreamCall = false
     }
 
-    private suspend fun collectRunnerResult(it: BattleEvent) {
-        when (it) {
-            is BattleEvent.BattleReady -> {
-                countDownWhenReady(it.startTime)
+    private suspend fun collectRunnerResult() {
+        viewModelScope.launch {
+            resultResult.collect {
+                when (it) {
+                    is BattleEvent.BattleStart -> {
+                        countDownWhenReady(it.startTime)
+                    }
+                    is BattleEvent.BattleRunning -> {
+                        updateBattleStateWithRunnerResult(it)
+                    }
+                    else -> {} // Handle other cases as needed
+                }
             }
-            is BattleEvent.BattleRunner -> {
-                updateBattleStateWithRunnerResult(it)
-            }
-            else -> {} // Handle other cases as needed
         }
     }
 
@@ -128,7 +135,7 @@ class BattleContentViewModel @Inject constructor(
         if (t is ConnectException) { navigateToBattleOnWebSocketError() }
     }
 
-    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunner) {
+    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunning) {
         val currentBattleState = _battleUiState.value.battleState.battleInfo.toMutableList()
         val existingRunnerState = currentBattleState.find { it.runnerId == result.runnerId }
 
@@ -184,7 +191,7 @@ class BattleContentViewModel @Inject constructor(
                 latitude = location.latitude,
                 longitude = location.longitude,
                 altitude = location.altitude,
-                gpsTime = LocalDateTime.now()
+                time = LocalDateTime.now()
             )
         )
     }

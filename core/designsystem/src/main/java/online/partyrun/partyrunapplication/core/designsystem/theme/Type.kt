@@ -27,14 +27,14 @@ val PartyRunProjectFontFamily = FontFamily(
 internal val PartyRunTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = PartyRunProjectFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
     ),
     displayMedium = TextStyle(
         fontFamily = PartyRunProjectFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp,

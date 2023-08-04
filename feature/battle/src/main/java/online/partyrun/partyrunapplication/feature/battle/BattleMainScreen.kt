@@ -40,6 +40,7 @@ import online.partyrun.partyrunapplication.core.ui.KmInfoCard
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
+import timber.log.Timber
 
 @Composable
 fun BattleMainScreen(
@@ -80,6 +81,7 @@ fun BattleMainScreen(
 
     if (matchUiState.isAllRunnersAccepted) {
         navigateToBattleRunningWithArgs(battleId, runnerIdsJson)
+        matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
     }
 
     Content(matchViewModel, matchUiState, exoPlayer, isBuffering)

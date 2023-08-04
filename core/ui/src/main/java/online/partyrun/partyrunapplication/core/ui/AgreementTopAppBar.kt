@@ -26,7 +26,7 @@ fun AgreementTopAppBar(
             IconButton(onClick = { action() }) {
                 Icon(
                     painterResource(id = ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.arrow_back)
+                    contentDescription = stringResource(id = R.string.arrow_back_desc)
                 )
             }
         }

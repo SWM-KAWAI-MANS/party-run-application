@@ -49,6 +49,9 @@ internal val Level5 = Color(0xFF749BFF)
 internal val Level6 = Color(0xFF7369E8)
 internal val Level7 = Color(0xFFC769E8)
 
+internal val SectionColor10 = Color(0xFFC163FC)
+internal val SectionColor20 = Color(0xFFA654E3)
+
 internal val DarkGreen10 = Color(0xFF0D1F12)
 internal val DarkGreen20 = Color(0xFF223526)
 internal val DarkGreen30 = Color(0xFF394B3C)

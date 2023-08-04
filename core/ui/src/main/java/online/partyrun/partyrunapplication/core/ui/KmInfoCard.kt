@@ -35,7 +35,7 @@ fun KmInfoCard(
         ) {
             Icon(
                 painterResource(id = PartyRunIcons.ArrowBackIos),
-                contentDescription = stringResource(id = R.string.arrow_back)
+                contentDescription = stringResource(id = R.string.arrow_back_desc)
             )
         }
         Spacer(modifier = Modifier.width(30.dp))
@@ -53,7 +53,7 @@ fun KmInfoCard(
         ) {
             Icon(
                 painterResource(id = PartyRunIcons.ArrowForwardIos),
-                contentDescription = stringResource(id = R.string.arrow_forward)
+                contentDescription = stringResource(id = R.string.arrow_forward_desc)
             )
         }
     }

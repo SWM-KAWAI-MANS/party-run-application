@@ -38,7 +38,7 @@ fun GoogleSignInButton(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = R.drawable.google_logo),
-                contentDescription = stringResource(id = R.string.google_signin_button_desc),
+                contentDescription = stringResource(id = R.string.google_signin_btn),
                 modifier = Modifier.size(24.dp),
                 tint = Color.Unspecified
             )

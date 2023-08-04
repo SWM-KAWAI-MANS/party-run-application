@@ -1,7 +1,10 @@
 package online.partyrun.partyrunapplication.core.designsystem.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -18,6 +21,9 @@ import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.theme.GradientColors
 import online.partyrun.partyrunapplication.core.designsystem.theme.LocalBackgroundTheme
 import online.partyrun.partyrunapplication.core.designsystem.theme.LocalGradientColors
+import online.partyrun.partyrunapplication.core.designsystem.theme.SectionColor10
+import online.partyrun.partyrunapplication.core.designsystem.theme.SectionColor20
+import online.partyrun.partyrunapplication.core.designsystem.theme.White10
 import kotlin.math.tan
 
 @Composable
@@ -100,5 +106,31 @@ fun PartyRunGradientBackground(
         ) {
             content()
         }
+    }
+}
+
+@Composable
+fun PartyRunVerticalSectionBackground() {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // 상단 부분
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.5f)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(SectionColor10, SectionColor20)
+                    )
+                )
+        )
+        // 하단 부분
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(2f)
+                .background(White10)
+        )
     }
 }

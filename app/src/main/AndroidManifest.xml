@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="LockedOrientationActivity">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -25,6 +26,7 @@
         <activity
             android:name=".AuthActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PartyRunApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,6 +38,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PartyRunApplication">
         </activity>
     </application>

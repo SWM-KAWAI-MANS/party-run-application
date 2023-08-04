@@ -57,7 +57,7 @@ class BattleContentViewModel @Inject constructor(
     private val _battleUiState = MutableStateFlow(BattleUiState())
     val battleUiState: StateFlow<BattleUiState> = _battleUiState
 
-    private lateinit var resultResult: StateFlow<BattleEvent>
+    private lateinit var runnersState: StateFlow<BattleEvent>
 
     private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
 
@@ -68,48 +68,47 @@ class BattleContentViewModel @Inject constructor(
         )).build()
     }
 
-    fun startBattleStream(
+    suspend fun startBattleStream(
         battleId: String,
         navigateToBattleOnWebSocketError: () -> Unit
     ) {
-        resultResult = battleStreamUseCase
+        runnersState = battleStreamUseCase
             .getBattleStream(battleId = battleId)
             .onStart { onStartBattleStream() }
-            .onEach { onEachBattleStream(it) } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
+            .onEach { onWebSocketConnected() } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
             .catch { t -> handleBattleStreamError(t, navigateToBattleOnWebSocketError) }
             .stateIn(
                 scope = viewModelScope, // ViewModel의 수명 주기에 맞게 관리
                 started = SharingStarted.WhileSubscribed(STATE_SHARE_SUBSCRIPTION_TIMEOUT),
                 initialValue = BattleEvent.BattleDefault()
             )
-    }
-
-    private suspend fun onEachBattleStream(it: BattleEvent) {
-        if (isFirstBattleStreamCall) {
-            onWebSocketConnected()
-        } else {
-            collectRunnerResult(it)
-        }
+        collectRunnersState()
     }
 
     private fun onWebSocketConnected() {
-        _battleUiState.update { state ->
-            state.copy(
-                isConnecting = false
-            )
+        if (isFirstBattleStreamCall) {
+            _battleUiState.update { state ->
+                state.copy(
+                    isConnecting = false // false = 연결 완료
+                )
+            }
         }
         isFirstBattleStreamCall = false
     }
 
-    private suspend fun collectRunnerResult(it: BattleEvent) {
-        when (it) {
-            is BattleEvent.BattleReady -> {
-                countDownWhenReady(it.startTime)
+    private suspend fun collectRunnersState() {
+        viewModelScope.launch {
+            runnersState.collect {
+                when (it) {
+                    is BattleEvent.BattleStart -> {
+                        countDownWhenReady(it.startTime)
+                    }
+                    is BattleEvent.BattleRunning -> {
+                        updateBattleStateWithRunnerResult(it)
+                    }
+                    else -> {} // Handle other cases as needed
+                }
             }
-            is BattleEvent.BattleRunner -> {
-                updateBattleStateWithRunnerResult(it)
-            }
-            else -> {} // Handle other cases as needed
         }
     }
 
@@ -128,7 +127,7 @@ class BattleContentViewModel @Inject constructor(
         if (t is ConnectException) { navigateToBattleOnWebSocketError() }
     }
 
-    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunner) {
+    private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunning) {
         val currentBattleState = _battleUiState.value.battleState.battleInfo.toMutableList()
         val existingRunnerState = currentBattleState.find { it.runnerId == result.runnerId }
 
@@ -184,7 +183,7 @@ class BattleContentViewModel @Inject constructor(
                 latitude = location.latitude,
                 longitude = location.longitude,
                 altitude = location.altitude,
-                gpsTime = LocalDateTime.now()
+                time = LocalDateTime.now()
             )
         )
     }

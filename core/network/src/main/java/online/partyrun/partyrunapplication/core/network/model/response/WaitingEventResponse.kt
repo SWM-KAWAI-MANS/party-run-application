@@ -5,7 +5,7 @@ import online.partyrun.partyrunapplication.core.model.match.WaitingStatus
 
 data class WaitingEventResponse(
     @SerializedName("status")
-    val status: WaitingStatus = WaitingStatus.CONNECT,
+    val status: WaitingStatus = WaitingStatus.CONNECTED,
     @SerializedName("message")
     val message: String?
 )

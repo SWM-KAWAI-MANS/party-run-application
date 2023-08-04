@@ -84,13 +84,9 @@ class MatchViewModel @Inject constructor(
     fun beginBattleMatchingProcess(runningDistance: RunningDistance) =
         viewModelScope.launch {
             try {
-                Timber.e("1")
                 registerMatch(runningDistance)
-                Timber.e("2")
                 connectWaitingEventSource()
-                Timber.e("3")
                 handleUserMatchDecision()
-                Timber.e("4")
                 connectMatchResultEventSource()
                 verifyMatchSuccess()
             } catch (e: MatchingProcessException) {
@@ -223,13 +219,11 @@ class MatchViewModel @Inject constructor(
             WaitingEvent::class.java
         )
         Timber.tag("Event").d("Event Received: status -: ${eventData.status}")
-        Timber.tag("Event").d("Event Received: message -: ${eventData.message}")
         _matchUiState.update {
             it.copy(
                 matchProgress = if (eventData.status == WaitingStatus.MATCHED) MatchProgress.DECISION else it.matchProgress,
                 waitingEventState = WaitingEventState(
-                    status = eventData.status,
-                    message = eventData.message
+                    status = eventData.status
                 )
             )
         }

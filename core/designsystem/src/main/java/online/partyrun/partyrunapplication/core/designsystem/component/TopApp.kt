@@ -16,7 +16,7 @@ fun PartyRunTopAppBar(
     modifier: Modifier = Modifier,
     colors: TopAppBarColors = TopAppBarDefaults.smallTopAppBarColors(),
     containerColor: Color = MaterialTheme.colorScheme.background,
-    navigationContent: @Composable () -> Unit,
+    navigationContent: @Composable () -> Unit = {},
     actionsContent: @Composable () -> Unit = {},
     titleContent: @Composable () -> Unit = {}
 ) {

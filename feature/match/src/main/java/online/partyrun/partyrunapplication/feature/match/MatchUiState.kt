@@ -35,8 +35,7 @@ data class WaitingRestState(
     val message: String = ""
 )
 data class WaitingEventState(
-    val status: WaitingStatus = WaitingStatus.CONNECT,
-    val message: String = "",
+    val status: WaitingStatus = WaitingStatus.CONNECTED,
 )
 
 data class MatchResultRestState(

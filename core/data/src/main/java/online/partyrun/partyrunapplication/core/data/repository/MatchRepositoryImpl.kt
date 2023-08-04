@@ -62,7 +62,7 @@ class MatchRepositoryImpl @Inject constructor(
     }
 
     override fun createMatchResultEventSource(listener: EventSourceListener): EventSource {
-        val url = BASE_URL.plus("/api/match/event")
+        val url = BASE_URL.plus("/api/matching/event")
         return dataSource.createEventSource(url = url, listener = listener)
     }
 

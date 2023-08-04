@@ -122,7 +122,7 @@ fun BattleRunningScreen(
                         ) {
                             Image(
                                 painter = painterResource(id = PartyRunIcons.Schedule),
-                                contentDescription = stringResource(id = R.string.ic_schedule),
+                                contentDescription = stringResource(id = R.string.schedule_desc),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                             )
                             Text(
@@ -144,7 +144,7 @@ fun BattleRunningScreen(
                         ) {
                             Image(
                                 painter = painterResource(id = PartyRunIcons.Pace),
-                                contentDescription = stringResource(id = R.string.ic_pace),
+                                contentDescription = stringResource(id = R.string.pace_desc),
                                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                             )
                             Text(
@@ -182,7 +182,7 @@ private fun RunningTopAppBar() {
             IconButton(onClick = { }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.ic_arrow_back)
+                    contentDescription = stringResource(id = R.string.arrow_back_desc)
                 )
             }
         },
@@ -190,7 +190,7 @@ private fun RunningTopAppBar() {
             IconButton(onClick = { }) {
                 Icon(
                     painterResource(id = PartyRunIcons.Menu),
-                    contentDescription = stringResource(id = R.string.ic_menu)
+                    contentDescription = stringResource(id = R.string.menu_desc)
                 )
             }
         }

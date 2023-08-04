@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="my_page_title">마이페이지</string>
+    <string name="sign_out_btn">로그아웃</string>
+    <string name="setting_desc">셋팅 버튼</string>
+    <string name="profile_img_desc">프로필 이미지</string>
 
 </resources>

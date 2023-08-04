@@ -6,5 +6,5 @@ data class GpsData(
     val latitude: Double,
     val longitude: Double,
     val altitude: Double,
-    val gpsTime: LocalDateTime = LocalDateTime.now()
+    val time: LocalDateTime = LocalDateTime.now()
 )

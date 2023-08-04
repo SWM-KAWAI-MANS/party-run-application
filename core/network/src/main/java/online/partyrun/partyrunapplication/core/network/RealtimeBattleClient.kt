@@ -24,7 +24,6 @@ import java.util.logging.Level
 class RealtimeBattleClient(
     @WSOkHttpClient private val okHttpClient: OkHttpClient
 ) {
-
     private lateinit var stompConnection: Disposable
     private lateinit var topic: Disposable
 
@@ -37,7 +36,7 @@ class RealtimeBattleClient(
 
     private val stomp: StompClient by lazy {
         StompClient(okHttpClient, 3000L).apply {
-            url = "ws://${BASE_URL.removePrefix("http://")}/api/battle/connection"
+            url = "wss://${BASE_URL.removePrefix("https://")}/api/battles/connection"
         }
     }
 
@@ -63,6 +62,7 @@ class RealtimeBattleClient(
     ) {
         when (it.type) {
             Event.Type.OPENED -> {
+                Timber.e("getBattleStream onOpen")
                 subscribeToBattleTopic(battleId) // topic 구독 수행
                 sendReadyMessage(battleId) // 구독했음을 알리기 위한 처음 Ready 메세지 전송
             }
@@ -86,7 +86,7 @@ class RealtimeBattleClient(
     }
 
     private fun ProducerScope<BattleEventResponse>.subscribeToBattleTopic(battleId: String) {
-        topic = stomp.join("/topic/battle/$battleId")
+        topic = stomp.join("/topic/battles/$battleId")
             .subscribe { message -> // 구독이 성공적으로 이루어지면, 새로운 메시지가 도착할 때마다 해당 람다 함수 호출
                 TaskRunner.logger.log(Level.INFO, message)
                 Timber.tag("BattleClient").d(message)
@@ -97,7 +97,7 @@ class RealtimeBattleClient(
 
     @SuppressLint("CheckResult")
     private fun sendReadyMessage(battleId: String) {
-        stomp.send("/pub/battle/$battleId/ready", "준비 완료").subscribe { isSent ->
+        stomp.send("/pub/battles/$battleId/ready", "준비 완료").subscribe { isSent ->
             if (isSent) {
                 Timber.tag("Sent").d("sent to $topic: 준비 완료")
             } else {
@@ -112,8 +112,9 @@ class RealtimeBattleClient(
     private fun parseBattleEvent(message: String): BattleEventResponse {
         val jsonObject = JsonParser.parseString(message).asJsonObject
         return when(jsonObject.get("type").asString) {
-            "BATTLE_START_TIME" -> gson.fromJson(message, BattleEventResponse.BattleReadyResponse::class.java)
-            else -> gson.fromJson(message, BattleEventResponse.BattleRunnerResponse::class.java)
+            "BATTLE_START" -> gson.fromJson(message, BattleEventResponse.BattleBaseStartResponse::class.java)
+            "BATTLE_RUNNING" -> gson.fromJson(message, BattleEventResponse.BattleBaseRunningResponse::class.java)
+            else -> gson.fromJson(message, BattleEventResponse.BattleBaseFinishedResponse::class.java)
         }
     }
 
@@ -123,7 +124,7 @@ class RealtimeBattleClient(
     @SuppressLint("CheckResult")
     suspend fun sendRecordData(battleId: String, recordData: RecordDataRequest) {
         val jsonData = gson.toJson(recordData)
-        stomp.send("/pub/battle/$battleId/record", jsonData).subscribe { isSent ->
+        stomp.send("/pub/battles/$battleId/record", jsonData).subscribe { isSent ->
             if (isSent) {
                 Timber.tag("Sent").d("sent to $battleId: $jsonData")
             } else {

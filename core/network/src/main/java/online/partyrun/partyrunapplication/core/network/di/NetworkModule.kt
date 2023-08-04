@@ -12,7 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.network.RefreshTokenExpirationNotifier
+import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
@@ -38,9 +38,9 @@ object NetworkModule {
     fun provideAuthAuthenticator(
         tokenDataSource: TokenDataSource,
         @ApplicationContext context: Context,
-        refreshTokenExpirationNotifier: RefreshTokenExpirationNotifier
+        tokenExpirationNotifier: TokenExpirationNotifier
     ): AuthAuthenticator =
-        AuthAuthenticator(tokenDataSource, context, refreshTokenExpirationNotifier)
+        AuthAuthenticator(tokenDataSource, context, tokenExpirationNotifier)
 
     /* SignInClient 인스턴스 생성 */
     @Provides

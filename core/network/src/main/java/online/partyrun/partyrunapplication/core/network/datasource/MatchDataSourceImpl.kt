@@ -89,6 +89,7 @@ class MatchDataSourceImpl @Inject constructor(
                 type: String?,
                 data: String,
             ) {
+                Timber.tag("Event").d("onEvent")
                 onEvent(data)
             }
 
@@ -97,8 +98,8 @@ class MatchDataSourceImpl @Inject constructor(
                 t: Throwable?,
                 response: Response?
             ) {
+                Timber.tag("Event").d("On Failure -: $t")
                 Timber.tag("Event").d("On Failure -: $response")
-                Timber.tag("Event").d("On Failure -: ${response?.body?.string()}")
                 onFailure()
             }
         }

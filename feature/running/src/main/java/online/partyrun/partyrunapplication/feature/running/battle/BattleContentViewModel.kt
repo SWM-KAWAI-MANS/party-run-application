@@ -32,7 +32,6 @@ import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
-import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -58,7 +57,7 @@ class BattleContentViewModel @Inject constructor(
     private val _battleUiState = MutableStateFlow(BattleUiState())
     val battleUiState: StateFlow<BattleUiState> = _battleUiState
 
-    private lateinit var resultResult: StateFlow<BattleEvent>
+    private lateinit var runnersState: StateFlow<BattleEvent>
 
     private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
 
@@ -73,40 +72,33 @@ class BattleContentViewModel @Inject constructor(
         battleId: String,
         navigateToBattleOnWebSocketError: () -> Unit
     ) {
-        Timber.e("웹소켓 스트림")
-        resultResult = battleStreamUseCase
+        runnersState = battleStreamUseCase
             .getBattleStream(battleId = battleId)
             .onStart { onStartBattleStream() }
-            .onEach { onEachBattleStream(it) } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
+            .onEach { onWebSocketConnected() } // WebSocket에서 새로운 배틀 이벤트가 도착할 때마다 호출
             .catch { t -> handleBattleStreamError(t, navigateToBattleOnWebSocketError) }
             .stateIn(
                 scope = viewModelScope, // ViewModel의 수명 주기에 맞게 관리
                 started = SharingStarted.WhileSubscribed(STATE_SHARE_SUBSCRIPTION_TIMEOUT),
                 initialValue = BattleEvent.BattleDefault()
             )
-        collectRunnerResult()
-    }
-
-    private fun onEachBattleStream(it: BattleEvent) {
-        if (isFirstBattleStreamCall) {
-            onWebSocketConnected()
-        } else {
-            //collectRunnerResult()
-        }
+        collectRunnersState()
     }
 
     private fun onWebSocketConnected() {
-        _battleUiState.update { state ->
-            state.copy(
-                isConnecting = false
-            )
+        if (isFirstBattleStreamCall) {
+            _battleUiState.update { state ->
+                state.copy(
+                    isConnecting = false // false = 연결 완료
+                )
+            }
         }
         isFirstBattleStreamCall = false
     }
 
-    private suspend fun collectRunnerResult() {
+    private suspend fun collectRunnersState() {
         viewModelScope.launch {
-            resultResult.collect {
+            runnersState.collect {
                 when (it) {
                     is BattleEvent.BattleStart -> {
                         countDownWhenReady(it.startTime)

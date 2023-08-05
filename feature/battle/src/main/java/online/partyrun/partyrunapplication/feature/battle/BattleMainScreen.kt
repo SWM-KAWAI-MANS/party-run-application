@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.gson.Gson
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
@@ -37,10 +38,11 @@ import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.core.ui.KmInfoCard
+import online.partyrun.partyrunapplication.feature.battle.util.ExoPlayerCache
+import online.partyrun.partyrunapplication.feature.battle.util.getCacheDataSourceFactory
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
-import timber.log.Timber
 
 @Composable
 fun BattleMainScreen(
@@ -170,11 +172,22 @@ private fun getVideoUri(): Uri {
     return Uri.parse(videoUri)
 }
 
-private fun Context.buildExoPlayer(uri: Uri) =
-    ExoPlayer.Builder(this).build().apply {
-        setMediaItem(MediaItem.fromUri(uri))
+private fun Context.buildExoPlayer(uri: Uri): ExoPlayer {
+    val cache = ExoPlayerCache.get(this)
+    val dataSourceFactory = getCacheDataSourceFactory(cache)
+
+    val mediaItem = MediaItem.Builder()
+        .setUri(uri)
+        .build()
+
+    // Cache를 사용하는 데이터 소스 팩토리를 사용하여 MediaSource 생성
+    val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+        .createMediaSource(mediaItem)
+
+    return ExoPlayer.Builder(this).build().apply {
+        setMediaSource(mediaSource)
         repeatMode = Player.REPEAT_MODE_ALL
         playWhenReady = true
         prepare()
     }
-
+}

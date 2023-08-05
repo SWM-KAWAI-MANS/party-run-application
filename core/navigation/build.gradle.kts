@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":feature:match"))
     implementation(project(":feature:running"))
     implementation(project(":feature:challenge"))
+    implementation(project(":feature:running_result"))
 
     // BottomNavigation 및 BottomNavigationItem 구성요소 사용
     implementation (libs.androidx.compose.material.core)

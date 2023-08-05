@@ -27,7 +27,7 @@ fun KmInfoCard(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         PartyRunCircularIconButton(
             modifier = Modifier.size(56.dp),

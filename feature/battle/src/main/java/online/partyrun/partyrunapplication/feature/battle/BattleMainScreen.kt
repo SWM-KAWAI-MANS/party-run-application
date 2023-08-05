@@ -188,6 +188,7 @@ private fun Context.buildExoPlayer(uri: Uri): ExoPlayer {
         setMediaSource(mediaSource)
         repeatMode = Player.REPEAT_MODE_ALL
         playWhenReady = true
+        volume = 0.0f
         prepare()
     }
 }

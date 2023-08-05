@@ -6,10 +6,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import online.partyrun.partyrunapplication.core.network.datasource.RunningResultDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.RunningResultDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
+import online.partyrun.partyrunapplication.core.network.service.BattleResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
@@ -35,5 +38,11 @@ object DataSourceModule {
     fun provideSignInDataSource(
         signInApiService: SignInApiService
     ): SignInDataSource = SignInDataSourceImpl(signInApiService)
+
+    @Singleton
+    @Provides
+    fun provideRunningResultDataSource(
+        battleResultApiService: BattleResultApiService
+    ): RunningResultDataSource = RunningResultDataSourceImpl(battleResultApiService)
 
 }

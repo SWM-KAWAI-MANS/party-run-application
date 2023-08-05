@@ -25,7 +25,7 @@ object ExoPlayerCache {
                 StandaloneDatabaseProvider(context.applicationContext)
             )
         }
-        return cache!!
+        return cache as Cache
     }
 }
 

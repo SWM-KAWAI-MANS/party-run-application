@@ -100,11 +100,14 @@ class BattleContentViewModel @Inject constructor(
         viewModelScope.launch {
             runnersState.collect {
                 when (it) {
-                    is BattleEvent.BattleStart -> {
+                    is BattleEvent.BattleStart -> { // 대결 시작 시간 처리
                         countDownWhenReady(it.startTime)
                     }
-                    is BattleEvent.BattleRunning -> {
+                    is BattleEvent.BattleRunning -> { // 달리는 유저들의 거리 상태 처리
                         updateBattleStateWithRunnerResult(it)
+                    }
+                    is BattleEvent.BattleFinished -> { // 대결 종료 상태 처리
+                        handleBattleFinished(it.runnerId)
                     }
                     else -> {} // Handle other cases as needed
                 }
@@ -264,6 +267,17 @@ class BattleContentViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun handleBattleFinished(runnerId: String) {
+        /* if (runnerId == MY_STORED_ID) {  /*TODO: 내 아이디와 비교하는 작업 수행해야 함.*/
+            _battleUiState.update { state ->
+                state.copy(
+                    isFinished = true
+                )
+            }
+        }*/
+        /* TODO: 내가 대결이 종료된 게 맞다면, 3초 뒤 결과 페이지로 넘어가는 작업을 수행해야 함. */
     }
 
     // 거리와 좌표를 매핑하는 로직

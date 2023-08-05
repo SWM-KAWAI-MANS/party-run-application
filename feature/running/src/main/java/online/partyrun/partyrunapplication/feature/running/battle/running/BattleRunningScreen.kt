@@ -52,6 +52,7 @@ import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
 @Composable
 fun BattleRunningScreen(
     battleUiState: BattleUiState,
+    navigationToRunningResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel = hiltViewModel()
 ) {
     val battleState = battleUiState.battleState // 배틀 상태 state

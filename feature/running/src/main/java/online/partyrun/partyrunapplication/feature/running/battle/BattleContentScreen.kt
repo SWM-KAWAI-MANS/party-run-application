@@ -16,7 +16,8 @@ import online.partyrun.partyrunapplication.feature.running.battle.running.Battle
 
 @Composable
 fun BattleContentScreen(
-    navigateToBattleOnWebSocketError: () -> Unit,
+    navigateToBattleOnWebSocketError: () -> Unit = {},
+    navigationToRunningResult: () -> Unit = {},
     battleId: String? = "",
     runnerIds: RunnerIds,
     viewModel: BattleContentViewModel = hiltViewModel()
@@ -34,12 +35,13 @@ fun BattleContentScreen(
 
     CheckStartTime(battleUiState, battleId, viewModel, runnerIds)
 
-    Content(battleUiState)
+    Content(battleUiState, navigationToRunningResult)
 }
 
 @Composable
 fun Content(
-    battleUiState: BattleUiState
+    battleUiState: BattleUiState,
+    navigationToRunningResult: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -47,7 +49,7 @@ fun Content(
     ) {
         when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
-            is BattleScreenState.Running -> BattleRunningScreen(battleUiState)
+            is BattleScreenState.Running -> BattleRunningScreen(battleUiState, navigationToRunningResult)
         }
     }
 }

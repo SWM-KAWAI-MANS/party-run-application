@@ -14,9 +14,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBar
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBarItem
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
-import online.partyrun.partyrunapplication.core.navigation.battle.battleRunningRoute
+import online.partyrun.partyrunapplication.core.navigation.battle_running.battleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
+import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
 import online.partyrun.partyrunapplication.core.navigation.single.singleRoute
 
 @Composable
@@ -56,8 +57,17 @@ fun SetUpMainNavGraph(
                         inclusive = true
                     }
                 }
+            },
+            navigationToRunningResult = {
+                navController.navigate(MainNavRoutes.RunningResult.route) {
+                    popUpTo(MainNavRoutes.RunningResult.route) {
+                        inclusive = true
+                    }
+                }
             }
         )
+
+        runningResultRoute()
 
     }
 }

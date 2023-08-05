@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
+import online.partyrun.partyrunapplication.feature.running.battle.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.battle.ready.BattleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.battle.running.BattleRunningScreen
 
@@ -22,6 +23,13 @@ fun BattleContentScreen(
     viewModel: BattleContentViewModel = hiltViewModel()
 ) {
     val battleUiState by viewModel.battleUiState.collectAsState()
+
+    /**
+     * 목표 거리에 도달했다면, 반투명의 대결 종료 레이어 스크린을 띄움.
+     */
+    if (battleUiState.isFinished) {
+        FinishScreen()
+    }
 
     LaunchedEffect(battleId) {
         battleId?.let {

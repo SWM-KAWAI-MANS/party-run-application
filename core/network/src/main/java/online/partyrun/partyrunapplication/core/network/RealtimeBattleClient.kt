@@ -29,6 +29,7 @@ class RealtimeBattleClient(
 
     /**
      * LocalDateTimeAdapter를 Gson 인스턴스에 등록한 후, GpsData 객체를 Gson을 사용하여 JSON 문자열로 직렬화
+     * 웹소켓 과정에서는 String으로 response를 받기 때문에 이를 LocalDateTime으로 변환하는 어댑터 등록
      */
     private val gson = GsonBuilder()
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
@@ -36,10 +37,15 @@ class RealtimeBattleClient(
 
     private val stomp: StompClient by lazy {
         StompClient(okHttpClient, 3000L).apply {
-            url = "wss://${BASE_URL.removePrefix("https://")}/api/battles/connection"
+            url = "wss://${BASE_URL.removePrefix("https://")}/api/ws/battles/connection"
         }
     }
 
+    /**
+     * 전달 받은 battleId에 해당하는 실시간 대결 방의 스트림을 Flow으로 반환
+     * 실제 웹소켓 연결을 설정하고 이벤트에 따라 타입에 따른 Stomp 이벤트 처리 진행
+     * @param battleId : 대결을 위한 방(topic) ID
+     */
     fun getBattleStream(
         battleId: String
     ): Flow<BattleEventResponse> = callbackFlow {
@@ -55,6 +61,7 @@ class RealtimeBattleClient(
 
     /*
      * 배틀 스트림 연결 상태가 어떻게 진행되고 있는지 수집하고 type에 맞게 처리
+     * 웹소켓 이벤트 처리
      */
     private fun ProducerScope<BattleEventResponse>.handleStompEvent(
         it: Event,
@@ -85,6 +92,10 @@ class RealtimeBattleClient(
         }
     }
 
+    /**
+     * 전달 받은 battleId에 해당하는 토픽을 구독
+     * 새로운 데이터가 도착하면 해당 데이터를 로깅 및 파싱한 후, 해당 Flow에 이벤트 방출
+     */
     private fun ProducerScope<BattleEventResponse>.subscribeToBattleTopic(battleId: String) {
         topic = stomp.join("/topic/battles/$battleId")
             .subscribe { message -> // 구독이 성공적으로 이루어지면, 새로운 메시지가 도착할 때마다 해당 람다 함수 호출
@@ -95,6 +106,9 @@ class RealtimeBattleClient(
             }
     }
 
+    /**
+     * "준비 완료" 메시지를 서버에 보내 러너가 대결 준비가 되었음을 서버에 알림.
+     */
     @SuppressLint("CheckResult")
     private fun sendReadyMessage(battleId: String) {
         stomp.send("/pub/battles/$battleId/ready", "준비 완료").subscribe { isSent ->
@@ -107,7 +121,8 @@ class RealtimeBattleClient(
     }
 
     /**
-     * 배틀정보를 받아올 때 처음 Response와 그 뒤에 오는 Response Type을 구분해 전송할 수 있게 한다.
+     * 배틀정보를 받아올 때 처음 Response와 그 뒤에 오는 Response Type을 구분해 서로 다른 종류의 객체를 반환할 수 있게 한다.
+     * 서버로부터 받은 데이터를 BattleEventResponse 객체로 변환
      */
     private fun parseBattleEvent(message: String): BattleEventResponse {
         val jsonObject = JsonParser.parseString(message).asJsonObject
@@ -119,7 +134,8 @@ class RealtimeBattleClient(
     }
 
     /**
-     * 유저의 달리기 기록을 초 단위로 묶은 리스트 전송
+     * 유저의 달리기 기록을 초 단위로 묶은 리스트를 서버에 전송
+     * 서버에 사용자의 달리기 데이터를 실시간으로 제공
      */
     @SuppressLint("CheckResult")
     suspend fun sendRecordData(battleId: String, recordData: RecordDataRequest) {
@@ -133,11 +149,19 @@ class RealtimeBattleClient(
         }
     }
 
+    /**
+     * 웹소켓 연결을 종료하는 메소드
+     */
     suspend fun close() {
         stompConnection.dispose()
     }
 
+    /**
+     * 현재 구독 중인 토픽을 해제
+     * 리소스를 정리하고 불필요한 네트워크 통신을 방지
+     */
     private fun disposeTopic() {
         topic.dispose()
     }
+
 }

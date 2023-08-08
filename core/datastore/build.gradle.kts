@@ -4,6 +4,9 @@ plugins {
 }
 
 android {
+    defaultConfig {
+        consumerProguardFiles("consumer-proguard-rules.pro")
+    }
     namespace = "online.partyrun.partyrunapplication.core.datastore"
     testOptions {
         unitTests {

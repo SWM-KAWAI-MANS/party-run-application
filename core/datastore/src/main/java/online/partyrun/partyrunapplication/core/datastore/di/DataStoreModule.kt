@@ -2,7 +2,9 @@ package online.partyrun.partyrunapplication.core.datastore.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -18,6 +20,8 @@ import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import online.partyrun.partyrunapplication.core.datastore.UserPreferences
+import online.partyrun.partyrunapplication.core.datastore.UserPreferencesSerializer
 import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSource
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import javax.inject.Named
@@ -29,6 +33,20 @@ object DataStoreModule {
 
     private const val AGREEMENT_PREFERENCES = "agreement_pref"
     private const val TOKEN_PREFERENCES = "token_pref"
+
+    @Provides
+    @Singleton
+    fun providesUserPreferencesDataStore(
+        @ApplicationContext context: Context,
+        userPreferencesSerializer: UserPreferencesSerializer,
+    ): DataStore<UserPreferences> =
+        DataStoreFactory.create(
+            serializer = userPreferencesSerializer,
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+            corruptionHandler = null
+        ) {
+            context.dataStoreFile("user_preferences.pb")
+        }
 
     @Singleton
     @Provides

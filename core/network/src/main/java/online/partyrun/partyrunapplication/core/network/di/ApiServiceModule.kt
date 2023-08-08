@@ -43,8 +43,9 @@ object ApiServiceModule {
 
     @Singleton
     @Provides
-    fun provideBattleResultApiService(retrofit: Retrofit.Builder): BattleResultApiService =
+    fun provideBattleResultApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): BattleResultApiService =
         retrofit
+            .client(okHttpClient)
             .build()
             .create(BattleResultApiService::class.java)
 

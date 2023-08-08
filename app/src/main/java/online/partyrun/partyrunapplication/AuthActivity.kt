@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import online.partyrun.partyrunapplication.core.common.ExtraConstants.SPLASH
@@ -15,8 +16,9 @@ import online.partyrun.partyrunapplication.ui.PartyRunAuth
 
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
+       installSplashScreen() // Splash Screen API
+
         super.onCreate(savedInstanceState)
         setContent {
             PartyRunApplicationTheme(

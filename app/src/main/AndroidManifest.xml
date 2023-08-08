@@ -27,7 +27,7 @@
             android:name=".AuthActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.PartyRunApplication">
+            android:theme="@style/Theme.PartyRunApplication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

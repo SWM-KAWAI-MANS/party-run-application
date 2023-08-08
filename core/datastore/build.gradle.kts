@@ -1,6 +1,7 @@
 plugins {
     id("nohjunh.android.library")
     id("nohjunh.android.hilt")
+    id("com.google.protobuf") version "0.9.3"
 }
 
 android {
@@ -21,6 +22,7 @@ dependencies {
     implementation(libs.androidx.dataStore.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.timber)
+    implementation(libs.protobuf.kotlin.lite)
 
     testImplementation(project(":core:testing"))
 }

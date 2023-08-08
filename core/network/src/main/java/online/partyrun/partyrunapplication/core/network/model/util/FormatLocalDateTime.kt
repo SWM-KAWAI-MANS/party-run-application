@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.core.network.model.util
 
+import java.text.NumberFormat
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -33,4 +34,17 @@ fun calculateElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Stri
     } else {
         String.format("%02d:%02d", minutes, seconds)
     }
+}
+
+fun formatDate(dateTime: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("M월 d일")
+    return dateTime.format(formatter)
+}
+
+fun formatDistanceWithComma(distance: Int): String {
+    return NumberFormat.getNumberInstance().format(distance).plus("m")
+}
+
+fun formatDistanceInKm(distance: Int): String {
+    return (distance / 1000).toString().plus("km")
 }

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.PartyRunApplication" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.PartyRunApplication" parent="android:Theme.Material.Light.NoActionBar">
+    </style>
+
+    <style name="Theme.PartyRunApplication.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_partyrun_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.PartyRunApplication</item>
+    </style>
+
 </resources>

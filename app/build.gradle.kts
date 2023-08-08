@@ -95,6 +95,7 @@ dependencies {
     implementation (libs.androidx.core.ktx)
     implementation (platform(libs.kotlin.bom))
     implementation (libs.androidx.lifecycle.runtime.ktx)
+    implementation (libs.androidx.core.splashscreen)
 
     // compose
     implementation (libs.androidx.activity.compose)

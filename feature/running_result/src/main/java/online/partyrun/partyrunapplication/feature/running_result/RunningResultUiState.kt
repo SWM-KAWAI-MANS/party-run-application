@@ -9,7 +9,10 @@ sealed class RunningResultUiState {
         val battleResult: BattleResult = BattleResult(
             battleRunnerStatus = emptyList(),
             startTime = "",
-            targetDistance = 1000
+            targetDistance = 1000,
+            targetDistanceFormatted = "", // 쉼표로 형식화
+            targetDistanceInKm = "", // km 단위로 형식화
+            battleDate = "" // "x월 x일" 형식화
         )
     ) : RunningResultUiState()
 

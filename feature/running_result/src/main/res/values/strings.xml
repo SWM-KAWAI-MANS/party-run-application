@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="battle_title">대결모드</string>
+    <string name="avg_pace">Avg. Pace</string>
+    <string name="time">Time</string>
+    <string name="calories">Calories</string>
+    <string name="rank">등</string>
+</resources>

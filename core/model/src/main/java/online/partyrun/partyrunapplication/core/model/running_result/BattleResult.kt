@@ -2,6 +2,9 @@ package online.partyrun.partyrunapplication.core.model.running_result
 
 data class BattleResult(
     val battleRunnerStatus: List<BattleRunnerStatus>? = emptyList(),
-    val startTime: String? = "",
-    val targetDistance: Int? = 0
+    val startTime: String? = "", // "xx:xx" 형식화
+    val targetDistance: Int? = 0,
+    val targetDistanceFormatted: String = "", // 쉼표로 형식화
+    val targetDistanceInKm: String = "", // km 단위로 형식화
+    val battleDate: String = "" // "x월 x일" 형식화
 )

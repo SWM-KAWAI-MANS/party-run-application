@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +32,58 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
 
 @Composable
 fun MyPageScreen(
-    viewModel: MyPageViewModel = hiltViewModel(),
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {}
+) {
+    val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
+
+    Content(
+        myPageViewModel = myPageViewModel,
+        myPageUiState = myPageUiState,
+        onSignOut = onSignOut
+    )
+}
+
+@Composable
+fun Content(
+    modifier: Modifier = Modifier,
+    myPageViewModel: MyPageViewModel,
+    myPageUiState: MyPageUiState,
+    onSignOut: () -> Unit
+) {
+    Box(modifier = modifier) {
+        when (myPageUiState) {
+            is MyPageUiState.Loading -> LoadingBody()
+            is MyPageUiState.Success -> MyPageBody(viewModel = myPageViewModel, onSignOut = onSignOut, userData = myPageUiState.user)
+            is MyPageUiState.LoadFailed -> LoadingBody()
+        }
+    }
+}
+
+@Composable
+private fun LoadingBody() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun MyPageBody(
+    viewModel: MyPageViewModel,
+    onSignOut: () -> Unit,
+    userData: User
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +102,8 @@ fun MyPageScreen(
                 .heightIn(max = max(270.dp, with(LocalDensity.current) { 200.sp.toDp() }))
         ) {
             ProfileContent(
-                userName = "TEST"
+                userName = userData.name,
+                userProfile = userData.profile
             )
         }
 
@@ -88,7 +135,8 @@ private fun TopAppTitle(
 }
 @Composable
 private fun ProfileContent(
-    userName: String
+    userName: String,
+    userProfile: String
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -97,7 +145,9 @@ private fun ProfileContent(
         ProfileHeader(
             userName = userName
         )
-        ProfileImage()
+        ProfileImage(
+            userProfile = userProfile
+        )
     }
 }
 
@@ -137,7 +187,9 @@ private fun ProfileHeader(
 }
 
 @Composable
-private fun ProfileImage() {
+private fun ProfileImage(
+    userProfile: String
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -145,9 +197,9 @@ private fun ProfileImage() {
             .clip(CircleShape)
             .zIndex(1f)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.mock_img),
-            contentDescription = stringResource(id = R.string.profile_img_desc)
+        RenderAsyncUrlImage(
+            imageUrl = userProfile,
+            contentDescription = null
         )
     }
 }

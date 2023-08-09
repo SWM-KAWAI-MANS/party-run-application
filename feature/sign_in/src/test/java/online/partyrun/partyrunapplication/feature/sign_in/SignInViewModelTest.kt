@@ -6,10 +6,13 @@ import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
+import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
+import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.testing.repository.TestGoogleAuthRepository
+import online.partyrun.partyrunapplication.core.testing.repository.TestMemberRepository
 import online.partyrun.partyrunapplication.core.testing.repository.TestSignInRepository
 import online.partyrun.partyrunapplication.core.testing.repository.TestTokenRepository
 import org.junit.Before
@@ -20,6 +23,7 @@ class SignInViewModelTest {
 
     private val signInRepository = TestSignInRepository()
     private val tokenRepository = TestTokenRepository()
+    private val memberRepository = TestMemberRepository()
     private val googleAuthRepository = TestGoogleAuthRepository()
     private val getSignInTokenUseCase = GetSignInTokenUseCase(
         signInRepository = signInRepository
@@ -29,6 +33,12 @@ class SignInViewModelTest {
     )
     private val googleSignInUseCase = GoogleSignInUseCase(
         googleAuthRepository = googleAuthRepository
+    )
+    private val getUserDataUseCase = GetUserDataUseCase(
+        memberRepository = memberRepository
+    )
+    private val saveUserDataUseCase = SaveUserDataUseCase(
+        memberRepository = memberRepository
     )
 
     private lateinit var viewModel: SignInViewModel
@@ -41,7 +51,9 @@ class SignInViewModelTest {
         viewModel = SignInViewModel(
             getSignInTokenUseCase = getSignInTokenUseCase,
             saveTokensUseCase = saveTokensUseCase,
-            googleSignInUseCase = googleSignInUseCase
+            googleSignInUseCase = googleSignInUseCase,
+            getUserDataUseCase = getUserDataUseCase,
+            saveUserDataUseCase = saveUserDataUseCase
         )
     }
 

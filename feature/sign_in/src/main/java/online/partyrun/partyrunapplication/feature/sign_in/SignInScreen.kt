@@ -76,6 +76,12 @@ fun SignInScreen (
     LaunchedEffect(key1 = state.isIdTokenSentToServer) {
         if (state.isIdTokenSentToServer) {
             viewModel.resetState()
+            viewModel.saveUserData()
+        }
+    }
+
+    LaunchedEffect(key1 = state.isUserDataSaved) {
+        if (state.isUserDataSaved) {
             setIntentMainActivity()
         }
     }

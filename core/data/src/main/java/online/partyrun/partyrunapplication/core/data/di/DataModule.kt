@@ -18,6 +18,8 @@ import online.partyrun.partyrunapplication.core.data.repository.RunningResultRep
 import online.partyrun.partyrunapplication.core.data.repository.RunningResultRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepositoryImpl
+import online.partyrun.partyrunapplication.core.data.repository.MemberRepository
+import online.partyrun.partyrunapplication.core.data.repository.MemberRepositoryImpl
 import javax.inject.Singleton
 
 /*
@@ -68,5 +70,11 @@ internal interface DataModule {
     fun bindRunningResultRepository (
         runningResultRepository: RunningResultRepositoryImpl
     ): RunningResultRepository
+
+    @Singleton
+    @Binds
+    fun bindMemberRepository (
+        memberRepository: MemberRepositoryImpl
+    ): MemberRepository
 
 }

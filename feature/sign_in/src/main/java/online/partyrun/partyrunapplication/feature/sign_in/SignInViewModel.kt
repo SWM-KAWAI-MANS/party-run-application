@@ -19,6 +19,8 @@ import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCas
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
+import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
+import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserInfo
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,7 +29,9 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val getSignInTokenUseCase: GetSignInTokenUseCase,
     private val saveTokensUseCase: SaveTokensUseCase,
-    private val googleSignInUseCase: GoogleSignInUseCase
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val getUserDataUseCase: GetUserDataUseCase,
+    private val saveUserDataUseCase: SaveUserDataUseCase
 ): ViewModel() {
 
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
@@ -81,16 +85,16 @@ class SignInViewModel @Inject constructor(
         getSignInTokenUseCase(idToken).collect() {
             when(it) {
                 is ApiResponse.Success -> {
+                    saveTokensUseCase(
+                        accessToken = it.data.accessToken ?: "",
+                        refreshToken = it.data.refreshToken ?: ""
+                    )
                     _signInGoogleState.update { state ->
                         state.copy(
                             isIdTokenSentToServer = true,
                             isSignInIndicatorOn = false
                         )
                     }
-                    saveTokensUseCase(
-                        accessToken = it.data.accessToken ?: "",
-                        refreshToken = it.data.refreshToken ?: ""
-                    )
                 }
                 is ApiResponse.Failure -> {
                     _signInGoogleState.update { state ->
@@ -102,6 +106,31 @@ class SignInViewModel @Inject constructor(
                 }
                 ApiResponse.Loading ->  {
                     Timber.tag("SignInViewModel").d("Loading")
+                }
+            }
+        }
+    }
+
+    fun saveUserData() {
+        viewModelScope.launch {
+            getUserDataUseCase().collect {
+                when (it) {
+                    is ApiResponse.Success -> {
+                        saveUserDataUseCase(it.data)
+                        _signInGoogleState.update { state ->
+                            state.copy(
+                                isUserDataSaved = true
+                            )
+                        }
+                    }
+
+                    is ApiResponse.Failure -> {
+                        Timber.e("${it.code} ${it.errorMessage}")
+                    }
+
+                    ApiResponse.Loading -> {
+                        Timber.d("$it")
+                    }
                 }
             }
         }

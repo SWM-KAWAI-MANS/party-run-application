@@ -25,6 +25,8 @@ mockk = "1.13.54"
 lottie = "6.0.0"
 gson = "2.10.1"
 mock = "4.10.0"
+protobuf = "3.23.4"
+protobufPlugin = "0.9.3"
 coil = "2.2.2"
 kotlinBom = "1.8.0"
 firebaseBom = "31.2.3"
@@ -114,6 +116,10 @@ exo-player = { group = "com.google.android.exoplayer", name = "exoplayer", versi
 # Lottie
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie"}
 
+# protobuf
+protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
+protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
+
 # firebase, google
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -183,4 +189,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }

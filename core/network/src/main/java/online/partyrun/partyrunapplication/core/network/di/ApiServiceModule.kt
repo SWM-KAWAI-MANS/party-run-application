@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import online.partyrun.partyrunapplication.core.network.service.BattleResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
+import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import retrofit2.Retrofit
@@ -48,5 +49,13 @@ object ApiServiceModule {
             .client(okHttpClient)
             .build()
             .create(BattleResultApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideMemberApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): MemberApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(MemberApiService::class.java)
 
 }

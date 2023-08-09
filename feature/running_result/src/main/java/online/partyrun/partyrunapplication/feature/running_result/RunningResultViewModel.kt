@@ -17,7 +17,7 @@ class RunningResultViewModel @Inject constructor(
 ) : ViewModel() {
     private val battleId: String = "64d1d17144c33923f53ec872"
 
-    private val _runningResultUiState = MutableStateFlow(RunningResultUiState.Loading)
+    private val _runningResultUiState = MutableStateFlow<RunningResultUiState>(RunningResultUiState.Loading)
     val runningResultUiState = _runningResultUiState.asStateFlow()
 
     init {
@@ -25,15 +25,19 @@ class RunningResultViewModel @Inject constructor(
             getBattleResultUseCase(battleId = battleId).collect {
                 when(it) {
                     is ApiResponse.Success -> {
-                        RunningResultUiState.Success(
-                            battleResult = it.data
-                        )
+                        _runningResultUiState.value =
+                            RunningResultUiState.Success(
+                                battleResult = it.data
+                            )
                     }
                     is ApiResponse.Failure -> {
                         Timber.e("$it")
+                        _runningResultUiState.value =
+                            RunningResultUiState.LoadFailed
                     }
                     ApiResponse.Loading -> {
-                        RunningResultUiState.Loading
+                        _runningResultUiState.value =
+                            RunningResultUiState.Loading
                     }
                 }
             }

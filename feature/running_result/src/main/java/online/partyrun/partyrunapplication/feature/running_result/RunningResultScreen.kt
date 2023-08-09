@@ -69,7 +69,7 @@ private fun Content(
     modifier: Modifier = Modifier,
     runningResultUiState: RunningResultUiState
 ) {
-    Column(modifier = modifier) {
+    Box(modifier = modifier) {
         when (runningResultUiState) {
             is RunningResultUiState.Loading -> LoadingBody()
             is RunningResultUiState.Success -> RunningResultBody(battleResult = runningResultUiState.battleResult)

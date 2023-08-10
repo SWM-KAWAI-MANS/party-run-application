@@ -21,10 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.gson.Gson
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
-import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.HeadLine
@@ -38,19 +36,13 @@ fun BattleMainScreen(
     modifier: Modifier = Modifier,
     battleViewModel: BattleMainViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel(),
-    navigateToBattleRunningWithArgs: (String, String) -> Unit
+    navigateToBattleRunning: () -> Unit
 ) {
-    /* Mock Data */
-    val gson = Gson()
-    val runnerIds = RunnerIds(listOf("123", "456"))
-    val runnerIdsJson = gson.toJson(runnerIds)
-    val battleId = "64ae682dd780770fab6dca5d"
-
     val battleMainUiState by battleViewModel.battleMainUiState.collectAsStateWithLifecycle()
     val matchUiState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
 
     if (matchUiState.isAllRunnersAccepted) {
-        navigateToBattleRunningWithArgs(battleId, runnerIdsJson)
+        navigateToBattleRunning()
         matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
     }
 

@@ -31,8 +31,10 @@ fun SetUpMainNavGraph(
         startDestination = startDestination,
     ) {
         battleRoute(
-            navigateToBattleRunningWithArgs = { battleId, runnerIdsJson ->
-                navController.navigate("${MainNavRoutes.BattleRunning.route}?battleId=$battleId&runnerIdsJson=$runnerIdsJson")
+            navigateToBattleRunning = {
+                navController.navigate(MainNavRoutes.BattleRunning.route) {
+                    popUpTo(MainNavRoutes.BattleRunning.route)
+                }
             }
         )
 

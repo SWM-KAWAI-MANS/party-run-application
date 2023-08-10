@@ -6,11 +6,11 @@ import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.feature.battle.BattleMainScreen
 
 fun NavGraphBuilder.battleRoute(
-    navigateToBattleRunningWithArgs: (String, String) -> Unit
+    navigateToBattleRunning: () -> Unit
 ) {
     composable(route = MainNavRoutes.Battle.route) {
         BattleMainScreen(
-            navigateToBattleRunningWithArgs = navigateToBattleRunningWithArgs
+            navigateToBattleRunning = navigateToBattleRunning
         )
     }
 }

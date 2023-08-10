@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
@@ -38,8 +38,8 @@ fun BattleMainScreen(
     matchViewModel: MatchViewModel = hiltViewModel(),
     navigateToBattleRunning: () -> Unit
 ) {
-    val battleMainUiState by battleViewModel.battleMainUiState.collectAsStateWithLifecycle()
-    val matchUiState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
+    val battleMainUiState by battleViewModel.battleMainUiState.collectAsState()
+    val matchUiState by matchViewModel.matchUiState.collectAsState()
 
     if (matchUiState.isAllRunnersAccepted) {
         navigateToBattleRunning()

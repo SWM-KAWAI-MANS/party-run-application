@@ -84,8 +84,8 @@ class BattleContentViewModel @Inject constructor(
             getBattleIdUseCase().collect {
                 when (it) {
                     is ApiResponse.Success -> {
-                        saveBattleIdUseCase(it.data) // DataStore에 BattleId 저장
-                        _battleId.value = it.data
+                        saveBattleIdUseCase(it.data.id) // DataStore에 BattleId 저장
+                        _battleId.value = it.data.id
                     }
 
                     is ApiResponse.Failure -> {

@@ -60,6 +60,13 @@ object ApiServiceModule {
             .build()
             .create(MemberApiService::class.java)
 
+    @Provides
+    fun provideBattleApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): BattleApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(BattleApiService::class.java)
+
     @Singleton
     @Provides
     fun provideMatchApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): MatchApiService =

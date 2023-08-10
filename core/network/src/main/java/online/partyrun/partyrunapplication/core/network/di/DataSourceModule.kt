@@ -6,15 +6,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import online.partyrun.partyrunapplication.core.network.datasource.RunningResultDataSource
-import online.partyrun.partyrunapplication.core.network.datasource.RunningResultDataSourceImpl
+import online.partyrun.partyrunapplication.core.network.datasource.BattleDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.BattleDataSourceImpl
+import online.partyrun.partyrunapplication.core.network.datasource.ResultDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.ResultDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
-import online.partyrun.partyrunapplication.core.network.service.BattleResultApiService
+import online.partyrun.partyrunapplication.core.network.service.BattleApiService
+import online.partyrun.partyrunapplication.core.network.service.MatchApiService
+import online.partyrun.partyrunapplication.core.network.service.ResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
@@ -31,9 +35,10 @@ object DataSourceModule {
         @SSEOkHttpClient okHttpClient: OkHttpClient,
         @SSERequestBuilder request: Request.Builder,
         waitingMatchApiService: WaitingMatchApiService,
-        matchDecisionApiService: MatchDecisionApiService
+        matchDecisionApiService: MatchDecisionApiService,
+        matchApiService: MatchApiService
     ): MatchDataSource {
-        return MatchDataSourceImpl(okHttpClient, request, waitingMatchApiService, matchDecisionApiService)
+        return MatchDataSourceImpl(okHttpClient, request, waitingMatchApiService, matchDecisionApiService, matchApiService)
     }
 
     @Singleton
@@ -44,9 +49,9 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideRunningResultDataSource(
-        battleResultApiService: BattleResultApiService
-    ): RunningResultDataSource = RunningResultDataSourceImpl(battleResultApiService)
+    fun provideResultDataSource(
+        resultApiService: ResultApiService
+    ): ResultDataSource = ResultDataSourceImpl(resultApiService)
 
     @Singleton
     @Provides

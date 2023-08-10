@@ -23,15 +23,18 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.running.BattleStreamUseCase
+import online.partyrun.partyrunapplication.core.domain.running.GetBattleIdUseCase
+import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
+import online.partyrun.partyrunapplication.core.domain.running.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
-import online.partyrun.partyrunapplication.core.model.battle.RunnerIds
-import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
+import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -42,6 +45,9 @@ import javax.inject.Inject
 class BattleContentViewModel @Inject constructor(
     private val battleStreamUseCase: BattleStreamUseCase,
     private val sendRecordDataUseCase: SendRecordDataUseCase,
+    private val getBattleIdUseCase: GetBattleIdUseCase,
+    private val getBattleStatusUseCase: GetBattleStatusUseCase,
+    private val saveBattleIdUseCase: SaveBattleIdUseCase,
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ): ViewModel() {
     companion object {
@@ -57,6 +63,9 @@ class BattleContentViewModel @Inject constructor(
     private val _battleUiState = MutableStateFlow(BattleUiState())
     val battleUiState: StateFlow<BattleUiState> = _battleUiState
 
+    private val _battleId = MutableStateFlow<String?>(null)
+    val battleId: StateFlow<String?> = _battleId
+
     private lateinit var runnersState: StateFlow<BattleEvent>
 
     private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
@@ -66,6 +75,29 @@ class BattleContentViewModel @Inject constructor(
         locationRequest = LocationRequest.Builder(priority, TimeUnit.SECONDS.toMillis(
             LOCATION_UPDATE_INTERVAL_SECONDS
         )).build()
+
+        getBattleId()
+    }
+
+    private fun getBattleId() {
+        viewModelScope.launch {
+            getBattleIdUseCase().collect {
+                when (it) {
+                    is ApiResponse.Success -> {
+                        saveBattleIdUseCase(it.data.id) // DataStore에 BattleId 저장
+                        _battleId.value = it.data.id
+                    }
+
+                    is ApiResponse.Failure -> {
+                        Timber.e("$it")
+                    }
+
+                    ApiResponse.Loading -> {
+                        Timber.d("Loading")
+                    }
+                }
+            }
+        }
     }
 
     suspend fun startBattleStream(
@@ -212,19 +244,16 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    fun initBattleState(runnerIds: RunnerIds) {
-        // RunnerIds 객체에서 각 id를 가져와 RunnerState 객체 생성
-        val runnerStates = runnerIds.runnerIdData.map { id ->
-            RunnerStatus(
-                runnerId = id,
-                runnerName = "테스트"
-            )
-        }
-        // 생성된 RunnerState 객체들로 BattleState 객체 생성
-        _battleUiState.update { state ->
-            state.copy(
-                battleState = BattleStatus(battleInfo = runnerStates)
-            )
+    fun initBattleState() {
+        viewModelScope.launch {
+            val battleData = getBattleStatusUseCase()
+
+            // 생성된 RunnerState 객체들로 BattleState 객체 생성
+            _battleUiState.update { state ->
+                state.copy(
+                    battleState = battleData
+                )
+            }
         }
     }
 

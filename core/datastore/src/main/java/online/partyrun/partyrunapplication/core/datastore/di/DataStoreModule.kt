@@ -20,6 +20,8 @@ import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import online.partyrun.partyrunapplication.core.datastore.BattlePreferences
+import online.partyrun.partyrunapplication.core.datastore.BattlePreferencesSerializer
 import online.partyrun.partyrunapplication.core.datastore.UserPreferences
 import online.partyrun.partyrunapplication.core.datastore.UserPreferencesSerializer
 import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSource
@@ -46,6 +48,20 @@ object DataStoreModule {
             corruptionHandler = null
         ) {
             context.dataStoreFile("user_preferences.pb")
+        }
+
+    @Provides
+    @Singleton
+    fun providesBattlePreferencesDataStore(
+        @ApplicationContext context: Context,
+        battlePreferencesSerializer: BattlePreferencesSerializer,
+    ): DataStore<BattlePreferences> =
+        DataStoreFactory.create(
+            serializer = battlePreferencesSerializer,
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+            corruptionHandler = null
+        ) {
+            context.dataStoreFile("battle_preferences.pb")
         }
 
     @Singleton

@@ -22,7 +22,7 @@ class RunningResultViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getBattleResultUseCase(battleId = battleId).collect {
+            getBattleResultUseCase().collect {
                 when(it) {
                     is ApiResponse.Success -> {
                         _runningResultUiState.value =

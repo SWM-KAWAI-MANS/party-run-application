@@ -5,9 +5,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import online.partyrun.partyrunapplication.core.network.service.BattleResultApiService
+import online.partyrun.partyrunapplication.core.network.service.ResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
+import online.partyrun.partyrunapplication.core.network.service.BattleApiService
+import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import retrofit2.Retrofit
@@ -44,11 +46,11 @@ object ApiServiceModule {
 
     @Singleton
     @Provides
-    fun provideBattleResultApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): BattleResultApiService =
+    fun provideResultApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): ResultApiService =
         retrofit
             .client(okHttpClient)
             .build()
-            .create(BattleResultApiService::class.java)
+            .create(ResultApiService::class.java)
 
     @Singleton
     @Provides
@@ -57,5 +59,21 @@ object ApiServiceModule {
             .client(okHttpClient)
             .build()
             .create(MemberApiService::class.java)
+
+    @Provides
+    fun provideBattleApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): BattleApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(BattleApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideMatchApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): MatchApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(MatchApiService::class.java)
+
 
 }

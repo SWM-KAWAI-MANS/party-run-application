@@ -5,7 +5,7 @@ import online.partyrun.partyrunapplication.core.network.model.response.BattleRes
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface BattleResultApiService {
+interface ResultApiService {
 
     @GET("/api/battles/{battleId}")
     suspend fun getBattleResults(

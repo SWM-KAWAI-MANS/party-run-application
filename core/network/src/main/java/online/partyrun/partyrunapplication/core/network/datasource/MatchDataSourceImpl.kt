@@ -12,6 +12,8 @@ import online.partyrun.partyrunapplication.core.network.model.response.MatchStat
 import online.partyrun.partyrunapplication.core.network.di.SSEOkHttpClient
 import online.partyrun.partyrunapplication.core.network.di.SSERequestBuilder
 import online.partyrun.partyrunapplication.core.network.model.request.RunningDistanceRequest
+import online.partyrun.partyrunapplication.core.network.model.response.MatchInfoResponse
+import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import timber.log.Timber
@@ -21,7 +23,8 @@ class MatchDataSourceImpl @Inject constructor(
     @SSEOkHttpClient private val okHttpClient: OkHttpClient,
     @SSERequestBuilder private val request: Request.Builder,
     private val waitingMatchApiService: WaitingMatchApiService,
-    private val matchDecisionApiService: MatchDecisionApiService
+    private val matchDecisionApiService: MatchDecisionApiService,
+    private val matchApiService: MatchApiService
 ) : MatchDataSource {
     private lateinit var matchEventSource: EventSource
     private lateinit var matchResultSource: EventSource
@@ -34,6 +37,9 @@ class MatchDataSourceImpl @Inject constructor(
 
     override suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResponse> =
         matchDecisionApiService.declineMatch(matchDecisionRequest)
+
+    override suspend fun getRunnerIds(): ApiResult<MatchInfoResponse> =
+        matchApiService.getRunnerIds()
 
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,

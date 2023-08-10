@@ -7,12 +7,12 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface MatchDecisionApiService {
-    @POST("/api/matching")
+    @POST("/api/matching/members/join")
     suspend fun acceptMatch(
         @Body body: MatchDecisionRequest
     ): ApiResult<MatchStatusResponse>
 
-    @POST("/api/matching")
+    @POST("/api/matching/members/join")
     suspend fun declineMatch(
         @Body body: MatchDecisionRequest
     ): ApiResult<MatchStatusResponse>

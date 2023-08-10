@@ -21,10 +21,14 @@ import online.partyrun.partyrunapplication.core.domain.match.SendRegisterMatchUs
 import online.partyrun.partyrunapplication.core.domain.match.CreateWaitingEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.DisconnectMatchResultEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.DisconnectWaitingEventSourceUseCase
+import online.partyrun.partyrunapplication.core.domain.match.GetRunnerIdsUseCase
+import online.partyrun.partyrunapplication.core.domain.match.GetRunnersInfoUseCase
+import online.partyrun.partyrunapplication.core.domain.match.SaveRunnersInfoUseCase
 import online.partyrun.partyrunapplication.core.domain.match.SendAcceptMatchUseCase
 import online.partyrun.partyrunapplication.core.domain.match.SendDeclineMatchUseCase
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
 import online.partyrun.partyrunapplication.core.model.match.MatchResultEvent
+import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.model.match.WaitingEvent
 import online.partyrun.partyrunapplication.core.model.match.WaitingStatus
@@ -44,7 +48,10 @@ class MatchViewModel @Inject constructor(
     private val connectWaitingEventSourceUseCase: ConnectWaitingEventSourceUseCase,
     private val connectMatchResultEventSourceUseCase: ConnectMatchResultEventSourceUseCase,
     private val disconnectWaitingEventSourceUseCase: DisconnectWaitingEventSourceUseCase,
-    private val disconnectMatchResultEventSourceUseCase: DisconnectMatchResultEventSourceUseCase
+    private val disconnectMatchResultEventSourceUseCase: DisconnectMatchResultEventSourceUseCase,
+    private val getRunnerIdsUseCase: GetRunnerIdsUseCase,
+    private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
+    private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase
 ) : ViewModel() {
 
     private val _matchUiState = MutableStateFlow(MatchUiState())
@@ -75,11 +82,14 @@ class MatchViewModel @Inject constructor(
     }
 
     /**
-     * Battle 과정에 대한 전체 프로세스 수행
+     * Battle 매칭 과정에 대한 전체 프로세스 수행
      * 1. 배틀 매칭 큐에 사용자 등록
      * 2. 해당 큐에 목표한 사용자 수만큼 등록 완료 시
      * 3. 수락/거절 여부 파악
-     * 4. 최종 매칭 완료 프로세스 진행
+     * 4. 러너 데이터 가져오기
+     * 5. 매칭에 참여한 러너들의 Name, Profile URL 획득 및 저장
+     * 6. 다른 러너들의 매칭여부 판단
+     * 7. 최종 매칭 완료 프로세스 진행
      */
     fun beginBattleMatchingProcess(runningDistance: RunningDistance) =
         viewModelScope.launch {
@@ -87,6 +97,8 @@ class MatchViewModel @Inject constructor(
                 registerMatch(runningDistance)
                 connectWaitingEventSource()
                 handleUserMatchDecision()
+                getRunnerIds()
+                saveRunnersInfo(_matchUiState.value.runnerIds)
                 connectMatchResultEventSource()
                 verifyMatchSuccess()
             } catch (e: MatchingProcessException) {
@@ -95,6 +107,29 @@ class MatchViewModel @Inject constructor(
                 closeMatchDialog()
             }
         }
+
+    private suspend fun getRunnerIds() =
+        getRunnerIdsUseCase().collect {
+            when (it) {
+                is ApiResponse.Success -> {
+                    _matchUiState.update {state ->
+                        state.copy(
+                            runnerIds = it.data
+                        )
+                    }
+                }
+
+                is ApiResponse.Failure -> {
+                    Timber.tag("MainViewModel getRunnerIds").e("${it.code} ${it.errorMessage}")
+                    cancelMatchingProcess()
+                }
+
+                ApiResponse.Loading -> {
+                    Timber.d("$it")
+                }
+            }
+        }
+
 
     private fun verifyMatchSuccess() {
         val matchStatus = matchUiState.value.matchResultEventState.status
@@ -144,7 +179,7 @@ class MatchViewModel @Inject constructor(
 
                 is ApiResponse.Failure -> {
                     Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    throw MatchingProcessException("Failure from API: ${it.errorMessage}")
+                    cancelMatchingProcess()
                 }
 
                 ApiResponse.Loading -> {
@@ -169,7 +204,7 @@ class MatchViewModel @Inject constructor(
 
                 is ApiResponse.Failure -> {
                     Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    throw RuntimeException("Failure from API: ${it.errorMessage}")
+                    cancelMatchingProcess()
                 }
 
                 ApiResponse.Loading -> {
@@ -194,7 +229,7 @@ class MatchViewModel @Inject constructor(
 
                 is ApiResponse.Failure -> {
                     Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    throw RuntimeException("Failure from API: ${it.errorMessage}")
+                    cancelMatchingProcess()
                 }
 
                 ApiResponse.Loading -> {
@@ -305,4 +340,28 @@ class MatchViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun saveRunnersInfo(runnerIds: RunnerIds) =
+        getRunnersInfoUseCase(runnerIds).collect {
+            when (it) {
+                is ApiResponse.Success -> {
+                    saveRunnersInfoUseCase(it.data)
+                    _matchUiState.update {state ->
+                        state.copy(
+                            runnerInfoData = it.data
+                        )
+                    }
+                }
+
+                is ApiResponse.Failure -> {
+                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
+                    cancelMatchingProcess()
+                }
+
+                ApiResponse.Loading -> {
+                    Timber.d("$it")
+                }
+            }
+        }
+
 }

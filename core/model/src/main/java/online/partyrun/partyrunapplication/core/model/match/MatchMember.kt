@@ -1,6 +1,6 @@
 package online.partyrun.partyrunapplication.core.model.match
 
-enum class PlayerStatus {
+enum class RunnerStatus {
     NO_RESPONSE,
     READY,
     CANCELED,

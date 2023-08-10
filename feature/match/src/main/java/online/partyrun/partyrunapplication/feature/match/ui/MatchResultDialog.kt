@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.feature.match.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -30,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunResultDialog
-import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncImage
+import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.model.match.MatchMember
-import online.partyrun.partyrunapplication.core.model.match.PlayerStatus
+import online.partyrun.partyrunapplication.core.model.match.RunnerStatus
 import online.partyrun.partyrunapplication.core.ui.FormatRemainingTimer
 import online.partyrun.partyrunapplication.feature.match.MatchResultEventState
 import online.partyrun.partyrunapplication.feature.match.MatchResultStatus
@@ -167,14 +169,23 @@ fun DisplayMatchStatus(
         itemsIndexed(
             matchUiState.matchResultEventState.members
         ) { index, item ->
-            MatchStatusItem(player = item)
+            // 아이디와 일치하는 RunnerInfo 찾기
+            val runnerInfo = matchUiState.runnerInfoData.runners.firstOrNull { it.id == item.id }
+
+            // 일치하는 RunnerInfo가 있으면 해당 이름과 프로필을 사용하고, 없으면 디폴트 텍스트를 사용
+            val runnerName = runnerInfo?.name ?: "이름 없음"
+            val runnerProfile = runnerInfo?.profile ?: ""
+
+            MatchStatusItem(runnerName, runnerProfile, item.status)
         }
     }
 }
 
 @Composable
 fun MatchStatusItem(
-    player: MatchMember
+    runnerName: String,
+    runnerProfile: String,
+    runnerStatus: String
 ) {
     Row(
         modifier = Modifier
@@ -188,30 +199,34 @@ fun MatchStatusItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            RenderAsyncImage(
-                image = R.drawable.mock_profile,
-                size = 120,
-                contentDescription = null
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(45.dp)
+                    .clip(CircleShape)
+            ) {
+                RenderAsyncUrlImage(
+                    imageUrl = runnerProfile,
+                    contentDescription = null
+                )
+            }
             Text(
                 modifier = Modifier.padding(start = 10.dp),
-                text = player.id,
+                text = runnerName,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
-        ConvertPlayerStatus(player)
+        ConvertPlayerStatus(runnerStatus)
     }
 }
 
 @Composable
-private fun ConvertPlayerStatus(player: MatchMember) {
-    when (player.status) {
-        PlayerStatus.NO_RESPONSE.name ->
+private fun ConvertPlayerStatus(runnerStatus: String) {
+    when (runnerStatus) {
+        RunnerStatus.NO_RESPONSE.name ->
             PartyRunOutlinedText(
-                modifier = Modifier
-                    .width(68.dp)
-                    .height(32.dp)
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.waiting_for_user),
@@ -220,11 +235,9 @@ private fun ConvertPlayerStatus(player: MatchMember) {
                 )
             }
 
-        PlayerStatus.READY.name ->
+        RunnerStatus.READY.name ->
             PartyRunGradientText(
-                modifier = Modifier
-                    .width(68.dp)
-                    .height(32.dp)
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.accept_matching_status),
@@ -233,11 +246,9 @@ private fun ConvertPlayerStatus(player: MatchMember) {
                 )
             }
 
-        PlayerStatus.CANCELED.name ->
+        RunnerStatus.CANCELED.name ->
             PartyRunOutlinedText(
-                modifier = Modifier
-                    .width(64.dp)
-                    .height(32.dp)
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
             ) {
                 Text(
                     text = stringResource(id = R.string.decline_matching_status),
@@ -256,11 +267,11 @@ fun PartyRunResultDialogPreview() {
             listOf(
                 MatchMember(
                     id = "TEST1",
-                    status = PlayerStatus.NO_RESPONSE.name
+                    status = RunnerStatus.NO_RESPONSE.name
                 ),
                 MatchMember(
                     id = "TEST2",
-                    status = PlayerStatus.READY.name
+                    status = RunnerStatus.READY.name
                 )
             ),
         status = MatchResultStatus.WAIT

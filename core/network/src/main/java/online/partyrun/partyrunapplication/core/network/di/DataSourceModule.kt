@@ -59,4 +59,9 @@ object DataSourceModule {
         memberApiService: MemberApiService
     ): MemberDataSource = MemberDataSourceImpl(memberApiService)
 
+    @Singleton
+    @Provides
+    fun provideBattleDataSource(
+        battleApiService: BattleApiService
+    ): BattleDataSource = BattleDataSourceImpl(battleApiService)
 }

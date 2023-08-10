@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepository
+import online.partyrun.partyrunapplication.core.model.match.RunnerIds
+import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
 import online.partyrun.partyrunapplication.core.model.user.User
 
 class TestMemberRepository : MemberRepository {
@@ -17,6 +19,10 @@ class TestMemberRepository : MemberRepository {
 
     override val userData: Flow<User>
         get() = flowOf(User(id = userId ?: "", name = userName ?: "", profile = userProfile ?: ""))
+
+    override suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<ApiResponse<RunnerInfoData>> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun getUserData(): Flow<ApiResponse<User>> = user
 

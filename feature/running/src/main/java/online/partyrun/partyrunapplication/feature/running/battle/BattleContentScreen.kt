@@ -60,7 +60,7 @@ fun Content(
     ) {
         when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
-            is BattleScreenState.Running -> BattleRunningScreen(battleUiState, navigationToRunningResult)
+            is BattleScreenState.Running -> BattleRunningScreen(battleUiState = battleUiState)
             BattleScreenState.Finish -> FinishScreen()
         }
     }

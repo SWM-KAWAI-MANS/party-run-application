@@ -64,5 +64,7 @@ class BattleRepositoryImpl @Inject constructor(
     override suspend fun sendRecordData(battleId: String, recordData: RecordData) =
         realtimeBattleClient.sendRecordData(battleId, recordData.toRequestModel())
 
-    override suspend fun close() = realtimeBattleClient.close()
+    override suspend fun close() = realtimeBattleClient.closeSocket()
+    override suspend fun disposeSocketResources() = realtimeBattleClient.disposeSocketResources()
+
 }

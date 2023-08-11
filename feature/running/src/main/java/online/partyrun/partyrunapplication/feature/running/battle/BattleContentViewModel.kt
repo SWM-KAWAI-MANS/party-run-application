@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.running.BattleStreamUseCase
+import online.partyrun.partyrunapplication.core.domain.running.DisposeSocketResourcesUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
@@ -50,6 +51,7 @@ class BattleContentViewModel @Inject constructor(
     private val getBattleStatusUseCase: GetBattleStatusUseCase,
     private val saveBattleIdUseCase: SaveBattleIdUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
+    private val disposeSocketResourcesUseCase: DisposeSocketResourcesUseCase,
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ): ViewModel() {
     companion object {
@@ -300,6 +302,10 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
+    suspend fun disposeSocketResources() {
+        disposeSocketResourcesUseCase()
+    }
+
     private suspend fun handleBattleFinished(runnerId: String) {
         val userId = getUserIdUseCase()
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
@@ -309,6 +315,8 @@ class BattleContentViewModel @Inject constructor(
                     screenState = BattleScreenState.Finish
                 )
             }
+            Timber.tag("handleBattleFinished").d("웹소켓 리소스 해제")
+            disposeSocketResources() // 웹소켓 리소스 해제
         }
     }
 

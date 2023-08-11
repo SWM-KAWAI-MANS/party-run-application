@@ -152,7 +152,7 @@ class RealtimeBattleClient(
     /**
      * 웹소켓 연결을 종료하는 메소드
      */
-    suspend fun close() {
+    suspend fun closeSocket() {
         stompConnection.dispose()
     }
 
@@ -164,4 +164,12 @@ class RealtimeBattleClient(
         topic.dispose()
     }
 
+    /**
+     * 웹소켓 연결과 토픽 구독을 종료하고 관련 리소스 정리 수행
+     */
+    suspend fun disposeSocketResources() {
+        disposeTopic()
+        closeSocket()
+    }
 }
+

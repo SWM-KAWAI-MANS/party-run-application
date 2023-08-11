@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -38,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
@@ -49,13 +47,11 @@ import online.partyrun.partyrunapplication.core.ui.FormatElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
-import online.partyrun.partyrunapplication.feature.running.battle.finish.FinishScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BattleRunningScreen(
     battleUiState: BattleUiState,
-    navigationToRunningResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel = hiltViewModel()
 ) {
     val battleState = battleUiState.battleState // 배틀 상태 state

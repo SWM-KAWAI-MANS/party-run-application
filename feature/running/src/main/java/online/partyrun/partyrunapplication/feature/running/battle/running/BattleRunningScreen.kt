@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
@@ -47,6 +49,7 @@ import online.partyrun.partyrunapplication.core.ui.FormatElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
+import online.partyrun.partyrunapplication.feature.running.battle.finish.FinishScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +59,18 @@ fun BattleRunningScreen(
     battleContentViewModel: BattleContentViewModel = hiltViewModel()
 ) {
     val battleState = battleUiState.battleState // 배틀 상태 state
+
+    /**
+     * 목표 거리에 도달했다면, 반투명의 대결 종료 레이어 스크린을 띄움.
+     */
+    if (battleUiState.isFinished) {
+        FinishScreen()
+
+        LaunchedEffect(Unit) {
+            delay(3000) // 3초 대기
+            navigationToRunningResult()
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

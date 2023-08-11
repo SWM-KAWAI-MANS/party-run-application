@@ -301,7 +301,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private suspend fun handleBattleFinished(runnerId: String) {
-        val userId = getUserIdUseCase().id
+        val userId = getUserIdUseCase()
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
             _battleUiState.update { state ->
                 state.copy(

@@ -15,7 +15,6 @@ import javax.inject.Inject
 class RunningResultViewModel @Inject constructor(
     private val getBattleResultUseCase: GetBattleResultUseCase
 ) : ViewModel() {
-    private val battleId: String = "64d1d17144c33923f53ec872"
 
     private val _runningResultUiState = MutableStateFlow<RunningResultUiState>(RunningResultUiState.Loading)
     val runningResultUiState = _runningResultUiState.asStateFlow()

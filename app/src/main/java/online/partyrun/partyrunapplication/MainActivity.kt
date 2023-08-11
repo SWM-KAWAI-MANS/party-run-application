@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -15,10 +16,13 @@ import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
+import online.partyrun.partyrunapplication.feature.battle.BattleMainViewModel
 import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val battleViewModel: BattleMainViewModel by viewModels()
 
     /**
      * 사용자로부터 위치 접근 권한을 요청하고 그 결과를 받아 처리하기 위한 코드
@@ -45,6 +49,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        battleViewModel.terminateOngoingBattle() // 앱이 처음 시작될 때 진행 중인 배틀이 있다면 종료 요청
         askPermissions() // 권한 확인 및 요청
 
         setContent {

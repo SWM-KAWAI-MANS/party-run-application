@@ -8,6 +8,7 @@ import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
+import online.partyrun.partyrunapplication.core.model.match.CancelMatch
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
 import online.partyrun.partyrunapplication.core.model.match.MatchStatus
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
@@ -63,6 +64,17 @@ class MatchRepositoryImpl @Inject constructor(
 
     override suspend fun getRunnerIds(): Flow<ApiResponse<RunnerIds>> {
         return apiRequestFlow { matchDataSource.getRunnerIds() }
+            .map { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Loading -> ApiResponse.Loading
+                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
+                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
+                }
+            }
+    }
+
+    override suspend fun cancelMatchWaitingEvent(): Flow<ApiResponse<CancelMatch>> {
+        return apiRequestFlow { matchDataSource.cancelMatchWaitingEvent() }
             .map { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Loading -> ApiResponse.Loading

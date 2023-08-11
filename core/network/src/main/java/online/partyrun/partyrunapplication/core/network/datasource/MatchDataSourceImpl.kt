@@ -12,6 +12,7 @@ import online.partyrun.partyrunapplication.core.network.model.response.MatchStat
 import online.partyrun.partyrunapplication.core.network.di.SSEOkHttpClient
 import online.partyrun.partyrunapplication.core.network.di.SSERequestBuilder
 import online.partyrun.partyrunapplication.core.network.model.request.RunningDistanceRequest
+import online.partyrun.partyrunapplication.core.network.model.response.CancelMatchResponse
 import online.partyrun.partyrunapplication.core.network.model.response.MatchInfoResponse
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
@@ -40,6 +41,10 @@ class MatchDataSourceImpl @Inject constructor(
 
     override suspend fun getRunnerIds(): ApiResult<MatchInfoResponse> =
         matchApiService.getRunnerIds()
+
+    override suspend fun cancelMatchWaitingEvent(): ApiResult<CancelMatchResponse> =
+        matchApiService.cancelMatchWaitingEvent()
+
 
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,

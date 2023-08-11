@@ -305,7 +305,8 @@ class BattleContentViewModel @Inject constructor(
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
             _battleUiState.update { state ->
                 state.copy(
-                    isFinished = true
+                    isFinished = true,
+                    screenState = BattleScreenState.Finish
                 )
             }
         }
@@ -318,11 +319,14 @@ class BattleContentViewModel @Inject constructor(
         trackWidth: Double,
         trackHeight: Double
     ): Pair<Double, Double> {
+        val currentDistance = distance.coerceAtMost(totalTrackDistance)
+
         return distanceToCoordinatesMapper(
             totalTrackDistance = totalTrackDistance,
-            distance = distance,
+            distance = currentDistance,
             trackWidth = trackWidth,
             trackHeight = trackHeight
         )
     }
+
 }

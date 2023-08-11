@@ -7,6 +7,8 @@ data class BattleUiState(
     val isConnecting: Boolean = true,
     // 목표 거리에 도달했는지 여부 판단
     val isFinished: Boolean = false,
+    // 유저 id
+    val userId: String = "",
     // 사용자가 선택한 목표 거리
     val selectedDistance: Int = 1000,
     // 현재 보여줘야 할 스크린

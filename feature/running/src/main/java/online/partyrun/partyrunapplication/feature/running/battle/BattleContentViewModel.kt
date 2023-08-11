@@ -58,6 +58,7 @@ class BattleContentViewModel @Inject constructor(
         const val STATE_SHARE_SUBSCRIPTION_TIMEOUT = 3000L
     }
 
+    private lateinit var userId: String
     private lateinit var locationCallback: LocationCallback
     private val locationRequest: LocationRequest
     private var isFirstBattleStreamCall = true // onEach 분기를 위한 boolean
@@ -79,7 +80,17 @@ class BattleContentViewModel @Inject constructor(
         )).build()
 
         getBattleId()
+        getUserId()
     }
+
+    private fun getUserId() = viewModelScope.launch {
+            userId = getUserIdUseCase()
+            _battleUiState.update { state ->
+                state.copy(
+                    userId = userId
+                )
+            }
+        }
 
     private fun getBattleId() {
         viewModelScope.launch {
@@ -301,7 +312,6 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private suspend fun handleBattleFinished(runnerId: String) {
-        val userId = getUserIdUseCase()
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
             _battleUiState.update { state ->
                 state.copy(

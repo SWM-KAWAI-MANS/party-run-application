@@ -7,6 +7,7 @@ import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.battle.BattleId
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
+import online.partyrun.partyrunapplication.core.model.battle.TerminateBattle
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
 import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
@@ -31,6 +32,20 @@ class BattleRepositoryImpl @Inject constructor(
 
     override suspend fun getBattleId(): Flow<ApiResponse<BattleId>> {
         return apiRequestFlow { battleDataSource.getBattleId() }
+            .map { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Loading -> ApiResponse.Loading
+                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
+                    is ApiResponse.Failure -> ApiResponse.Failure(
+                        apiResponse.errorMessage,
+                        apiResponse.code
+                    )
+                }
+            }
+    }
+
+    override suspend fun terminateOngoingBattle(): Flow<ApiResponse<TerminateBattle>> {
+        return apiRequestFlow { battleDataSource.terminateOngoingBattle() }
             .map { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Loading -> ApiResponse.Loading

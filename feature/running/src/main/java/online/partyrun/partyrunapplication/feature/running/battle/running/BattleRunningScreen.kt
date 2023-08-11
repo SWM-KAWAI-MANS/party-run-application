@@ -142,9 +142,7 @@ fun BattleRunningScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        FormatElapsedTimer(
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                        UserDistanceDisplay(battleContentViewModel)
                         Row(
                             modifier = Modifier.padding(top = 10.dp)
                         ) {
@@ -155,7 +153,7 @@ fun BattleRunningScreen(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 3.dp, bottom = 2.dp),
-                                text = stringResource(id = R.string.average_pace),
+                                text = stringResource(id = R.string.running_distance),
                             )
                         }
                     }
@@ -177,6 +175,15 @@ fun BattleRunningScreen(
             }
         }
     }
+}
+
+@Composable
+private fun UserDistanceDisplay(battleContentViewModel: BattleContentViewModel) {
+    Text(
+        text = battleContentViewModel.getRunnerDistance(),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onPrimary
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

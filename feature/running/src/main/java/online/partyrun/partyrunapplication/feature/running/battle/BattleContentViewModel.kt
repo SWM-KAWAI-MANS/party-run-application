@@ -194,9 +194,18 @@ class BattleContentViewModel @Inject constructor(
             currentBattleState[runnerIndex] = updatedRunnerState
         }
 
+        // 거리에 따라 러너들을 정렬
+        val sortedRunners = currentBattleState.sortedByDescending { it.distance }
+
+        // 순위 업데이트
+        val rankedRunners = sortedRunners.mapIndexed { index, runner ->
+            runner.copy(currentRank = index + 1)
+        }
+
+        // 업데이트된 상태로 저장
         _battleUiState.update { state ->
             state.copy(
-                battleState = BattleStatus(battleInfo = currentBattleState)
+                battleState = BattleStatus(battleInfo = rankedRunners)
             )
         }
     }

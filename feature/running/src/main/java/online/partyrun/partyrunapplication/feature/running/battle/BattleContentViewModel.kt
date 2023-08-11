@@ -27,6 +27,7 @@ import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.running.BattleStreamUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
+import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
@@ -48,6 +49,7 @@ class BattleContentViewModel @Inject constructor(
     private val getBattleIdUseCase: GetBattleIdUseCase,
     private val getBattleStatusUseCase: GetBattleStatusUseCase,
     private val saveBattleIdUseCase: SaveBattleIdUseCase,
+    private val getUserIdUseCase: GetUserIdUseCase,
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ): ViewModel() {
     companion object {
@@ -298,15 +300,15 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    private fun handleBattleFinished(runnerId: String) {
-        /* if (runnerId == MY_STORED_ID) {  /*TODO: 내 아이디와 비교하는 작업 수행해야 함.*/
+    private suspend fun handleBattleFinished(runnerId: String) {
+        val userId = getUserIdUseCase().id
+        if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
             _battleUiState.update { state ->
                 state.copy(
                     isFinished = true
                 )
             }
-        }*/
-        /* TODO: 내가 대결이 종료된 게 맞다면, 3초 뒤 결과 페이지로 넘어가는 작업을 수행해야 함. */
+        }
     }
 
     // 거리와 좌표를 매핑하는 로직

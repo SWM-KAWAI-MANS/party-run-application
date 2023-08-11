@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.model.match.CancelMatch
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
 import online.partyrun.partyrunapplication.core.model.match.MatchStatus
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
@@ -20,6 +21,7 @@ interface MatchRepository {
     suspend fun acceptMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>>
     suspend fun declineMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>>
     suspend fun getRunnerIds(): Flow<ApiResponse<RunnerIds>>
+    suspend fun cancelMatchWaitingEvent(): Flow<ApiResponse<CancelMatch>>
 
     /* SSE */
     fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener

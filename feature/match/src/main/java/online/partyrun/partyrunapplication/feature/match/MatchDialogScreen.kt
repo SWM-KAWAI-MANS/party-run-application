@@ -61,6 +61,7 @@ fun MatchDialog(
             MatchWaitingDialog(
                 setShowDialog = setShowDialog,
                 disconnectSSE = {
+                    matchViewModel.cancelMatchWaitingEvent()
                     matchViewModel.disconnectMatchEventSource()
                 },
                 matchUiState = matchState,

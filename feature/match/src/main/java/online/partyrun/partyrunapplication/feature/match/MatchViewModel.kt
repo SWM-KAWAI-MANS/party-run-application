@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.domain.match.CancelMatchWaitingUseCase
 import online.partyrun.partyrunapplication.core.domain.match.ConnectMatchResultEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.ConnectWaitingEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.CreateMatchEventSourceListenerUseCase
@@ -51,7 +52,8 @@ class MatchViewModel @Inject constructor(
     private val disconnectMatchResultEventSourceUseCase: DisconnectMatchResultEventSourceUseCase,
     private val getRunnerIdsUseCase: GetRunnerIdsUseCase,
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
-    private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase
+    private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
+    private val cancelMatchWaitingUseCase: CancelMatchWaitingUseCase
 ) : ViewModel() {
 
     private val _matchUiState = MutableStateFlow(MatchUiState())
@@ -363,5 +365,24 @@ class MatchViewModel @Inject constructor(
                 }
             }
         }
+
+    fun cancelMatchWaitingEvent() = viewModelScope.launch {
+        cancelMatchWaitingUseCase().collect {
+            when (it) {
+                is ApiResponse.Success -> {
+                    Timber.d("정상적으로 매칭 취소 완료")
+                }
+
+                is ApiResponse.Failure -> {
+                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
+                }
+
+                ApiResponse.Loading -> {
+                    Timber.d("$it")
+                }
+            }
+        }
+    }
+
 
 }

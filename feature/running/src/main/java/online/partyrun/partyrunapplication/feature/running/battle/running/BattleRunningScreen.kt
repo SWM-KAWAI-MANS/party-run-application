@@ -257,7 +257,7 @@ fun TrackWithMultipleUsers(
                             .height(40.dp)
                             .background(
                                 color = Color.Black.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(20.dp) // 모서리를 둥글게 하기 위한 값
+                                shape = RoundedCornerShape(25.dp) // 모서리를 둥글게 하기 위한 값
                             )
                             .padding(10.dp)
                     ) {

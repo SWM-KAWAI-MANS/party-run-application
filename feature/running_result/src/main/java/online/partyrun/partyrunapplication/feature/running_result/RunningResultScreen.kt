@@ -45,11 +45,8 @@ import online.partyrun.partyrunapplication.core.model.running_result.BattleRunne
 data class User(val imageRes: Int, val name: String)
 
 val mockUsers = listOf(
-    User(R.drawable.mock_profile2, "가나"),
     User(R.drawable.mock_profile2, "가나다"),
     User(R.drawable.mock_profile2, "가나다라"),
-    User(R.drawable.mock_profile2, "가나다라마"),
-    User(R.drawable.mock_profile2, "가나다라마바사")
 )
 
 @Composable

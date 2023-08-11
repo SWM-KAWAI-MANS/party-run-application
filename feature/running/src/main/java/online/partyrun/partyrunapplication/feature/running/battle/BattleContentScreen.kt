@@ -9,7 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
+import online.partyrun.partyrunapplication.feature.running.battle.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.battle.ready.BattleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.battle.running.BattleRunningScreen
 
@@ -31,6 +33,17 @@ fun BattleContentScreen(
         }
     }
 
+    /**
+     * 목표 거리에 도달했다면, 4초 대기 후 결과 스크린으로 이동
+     */
+    if (battleUiState.isFinished) {
+        LaunchedEffect(Unit) {
+            delay(4000)
+            navigationToRunningResult()
+        }
+    }
+
+
     CheckStartTime(battleUiState, battleId, viewModel)
 
     Content(battleUiState, navigationToRunningResult)
@@ -48,7 +61,7 @@ fun Content(
         when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
             is BattleScreenState.Running -> BattleRunningScreen(battleUiState, navigationToRunningResult)
-            else -> {}
+            BattleScreenState.Finish -> FinishScreen()
         }
     }
 }

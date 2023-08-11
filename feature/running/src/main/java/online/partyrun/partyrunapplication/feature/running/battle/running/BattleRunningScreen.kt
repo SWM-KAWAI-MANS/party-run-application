@@ -60,18 +60,6 @@ fun BattleRunningScreen(
 ) {
     val battleState = battleUiState.battleState // 배틀 상태 state
 
-    /**
-     * 목표 거리에 도달했다면, 반투명의 대결 종료 레이어 스크린을 띄움.
-     */
-    if (battleUiState.isFinished) {
-        FinishScreen()
-
-        LaunchedEffect(Unit) {
-            delay(3000) // 3초 대기
-            navigationToRunningResult()
-        }
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -290,8 +278,15 @@ fun RealtimeBattleScreenItem(runner: RunnerStatus) {
             .fillMaxWidth()
             .padding(5.dp)
             .shadow(4.dp, shape = RoundedCornerShape(35.dp))
-            .border(2.dp, color = MaterialTheme.colorScheme.onBackground, shape = RoundedCornerShape(35.dp)) // 테두리 추가
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(35.dp))
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.onBackground,
+                shape = RoundedCornerShape(35.dp)
+            ) // 테두리 추가
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(35.dp)
+            )
     ) {
         Row(
             modifier = Modifier.padding(15.dp),

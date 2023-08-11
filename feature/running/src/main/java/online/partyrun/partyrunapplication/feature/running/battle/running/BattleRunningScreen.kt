@@ -36,6 +36,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
@@ -97,6 +98,7 @@ fun BattleRunningScreen(
                     TrackWithMultipleUsers(
                         battleContentViewModel = battleContentViewModel,
                         totalTrackDistance = battleUiState.selectedDistance,
+                        userId = battleUiState.userId,
                         runners = battleState.battleInfo
                     )
                 }
@@ -201,6 +203,7 @@ private fun RunningTopAppBar() {
 fun TrackWithMultipleUsers(
     battleContentViewModel: BattleContentViewModel,
     totalTrackDistance: Int,
+    userId: String,
     runners: List<RunnerStatus>
 ) {
     // 트랙 이미지 리소스를 사용
@@ -232,11 +235,14 @@ fun TrackWithMultipleUsers(
                 trackWidth = trackWidth,
                 trackHeight = trackHeight
             )
+            val zIndex = if (runner.runnerId == userId) 1f else 0f // 해당 runnerId가 userId와 같으면 z-index를 1로 설정
             Box(
-                modifier = Modifier.offset(
-                    x = currentX.dp,
-                    y = currentY.dp
-                )
+                modifier = Modifier
+                    .offset(
+                        x = currentX.dp,
+                        y = currentY.dp
+                    )
+                    .zIndex(zIndex) // 여기에 z-index 설정하여 user라면 최상단에 마커를 위치
             ) {
                 Column() {
                     Box(

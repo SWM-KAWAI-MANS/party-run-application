@@ -18,5 +18,6 @@ interface BattleRepository {
     suspend fun terminateOngoingBattle(): Flow<ApiResponse<TerminateBattle>>
     fun getBattleStream(battleId: String): Flow<BattleEvent>
     suspend fun sendRecordData(battleId: String, recordData: RecordData)
+    suspend fun disposeSocketResources()
     suspend fun close()
 }

@@ -1,8 +1,8 @@
 package online.partyrun.partyrunapplication.core.designsystem.component
 
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -20,11 +20,8 @@ fun PartyRunTopAppBar(
     actionsContent: @Composable () -> Unit = {},
     titleContent: @Composable () -> Unit = {}
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         modifier = modifier,
-        title = {
-            titleContent()
-        },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = containerColor,
             navigationIconContentColor = White10,
@@ -33,6 +30,9 @@ fun PartyRunTopAppBar(
         ),
         navigationIcon = {
             navigationContent()
+        },
+        title = {
+            titleContent()
         },
         actions = {
             actionsContent()

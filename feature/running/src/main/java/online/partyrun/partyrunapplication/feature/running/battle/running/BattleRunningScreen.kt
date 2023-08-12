@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -35,12 +37,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
+import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
@@ -138,9 +142,7 @@ fun BattleRunningScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        FormatElapsedTimer(
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
+                        UserDistanceDisplay(battleContentViewModel)
                         Row(
                             modifier = Modifier.padding(top = 10.dp)
                         ) {
@@ -151,7 +153,7 @@ fun BattleRunningScreen(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 3.dp, bottom = 2.dp),
-                                text = stringResource(id = R.string.average_pace),
+                                text = stringResource(id = R.string.running_distance),
                             )
                         }
                     }
@@ -173,6 +175,15 @@ fun BattleRunningScreen(
             }
         }
     }
+}
+
+@Composable
+private fun UserDistanceDisplay(battleContentViewModel: BattleContentViewModel) {
+    Text(
+        text = battleContentViewModel.getRunnerDistance(),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onPrimary
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -244,14 +255,16 @@ fun TrackWithMultipleUsers(
                     )
                     .zIndex(zIndex) // 여기에 z-index 설정하여 user라면 최상단에 마커를 위치
             ) {
-                Column() {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .height(40.dp)
                             .background(
                                 color = Color.Black.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(20.dp) // 모서리를 둥글게 하기 위한 값
+                                shape = RoundedCornerShape(25.dp) // 모서리를 둥글게 하기 위한 값
                             )
                             .padding(10.dp)
                     ) {
@@ -261,13 +274,36 @@ fun TrackWithMultipleUsers(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                    Image(
-                        modifier = Modifier.size(60.dp),
-                        painter = painterResource(id = R.drawable.runner_img_marker),
-                        contentDescription = stringResource(id = R.string.runner_img_marker)
-                    )
+
+                    RunnerMarker(runner)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RunnerMarker(runner: RunnerStatus) {
+    Box (
+        contentAlignment = Alignment.Center
+    ) {
+        // 마커 프레임
+        Image(
+            modifier = Modifier.size(70.dp),
+            painter = painterResource(id = R.drawable.runner_img_marker),
+            contentDescription = stringResource(id = R.string.runner_img_marker)
+        )
+        // 유저 프로필 이미지
+        Box(
+            modifier = Modifier
+                .size(42.dp)
+                .offset(y = (-6).dp)
+                .clip(CircleShape)
+        ) {
+            RenderAsyncUrlImage(
+                imageUrl = runner.runnerProfile,
+                contentDescription = null
+            )
         }
     }
 }
@@ -349,5 +385,55 @@ fun TrackDistanceDistanceBox(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
+    }
+}
+
+@Preview(showBackground = false)
+@Composable
+fun RunnerImagePreview(
+    imageUrl: String = "https://avatars.githubusercontent.com/u/134378498?s=400&u=72e57bdb2eafcad3d0c8b8e137349397eefce35f&v=4" // 대체 이미지 URL
+) {
+    Box() {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .height(40.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(20.dp) // 모서리를 둥글게 하기 위한 값
+                    )
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = "김말숙",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(70.dp),
+                    painter = painterResource(id = R.drawable.runner_img_marker),
+                    contentDescription = stringResource(id = R.string.runner_img_marker)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .offset(y = (-6).dp)
+                        .clip(CircleShape)
+                ) {
+                    RenderAsyncUrlImage(
+                        imageUrl = imageUrl,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
     }
 }

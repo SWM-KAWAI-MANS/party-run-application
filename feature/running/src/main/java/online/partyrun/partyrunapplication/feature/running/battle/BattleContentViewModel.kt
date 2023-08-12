@@ -86,13 +86,13 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun getUserId() = viewModelScope.launch {
-            userId = getUserIdUseCase()
-            _battleUiState.update { state ->
-                state.copy(
-                    userId = userId
-                )
-            }
+        userId = getUserIdUseCase()
+        _battleUiState.update { state ->
+            state.copy(
+                userId = userId
+            )
         }
+    }
 
     private fun getBattleId() {
         viewModelScope.launch {
@@ -183,7 +183,6 @@ class BattleContentViewModel @Inject constructor(
 
         val updatedRunnerState = existingRunnerState?.copy(
             distance = result.distance,
-            currentRank = 1,  // 적절한 값으로 변경
             currentRound = 1,  // 적절한 값으로 변경
             totalRounds = 1  // 적절한 값으로 변경
         )
@@ -194,9 +193,18 @@ class BattleContentViewModel @Inject constructor(
             currentBattleState[runnerIndex] = updatedRunnerState
         }
 
+        // 거리에 따라 러너들을 정렬
+        val sortedRunners = currentBattleState.sortedByDescending { it.distance }
+
+        // 순위 업데이트
+        val rankedRunners = sortedRunners.mapIndexed { index, runner ->
+            runner.copy(currentRank = index + 1)
+        }
+
+        // 업데이트된 상태로 저장
         _battleUiState.update { state ->
             state.copy(
-                battleState = BattleStatus(battleInfo = currentBattleState)
+                battleState = BattleStatus(battleInfo = rankedRunners)
             )
         }
     }
@@ -347,4 +355,9 @@ class BattleContentViewModel @Inject constructor(
         )
     }
 
+    fun getRunnerDistance(): String {
+        val runnerStatus = _battleUiState.value.battleState.battleInfo.find { it.runnerId == userId }
+        val distance = runnerStatus?.distance?.toInt() ?: 0
+        return "${distance}m"
+    }
 }

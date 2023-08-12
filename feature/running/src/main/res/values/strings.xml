@@ -9,6 +9,7 @@
     <string name="menu_desc">메뉴 아이콘</string>
     <string name="track_img">달리기 트랙 이미지</string>
     <string name="runner_img_marker">러너 프로필 이미지</string>
+    <string name="running_distance">달린 거리</string>
     <string name="ranking">등</string>
     <string name="schedule_desc">진행 시간 아이콘</string>
     <string name="pace_desc">평균 페이스 아이콘</string>

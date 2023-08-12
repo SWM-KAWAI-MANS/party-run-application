@@ -38,16 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
+import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
 import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
-
-data class User(val imageRes: Int, val name: String)
-
-val mockUsers = listOf(
-    User(R.drawable.mock_profile2, "가나다"),
-    User(R.drawable.mock_profile2, "가나다라"),
-)
+import timber.log.Timber
 
 @Composable
 fun RunningResultScreen(
@@ -137,13 +132,12 @@ private fun RunningResultBody(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(start = 20.dp)
                         .background(color = Color.Transparent)
                         .offset(y = (-40).dp)
                 ) {
                     UserProfiles(
-                        users = mockUsers,
-                        battleResult = battleResult
+                        users = battleResult.battleRunnerStatus
                     )
                 }
                 Column(
@@ -225,17 +219,15 @@ private fun RunningResultBody(
 
 @Composable
 fun UserProfiles(
-    users: List<User>,
-    battleResult: BattleResult
+    users: List<BattleRunnerStatus>,
 ) {
     LazyRow(
         modifier = Modifier.padding(all = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        itemsIndexed(users) { index, user ->
+        itemsIndexed(users) { index, runner ->
             UserProfile(
-                user = user,
-                battleRunnerStatus = battleResult.battleRunnerStatus?.get(index) ?: BattleRunnerStatus()
+                runner = runner
             )
         }
     }
@@ -243,8 +235,7 @@ fun UserProfiles(
 
 @Composable
 fun UserProfile(
-    user: User,
-    battleRunnerStatus: BattleRunnerStatus
+    runner: BattleRunnerStatus,
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -256,23 +247,26 @@ fun UserProfile(
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(20.dp)
         ) {
-            Image(
-                painter = painterResource(id = user.imageRes),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            ) {
+                RenderAsyncUrlImage(
+                    imageUrl = runner.profile,
+                    contentDescription = null
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
             Column() {
                 Text(
-                    text = user.name,
+                    text = runner.name,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = battleRunnerStatus.elapsedTime,
+                    text = runner.elapsedTime,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -288,7 +282,7 @@ fun UserProfile(
                     .padding(horizontal = 17.dp, vertical = 8.dp)
             ) {
                 Text(
-                    text = "${battleRunnerStatus.rank} ${stringResource(id = R.string.rank)}",
+                    text = "${runner.rank} ${stringResource(id = R.string.rank)}",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

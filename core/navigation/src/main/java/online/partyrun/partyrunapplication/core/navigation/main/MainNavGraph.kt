@@ -75,7 +75,11 @@ fun SetUpMainNavGraph(
 
         runningResultRoute()
 
-        settingsRoute()
+        settingsRoute(
+            navigateBack = {
+                navController.popBackStack()
+            }
+        )
 
     }
 }

@@ -110,7 +110,6 @@ private fun MyPageBody(
         SignOutButton(
             onSignOut = {
                 viewModel.signOutFromGoogle()
-                viewModel.saveAgreementState(isChecked = false)
                 onSignOut()
             },
             modifier = Modifier.fillMaxWidth()

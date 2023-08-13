@@ -54,10 +54,11 @@ fun SetUpMainGraph(
      */
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route?.substringBefore("?")
+    val hiddenRoutes = setOf(MainNavRoutes.BattleRunning.route, MainNavRoutes.Settings.route)
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != MainNavRoutes.BattleRunning.route) {
+            if (currentRoute !in hiddenRoutes) {
                 BottomNavigationBar(navController = navController)
             }
         },
@@ -76,7 +77,7 @@ fun SetUpMainGraph(
                 onSignOut = onSignOut
             )
 
-            if (currentRoute != MainNavRoutes.BattleRunning.route) {
+            if (currentRoute !in hiddenRoutes) {
                 Divider( // 네비게이션바 border 상단 표현
                     modifier = Modifier
                         .fillMaxWidth()

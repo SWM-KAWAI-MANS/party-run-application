@@ -54,11 +54,19 @@ fun SetUpMainGraph(
      */
     val currentDestination by navController.currentBackStackEntryAsState()
     val currentRoute = currentDestination?.destination?.route?.substringBefore("?")
-    val hiddenRoutes = setOf(MainNavRoutes.BattleRunning.route, MainNavRoutes.Settings.route)
+
+    // Top-level destinations 정의
+    val topLevelDestinations = setOf(
+        MainNavRoutes.Battle.route,
+        MainNavRoutes.Challenge.route,
+        MainNavRoutes.Single.route,
+        MainNavRoutes.MyPage.route
+    )
 
     Scaffold(
         bottomBar = {
-            if (currentRoute !in hiddenRoutes) {
+            // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
+            if (currentRoute in topLevelDestinations) {
                 BottomNavigationBar(navController = navController)
             }
         },
@@ -77,7 +85,7 @@ fun SetUpMainGraph(
                 onSignOut = onSignOut
             )
 
-            if (currentRoute !in hiddenRoutes) {
+            if (currentRoute in topLevelDestinations) {
                 Divider( // 네비게이션바 border 상단 표현
                     modifier = Modifier
                         .fillMaxWidth()

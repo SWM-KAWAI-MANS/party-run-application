@@ -13,11 +13,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 
@@ -25,7 +28,10 @@ import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit = {},
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val settingsUiState by settingsViewModel.settingsUiState.collectAsStateWithLifecycle()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -40,25 +46,53 @@ fun SettingsScreen(
                     bottom = paddingValues.calculateBottomPadding()
                 )
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(id = R.string.unsubscribe),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painterResource(id = PartyRunIcons.ArrowForwardIos),
-                        contentDescription = stringResource(id = R.string.arrow_forward_desc)
-                    )
-                }
-            }
+            Content(
+                settingsViewModel = settingsViewModel,
+                settingsUiState = settingsUiState
+            )
+        }
+    }
+}
+
+@Composable
+fun Content(
+    settingsViewModel: SettingsViewModel,
+    settingsUiState: SettingsUiState,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        when (settingsUiState.screenState) {
+            is SettingsScreenState.Unsubscribe -> UnsubscribeScreen()
+            SettingsScreenState.Main -> MainBody(
+                settingsViewModel = settingsViewModel
+            )
+        }
+    }
+}
+
+@Composable
+private fun MainBody(
+    settingsViewModel: SettingsViewModel
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.unsubscribe),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        IconButton(onClick = { settingsViewModel.navigateToUnsubscribe() }) {
+            Icon(
+                painterResource(id = PartyRunIcons.ArrowForwardIos),
+                contentDescription = stringResource(id = R.string.arrow_forward_desc)
+            )
         }
     }
 }

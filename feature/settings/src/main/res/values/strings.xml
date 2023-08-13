@@ -4,4 +4,7 @@
     <string name="unsubscribe">회원 탈퇴</string>
     <string name="arrow_back_desc">뒤로 가기 아이콘</string>
     <string name="arrow_forward_desc">앞으로 가기 아이콘</string>
+    <string name="unsubscribe_title">회원 탈퇴 하기</string>
+    <string name="unsubscribe_btn">탈퇴 하기</string>
+    <string name="unsubscribe_desc">요청이 정상적으로 진행되면 파티런(PartyRun)에서 보유하고 있는 사용자의 모든 개인정보가 영구적으로 삭제됩니다.(개인정보 방침에 따라 명시된 일부 정보는 제외)</string>
 </resources>

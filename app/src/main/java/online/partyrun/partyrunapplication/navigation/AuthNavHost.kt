@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.agreementRoute

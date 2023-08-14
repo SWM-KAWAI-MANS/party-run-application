@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,62 +22,49 @@ import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.navigation.BottomNavigationBar
 import online.partyrun.partyrunapplication.navigation.SetUpMainNavGraph
 
+@OptIn(
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun PartyRunMain(
     appState: PartyRunAppState = rememberPartyRunAppState(),
     onSignOut: () -> Unit
 ) {
     PartyRunBackground {
-        Surface(
+        val snackbarHostState = remember { SnackbarHostState() }
+        val currentDestination = appState.currentDestination?.route
+        val topLevelDestinations = appState.topLevelDestinations
+
+        Scaffold(
             modifier = Modifier.fillMaxSize(),
-        ) {
-            SetUpMainGraph(
-                appState = appState,
-                onSignOut = onSignOut
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SetUpMainGraph(
-    appState: PartyRunAppState,
-    onSignOut: () -> Unit
-) {
-    val currentDestination = appState.currentDestination?.route
-    val topLevelDestinations = appState.topLevelDestinations
-
-    Scaffold(
-        bottomBar = {
-            // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
-            if (currentDestination in topLevelDestinations) {
-                BottomNavigationBar(navController = appState.navController)
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            bottomBar = {
+                // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
+                if (currentDestination in topLevelDestinations) {
+                    BottomNavigationBar(navController = appState.navController)
+                }
             }
-        },
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                SetUpMainNavGraph(
+                    startDestination = MainNavRoutes.Battle.route,
+                    appState = appState,
+                    onSignOut = onSignOut
                 )
-        ) {
-            SetUpMainNavGraph(
-                startDestination = MainNavRoutes.Battle.route,
-                appState = appState,
-                onSignOut = onSignOut
-            )
 
-            if (currentDestination in topLevelDestinations) {
-                Divider( // 네비게이션바 border 상단 표현
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
-                    color = Color(0xFFBD55F2)
-                )
+                if (currentDestination in topLevelDestinations) {
+                    Divider( // 네비게이션바 border 상단 표현
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
+                        color = Color(0xFFBD55F2)
+                    )
+                }
             }
         }
     }

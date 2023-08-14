@@ -1,7 +1,6 @@
 package online.partyrun.partyrunapplication.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import online.partyrun.partyrunapplication.core.navigation.auth.AuthNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.auth.agreementRoute
@@ -13,7 +12,8 @@ import online.partyrun.partyrunapplication.ui.PartyRunAppState
 fun SetUpAuthNavGraph(
     appState: PartyRunAppState,
     startDestination: String,
-    intentToMainActivity: () -> Unit
+    intentToMainActivity: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
 ) {
     val navController = appState.navController
 
@@ -42,7 +42,8 @@ fun SetUpAuthNavGraph(
         )
 
         signInRoute(
-            setIntentMainActivity = intentToMainActivity
+            setIntentMainActivity = intentToMainActivity,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

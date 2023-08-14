@@ -29,7 +29,8 @@ import online.partyrun.partyrunapplication.ui.PartyRunAppState
 fun SetUpMainNavGraph(
     appState: PartyRunAppState,
     startDestination: String,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     val navController = appState.navController
 
@@ -42,7 +43,8 @@ fun SetUpMainNavGraph(
                 navController.navigate(MainNavRoutes.BattleRunning.route) {
                     popUpTo(MainNavRoutes.BattleRunning.route)
                 }
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
 
         singleRoute(
@@ -59,7 +61,8 @@ fun SetUpMainNavGraph(
             onSignOut = onSignOut,
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
 
         battleRunningRoute(
@@ -76,7 +79,8 @@ fun SetUpMainNavGraph(
                         inclusive = true
                     }
                 }
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
 
         runningResultRoute()
@@ -88,7 +92,8 @@ fun SetUpMainNavGraph(
             },
             navigateToUnsubscribe = {
                 navController.navigate(SettingsNavRoutes.Unsubscribe.route)
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
 
     }

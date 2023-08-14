@@ -16,25 +16,29 @@ object BottomNavBarItems {
             title = R.string.battle_title,
             image = BattleIcon,
             selectedImage = SelectedBattleIcon,
-            route = MainNavRoutes.Battle.route
+            route = MainNavRoutes.Battle.route,
+            isLaunched = true
         ),
         BottomBarItem(
             title = R.string.single_title,
             image = SingleIcon,
             selectedImage = SelectedSingleIcon,
-            route = MainNavRoutes.Single.route
+            route = MainNavRoutes.Single.route,
+            isLaunched = false
         ),
         BottomBarItem(
             title = R.string.challenge_title,
             image = ChallengeIcon,
             selectedImage = SelectedChallengeIcon,
-            route = MainNavRoutes.Challenge.route
+            route = MainNavRoutes.Challenge.route,
+            isLaunched = false
         ),
         BottomBarItem(
             title = R.string.my_page_title,
             image = MyPageIcon,
             selectedImage = SelectedMyPageIcon,
-            route = MainNavRoutes.MyPage.route
+            route = MainNavRoutes.MyPage.route,
+            isLaunched = true
         ),
     )
 }

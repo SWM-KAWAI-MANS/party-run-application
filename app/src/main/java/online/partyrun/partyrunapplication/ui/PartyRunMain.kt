@@ -10,64 +10,47 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import online.partyrun.partyrunapplication.core.navigation.main.BottomNavigationBar
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
-import online.partyrun.partyrunapplication.core.navigation.main.SetUpMainNavGraph
+import online.partyrun.partyrunapplication.navigation.BottomNavigationBar
+import online.partyrun.partyrunapplication.navigation.SetUpMainNavGraph
 
 @Composable
 fun PartyRunMain(
+    appState: PartyRunAppState = rememberPartyRunAppState(),
     onSignOut: () -> Unit
 ) {
-    /*
-     Navigation Architecture Component
-     메인 기준 NavHostController 인스턴스 생성
-     */
-    val navController = rememberNavController() // 백 스택 관리 및 현재 목적지가 어떤 Composable인지 추적
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        SetUpMainGraph(
-            navController = navController,
-            onSignOut = onSignOut
-        )
+    PartyRunBackground {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            SetUpMainGraph(
+                appState = appState,
+                onSignOut = onSignOut
+            )
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetUpMainGraph(
-    navController: NavHostController,
+    appState: PartyRunAppState,
     onSignOut: () -> Unit
 ) {
-    /**
-     * 현재 destination 가져와 arguments는 고려하지 않고 route만 비교 -> currentRoute
-     */
-    val currentDestination by navController.currentBackStackEntryAsState()
-    val currentRoute = currentDestination?.destination?.route?.substringBefore("?")
-
-    // Top-level destinations 정의
-    val topLevelDestinations = setOf(
-        MainNavRoutes.Battle.route,
-        MainNavRoutes.Challenge.route,
-        MainNavRoutes.Single.route,
-        MainNavRoutes.MyPage.route
-    )
+    val currentDestination = appState.currentDestination?.route
+    val topLevelDestinations = appState.topLevelDestinations
 
     Scaffold(
         bottomBar = {
             // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
-            if (currentRoute in topLevelDestinations) {
-                BottomNavigationBar(navController = navController)
+            if (currentDestination in topLevelDestinations) {
+                BottomNavigationBar(navController = appState.navController)
             }
         },
     ) { paddingValues ->
@@ -81,11 +64,11 @@ fun SetUpMainGraph(
         ) {
             SetUpMainNavGraph(
                 startDestination = MainNavRoutes.Battle.route,
-                navController = navController,
+                appState = appState,
                 onSignOut = onSignOut
             )
 
-            if (currentRoute in topLevelDestinations) {
+            if (currentDestination in topLevelDestinations) {
                 Divider( // 네비게이션바 border 상단 표현
                     modifier = Modifier
                         .fillMaxWidth()

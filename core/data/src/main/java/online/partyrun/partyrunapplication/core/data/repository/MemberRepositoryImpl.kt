@@ -7,6 +7,7 @@ import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.UserPreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
+import online.partyrun.partyrunapplication.core.model.user.DeleteAccount
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSource
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
@@ -36,6 +37,20 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun getUserData(): Flow<ApiResponse<User>> {
         return apiRequestFlow { memberDataSource.getUserData() }
+            .map { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Loading -> ApiResponse.Loading
+                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
+                    is ApiResponse.Failure -> ApiResponse.Failure(
+                        apiResponse.errorMessage,
+                        apiResponse.code
+                    )
+                }
+            }
+    }
+
+    override suspend fun deleteAccount(): Flow<ApiResponse<DeleteAccount>> {
+        return apiRequestFlow { memberDataSource.deleteAccount() }
             .map { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Loading -> ApiResponse.Loading

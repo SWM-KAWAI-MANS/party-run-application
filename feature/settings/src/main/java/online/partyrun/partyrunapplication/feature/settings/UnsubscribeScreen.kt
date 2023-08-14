@@ -47,7 +47,8 @@ import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 fun UnsubscribeScreen(
     onSignOut: () -> Unit,
     settingsViewModel: SettingsViewModel = hiltViewModel(),
-    navigateBack: () -> Unit = {}
+    navigateBack: () -> Unit = {},
+    onShowSnackbar: (String) -> Unit
 ) {
     val context = LocalContext.current
     val settingsUiState by settingsViewModel.settingsUiState.collectAsStateWithLifecycle()

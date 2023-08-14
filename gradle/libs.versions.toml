@@ -35,6 +35,9 @@ firebasePerfPlugin = "1.4.2"
 firebaseAuth = "22.0.0"
 firebaseStroage ="20.2.0"
 gmsPlugin = "4.3.15"
+composeMap = "2.8.0"
+gmsMap = "18.1.0"
+gmsMapKtx = "3.2.1"
 gmsLocation = "21.0.1"
 gmsAuth = "20.5.0"
 hilt = "2.44"
@@ -130,7 +133,13 @@ firebase-auth = { module = "com.google.firebase:firebase-auth-ktx", version.ref 
 firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStroage" }
 google-service = { group = "com.google.gms", name = "google-services", version.ref = "gmsPlugin" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "gmsAuth" }
-google-location = {group = "com.google.android.gms", name = "play-services-location", version.ref = "gmsLocation"}
+
+# maps
+google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "composeMap"}
+google-maps =  { group = "com.google.android.gms", name = "play-services-maps", version.ref = "gmsMap"}
+google-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "gmsLocation"}
+google-maps-sdk = { group = "com.google.maps.android", name = "maps-ktx", version.ref = "gmsMapKtx"}
+google-maps-utility = { group = "com.google.maps.android", name = "maps-utils-ktx", version.ref = "gmsMapKtx"}
 
 # coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }

@@ -9,13 +9,15 @@ import online.partyrun.partyrunapplication.feature.settings.UnsubscribeScreen
 fun NavGraphBuilder.settingsRoute(
     onSignOut: () -> Unit,
     navigateBack: () -> Unit,
-    navigateToUnsubscribe: () -> Unit
+    navigateToUnsubscribe: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     // MainNavRoute
     composable(route = MainNavRoutes.Settings.route) {
         SettingsScreen(
             navigateBack = navigateBack,
-            navigateToUnsubscribe = navigateToUnsubscribe
+            navigateToUnsubscribe = navigateToUnsubscribe,
+            onShowSnackbar = onShowSnackbar
         )
     }
 
@@ -23,7 +25,8 @@ fun NavGraphBuilder.settingsRoute(
     composable(route = SettingsNavRoutes.Unsubscribe.route) {
         UnsubscribeScreen(
             onSignOut = onSignOut,
-            navigateBack = navigateBack
+            navigateBack = navigateBack,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

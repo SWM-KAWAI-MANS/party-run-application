@@ -7,7 +7,8 @@ import online.partyrun.partyrunapplication.feature.running.battle.BattleContentS
 
 fun NavGraphBuilder.battleRunningRoute(
     navigateToBattleOnWebSocketError: () -> Unit,
-    navigationToRunningResult: () -> Unit
+    navigationToRunningResult: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     composable(
         route = MainNavRoutes.BattleRunning.route,
@@ -15,6 +16,7 @@ fun NavGraphBuilder.battleRunningRoute(
         BattleContentScreen(
             navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
             navigationToRunningResult = navigationToRunningResult,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

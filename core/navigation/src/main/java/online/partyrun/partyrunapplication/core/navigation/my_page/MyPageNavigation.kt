@@ -7,12 +7,14 @@ import online.partyrun.partyrunapplication.feature.my_page.MyPageScreen
 
 fun NavGraphBuilder.myPageRoute(
     onSignOut: () -> Unit,
-    navigateToSettings: () -> Unit
+    navigateToSettings: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     composable(route = MainNavRoutes.MyPage.route) {
         MyPageScreen(
             onSignOut = onSignOut,
-            navigateToSettings = navigateToSettings
+            navigateToSettings = navigateToSettings,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

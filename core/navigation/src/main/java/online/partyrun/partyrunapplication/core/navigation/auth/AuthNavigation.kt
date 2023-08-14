@@ -51,11 +51,13 @@ fun NavGraphBuilder.agreementRoute(
 }
 
 fun NavGraphBuilder.signInRoute(
-    setIntentMainActivity: () -> Unit
+    setIntentMainActivity: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     composable(route = AuthNavRoutes.SignIn.route) {
         SignInScreen(
-            setIntentMainActivity = setIntentMainActivity
+            setIntentMainActivity = setIntentMainActivity,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

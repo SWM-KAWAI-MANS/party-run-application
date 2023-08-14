@@ -18,6 +18,8 @@ import online.partyrun.partyrunapplication.core.navigation.battle_running.battle
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
 import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
+import online.partyrun.partyrunapplication.core.navigation.settings.SettingsNavRoutes
+import online.partyrun.partyrunapplication.core.navigation.settings.settingsRoute
 import online.partyrun.partyrunapplication.core.navigation.single.singleRoute
 
 @Composable
@@ -49,7 +51,10 @@ fun SetUpMainNavGraph(
         challengeRoute()
 
         myPageRoute(
-            onSignOut = onSignOut
+            onSignOut = onSignOut,
+            navigateToSettings = {
+                navController.navigate(MainNavRoutes.Settings.route)
+            }
         )
 
         battleRunningRoute(
@@ -70,6 +75,16 @@ fun SetUpMainNavGraph(
         )
 
         runningResultRoute()
+
+        settingsRoute(
+            onSignOut = onSignOut,
+            navigateBack = {
+                navController.popBackStack()
+            },
+            navigateToUnsubscribe = {
+                navController.navigate(SettingsNavRoutes.Unsubscribe.route)
+            }
+        )
 
     }
 }

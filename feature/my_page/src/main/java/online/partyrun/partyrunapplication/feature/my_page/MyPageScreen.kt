@@ -41,14 +41,16 @@ import online.partyrun.partyrunapplication.core.ui.ProfileSection
 @Composable
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit = {},
+    navigateToSettings: () -> Unit = {}
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
 
     Content(
         myPageViewModel = myPageViewModel,
         myPageUiState = myPageUiState,
-        onSignOut = onSignOut
+        onSignOut = onSignOut,
+        navigateToSettings = navigateToSettings
     )
 }
 
@@ -57,12 +59,18 @@ fun Content(
     modifier: Modifier = Modifier,
     myPageViewModel: MyPageViewModel,
     myPageUiState: MyPageUiState,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    navigateToSettings: () -> Unit
 ) {
     Box(modifier = modifier) {
         when (myPageUiState) {
             is MyPageUiState.Loading -> LoadingBody()
-            is MyPageUiState.Success -> MyPageBody(viewModel = myPageViewModel, onSignOut = onSignOut, userData = myPageUiState.user)
+            is MyPageUiState.Success -> MyPageBody(
+                viewModel = myPageViewModel,
+                onSignOut = onSignOut,
+                userData = myPageUiState.user,
+                navigateToSettings = navigateToSettings
+            )
             is MyPageUiState.LoadFailed -> LoadingBody()
         }
     }
@@ -83,7 +91,8 @@ private fun LoadingBody() {
 private fun MyPageBody(
     viewModel: MyPageViewModel,
     onSignOut: () -> Unit,
-    userData: User
+    userData: User,
+    navigateToSettings: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -102,6 +111,7 @@ private fun MyPageBody(
                 .heightIn(max = max(270.dp, with(LocalDensity.current) { 200.sp.toDp() }))
         ) {
             ProfileContent(
+                navigateToSettings = navigateToSettings,
                 userName = userData.name,
                 userProfile = userData.profile
             )
@@ -134,14 +144,16 @@ private fun TopAppTitle(
 }
 @Composable
 private fun ProfileContent(
+    navigateToSettings: () -> Unit,
     userName: String,
-    userProfile: String
+    userProfile: String,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileHeader(
+            navigateToSettings = navigateToSettings,
             userName = userName
         )
         ProfileImage(
@@ -152,6 +164,7 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileHeader(
+    navigateToSettings: () -> Unit,
     userName: String
 ) {
     Box(
@@ -170,7 +183,9 @@ private fun ProfileHeader(
         )
 
         IconButton(
-            onClick = { /*TODO:*/ },
+            onClick = {
+                navigateToSettings()
+            },
             modifier = Modifier
                 .padding(end = 10.dp)
                 .align(Alignment.CenterEnd)

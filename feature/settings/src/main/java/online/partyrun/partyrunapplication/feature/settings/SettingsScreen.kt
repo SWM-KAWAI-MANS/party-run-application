@@ -21,17 +21,56 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit = {},
+    navigateToUnsubscribe: () -> Unit = {},
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val settingsUiState by settingsViewModel.settingsUiState.collectAsStateWithLifecycle()
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Content(
+            settingsViewModel = settingsViewModel,
+            settingsUiState = settingsUiState,
+            navigateBack = navigateBack,
+            navigateToUnsubscribe = navigateToUnsubscribe
+        )
+    }
+}
+
+@Composable
+fun Content(
+    settingsViewModel: SettingsViewModel,
+    settingsUiState: SettingsUiState,
+    navigateBack: () -> Unit,
+    navigateToUnsubscribe: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        MainBody(
+            settingsViewModel = settingsViewModel,
+            navigateBack = navigateBack,
+            navigateToUnsubscribe = navigateToUnsubscribe
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainBody(
+    settingsViewModel: SettingsViewModel,
+    navigateBack: () -> Unit,
+    navigateToUnsubscribe: () -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -41,81 +80,26 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
-                )
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
-            Content(
-                settingsViewModel = settingsViewModel,
-                settingsUiState = settingsUiState
-            )
-        }
-    }
-}
-
-@Composable
-fun Content(
-    settingsViewModel: SettingsViewModel,
-    settingsUiState: SettingsUiState,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        when (settingsUiState.screenState) {
-            is SettingsScreenState.Unsubscribe -> UnsubscribeScreen()
-            SettingsScreenState.Main -> MainBody(
-                settingsViewModel = settingsViewModel
-            )
-        }
-    }
-}
-
-@Composable
-private fun MainBody(
-    settingsViewModel: SettingsViewModel
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(id = R.string.unsubscribe),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-        IconButton(onClick = { settingsViewModel.navigateToUnsubscribe() }) {
-            Icon(
-                painterResource(id = PartyRunIcons.ArrowForwardIos),
-                contentDescription = stringResource(id = R.string.arrow_forward_desc)
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SettingsTopAppBar(navigateBack: () -> Unit) {
-    PartyRunTopAppBar(
-        modifier = Modifier,
-        titleContent = {
-            Text(stringResource(id = R.string.settings))
-        },
-        navigationContent = {
-            IconButton(
-                onClick = {
-                    navigateBack()
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth().padding(start = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    painterResource(id = PartyRunIcons.ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.arrow_back_desc)
+                Text(
+                    text = stringResource(id = R.string.unsubscribe),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
+                IconButton(onClick = { navigateToUnsubscribe() }) {
+                    Icon(
+                        painterResource(id = PartyRunIcons.ArrowForwardIos),
+                        contentDescription = stringResource(id = R.string.arrow_forward_desc)
+                    )
+                }
             }
         }
-    )
+    }
 }

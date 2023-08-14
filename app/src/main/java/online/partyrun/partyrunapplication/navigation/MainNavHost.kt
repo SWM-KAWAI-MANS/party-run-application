@@ -1,6 +1,6 @@
-package online.partyrun.partyrunapplication.core.navigation.main
+package online.partyrun.partyrunapplication.navigation
 
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,18 +16,23 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunN
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
 import online.partyrun.partyrunapplication.core.navigation.battle_running.battleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
+import online.partyrun.partyrunapplication.core.navigation.main.BottomNavBarItems
+import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
 import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
 import online.partyrun.partyrunapplication.core.navigation.settings.SettingsNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.settings.settingsRoute
 import online.partyrun.partyrunapplication.core.navigation.single.singleRoute
+import online.partyrun.partyrunapplication.ui.PartyRunAppState
 
 @Composable
 fun SetUpMainNavGraph(
-    navController: NavHostController,
+    appState: PartyRunAppState,
     startDestination: String,
     onSignOut: () -> Unit
 ) {
+    val navController = appState.navController
+
     NavHost(
         navController = navController,
         startDestination = startDestination,

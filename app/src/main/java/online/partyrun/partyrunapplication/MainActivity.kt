@@ -14,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
 import online.partyrun.partyrunapplication.feature.battle.BattleMainViewModel
 import timber.log.Timber
@@ -58,15 +57,13 @@ class MainActivity : ComponentActivity() {
                 androidTheme = false,
                 disableDynamicTheming = true,
             ) {
-                PartyRunBackground {
-                    PartyRunMain(
-                        onSignOut = {
-                            lifecycleScope.launch {
-                                performSignOutProcess()
-                            }
+                PartyRunMain(
+                    onSignOut = {
+                        lifecycleScope.launch {
+                            performSignOutProcess()
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }

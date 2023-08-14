@@ -8,91 +8,88 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import online.partyrun.partyrunapplication.core.navigation.main.BottomNavigationBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
-import online.partyrun.partyrunapplication.core.navigation.main.SetUpMainNavGraph
+import online.partyrun.partyrunapplication.core.ui.SnackbarBox
+import online.partyrun.partyrunapplication.navigation.BottomNavigationBar
+import online.partyrun.partyrunapplication.navigation.SetUpMainNavGraph
 
+@OptIn(
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun PartyRunMain(
+    appState: PartyRunAppState = rememberPartyRunAppState(),
+    snackbarScope: CoroutineScope = rememberCoroutineScope(),
     onSignOut: () -> Unit
 ) {
-    /*
-     Navigation Architecture Component
-     메인 기준 NavHostController 인스턴스 생성
-     */
-    val navController = rememberNavController() // 백 스택 관리 및 현재 목적지가 어떤 Composable인지 추적
+    PartyRunBackground {
+        val snackbarHostState = remember { SnackbarHostState() }
+        val currentDestination = appState.currentDestination?.route
+        val topLevelDestinations = appState.topLevelDestinations
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        SetUpMainGraph(
-            navController = navController,
-            onSignOut = onSignOut
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SetUpMainGraph(
-    navController: NavHostController,
-    onSignOut: () -> Unit
-) {
-    /**
-     * 현재 destination 가져와 arguments는 고려하지 않고 route만 비교 -> currentRoute
-     */
-    val currentDestination by navController.currentBackStackEntryAsState()
-    val currentRoute = currentDestination?.destination?.route?.substringBefore("?")
-
-    // Top-level destinations 정의
-    val topLevelDestinations = setOf(
-        MainNavRoutes.Battle.route,
-        MainNavRoutes.Challenge.route,
-        MainNavRoutes.Single.route,
-        MainNavRoutes.MyPage.route
-    )
-
-    Scaffold(
-        bottomBar = {
-            // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
-            if (currentRoute in topLevelDestinations) {
-                BottomNavigationBar(navController = navController)
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            snackbarHost = {
+                SnackbarHost(
+                    snackbarHostState,
+                    snackbar = {
+                        SnackbarBox(it) {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+                        }
+                    }
+                )
+            },
+            bottomBar = {
+                // 현재 목적지가 top-level일 경우에만 바텀 네비게이션 바 표시
+                if (currentDestination in topLevelDestinations) {
+                    BottomNavigationBar(navController = appState.navController)
+                }
             }
-        },
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
+        ) { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(if (snackbarHostState.currentSnackbarData != null) 0.3f else 1f)
+                    .padding(padding)
+            ) {
+                SetUpMainNavGraph(
+                    startDestination = MainNavRoutes.Battle.route,
+                    appState = appState,
+                    onSignOut = onSignOut,
+                    onShowSnackbar = { message ->
+                        snackbarScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = message,
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 )
-        ) {
-            SetUpMainNavGraph(
-                startDestination = MainNavRoutes.Battle.route,
-                navController = navController,
-                onSignOut = onSignOut
-            )
 
-            if (currentRoute in topLevelDestinations) {
-                Divider( // 네비게이션바 border 상단 표현
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
-                    color = Color(0xFFBD55F2)
-                )
+                if (currentDestination in topLevelDestinations) {
+                    Divider( // 네비게이션바 border 상단 표현
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .align(Alignment.BottomCenter), // 스크린 바닥에 경계 표현
+                        color = Color(0xFFBD55F2)
+                    )
+                }
             }
         }
     }
@@ -101,5 +98,5 @@ fun SetUpMainGraph(
 @Preview(showBackground = true)
 @Composable
 fun PartyRunMainPreview() {
-    /*TODO*/
+
 }

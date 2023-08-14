@@ -37,9 +37,10 @@ import online.partyrun.partyrunapplication.core.ui.GoogleSignInButton
 import timber.log.Timber
 
 @Composable
-fun SignInScreen (
+fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel(),
     setIntentMainActivity: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.signInGoogleState.collectAsStateWithLifecycle()

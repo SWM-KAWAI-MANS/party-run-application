@@ -19,7 +19,8 @@ import online.partyrun.partyrunapplication.feature.running.battle.running.Battle
 fun BattleContentScreen(
     navigateToBattleOnWebSocketError: () -> Unit = {},
     navigationToRunningResult: () -> Unit = {},
-    viewModel: BattleContentViewModel = hiltViewModel()
+    viewModel: BattleContentViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
     val battleUiState by viewModel.battleUiState.collectAsStateWithLifecycle()
     val battleId by viewModel.battleId.collectAsStateWithLifecycle()

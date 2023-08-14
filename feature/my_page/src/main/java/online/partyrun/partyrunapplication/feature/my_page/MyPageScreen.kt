@@ -42,7 +42,8 @@ import online.partyrun.partyrunapplication.core.ui.ProfileSection
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
-    navigateToSettings: () -> Unit = {}
+    navigateToSettings: () -> Unit = {},
+    onShowSnackbar: (String) -> Unit
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
 
@@ -71,6 +72,7 @@ fun Content(
                 userData = myPageUiState.user,
                 navigateToSettings = navigateToSettings
             )
+
             is MyPageUiState.LoadFailed -> LoadingBody()
         }
     }
@@ -142,6 +144,7 @@ private fun TopAppTitle(
         )
     }
 }
+
 @Composable
 private fun ProfileContent(
     navigateToSettings: () -> Unit,

@@ -6,11 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import online.partyrun.partyrunapplication.core.common.ExtraConstants.SPLASH
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunBackground
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
 import online.partyrun.partyrunapplication.ui.PartyRunAuth
 
@@ -26,17 +23,11 @@ class AuthActivity : ComponentActivity() {
                 androidTheme = false,
                 disableDynamicTheming = true,
             ) {
-                val navController = rememberNavController()
-
-                PartyRunBackground {
-                    PartyRunAuth(
-                        navController = navController,
-                        startDestination = SPLASH,
-                        intentToMainActivity = {
-                            intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
-                        }
-                    )
-                }
+                PartyRunAuth(
+                    intentToMainActivity = {
+                        intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
+                    }
+                )
             }
         }
     }

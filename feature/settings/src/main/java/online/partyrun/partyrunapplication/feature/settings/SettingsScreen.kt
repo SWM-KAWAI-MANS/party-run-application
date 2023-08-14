@@ -28,7 +28,8 @@ import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 fun SettingsScreen(
     navigateBack: () -> Unit = {},
     navigateToUnsubscribe: () -> Unit = {},
-    settingsViewModel: SettingsViewModel = hiltViewModel()
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
     val settingsUiState by settingsViewModel.settingsUiState.collectAsStateWithLifecycle()
 
@@ -84,7 +85,8 @@ private fun MainBody(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth().padding(start = 20.dp),
+                    .fillMaxWidth()
+                    .padding(start = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

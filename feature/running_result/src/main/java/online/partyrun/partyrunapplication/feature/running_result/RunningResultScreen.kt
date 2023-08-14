@@ -42,7 +42,6 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
 import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
-import timber.log.Timber
 
 @Composable
 fun RunningResultScreen(

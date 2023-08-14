@@ -36,7 +36,8 @@ fun BattleMainScreen(
     modifier: Modifier = Modifier,
     battleViewModel: BattleMainViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel(),
-    navigateToBattleRunning: () -> Unit
+    navigateToBattleRunning: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
 ) {
     val battleMainUiState by battleViewModel.battleMainUiState.collectAsState()
     val matchUiState by matchViewModel.matchUiState.collectAsState()
@@ -49,7 +50,8 @@ fun BattleMainScreen(
     Content(
         battleMainUiState = battleMainUiState,
         matchViewModel = matchViewModel,
-        matchUiState = matchUiState
+        matchUiState = matchUiState,
+        onShowSnackbar = onShowSnackbar
     )
 
 }
@@ -60,11 +62,17 @@ fun Content(
     battleMainUiState: BattleMainUiState,
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState,
+    onShowSnackbar: (String) -> Unit,
 ) {
     Box(modifier = modifier) {
         when (battleMainUiState) {
             is BattleMainUiState.Loading -> LoadingBody()
-            is BattleMainUiState.Success -> BattleMainBody(matchViewModel = matchViewModel, matchUiState = matchUiState)
+            is BattleMainUiState.Success -> BattleMainBody(
+                matchViewModel = matchViewModel,
+                matchUiState = matchUiState,
+                onShowSnackbar = onShowSnackbar
+            )
+
             is BattleMainUiState.LoadFailed -> LoadingBody()
         }
     }
@@ -85,6 +93,7 @@ private fun LoadingBody() {
 fun BattleMainBody(
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState,
+    onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isOpen) {
         MatchDialog(
@@ -93,6 +102,7 @@ fun BattleMainBody(
             }
         )
     }
+
     Box(modifier = Modifier.fillMaxSize()) {
         BackgroundBlurImage(
             modifier = Modifier.fillMaxSize(),

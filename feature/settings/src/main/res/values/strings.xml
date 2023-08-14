@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="settings">설정</string>
     <string name="unsubscribe">회원 탈퇴</string>
+
     <string name="arrow_back_desc">뒤로 가기 아이콘</string>
     <string name="arrow_forward_desc">앞으로 가기 아이콘</string>
-    <string name="unsubscribe_title">회원 탈퇴 하기</string>
-    <string name="unsubscribe_btn">탈퇴 하기</string>
-    <string name="unsubscribe_desc">요청이 정상적으로 진행되면 파티런(PartyRun)에서 보유하고 있는 사용자의 모든 개인정보가 영구적으로 삭제됩니다.(개인정보 방침에 따라 명시된 일부 정보는 제외)</string>
+    <string name="dropdown_desc">드랍다운 아이콘</string>
+
+    <string name="unsubscribe_confirm_btn">네, 탈퇴할게요.</string>
+    <string name="unsubscribe_cancel_btn">더 사용할게요.</string>
+    <string name="unsubscribe_success_message">회원탈퇴가 완료되었습니다.</string>
+
+    <string name="unsubscribe_title_1">정말 탈퇴를 진행하시나요?</string>
+    <string name="unsubscribe_title_2">탈퇴 하려는 이유가 궁금해요.</string>
+    <string name="unsubscribe_desc_1">요청이 정상적으로 진행되면 파티런(PartyRun)에서 보유하고 있는 사용자의 모든 개인정보가 영구적으로 삭제가 됩니다. (개인정보 방침에 따라 명시된 일부 정보는 제외)</string>
+    <string name="unsubscribe_desc_2">다양한 컨텐츠들이 출시 예정이기에 회원님과 헤어지기 아쉬워요. 이유가 있다면 저희가 개선할 수 있도록 도움을 주시겠어요?</string>
+
+    <string name="unsubscribe_reason_1">새 계정을 만들고 싶어요.</string>
+    <string name="unsubscribe_reason_2">잘 사용하지 않아요.</string>
+    <string name="unsubscribe_reason_3">재미가 없어요.</string>
+    <string name="unsubscribe_reason_4">사용하기 불편해요.</string>
+    <string name="unsubscribe_reason_5">잠시 탈퇴할게요.</string>
+
 </resources>

@@ -1,5 +1,8 @@
 package online.partyrun.partyrunapplication.navigation
 
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import online.partyrun.partyrunapplication.R
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBar
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBarItem
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
@@ -99,6 +103,7 @@ fun SetUpMainNavGraph(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(
     navController: NavHostController
@@ -124,18 +129,38 @@ fun BottomNavigationBar(
                     }
                 },
                 icon = {
-                    Icon(
-                        painter = painterResource(navItem.image),
-                        contentDescription = stringResource(navItem.title),
-                        tint = Color.Unspecified
-                    )
+                    BadgedBox(
+                        badge = {
+                            if (!navItem.isLaunched) {
+                                Badge {
+                                    Text(text = stringResource(id = R.string.navigation_bar_launch_status))
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(navItem.image),
+                            contentDescription = stringResource(navItem.title),
+                            tint = Color.Unspecified
+                        )
+                    }
                 },
                 selectedIcon = {
-                    Icon(
-                        painter = painterResource(navItem.selectedImage),
-                        contentDescription = stringResource(navItem.title),
-                        tint = Color.Unspecified
-                    )
+                    BadgedBox(
+                        badge = {
+                            if (!navItem.isLaunched) {
+                                Badge {
+                                    Text(text = stringResource(id = R.string.navigation_bar_launch_status))
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(navItem.selectedImage),
+                            contentDescription = stringResource(navItem.title),
+                            tint = Color.Unspecified
+                        )
+                    }
                 },
                 label = {
                     Text(

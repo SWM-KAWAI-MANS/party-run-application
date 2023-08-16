@@ -45,7 +45,9 @@ fun SetUpMainNavGraph(
         battleRoute(
             navigateToBattleRunning = {
                 navController.navigate(MainNavRoutes.BattleRunning.route) {
-                    popUpTo(MainNavRoutes.BattleRunning.route)
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = true
+                    }
                 }
             },
             onShowSnackbar = onShowSnackbar

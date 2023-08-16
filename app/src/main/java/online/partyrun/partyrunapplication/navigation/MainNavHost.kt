@@ -87,7 +87,11 @@ fun SetUpMainNavGraph(
             onShowSnackbar = onShowSnackbar
         )
 
-        runningResultRoute()
+        runningResultRoute(
+            navigateToTopLevel = {
+                navController.navigate(MainNavRoutes.Battle.route)
+            }
+        )
 
         settingsRoute(
             onSignOut = onSignOut,

@@ -16,4 +16,10 @@
     <string name="background_finish_blur">투명한 배경 블러 이미지</string>
     <string name="finish">Finish</string>
     <string name="finish_comment">대결이 종료됐습니다.</string>
+
+    <string name="exit_dialog_title">대결을 종료하시겠습니까?</string>
+    <string name="exit_dialog_subtitle">종료 시 현재 대결을 이어 달릴 수 없습니다.</string>
+    <string name="exit_dialog_confirm">예</string>
+    <string name="exit_dialog_cancel">아니오</string>
+
 </resources>

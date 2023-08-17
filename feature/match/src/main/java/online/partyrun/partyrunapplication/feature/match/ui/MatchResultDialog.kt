@@ -43,7 +43,6 @@ import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchResultDialog(
-    setShowDialog: (Boolean) -> Unit,
     matchUiState: MatchUiState
 ) {
     PartyRunResultDialog(
@@ -277,7 +276,6 @@ fun PartyRunResultDialogPreview() {
         modifier = Modifier.fillMaxSize()
     ) {
         MatchResultDialog(
-            setShowDialog = {},
             matchUiState = MatchUiState(
                 matchResultEventState = testData
             )

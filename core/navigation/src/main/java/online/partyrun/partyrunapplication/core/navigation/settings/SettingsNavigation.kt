@@ -17,6 +17,7 @@ fun NavGraphBuilder.settingsRoute(
         SettingsScreen(
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe,
+            onShowSnackbar = onShowSnackbar
         )
     }
 
@@ -25,7 +26,6 @@ fun NavGraphBuilder.settingsRoute(
         UnsubscribeScreen(
             onSignOut = onSignOut,
             navigateBack = navigateBack,
-            onShowSnackbar = onShowSnackbar
         )
     }
 }

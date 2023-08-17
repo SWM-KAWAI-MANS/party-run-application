@@ -25,6 +25,13 @@ class SettingsViewModel @Inject constructor(
     private val _settingsUiState = MutableStateFlow(SettingsUiState())
     val settingsUiState: StateFlow<SettingsUiState> = _settingsUiState
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
+
     fun deleteAccount() = viewModelScope.launch {
         deleteAccountUseCase().collect {
             when (it) {

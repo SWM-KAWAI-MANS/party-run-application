@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,25 +27,37 @@ import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 
 @Composable
 fun SettingsScreen(
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
     navigateToUnsubscribe: () -> Unit = {},
+    onShowSnackbar: (String) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Content(
-            navigateBack = navigateBack,
-            navigateToUnsubscribe = navigateToUnsubscribe
-        )
-    }
+    val settingsSnackbarMessage by settingsViewModel.snackbarMessage.collectAsStateWithLifecycle()
+
+    Content(
+        navigateBack = navigateBack,
+        navigateToUnsubscribe = navigateToUnsubscribe,
+        settingsViewModel = settingsViewModel,
+        onShowSnackbar = onShowSnackbar,
+        settingsSnackbarMessage = settingsSnackbarMessage
+    )
 }
 
 @Composable
 fun Content(
+    settingsViewModel: SettingsViewModel,
     navigateBack: () -> Unit,
-    navigateToUnsubscribe: () -> Unit
+    navigateToUnsubscribe: () -> Unit,
+    onShowSnackbar: (String) ->  Unit,
+    settingsSnackbarMessage: String
 ) {
+    LaunchedEffect(settingsSnackbarMessage) {
+        if (settingsSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(settingsSnackbarMessage)
+            settingsViewModel.clearSnackbarMessage()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

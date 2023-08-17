@@ -56,6 +56,7 @@ fun RunningResultScreen(
     val runningResultUiState by runningResultViewModel.runningResultUiState.collectAsStateWithLifecycle()
 
     Content(
+        modifier = modifier,
         runningResultUiState = runningResultUiState,
         navigateToTopLevel = navigateToTopLevel
     )

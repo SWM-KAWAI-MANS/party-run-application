@@ -49,7 +49,6 @@ fun SignInScreen(
 
     LaunchedEffect(key1 = state.hasSignInError) {
         state.hasSignInError?.let { error ->
-            /* TODO: Toast 메세지 변경 요 */
             Toast.makeText(context, error, Toast.LENGTH_LONG).show()
         }
     }
@@ -57,7 +56,6 @@ fun SignInScreen(
     LaunchedEffect(key1 = state.isSignInSuccessful) {
         if (state.isSignInSuccessful) {
             val mUser = FirebaseAuth.getInstance().currentUser
-            /* TODO: null 처리 */
             mUser?.getIdToken(true)
                 ?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -69,6 +67,7 @@ fun SignInScreen(
                         )
                     } else {
                         // Handle error -> task.getException()
+                        Timber.e("Handle error -> task.getException()")
                     }
                 }
         }

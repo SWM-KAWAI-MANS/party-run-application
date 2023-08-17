@@ -48,10 +48,6 @@ fun PartyRunOutlinedButton(
     shape: Shape = CircleShape,
     borderStrokeWidth: Dp = 5.dp,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    textColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
-    enabledColor: Color = MaterialTheme.colorScheme.outline,
-    disabledColor: Color = MaterialTheme.colorScheme.onSurface,
     content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
@@ -60,12 +56,12 @@ fun PartyRunOutlinedButton(
         enabled = enabled,
         shape = shape,
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = textColor,
-            containerColor = containerColor,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         border = BorderStroke(
             width = borderStrokeWidth,
-            color = if (enabled) enabledColor else disabledColor,
+            color = if (enabled) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.onSurface,
         ),
         contentPadding = contentPadding,
         content = content,
@@ -152,16 +148,14 @@ fun PartyRunMatchButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    contentColor: Color = Purple90,
-    containerColor: Color = DarkNavy30, // 배경 색
     content: @Composable RowScope.() -> Unit,
 ) {
     PartyRunTextButton(
         onClick = onClick,
         modifier = modifier.width(187.dp).height(60.dp),
         enabled = enabled,
-        contentColor = contentColor,
-        containerColor = containerColor,
+        contentColor = Purple90,
+        containerColor = DarkNavy30,
         content = content
     )
 }
@@ -195,10 +189,6 @@ fun PartyRunGradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    containerColor: Color = Color.Transparent,
-    disabledContainerColor: Color = MaterialTheme.colorScheme.onBackground,
-    disabledContentColor: Color = MaterialTheme.colorScheme.onPrimary,
     content: @Composable () -> Unit
 ) {
     Button(
@@ -212,10 +202,10 @@ fun PartyRunGradientButton(
         onClick = onClick,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            contentColor = contentColor,
-            containerColor = containerColor,
-            disabledContainerColor = disabledContainerColor,
-            disabledContentColor = disabledContentColor,
+            contentColor = Color.White,
+            containerColor = Color.Unspecified,
+            disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary,
         )
     ) {
         content()

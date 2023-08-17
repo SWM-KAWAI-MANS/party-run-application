@@ -45,6 +45,7 @@ fun BattleMainScreen(
     val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsState()
 
     Content(
+        modifier = modifier,
         battleMainUiState = battleMainUiState,
         matchViewModel = matchViewModel,
         navigateToBattleRunning = navigateToBattleRunning,

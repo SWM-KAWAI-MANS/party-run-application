@@ -177,7 +177,7 @@ class MatchViewModel @Inject constructor(
                 is ApiResponse.Success -> {
                     _matchUiState.update { state ->
                         state.copy(
-                            WaitingRestState = WaitingRestState(
+                            waitingRestState = WaitingRestState(
                                 message = it.data.message
                             ),
                         )

@@ -47,10 +47,7 @@ fun MatchResultDialog(
     matchUiState: MatchUiState
 ) {
     PartyRunResultDialog(
-        onDismissRequest = {
-            /* TODO: 취소가 불가능하게 */
-            // setShowDialog(false)
-        },
+        onDismissRequest = {},
         modifier = Modifier.fillMaxSize()
     ) {
         ResultDialogContent(
@@ -168,7 +165,7 @@ fun DisplayMatchStatus(
     LazyColumn {
         itemsIndexed(
             matchUiState.matchResultEventState.members
-        ) { index, item ->
+        ) { _, item ->
             // 아이디와 일치하는 RunnerInfo 찾기
             val runnerInfo = matchUiState.runnerInfoData.runners.firstOrNull { it.id == item.id }
 

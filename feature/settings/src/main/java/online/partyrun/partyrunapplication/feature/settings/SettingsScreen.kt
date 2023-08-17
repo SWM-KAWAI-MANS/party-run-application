@@ -28,18 +28,12 @@ import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 fun SettingsScreen(
     navigateBack: () -> Unit = {},
     navigateToUnsubscribe: () -> Unit = {},
-    settingsViewModel: SettingsViewModel = hiltViewModel(),
-    onShowSnackbar: (String) -> Unit
 ) {
-    val settingsUiState by settingsViewModel.settingsUiState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
         Content(
-            settingsViewModel = settingsViewModel,
-            settingsUiState = settingsUiState,
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe
         )
@@ -48,8 +42,6 @@ fun SettingsScreen(
 
 @Composable
 fun Content(
-    settingsViewModel: SettingsViewModel,
-    settingsUiState: SettingsUiState,
     navigateBack: () -> Unit,
     navigateToUnsubscribe: () -> Unit
 ) {
@@ -58,7 +50,6 @@ fun Content(
             .fillMaxSize()
     ) {
         MainBody(
-            settingsViewModel = settingsViewModel,
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe
         )
@@ -68,7 +59,6 @@ fun Content(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainBody(
-    settingsViewModel: SettingsViewModel,
     navigateBack: () -> Unit,
     navigateToUnsubscribe: () -> Unit
 ) {

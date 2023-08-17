@@ -63,14 +63,12 @@ fun MatchDialog(
                 disconnectMatching = {
                     matchViewModel.cancelMatchWaitingEvent()
                 },
-                matchUiState = matchState,
                 exoPlayer = exoPlayer,
                 isBuffering = isBuffering
             )
         MatchProgress.DECISION.name ->
             MatchDecisionDialog(
                 setShowDialog = setShowDialog,
-                matchUiState = matchState,
                 onAccept = {
                     matchViewModel.onUserDecision(true)
                 },
@@ -85,8 +83,7 @@ fun MatchDialog(
             )
         MatchProgress.CANCEL.name ->
             MatchCancelDialog(
-                setShowDialog = setShowDialog,
-                matchUiState = matchState
+                setShowDialog = setShowDialog
             )
     }
 }

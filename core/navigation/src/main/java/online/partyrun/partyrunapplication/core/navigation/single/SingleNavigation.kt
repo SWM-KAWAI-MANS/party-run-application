@@ -5,9 +5,7 @@ import androidx.navigation.compose.composable
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.feature.single.SingleScreen
 
-fun NavGraphBuilder.singleRoute(
-    navigateToMyPage: () -> Unit,
-) {
+fun NavGraphBuilder.singleRoute() {
     composable(route = MainNavRoutes.Single.route) {
         SingleScreen()
     }

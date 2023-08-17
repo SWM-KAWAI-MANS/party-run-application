@@ -27,7 +27,7 @@ fun<T : Any> apiRequestFlow(call: suspend () -> ApiResult<T>): Flow<ApiResponse<
                     }
                 }
             }
-            .onException { it ->
+            .onException {
                 emit(ApiResponse.Failure(it.message ?: it.toString(), 400))
             }
     } ?: emit(ApiResponse.Failure("Timeout! Please try again.", 408))
@@ -41,7 +41,7 @@ fun<T : Any> apiBaseRequestFlow(call: suspend () -> ApiResult<BaseResponse<T>>):
             .onSuccess {
                 emit(ApiResponse.Success(it.data))
             }
-            .onException { it ->
+            .onException {
                 emit(ApiResponse.Failure(it.message ?: it.toString(), 400))
             }
     } ?: emit(ApiResponse.Failure("Timeout! Please try again.", 408))

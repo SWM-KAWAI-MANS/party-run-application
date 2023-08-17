@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +47,15 @@ fun MyPageScreen(
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
+    val myPageSnackbarMessage by myPageViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         myPageViewModel = myPageViewModel,
         myPageUiState = myPageUiState,
         onSignOut = onSignOut,
-        navigateToSettings = navigateToSettings
+        navigateToSettings = navigateToSettings,
+        onShowSnackbar = onShowSnackbar,
+        myPageSnackbarMessage = myPageSnackbarMessage
     )
 }
 
@@ -61,8 +65,17 @@ fun Content(
     myPageViewModel: MyPageViewModel,
     myPageUiState: MyPageUiState,
     onSignOut: () -> Unit,
-    navigateToSettings: () -> Unit
+    navigateToSettings: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    myPageSnackbarMessage: String
 ) {
+    LaunchedEffect(myPageSnackbarMessage) {
+        if (myPageSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(myPageSnackbarMessage)
+            myPageViewModel.clearSnackbarMessage()
+        }
+    }
+
     Box(modifier = modifier) {
         when (myPageUiState) {
             is MyPageUiState.Loading -> LoadingBody()

@@ -29,7 +29,7 @@ data class MatchUiState(
     val runnerIds: RunnerIds = RunnerIds(emptyList()),
     val runnerInfoData: RunnerInfoData = RunnerInfoData(emptyList()),
     val matchProgress: MatchProgress = MatchProgress.WAITING,
-    val WaitingRestState: WaitingRestState = WaitingRestState(),
+    val waitingRestState: WaitingRestState = WaitingRestState(),
     val waitingEventState: WaitingEventState = WaitingEventState(),
     val matchResultRestState: MatchResultRestState = MatchResultRestState(),
     val matchResultEventState: MatchResultEventState = MatchResultEventState(),

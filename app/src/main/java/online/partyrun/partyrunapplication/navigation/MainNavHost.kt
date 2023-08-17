@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,13 +54,7 @@ fun SetUpMainNavGraph(
             onShowSnackbar = onShowSnackbar
         )
 
-        singleRoute(
-            navigateToMyPage = {
-                navController.navigate(MainNavRoutes.Challenge.route) {
-                    popUpTo(MainNavRoutes.Challenge.route)
-                }
-            }
-        )
+        singleRoute()
 
         challengeRoute()
 
@@ -116,7 +111,7 @@ fun BottomNavigationBar(
 ) {
     PartyRunNavigationBar(
         modifier = Modifier,
-    )  {
+    ) {
         val backStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = backStackEntry?.destination?.route
 
@@ -125,11 +120,9 @@ fun BottomNavigationBar(
                 selected = currentRoute == navItem.route,
                 onClick = {
                     navController.navigate(navItem.route) {
-                        /*
                         popUpTo(navController.graph.findStartDestination().id) {
-                    	    saveState = true
+                            saveState = true
                         }
-                        */
                         launchSingleTop = true // 자기 자신이 또 스택 푸시가 되지 않도록 방지
                         restoreState = true
                     }

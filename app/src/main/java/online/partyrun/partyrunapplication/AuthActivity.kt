@@ -25,16 +25,14 @@ class AuthActivity : ComponentActivity() {
             ) {
                 PartyRunAuth(
                     intentToMainActivity = {
-                        intentToMainActivity(toastText = resources.getString(R.string.sign_in_message))
+                        intentToMainActivity()
                     }
                 )
             }
         }
     }
 
-    private fun intentToMainActivity(toastText: String) {
-        /* TODO: ToastMesseage를 마지막 접속 시간으로 */
-        // Toast.makeText(applicationContext, toastText, Toast.LENGTH_LONG).show()
+    private fun intentToMainActivity() {
         setIntentActivity(
             MainActivity::class.java,
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

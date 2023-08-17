@@ -37,6 +37,13 @@ class SignInViewModel @Inject constructor(
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
     val signInGoogleState: StateFlow<SignInGoogleState> = _signInGoogleState.asStateFlow()
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
+
     private fun onSignInGoogleResult(result: GoogleUserInfo?) {
         _signInGoogleState.update {
             it.copy(
@@ -97,6 +104,7 @@ class SignInViewModel @Inject constructor(
                     }
                 }
                 is ApiResponse.Failure -> {
+                    _snackbarMessage.value = "로그인 실패"
                     _signInGoogleState.update { state ->
                         state.copy(
                             isSignInSuccessful = false

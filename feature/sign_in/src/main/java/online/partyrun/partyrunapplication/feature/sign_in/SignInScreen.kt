@@ -38,14 +38,15 @@ import timber.log.Timber
 
 @Composable
 fun SignInScreen(
-    viewModel: SignInViewModel = hiltViewModel(),
+    signInViewModel: SignInViewModel = hiltViewModel(),
     setIntentMainActivity: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val state by viewModel.signInGoogleState.collectAsStateWithLifecycle()
-    val launcher = managedActivityResultLauncher(viewModel = viewModel)
+    val state by signInViewModel.signInGoogleState.collectAsStateWithLifecycle()
+    val launcher = managedActivityResultLauncher(viewModel = signInViewModel)
     var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 84
+    val signInSnackbarMessage by signInViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = state.hasSignInError) {
         state.hasSignInError?.let { error ->
@@ -62,7 +63,7 @@ fun SignInScreen(
                         val idToken: String? = task.result.token
                         Timber.tag("SignInScreen").i("IDToken: $idToken")
                         /* Send token to backend via HTTPS Retrofit */
-                        viewModel.signInWithGoogleTokenViaServer(
+                        signInViewModel.signInWithGoogleTokenViaServer(
                             GoogleIdToken(idToken = idToken)
                         )
                     } else {
@@ -73,10 +74,17 @@ fun SignInScreen(
         }
     }
 
+    LaunchedEffect(signInSnackbarMessage) {
+        if (signInSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(signInSnackbarMessage)
+            signInViewModel.clearSnackbarMessage()
+        }
+    }
+
     LaunchedEffect(key1 = state.isIdTokenSentToServer) {
         if (state.isIdTokenSentToServer) {
-            viewModel.resetState()
-            viewModel.saveUserData()
+            signInViewModel.resetState()
+            signInViewModel.saveUserData()
         }
     }
 
@@ -132,7 +140,7 @@ fun SignInScreen(
             GoogleSignInButton(
                 /* Firebase Google SignIn process */
                 onClick = {
-                    viewModel.signInWithGoogle(launcher)
+                    signInViewModel.signInWithGoogle(launcher)
                 }
             ) {
                 Text(

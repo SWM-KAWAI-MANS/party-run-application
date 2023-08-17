@@ -78,8 +78,7 @@ fun MatchDialog(
             )
         MatchProgress.RESULT.name ->
             MatchResultDialog(
-                setShowDialog = setShowDialog,
-                matchUiState = matchState,
+                matchUiState = matchState
             )
         MatchProgress.CANCEL.name ->
             MatchCancelDialog(

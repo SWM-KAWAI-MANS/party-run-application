@@ -35,7 +35,6 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchDialog
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.ui.FormatElapsedTimer
-import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.R
 import online.partyrun.partyrunapplication.feature.match.buildPlayerView
 
@@ -43,7 +42,6 @@ import online.partyrun.partyrunapplication.feature.match.buildPlayerView
 fun MatchWaitingDialog(
     setShowDialog: (Boolean) -> Unit,
     disconnectMatching: () -> Unit,
-    matchUiState: MatchUiState,
     exoPlayer: ExoPlayer,
     isBuffering: MutableState<Boolean>
 ) {

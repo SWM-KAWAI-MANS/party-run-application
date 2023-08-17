@@ -41,18 +41,40 @@ import online.partyrun.partyrunapplication.feature.running.battle.running.Battle
 fun BattleContentScreen(
     navigateToBattleOnWebSocketError: () -> Unit = {},
     navigationToRunningResult: () -> Unit = {},
-    viewModel: BattleContentViewModel = hiltViewModel(),
+    battleContentViewModel: BattleContentViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
-    val battleUiState by viewModel.battleUiState.collectAsStateWithLifecycle()
-    val battleId by viewModel.battleId.collectAsStateWithLifecycle()
+    val battleUiState by battleContentViewModel.battleUiState.collectAsStateWithLifecycle()
+    val battleId by battleContentViewModel.battleId.collectAsStateWithLifecycle()
+    val battleContentSnackbarMessage by battleContentViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
+    Content(
+        navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
+        navigationToRunningResult = navigationToRunningResult,
+        battleContentViewModel = battleContentViewModel,
+        battleUiState = battleUiState,
+        battleId = battleId,
+        battleContentSnackbarMessage = battleContentSnackbarMessage,
+        onShowSnackbar = onShowSnackbar
+    )
+}
+
+@Composable
+fun Content(
+    navigateToBattleOnWebSocketError: () -> Unit = {},
+    navigationToRunningResult: () -> Unit = {},
+    battleContentViewModel: BattleContentViewModel,
+    battleUiState: BattleUiState,
+    battleId: String?,
+    battleContentSnackbarMessage: String,
+    onShowSnackbar: (String) -> Unit
+) {
     RunningBackNavigationHandler() // 대결 중 BackPressed 수행 시 처리할 핸들러
 
     LaunchedEffect(battleId) {
-        battleId?.let { id ->
-            viewModel.startBattleStream(
-                battleId = id,
+        battleId.let { id ->
+            battleContentViewModel.startBattleStream(
+                battleId = id ?: "",
                 navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError
             )
         }
@@ -68,17 +90,15 @@ fun BattleContentScreen(
         }
     }
 
+    LaunchedEffect(battleContentSnackbarMessage) {
+        if (battleContentSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(battleContentSnackbarMessage)
+            battleContentViewModel.clearSnackbarMessage()
+        }
+    }
 
-    CheckStartTime(battleUiState, battleId, viewModel)
+    CheckStartTime(battleUiState, battleId, battleContentViewModel)
 
-    Content(battleUiState, navigationToRunningResult)
-}
-
-@Composable
-fun Content(
-    battleUiState: BattleUiState,
-    navigationToRunningResult: () -> Unit = {}
-) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,13 +115,13 @@ fun Content(
 private fun CheckStartTime(
     battleUiState: BattleUiState,
     battleId: String?,
-    viewModel: BattleContentViewModel,
+    battleContentViewModel: BattleContentViewModel,
 ) {
     when (battleUiState.timeRemaining) {
         in 1..5 -> CountdownDialog(timeRemaining = battleUiState.timeRemaining)
         0 -> battleId?.let {
             // 위치 업데이트 시작 및 정지 로직
-            StartBattleRunning(battleId, viewModel)
+            StartBattleRunning(battleId, battleContentViewModel)
         }
     }
 }

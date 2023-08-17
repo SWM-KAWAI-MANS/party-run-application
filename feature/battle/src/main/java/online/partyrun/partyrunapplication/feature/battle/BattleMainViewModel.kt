@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
@@ -19,6 +20,9 @@ class BattleMainViewModel @Inject constructor(
     private val _battleMainUiState = MutableStateFlow<BattleMainUiState>(BattleMainUiState.Success)
     val battleMainUiState = _battleMainUiState.asStateFlow()
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
     /**
      * 앱이 처음 시작될 때(MainActivity가 onCreate될 때) 진행 중인 배틀이 있다면 종료 요청 수행
      */
@@ -30,6 +34,7 @@ class BattleMainViewModel @Inject constructor(
                 }
 
                 is ApiResponse.Failure -> {
+                    _snackbarMessage.value = "기존 대결을 종료할 수 없습니다."
                     Timber.tag("BattleMainViewModel").e("${it.code} ${it.errorMessage}")
                 }
 

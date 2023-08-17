@@ -63,7 +63,6 @@ fun MatchDialog(
                 disconnectMatching = {
                     matchViewModel.cancelMatchWaitingEvent()
                 },
-                matchUiState = matchState,
                 exoPlayer = exoPlayer,
                 isBuffering = isBuffering
             )

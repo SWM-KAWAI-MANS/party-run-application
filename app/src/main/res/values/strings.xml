@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">PartyRunApplication</string>
 
-    <string name="sign_in_message">로그인 성공!</string>
-    <string name="sign_out_message">로그아웃!</string>
-
     <string name="navigation_bar_launch_status">준비중</string>
 </resources>

@@ -45,6 +45,7 @@ fun BattleMainScreen(
     val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsState()
 
     Content(
+        modifier = modifier,
         battleMainUiState = battleMainUiState,
         matchViewModel = matchViewModel,
         navigateToBattleRunning = navigateToBattleRunning,
@@ -52,7 +53,6 @@ fun BattleMainScreen(
         matchSnackbarMessage = matchSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
-
 }
 
 @Composable
@@ -82,8 +82,7 @@ fun Content(
             is BattleMainUiState.Loading -> LoadingBody()
             is BattleMainUiState.Success -> BattleMainBody(
                 matchViewModel = matchViewModel,
-                matchUiState = matchUiState,
-                onShowSnackbar = onShowSnackbar
+                matchUiState = matchUiState
             )
 
             is BattleMainUiState.LoadFailed -> LoadingBody()
@@ -106,7 +105,6 @@ private fun LoadingBody() {
 fun BattleMainBody(
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState,
-    onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isOpen) {
         MatchDialog(

@@ -71,6 +71,9 @@ class BattleContentViewModel @Inject constructor(
     private val _battleId = MutableStateFlow<String?>(null)
     val battleId: StateFlow<String?> = _battleId
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
     private lateinit var runnersState: StateFlow<BattleEvent>
 
     private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
@@ -84,6 +87,11 @@ class BattleContentViewModel @Inject constructor(
         getBattleId()
         getUserId()
     }
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
+
 
     private fun getUserId() = viewModelScope.launch {
         userId = getUserIdUseCase()
@@ -104,6 +112,7 @@ class BattleContentViewModel @Inject constructor(
                     }
 
                     is ApiResponse.Failure -> {
+                        _snackbarMessage.value = "배틀 정보를 가져올 수 없습니다."
                         Timber.e("$it")
                     }
 

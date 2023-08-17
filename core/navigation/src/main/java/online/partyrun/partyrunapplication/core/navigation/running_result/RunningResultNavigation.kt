@@ -5,8 +5,12 @@ import androidx.navigation.compose.composable
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.feature.running_result.RunningResultScreen
 
-fun NavGraphBuilder.runningResultRoute() {
+fun NavGraphBuilder.runningResultRoute(
+    navigateToTopLevel: () -> Unit
+) {
     composable(route = MainNavRoutes.RunningResult.route) {
-        RunningResultScreen()
+        RunningResultScreen(
+            navigateToTopLevel = navigateToTopLevel
+        )
     }
 }

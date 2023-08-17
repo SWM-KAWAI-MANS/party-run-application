@@ -42,14 +42,14 @@ import online.partyrun.partyrunapplication.feature.match.buildPlayerView
 @Composable
 fun MatchWaitingDialog(
     setShowDialog: (Boolean) -> Unit,
-    disconnectSSE: () -> Unit,
+    disconnectMatching: () -> Unit,
     matchUiState: MatchUiState,
     exoPlayer: ExoPlayer,
     isBuffering: MutableState<Boolean>
 ) {
     PartyRunMatchDialog(
         onDismissRequest = {
-            disconnectSSE()
+            disconnectMatching()
             setShowDialog(false)
         },
     ) {
@@ -75,7 +75,7 @@ fun MatchWaitingDialog(
             }
             Spacer(modifier = Modifier.size(20.dp))
 
-            CancelButton(disconnectSSE, setShowDialog)
+            CancelButton(disconnectMatching, setShowDialog)
         }
     }
 }

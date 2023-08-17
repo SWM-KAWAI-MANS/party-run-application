@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,16 +42,14 @@ fun BattleMainScreen(
 ) {
     val battleMainUiState by battleViewModel.battleMainUiState.collectAsState()
     val matchUiState by matchViewModel.matchUiState.collectAsState()
-
-    if (matchUiState.isAllRunnersAccepted) {
-        navigateToBattleRunning()
-        matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
-    }
+    val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsState()
 
     Content(
         battleMainUiState = battleMainUiState,
         matchViewModel = matchViewModel,
+        navigateToBattleRunning = navigateToBattleRunning,
         matchUiState = matchUiState,
+        matchSnackbarMessage = matchSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
 
@@ -61,9 +60,23 @@ fun Content(
     modifier: Modifier = Modifier,
     battleMainUiState: BattleMainUiState,
     matchViewModel: MatchViewModel,
+    navigateToBattleRunning: () -> Unit,
     matchUiState: MatchUiState,
+    matchSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit,
 ) {
+    if (matchUiState.isAllRunnersAccepted) {
+        navigateToBattleRunning()
+        matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
+    }
+
+    LaunchedEffect(matchSnackbarMessage) {
+        if (matchSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(matchSnackbarMessage)
+            matchViewModel.clearSnackbarMessage()
+        }
+    }
+
     Box(modifier = modifier) {
         when (battleMainUiState) {
             is BattleMainUiState.Loading -> LoadingBody()

@@ -20,7 +20,6 @@ import online.partyrun.partyrunapplication.core.domain.match.CreateMatchEventSou
 import online.partyrun.partyrunapplication.core.domain.match.CreateMatchResultEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.SendRegisterMatchUseCase
 import online.partyrun.partyrunapplication.core.domain.match.CreateWaitingEventSourceUseCase
-import online.partyrun.partyrunapplication.core.domain.match.DisconnectMatchResultEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.DisconnectWaitingEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.GetRunnerIdsUseCase
 import online.partyrun.partyrunapplication.core.domain.match.GetRunnersInfoUseCase
@@ -49,7 +48,6 @@ class MatchViewModel @Inject constructor(
     private val connectWaitingEventSourceUseCase: ConnectWaitingEventSourceUseCase,
     private val connectMatchResultEventSourceUseCase: ConnectMatchResultEventSourceUseCase,
     private val disconnectWaitingEventSourceUseCase: DisconnectWaitingEventSourceUseCase,
-    private val disconnectMatchResultEventSourceUseCase: DisconnectMatchResultEventSourceUseCase,
     private val getRunnerIdsUseCase: GetRunnerIdsUseCase,
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
     private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
@@ -58,6 +56,9 @@ class MatchViewModel @Inject constructor(
 
     private val _matchUiState = MutableStateFlow(MatchUiState())
     val matchUiState: StateFlow<MatchUiState> = _matchUiState.asStateFlow()
+
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
 
     private var waitingEventSSEstate =
         CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
@@ -81,6 +82,10 @@ class MatchViewModel @Inject constructor(
         matchResultEventSSEstate = CompletableDeferred()
         userDecision.value = null
         _matchUiState.value = MatchUiState()
+    }
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
     }
 
     /**
@@ -301,6 +306,7 @@ class MatchViewModel @Inject constructor(
             },
             onFailure = {
                 waitingEventSSEstate.complete(Unit)
+                _snackbarMessage.value = "매칭 시도 실패 \n잠시 후 다시 시도 해주세요."
             }
         )
         connectWaitingEventSourceUseCase(createWaitingEventSourceUseCase(listener))
@@ -325,17 +331,6 @@ class MatchViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 disconnectWaitingEventSourceUseCase()
-                cancelMatchingProcess()
-            } catch (e: MatchingProcessException) {
-                Timber.e("${e.message}")
-            }
-        }
-    }
-
-    fun disconnectMatchResultEventSource() {
-        viewModelScope.launch {
-            try {
-                disconnectMatchResultEventSourceUseCase()
                 cancelMatchingProcess()
             } catch (e: MatchingProcessException) {
                 Timber.e("${e.message}")

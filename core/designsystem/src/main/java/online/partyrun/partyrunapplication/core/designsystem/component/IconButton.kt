@@ -36,9 +36,6 @@ fun PartyRunIconToggleButton(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    checkedContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
-    checkedContentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-    disabledContainerColor: Color = MaterialTheme.colorScheme.onBackground,
     icon: @Composable () -> Unit,
     checkedIcon: @Composable () -> Unit = icon,
 ) {
@@ -48,10 +45,10 @@ fun PartyRunIconToggleButton(
         modifier = modifier,
         enabled = enabled,
         colors = IconButtonDefaults.iconToggleButtonColors(
-            checkedContainerColor = checkedContainerColor,
-            checkedContentColor = checkedContentColor,
+            checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            checkedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             disabledContainerColor = if (checked) {
-                disabledContainerColor
+                MaterialTheme.colorScheme.onBackground
             } else {
                 Color.Transparent
             },
@@ -66,10 +63,6 @@ fun PartyRunCircularIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    containerColor: Color = Purple60,
-    contentColor: Color = White10,
-    disabledContainerColor: Color = MaterialTheme.colorScheme.onBackground,
-    disabledContentColor: Color = MaterialTheme.colorScheme.onPrimary,
     borderColor: Color = Purple40,
     borderWidth: Dp = 3.dp,
     icon: @Composable () -> Unit
@@ -77,7 +70,7 @@ fun PartyRunCircularIconButton(
     Box(
         modifier = modifier
             .background(
-                color = containerColor,
+                color = Purple60,
                 shape = CircleShape // 원형 모양으로 설정
             )
             .border(
@@ -91,10 +84,10 @@ fun PartyRunCircularIconButton(
             onClick = onClick,
             enabled = enabled,
             colors = IconButtonDefaults.filledIconButtonColors(
-                contentColor = contentColor,
+                contentColor = White10,
                 containerColor = Color.Transparent,
-                disabledContainerColor = disabledContainerColor,
-                disabledContentColor = disabledContentColor,
+                disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
             )
         ) {
             icon()

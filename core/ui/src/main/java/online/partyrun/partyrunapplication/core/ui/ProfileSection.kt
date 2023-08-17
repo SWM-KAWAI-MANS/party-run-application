@@ -8,7 +8,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunV
 @Composable
 fun ProfileSection(
     modifier: Modifier = Modifier,
-    ProfileContent: @Composable () -> Unit = {},
+    profileContent: @Composable () -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -16,6 +16,6 @@ fun ProfileSection(
         // 백그라운드 경계가 있는 배경 표현
         PartyRunVerticalSectionBackground()
 
-        ProfileContent()
+        profileContent()
     }
 }

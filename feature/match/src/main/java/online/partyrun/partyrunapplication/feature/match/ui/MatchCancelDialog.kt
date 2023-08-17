@@ -13,13 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunCancelDialog
-import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchCancelDialog(
-    setShowDialog: (Boolean) -> Unit,
-    matchUiState: MatchUiState,
+    setShowDialog: (Boolean) -> Unit
 ) {
     PartyRunCancelDialog(
         onDismissRequest = {

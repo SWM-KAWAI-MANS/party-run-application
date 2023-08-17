@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
@@ -20,6 +21,9 @@ class MyPageViewModel @Inject constructor(
     private val _myPageUiState = MutableStateFlow<MyPageUiState>(MyPageUiState.Loading)
     val myPageUiState = _myPageUiState.asStateFlow()
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
     init {
         viewModelScope.launch {
             try {
@@ -29,6 +33,10 @@ class MyPageViewModel @Inject constructor(
                 Timber.e(e)
             }
         }
+    }
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
     }
 
     fun signOutFromGoogle() = viewModelScope.launch {

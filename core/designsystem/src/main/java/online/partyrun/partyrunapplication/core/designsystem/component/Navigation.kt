@@ -52,18 +52,16 @@ fun RowScope.PartyRunNavigationBarItem(
 @Composable
 fun PartyRunNavigationBar(
     modifier: Modifier = Modifier,
-    contentColor: Color = MaterialTheme.colorScheme.primary,
-    containerColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable RowScope.() -> Unit,
 ) {
     NavigationBar(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 brush = Brush.verticalGradient(
                     listOf(Purple40, Purple70)
                 )
             ),
-        contentColor = contentColor,
+        contentColor = MaterialTheme.colorScheme.primary,
         containerColor = Color.Transparent, // 배경은 투명하게 설정
         tonalElevation = 0.dp,
         content = content,

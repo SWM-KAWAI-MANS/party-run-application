@@ -94,9 +94,3 @@ fun PartyRunMain(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PartyRunMainPreview() {
-
-}

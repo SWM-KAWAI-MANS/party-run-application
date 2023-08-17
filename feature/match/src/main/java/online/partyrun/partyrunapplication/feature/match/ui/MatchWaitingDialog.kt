@@ -46,10 +46,7 @@ fun MatchWaitingDialog(
     isBuffering: MutableState<Boolean>
 ) {
     PartyRunMatchDialog(
-        onDismissRequest = {
-            disconnectMatching()
-            setShowDialog(false)
-        },
+        onDismissRequest = {},
     ) {
         Column(
             modifier = Modifier.padding(20.dp),

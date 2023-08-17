@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.feature.running_result
 
-import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
 
 sealed class RunningResultUiState {

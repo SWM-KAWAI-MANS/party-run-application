@@ -7,10 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.domain.agreement.GetAgreementStateUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GetGoogleAuthUserUseCase
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel

@@ -18,20 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchDialog
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedButton
 import online.partyrun.partyrunapplication.core.ui.AnimationGaugeBar
-import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchDecisionDialog(
     setShowDialog: (Boolean) -> Unit,
-    matchUiState: MatchUiState,
     onAccept: () -> Unit,
     onDecline: () -> Unit
 ) {
@@ -106,9 +103,7 @@ private fun AcceptButton(onAccept: () -> Unit) {
         onClick = { onAccept() },
         modifier = Modifier
             .size(width = 120.dp, height = 50.dp)
-            .shadow(5.dp, shape = CircleShape),
-        contentColor = Color.White,
-        containerColor = Color.Unspecified
+            .shadow(5.dp, shape = CircleShape)
     ) {
         Text(
             text = stringResource(id = R.string.accept_button_title),

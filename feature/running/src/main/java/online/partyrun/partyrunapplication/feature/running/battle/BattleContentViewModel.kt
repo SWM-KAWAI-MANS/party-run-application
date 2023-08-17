@@ -165,7 +165,9 @@ class BattleContentViewModel @Inject constructor(
                     is BattleEvent.BattleFinished -> { // 대결 종료 상태 처리
                         handleBattleFinished(it.runnerId)
                     }
-                    else -> {} // Handle other cases as needed
+                    else -> {
+                        Timber.d("다른 Type의 BattleEvent 수신")
+                    } // Handle other cases as needed
                 }
             }
         }

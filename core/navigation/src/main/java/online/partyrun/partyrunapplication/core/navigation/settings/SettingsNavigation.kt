@@ -17,7 +17,6 @@ fun NavGraphBuilder.settingsRoute(
         SettingsScreen(
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe,
-            onShowSnackbar = onShowSnackbar
         )
     }
 

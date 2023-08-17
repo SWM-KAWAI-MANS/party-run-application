@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.PartyRunApplication" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/status_bar</item>
     </style>
 
     <style name="Theme.PartyRunApplication.Splash" parent="Theme.SplashScreen">

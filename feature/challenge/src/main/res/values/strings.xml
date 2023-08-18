@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="challenge_preparing_service_comment_1">챌린지 서비스 준비 중</string>
+    <string name="challenge_preparing_service_comment_2">온/오프라인 러닝 동호회를 위한 서비스를 제공할 예정이에요.</string>
 </resources>

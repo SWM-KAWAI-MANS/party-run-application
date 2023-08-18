@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
@@ -35,22 +36,23 @@ import online.partyrun.partyrunapplication.feature.match.MatchViewModel
 @Composable
 fun BattleMainScreen(
     modifier: Modifier = Modifier,
-    battleViewModel: BattleMainViewModel = hiltViewModel(),
+    battleMainViewModel: BattleMainViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel(),
     navigateToBattleRunning: () -> Unit,
     onShowSnackbar: (String) -> Unit,
 ) {
-    val battleMainUiState by battleViewModel.battleMainUiState.collectAsState()
+    val battleMainUiState by battleMainViewModel.battleMainUiState.collectAsState()
     val matchUiState by matchViewModel.matchUiState.collectAsState()
-    val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsState()
+    val battleMainSnackbarMessage by battleMainViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
         battleMainUiState = battleMainUiState,
+        battleMainViewModel = battleMainViewModel,
         matchViewModel = matchViewModel,
         navigateToBattleRunning = navigateToBattleRunning,
         matchUiState = matchUiState,
-        matchSnackbarMessage = matchSnackbarMessage,
+        battleMainSnackbarMessage = battleMainSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
 }
@@ -59,10 +61,11 @@ fun BattleMainScreen(
 fun Content(
     modifier: Modifier = Modifier,
     battleMainUiState: BattleMainUiState,
+    battleMainViewModel: BattleMainViewModel,
     matchViewModel: MatchViewModel,
     navigateToBattleRunning: () -> Unit,
     matchUiState: MatchUiState,
-    matchSnackbarMessage: String,
+    battleMainSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isAllRunnersAccepted) {
@@ -70,10 +73,10 @@ fun Content(
         matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
     }
 
-    LaunchedEffect(matchSnackbarMessage) {
-        if (matchSnackbarMessage.isNotEmpty()) {
-            onShowSnackbar(matchSnackbarMessage)
-            matchViewModel.clearSnackbarMessage()
+    LaunchedEffect(battleMainSnackbarMessage) {
+        if (battleMainSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(battleMainSnackbarMessage)
+            battleMainViewModel.clearSnackbarMessage()
         }
     }
 
@@ -84,7 +87,6 @@ fun Content(
                 matchViewModel = matchViewModel,
                 matchUiState = matchUiState
             )
-
             is BattleMainUiState.LoadFailed -> LoadingBody()
         }
     }
@@ -104,7 +106,7 @@ private fun LoadingBody() {
 @Composable
 fun BattleMainBody(
     matchViewModel: MatchViewModel,
-    matchUiState: MatchUiState,
+    matchUiState: MatchUiState
 ) {
     if (matchUiState.isOpen) {
         MatchDialog(

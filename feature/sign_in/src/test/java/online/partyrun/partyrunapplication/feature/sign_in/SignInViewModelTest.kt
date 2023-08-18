@@ -5,6 +5,7 @@ import kotlinx.coroutines.test.runTest
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
 import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
@@ -40,6 +41,9 @@ class SignInViewModelTest {
     private val saveUserDataUseCase = SaveUserDataUseCase(
         memberRepository = memberRepository
     )
+    private val googleSignOutUseCase = GoogleSignOutUseCase(
+        googleAuthRepository = googleAuthRepository
+    )
 
     private lateinit var viewModel: SignInViewModel
 
@@ -52,6 +56,7 @@ class SignInViewModelTest {
             getSignInTokenUseCase = getSignInTokenUseCase,
             saveTokensUseCase = saveTokensUseCase,
             googleSignInUseCase = googleSignInUseCase,
+            googleSignOutUseCase = googleSignOutUseCase,
             getUserDataUseCase = getUserDataUseCase,
             saveUserDataUseCase = saveUserDataUseCase
         )

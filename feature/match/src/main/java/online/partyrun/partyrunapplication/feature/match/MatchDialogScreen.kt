@@ -89,7 +89,7 @@ fun MatchDialog(
 }
 
 private fun getVideoUri(): Uri {
-    val videoUri = "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+    val videoUri = "https://partyrun-battle-preparation-video.s3.ap-northeast-2.amazonaws.com/develop/battle_preparation_video.mp4"
     return Uri.parse(videoUri)
 }
 

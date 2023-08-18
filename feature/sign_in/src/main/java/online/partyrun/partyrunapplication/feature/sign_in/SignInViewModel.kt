@@ -18,6 +18,7 @@ import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
 import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
@@ -28,11 +29,12 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val getSignInTokenUseCase: GetSignInTokenUseCase,
+    private val googleSignOutUseCase: GoogleSignOutUseCase,
     private val saveTokensUseCase: SaveTokensUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val saveUserDataUseCase: SaveUserDataUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
     val signInGoogleState: StateFlow<SignInGoogleState> = _signInGoogleState.asStateFlow()
@@ -61,36 +63,39 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun signInWithGoogle(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) = viewModelScope.launch(Dispatchers.IO) {
-        val signInIntentSender = googleSignInUseCase.signInGoogle()
-        launcher.launch(
-            IntentSenderRequest.Builder(
-                signInIntentSender ?: return@launch
-            ).build()
-        )
-    }
+    fun signInWithGoogle(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) =
+        viewModelScope.launch(Dispatchers.IO) {
+            val signInIntentSender = googleSignInUseCase.signInGoogle()
+            launcher.launch(
+                IntentSenderRequest.Builder(
+                    signInIntentSender ?: return@launch
+                ).build()
+            )
+        }
 
     /**
      * handleActivityResult는 ActivityResult의 결과만 처리하며,
      * 이후의 로그인 처리는 signInWithGoogleWithIntent 담당
      */
-    fun handleActivityResult(resultCode: Int, data: Intent?) = viewModelScope.launch(Dispatchers.IO) {
-        if (resultCode == ComponentActivity.RESULT_OK) {
-            signInWithGoogleWithIntent(intent = data)
+    fun handleActivityResult(resultCode: Int, data: Intent?) =
+        viewModelScope.launch(Dispatchers.IO) {
+            if (resultCode == ComponentActivity.RESULT_OK) {
+                signInWithGoogleWithIntent(intent = data)
+            }
         }
-    }
 
-    private fun signInWithGoogleWithIntent(intent: Intent?) = viewModelScope.launch(Dispatchers.IO) {
-        signInGoogleLoadingIndicator()
-        val signInResult = intent?.let { googleSignInUseCase.signInGoogleWithIntent(it) }
-        if (signInResult != null) {
-            onSignInGoogleResult(signInResult)
+    private fun signInWithGoogleWithIntent(intent: Intent?) =
+        viewModelScope.launch(Dispatchers.IO) {
+            signInGoogleLoadingIndicator()
+            val signInResult = intent?.let { googleSignInUseCase.signInGoogleWithIntent(it) }
+            if (signInResult != null) {
+                onSignInGoogleResult(signInResult)
+            }
         }
-    }
 
     fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken) = viewModelScope.launch {
         getSignInTokenUseCase(idToken).collect() {
-            when(it) {
+            when (it) {
                 is ApiResponse.Success -> {
                     saveTokensUseCase(
                         accessToken = it.data.accessToken ?: "",
@@ -103,8 +108,10 @@ class SignInViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is ApiResponse.Failure -> {
                     _snackbarMessage.value = "로그인 실패"
+                    signOutFromGoogle() // 파이어베이스 구글 로그아웃 보장
                     _signInGoogleState.update { state ->
                         state.copy(
                             isSignInSuccessful = false
@@ -112,7 +119,8 @@ class SignInViewModel @Inject constructor(
                     }
                     Timber.tag("SignInViewModel").e("${it.code} ${it.errorMessage}")
                 }
-                ApiResponse.Loading ->  {
+
+                ApiResponse.Loading -> {
                     Timber.tag("SignInViewModel").d("Loading")
                 }
             }
@@ -142,6 +150,10 @@ class SignInViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun signOutFromGoogle() = viewModelScope.launch {
+        googleSignOutUseCase()
     }
 
     fun resetState() {

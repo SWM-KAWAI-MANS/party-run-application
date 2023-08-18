@@ -112,7 +112,7 @@ private fun ExoPlayerBox(
 
 @Composable
 private fun CancelButton(
-    disconnectSSE: () -> Unit,
+    disconnectMatching: () -> Unit,
     setShowDialog: (Boolean) -> Unit
 ) {
     PartyRunGradientIconButton(
@@ -120,7 +120,7 @@ private fun CancelButton(
             .size(48.dp)
             .shadow(5.dp, CircleShape),
         onClick = {
-            disconnectSSE()
+            disconnectMatching()
             setShowDialog(false)
         }
     ) {

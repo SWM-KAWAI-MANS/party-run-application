@@ -119,7 +119,7 @@ class MatchViewModel @Inject constructor(
         getRunnerIdsUseCase().collect {
             when (it) {
                 is ApiResponse.Success -> {
-                    _matchUiState.update {state ->
+                    _matchUiState.update { state ->
                         state.copy(
                             runnerIds = it.data
                         )
@@ -147,6 +147,7 @@ class MatchViewModel @Inject constructor(
                 )
             }
         } else {
+            _snackbarMessage.value = "매칭이 취소되었습니다."
             cancelMatchingProcess()
         }
     }
@@ -299,14 +300,21 @@ class MatchViewModel @Inject constructor(
      * sseState.await(): 현재 스트림의 상태(sseState)가 완료 상태가 될 때까지 대기
      */
     private suspend fun connectWaitingEventSource() {
+        waitingEventSSEstate = CompletableDeferred() //  새로운 Deferred 인스턴스를 사용
+
         val listener = createMatchEventSourceListenerUseCase(
             onEvent = ::handleWaitingEvent,
             onClosed = {
                 waitingEventSSEstate.complete(Unit)
             },
             onFailure = {
-                waitingEventSSEstate.complete(Unit)
-                _snackbarMessage.value = "매칭 시도 실패 \n잠시 후 다시 시도 해주세요."
+                try {
+                    waitingEventSSEstate.complete(Unit)
+                    disconnectMatchEventSource()
+                    cancelMatchingProcess()
+                } catch (e: MatchingProcessException) {
+                    Timber.e("SSE Waiting 취소")
+                }
             }
         )
         connectWaitingEventSourceUseCase(createWaitingEventSourceUseCase(listener))
@@ -314,6 +322,8 @@ class MatchViewModel @Inject constructor(
     }
 
     private suspend fun connectMatchResultEventSource() {
+        matchResultEventSSEstate = CompletableDeferred() // 새로운 Deferred 인스턴스를 사용
+
         val listener = createMatchEventSourceListenerUseCase(
             onEvent = ::handleMatchResultEvent,
             onClosed = {
@@ -343,7 +353,7 @@ class MatchViewModel @Inject constructor(
             when (it) {
                 is ApiResponse.Success -> {
                     saveRunnersInfoUseCase(it.data)
-                    _matchUiState.update {state ->
+                    _matchUiState.update { state ->
                         state.copy(
                             runnerInfoData = it.data
                         )
@@ -369,6 +379,7 @@ class MatchViewModel @Inject constructor(
                 }
 
                 is ApiResponse.Failure -> {
+                    _snackbarMessage.value = "매칭 취소 실패 \n잠시 후 다시 시도 해주세요."
                     Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
                 }
 

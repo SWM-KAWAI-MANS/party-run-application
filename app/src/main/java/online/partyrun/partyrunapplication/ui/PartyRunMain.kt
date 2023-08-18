@@ -64,7 +64,7 @@ fun PartyRunMain(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .alpha(if (snackbarHostState.currentSnackbarData != null) 0.3f else 1f)
+                    .alpha(if (snackbarHostState.currentSnackbarData != null) 0.6f else 1f)
                     .padding(padding)
             ) {
                 SetUpMainNavGraph(

@@ -23,6 +23,14 @@ class BattleMainViewModel @Inject constructor(
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
 
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
+
+    fun onKmChangeButtonClick() = viewModelScope.launch {
+        _snackbarMessage.value = "현재 1km만 지원합니다."
+    }
+
     /**
      * 앱이 처음 시작될 때(MainActivity가 onCreate될 때) 진행 중인 배틀이 있다면 종료 요청 수행
      */

@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,7 @@ import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
 @Composable
 fun BattleRunningScreen(
     battleUiState: BattleUiState,
+    openRunningExitDialog: MutableState<Boolean>,
     battleContentViewModel: BattleContentViewModel = hiltViewModel()
 ) {
     val battleState = battleUiState.battleState // 배틀 상태 state
@@ -64,7 +66,9 @@ fun BattleRunningScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            RunningTopAppBar()
+            RunningTopAppBar(
+                openRunningExitDialog = openRunningExitDialog
+            )
         }
     ) { paddingValues ->
         BackgroundBlurImage(
@@ -188,11 +192,13 @@ private fun UserDistanceDisplay(battleContentViewModel: BattleContentViewModel) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RunningTopAppBar() {
+private fun RunningTopAppBar(
+    openRunningExitDialog: MutableState<Boolean>
+) {
     PartyRunTopAppBar(
         modifier = Modifier,
         navigationContent = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = { openRunningExitDialog.value = true }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),
                     contentDescription = stringResource(id = R.string.arrow_back_desc)

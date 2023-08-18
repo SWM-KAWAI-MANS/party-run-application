@@ -169,9 +169,15 @@ private fun RunningResultBody(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(500.dp)
+                                .height(300.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
+                            Text(
+                                text = "분석 차트 서비스 준비 중",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.size(60.dp)) // 바텀 컴포넌트보다 위에서 보이도록 스페이스 설정
@@ -201,7 +207,7 @@ private fun SummaryInfo() {
         Text(text = stringResource(id = R.string.avg_pace))
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "임시",
+            text = "준비 중",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
@@ -215,7 +221,7 @@ private fun SummaryInfo() {
         Text(text = stringResource(id = R.string.time))
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "임시",
+            text = "준비 중",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
@@ -229,7 +235,7 @@ private fun SummaryInfo() {
         Text(text = stringResource(id = R.string.calories))
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "임시",
+            text = "준비 중",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

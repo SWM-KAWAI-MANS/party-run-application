@@ -46,6 +46,7 @@ fun BattleContentScreen(
     val battleUiState by battleContentViewModel.battleUiState.collectAsStateWithLifecycle()
     val battleId by battleContentViewModel.battleId.collectAsStateWithLifecycle()
     val battleContentSnackbarMessage by battleContentViewModel.snackbarMessage.collectAsStateWithLifecycle()
+    val openRunningExitDialog = remember { mutableStateOf(false) }
 
     Content(
         navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
@@ -53,6 +54,7 @@ fun BattleContentScreen(
         battleContentViewModel = battleContentViewModel,
         battleUiState = battleUiState,
         battleId = battleId,
+        openRunningExitDialog = openRunningExitDialog,
         battleContentSnackbarMessage = battleContentSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
@@ -65,10 +67,11 @@ fun Content(
     battleContentViewModel: BattleContentViewModel,
     battleUiState: BattleUiState,
     battleId: String?,
+    openRunningExitDialog: MutableState<Boolean>,
     battleContentSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
-    RunningBackNavigationHandler() // 대결 중 BackPressed 수행 시 처리할 핸들러
+    RunningBackNavigationHandler(openRunningExitDialog) // 대결 중 BackPressed 수행 시 처리할 핸들러
 
     LaunchedEffect(battleId) {
         battleId.let { id ->
@@ -104,7 +107,11 @@ fun Content(
     ) {
         when (battleUiState.screenState) {
             is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
-            is BattleScreenState.Running -> BattleRunningScreen(battleUiState = battleUiState)
+            is BattleScreenState.Running ->
+                BattleRunningScreen(
+                    battleUiState = battleUiState,
+                    openRunningExitDialog = openRunningExitDialog
+                )
             BattleScreenState.Finish -> FinishScreen()
         }
     }
@@ -143,13 +150,14 @@ private fun StartBattleRunning(
 }
 
 @Composable
-fun RunningBackNavigationHandler() {
+fun RunningBackNavigationHandler(
+    openRunningExitDialog: MutableState<Boolean>
+) {
     val context = LocalContext.current
     val activity = context as? Activity
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val openDialog = remember { mutableStateOf(false) }
 
-    RunningExitConfirmationDialog(openDialog) {
+    RunningExitConfirmationDialog(openRunningExitDialog) {
         // 액티비티 재시작
         activity?.let {
             val intent = it.intent
@@ -164,7 +172,7 @@ fun RunningBackNavigationHandler() {
     DisposableEffect(Unit) {
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                openDialog.value = true
+                openRunningExitDialog.value = true
             }
         }
 
@@ -176,13 +184,13 @@ fun RunningBackNavigationHandler() {
 
 @Composable
 fun RunningExitConfirmationDialog(
-    openDialog: MutableState<Boolean>,
+    openRunningExitDialog: MutableState<Boolean>,
     confirmExit: () -> Unit
 ) {
-    if (openDialog.value) {
+    if (openRunningExitDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                openDialog.value = false
+                openRunningExitDialog.value = false
             },
             title = {
                 Column(
@@ -204,7 +212,7 @@ fun RunningExitConfirmationDialog(
                 PartyRunGradientButton(
                     onClick = {
                         confirmExit()
-                        openDialog.value = false
+                        openRunningExitDialog.value = false
                     },
                     modifier = Modifier
                         .width(90.dp)
@@ -221,7 +229,7 @@ fun RunningExitConfirmationDialog(
             dismissButton = {
                 PartyRunOutlinedButton(
                     onClick = {
-                        openDialog.value = false
+                        openRunningExitDialog.value = false
                     },
                     shape = RoundedCornerShape(35.dp),
                     borderStrokeWidth = 5.dp,

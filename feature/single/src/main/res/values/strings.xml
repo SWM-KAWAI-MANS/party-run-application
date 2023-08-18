@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="single_preparing_service_comment_1">싱글 서비스 준비 중</string>
+    <string name="single_preparing_service_comment_2">이전에 뛴 나의 기록과 실시간으로 함께 달리는 서비스를 제공할 예정이에요.</string>
 
 </resources>

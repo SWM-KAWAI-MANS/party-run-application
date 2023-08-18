@@ -84,6 +84,7 @@ fun Content(
         when (battleMainUiState) {
             is BattleMainUiState.Loading -> LoadingBody()
             is BattleMainUiState.Success -> BattleMainBody(
+                battleMainViewModel = battleMainViewModel,
                 matchViewModel = matchViewModel,
                 matchUiState = matchUiState
             )
@@ -105,6 +106,7 @@ private fun LoadingBody() {
 
 @Composable
 fun BattleMainBody(
+    battleMainViewModel: BattleMainViewModel,
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState
 ) {
@@ -150,8 +152,12 @@ fun BattleMainBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            onLeftClick = { /*TODO*/ },
-            onRightClick = { /*TODO*/ }
+            onLeftClick = {
+                battleMainViewModel.onKmChangeButtonClick()
+            },
+            onRightClick = {
+                battleMainViewModel.onKmChangeButtonClick()
+            }
         ) {
             Image(
                 modifier = Modifier.fillMaxSize(),

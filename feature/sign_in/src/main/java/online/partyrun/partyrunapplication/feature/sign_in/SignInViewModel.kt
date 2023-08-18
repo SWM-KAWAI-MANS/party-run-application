@@ -18,6 +18,7 @@ import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
+import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
 import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
 import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
@@ -28,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val getSignInTokenUseCase: GetSignInTokenUseCase,
+    private val googleSignOutUseCase: GoogleSignOutUseCase,
     private val saveTokensUseCase: SaveTokensUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
@@ -105,6 +107,7 @@ class SignInViewModel @Inject constructor(
                 }
                 is ApiResponse.Failure -> {
                     _snackbarMessage.value = "로그인 실패"
+                    signOutFromGoogle()
                     _signInGoogleState.update { state ->
                         state.copy(
                             isSignInSuccessful = false
@@ -142,6 +145,10 @@ class SignInViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun signOutFromGoogle() = viewModelScope.launch {
+        googleSignOutUseCase()
     }
 
     fun resetState() {

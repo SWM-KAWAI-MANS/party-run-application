@@ -3,6 +3,7 @@ package online.partyrun.partyrunapplication.core.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,12 +26,12 @@ fun KmInfoCard(
     content: @Composable () -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
         PartyRunCircularIconButton(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.size(45.dp),
             onClick = onLeftClick,
         ) {
             Icon(
@@ -38,7 +39,6 @@ fun KmInfoCard(
                 contentDescription = stringResource(id = R.string.arrow_back_desc)
             )
         }
-        Spacer(modifier = Modifier.width(30.dp))
         RoundedRect(
             modifier = Modifier
                 .width(187.dp)
@@ -46,9 +46,8 @@ fun KmInfoCard(
         ) {
             content()
         }
-        Spacer(modifier = Modifier.width(30.dp))
         PartyRunCircularIconButton(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.size(45.dp),
             onClick = onRightClick,
         ) {
             Icon(

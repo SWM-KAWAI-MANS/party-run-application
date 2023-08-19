@@ -133,8 +133,9 @@ private fun MyPageBody(
         }
 
         SignOutButton(
-            onSignOut = {
+            onClick = {
                 viewModel.signOutFromGoogle()
+                viewModel.saveAgreementState(isChecked = false)
                 onSignOut()
             },
             modifier = Modifier.fillMaxWidth()
@@ -236,7 +237,7 @@ private fun ProfileImage(
 
 @Composable
 fun SignOutButton(
-    onSignOut: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -245,7 +246,7 @@ fun SignOutButton(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { onSignOut() }
+            onClick = { onClick() }
         ) {
             Text(
                 text = stringResource(id = R.string.sign_out_btn),

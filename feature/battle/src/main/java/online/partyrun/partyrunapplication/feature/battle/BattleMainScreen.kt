@@ -44,6 +44,7 @@ fun BattleMainScreen(
     val battleMainUiState by battleMainViewModel.battleMainUiState.collectAsState()
     val matchUiState by matchViewModel.matchUiState.collectAsState()
     val battleMainSnackbarMessage by battleMainViewModel.snackbarMessage.collectAsStateWithLifecycle()
+    val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
@@ -53,6 +54,7 @@ fun BattleMainScreen(
         navigateToBattleRunning = navigateToBattleRunning,
         matchUiState = matchUiState,
         battleMainSnackbarMessage = battleMainSnackbarMessage,
+        matchSnackbarMessage = matchSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
 }
@@ -66,6 +68,7 @@ fun Content(
     navigateToBattleRunning: () -> Unit,
     matchUiState: MatchUiState,
     battleMainSnackbarMessage: String,
+    matchSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isAllRunnersAccepted) {
@@ -80,6 +83,13 @@ fun Content(
         }
     }
 
+    LaunchedEffect(matchSnackbarMessage) {
+        if (matchSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(matchSnackbarMessage)
+            matchViewModel.clearSnackbarMessage()
+        }
+    }
+
     Box(modifier = modifier) {
         when (battleMainUiState) {
             is BattleMainUiState.Loading -> LoadingBody()
@@ -88,6 +98,7 @@ fun Content(
                 matchViewModel = matchViewModel,
                 matchUiState = matchUiState
             )
+
             is BattleMainUiState.LoadFailed -> LoadingBody()
         }
     }

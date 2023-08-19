@@ -84,6 +84,14 @@ class MatchViewModel @Inject constructor(
         _matchUiState.value = MatchUiState()
     }
 
+    fun setMatchingBtnEnabled(isEnabled: Boolean) {
+        _matchUiState.update { state ->
+            state.copy(
+                isMatchingBtnEnabled = isEnabled
+            )
+        }
+    }
+
     fun clearSnackbarMessage() {
         _snackbarMessage.value = ""
     }

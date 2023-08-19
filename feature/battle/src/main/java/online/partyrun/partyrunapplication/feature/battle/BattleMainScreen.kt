@@ -180,13 +180,10 @@ fun BattleMainBody(
         PartyRunMatchButton(
             modifier = Modifier.padding(bottom = 70.dp),
             onClick = {
-                matchViewModel.openMatchDialog()
-                matchViewModel.beginBattleMatchingProcess(
-                    RunningDistance(
-                        distance = 1000
-                    )
-                )
-            }
+                if (matchUiState.isMatchingBtnEnabled) { // enabled로 할 경우 버튼이 사라지는 현상을 방지하기 위해 조건부로 처리
+                    matchingAction(matchViewModel)
+                }
+            },
         ) {
             Text(
                 text = stringResource(id = R.string.battle_matching_start),
@@ -194,4 +191,14 @@ fun BattleMainBody(
             )
         }
     }
+}
+
+private fun matchingAction(matchViewModel: MatchViewModel) {
+    matchViewModel.setMatchingBtnEnabled(isEnabled = false)
+    matchViewModel.openMatchDialog()
+    matchViewModel.beginBattleMatchingProcess(
+        RunningDistance(
+            distance = 1000
+        )
+    )
 }

@@ -26,6 +26,7 @@ enum class MatchResultStatus {
 data class MatchUiState(
     val isOpen: Boolean = false,
     val isAllRunnersAccepted: Boolean = false,
+    val isMatchingBtnEnabled: Boolean = true,
     val runnerIds: RunnerIds = RunnerIds(emptyList()),
     val runnerInfoData: RunnerInfoData = RunnerInfoData(emptyList()),
     val matchProgress: MatchProgress = MatchProgress.WAITING,

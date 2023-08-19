@@ -32,7 +32,7 @@ fun MatchDialog(
     matchViewModel: MatchViewModel = viewModel(),
 ) {
     val context = LocalContext.current
-    val matchState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
+    val matchUiState by matchViewModel.matchUiState.collectAsStateWithLifecycle()
     val exoPlayer = remember { context.buildExoPlayer(getVideoUri()) }
     val isBuffering = remember { mutableStateOf(true) } // 로딩 상태를 관리하기 위한 MutableState
 
@@ -56,13 +56,14 @@ fun MatchDialog(
         }
     }
 
-    when (matchState.matchProgress.name) {
+    when (matchUiState.matchProgress.name) {
         MatchProgress.WAITING.name ->
             MatchWaitingDialog(
                 setShowDialog = setShowDialog,
                 disconnectMatching = {
                     matchViewModel.cancelMatchWaitingEvent()
                     matchViewModel.disconnectMatchEventSource()
+                    matchViewModel.setMatchingBtnEnabled(isEnabled = true)
                 },
                 exoPlayer = exoPlayer,
                 isBuffering = isBuffering
@@ -79,7 +80,7 @@ fun MatchDialog(
             )
         MatchProgress.RESULT.name ->
             MatchResultDialog(
-                matchUiState = matchState
+                matchUiState = matchUiState
             )
         MatchProgress.CANCEL.name ->
             MatchCancelDialog(

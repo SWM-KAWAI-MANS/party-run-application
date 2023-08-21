@@ -54,8 +54,8 @@ class RealtimeBattleClient(
         }
         /* 코루틴이 종료되거나 채널이 닫힐 때 stompConnection 해제와 특정 토픽 해제 보장 */
         awaitClose {
-            stompConnection.dispose()
             disposeTopic()
+            closeSocket()
         }
     }
 
@@ -84,6 +84,7 @@ class RealtimeBattleClient(
                 stompConnection.dispose()
                 close(it.exception) // exception 전달
             }
+
             else -> {
                 Timber.tag("RealtimeBattleClient").e("ELSE")
                 disposeTopic()
@@ -101,7 +102,8 @@ class RealtimeBattleClient(
             .subscribe { message -> // 구독이 성공적으로 이루어지면, 새로운 메시지가 도착할 때마다 해당 람다 함수 호출
                 TaskRunner.logger.log(Level.INFO, message)
                 Timber.tag("BattleClient").d(message)
-                val battleEvent = parseBattleEvent(message) // 서버로부터 받은 message를 파싱하여 BattleEvent 객체로 변환
+                val battleEvent =
+                    parseBattleEvent(message) // 서버로부터 받은 message를 파싱하여 BattleEvent 객체로 변환
                 trySend(battleEvent).isSuccess // battleEvent를 구독한 프로듀서 스코프에 전달
             }
     }
@@ -126,10 +128,21 @@ class RealtimeBattleClient(
      */
     private fun parseBattleEvent(message: String): BattleEventResponse {
         val jsonObject = JsonParser.parseString(message).asJsonObject
-        return when(jsonObject.get("type").asString) {
-            "BATTLE_START" -> gson.fromJson(message, BattleEventResponse.BattleBaseStartResponse::class.java)
-            "BATTLE_RUNNING" -> gson.fromJson(message, BattleEventResponse.BattleBaseRunningResponse::class.java)
-            else -> gson.fromJson(message, BattleEventResponse.BattleBaseFinishedResponse::class.java)
+        return when (jsonObject.get("type").asString) {
+            "BATTLE_START" -> gson.fromJson(
+                message,
+                BattleEventResponse.BattleBaseStartResponse::class.java
+            )
+
+            "BATTLE_RUNNING" -> gson.fromJson(
+                message,
+                BattleEventResponse.BattleBaseRunningResponse::class.java
+            )
+
+            else -> gson.fromJson(
+                message,
+                BattleEventResponse.BattleBaseFinishedResponse::class.java
+            )
         }
     }
 
@@ -138,7 +151,7 @@ class RealtimeBattleClient(
      * 서버에 사용자의 달리기 데이터를 실시간으로 제공
      */
     @SuppressLint("CheckResult")
-    suspend fun sendRecordData(battleId: String, recordData: RecordDataRequest) {
+    fun sendRecordData(battleId: String, recordData: RecordDataRequest) {
         val jsonData = gson.toJson(recordData)
         stomp.send("/pub/battles/$battleId/record", jsonData).subscribe { isSent ->
             if (isSent) {
@@ -152,7 +165,7 @@ class RealtimeBattleClient(
     /**
      * 웹소켓 연결을 종료하는 메소드
      */
-    suspend fun closeSocket() {
+    fun closeSocket() {
         stompConnection.dispose()
     }
 
@@ -167,7 +180,7 @@ class RealtimeBattleClient(
     /**
      * 웹소켓 연결과 토픽 구독을 종료하고 관련 리소스 정리 수행
      */
-    suspend fun disposeSocketResources() {
+    fun disposeSocketResources() {
         disposeTopic()
         closeSocket()
     }

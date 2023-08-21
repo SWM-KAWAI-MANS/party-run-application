@@ -53,7 +53,7 @@ class BattleContentViewModel @Inject constructor(
     private val getUserIdUseCase: GetUserIdUseCase,
     private val disposeSocketResourcesUseCase: DisposeSocketResourcesUseCase,
     private val fusedLocationProviderClient: FusedLocationProviderClient
-): ViewModel() {
+) : ViewModel() {
     companion object {
         const val LOCATION_UPDATE_INTERVAL_SECONDS = 1L
         const val COUNTDOWN_SECONDS = 5
@@ -80,9 +80,11 @@ class BattleContentViewModel @Inject constructor(
 
     init {
         val priority = Priority.PRIORITY_HIGH_ACCURACY
-        locationRequest = LocationRequest.Builder(priority, TimeUnit.SECONDS.toMillis(
-            LOCATION_UPDATE_INTERVAL_SECONDS
-        )).build()
+        locationRequest = LocationRequest.Builder(
+            priority, TimeUnit.SECONDS.toMillis(
+                LOCATION_UPDATE_INTERVAL_SECONDS
+            )
+        ).build()
 
         getBattleId()
         getUserId()
@@ -159,14 +161,17 @@ class BattleContentViewModel @Inject constructor(
                     is BattleEvent.BattleStart -> { // 대결 시작 시간 처리
                         countDownWhenReady(it.startTime)
                     }
+
                     is BattleEvent.BattleRunning -> { // 달리는 유저들의 거리 상태 처리
                         updateBattleStateWithRunnerResult(it)
                     }
+
                     is BattleEvent.BattleFinished -> { // 대결 종료 상태 처리
                         handleBattleFinished(it.runnerId)
                     }
+
                     else -> {
-                        Timber.d("다른 Type의 BattleEvent 수신")
+                        Timber.d("다른 Type의 BattleEvent 수신", it)
                     } // Handle other cases as needed
                 }
             }
@@ -181,11 +186,16 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    private fun handleBattleStreamError(t: Throwable, navigateToBattleOnWebSocketError: () -> Unit) {
+    private fun handleBattleStreamError(
+        t: Throwable,
+        navigateToBattleOnWebSocketError: () -> Unit
+    ) {
         _battleUiState.update { state ->
             state.copy(showConnectionError = t is ConnectException)
         }
-        if (t is ConnectException) { navigateToBattleOnWebSocketError() }
+        if (t is ConnectException) {
+            navigateToBattleOnWebSocketError()
+        }
     }
 
     private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunning) {
@@ -322,7 +332,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private suspend fun countDown() {
-        for (i in COUNTDOWN_SECONDS  downTo  0) {
+        for (i in COUNTDOWN_SECONDS downTo 0) {
             delay(1000)
             _battleUiState.update { state ->
                 state.copy(
@@ -332,11 +342,12 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    suspend fun disposeSocketResources() {
+    fun disposeSocketResources() = viewModelScope.launch {
+        Timber.tag("disposeSocketResources").d("웹소켓 리소스 해제")
         disposeSocketResourcesUseCase()
     }
 
-    private suspend fun handleBattleFinished(runnerId: String) {
+    private fun handleBattleFinished(runnerId: String) {
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
             _battleUiState.update { state ->
                 state.copy(
@@ -367,7 +378,8 @@ class BattleContentViewModel @Inject constructor(
     }
 
     fun getRunnerDistance(): String {
-        val runnerStatus = _battleUiState.value.battleState.battleInfo.find { it.runnerId == userId }
+        val runnerStatus =
+            _battleUiState.value.battleState.battleInfo.find { it.runnerId == userId }
         val distance = runnerStatus?.distance?.toInt() ?: 0
         return "${distance}m"
     }

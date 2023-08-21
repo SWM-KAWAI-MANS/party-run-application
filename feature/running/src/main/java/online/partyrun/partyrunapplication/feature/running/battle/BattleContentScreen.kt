@@ -71,7 +71,11 @@ fun Content(
     battleContentSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
-    RunningBackNavigationHandler(openRunningExitDialog) // 대결 중 BackPressed 수행 시 처리할 핸들러
+    // 대결 중 BackPressed 수행 시 처리할 핸들러
+    RunningBackNavigationHandler(
+        battleContentViewModel = battleContentViewModel,
+        openRunningExitDialog = openRunningExitDialog,
+    )
 
     LaunchedEffect(battleId) {
         battleId.let { id ->
@@ -112,6 +116,7 @@ fun Content(
                     battleUiState = battleUiState,
                     openRunningExitDialog = openRunningExitDialog
                 )
+
             BattleScreenState.Finish -> FinishScreen()
         }
     }
@@ -151,13 +156,17 @@ private fun StartBattleRunning(
 
 @Composable
 fun RunningBackNavigationHandler(
+    battleContentViewModel: BattleContentViewModel,
     openRunningExitDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-    RunningExitConfirmationDialog(openRunningExitDialog) {
+    RunningExitConfirmationDialog(
+        openRunningExitDialog = openRunningExitDialog,
+    ) {
+        battleContentViewModel.disposeSocketResources()
         // 액티비티 재시작
         activity?.let {
             val intent = it.intent
@@ -211,8 +220,8 @@ fun RunningExitConfirmationDialog(
             confirmButton = {
                 PartyRunGradientButton(
                     onClick = {
-                        confirmExit()
                         openRunningExitDialog.value = false
+                        confirmExit()
                     },
                     modifier = Modifier
                         .width(90.dp)

@@ -2,7 +2,7 @@ package online.partyrun.partyrunapplication.feature.sign_in
 
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
@@ -68,7 +68,7 @@ class SignInViewModelTest {
             idToken = "valid token value"
         )
         val response = SignInTokenResponse("test", "test")
-        signInRepository.emit(ApiResponse.Success(response.toDomainModel()))
+        signInRepository.emit(Result.Success(response.toDomainModel()))
         viewModel.signInWithGoogleTokenViaServer(idToken)
         getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value
@@ -80,7 +80,7 @@ class SignInViewModelTest {
         val idToken = GoogleIdToken(
             idToken = "invalid"
         )
-        signInRepository.emit(ApiResponse.Failure("잘못된 요청입니다.", 400))
+        signInRepository.emit(Result.Failure("잘못된 요청입니다.", 400))
         viewModel.signInWithGoogleTokenViaServer(idToken)
         getSignInTokenUseCase(idToken)
         val data = viewModel.signInGoogleState.value

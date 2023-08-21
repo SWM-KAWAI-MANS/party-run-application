@@ -17,6 +17,7 @@ import kotlinx.coroutines.tasks.await
 import online.partyrun.partyrunapplication.core.common.Constants.FIREBASE_GOOGLE_CLIENT_ID
 import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserInfoResponse
 import online.partyrun.partyrunapplication.core.network.model.response.GoogleUserDataResponse
+import online.partyrun.partyrunapplication.core.common.result.Result
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,18 +38,20 @@ class GoogleAuthClient @Inject constructor(
      * oneTapClient의 beginSignIn() 호출 -> 로그인 프로세스 동작 수행
      * buildSignInRequest() 호출 -> 로그인 요청을 구성하고, 결과로 받은 PendingIntent의 intentSender 반환
      */
-    suspend fun signInGoogle(): IntentSender? {
-        val result = try {
-            oneTapClient.beginSignIn(
-                buildSignInGoogleRequest()
-            ).await()
-        } catch(e: Exception) {
+    suspend fun signInGoogle(): Result<IntentSender?> {
+        return try {
+            val result = oneTapClient.beginSignIn(buildSignInGoogleRequest()).await()
+            if (result?.pendingIntent?.intentSender != null) {
+                Result.Success(result.pendingIntent.intentSender)
+            } else {
+                Result.Failure("No intentSender found", -1)
+            }
+        } catch (e: Exception) {
             Timber.tag("GoogleAuthUiClient").e(e, "signInGoogle()")
-            if(e is CancellationException) throw e
-            null
+            Result.Failure(e.message ?: "Error during Google Sign In", -1)
         }
-        return result?.pendingIntent?.intentSender
     }
+
 
     /**
      * buildSignInGoogleRequest(): One-Tap 로그인을 위한 BeginSignInRequest 객체 구성
@@ -92,9 +95,9 @@ class GoogleAuthClient @Inject constructor(
                 },
                 errorMessage = null
             )
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Timber.tag("GoogleAuthUiClient").e(e, "Sign-in with Google failed")
-            if(e is CancellationException) throw e
+            if (e is CancellationException) throw e
             GoogleUserInfoResponse(
                 userData = null,
                 errorMessage = e.message
@@ -111,9 +114,9 @@ class GoogleAuthClient @Inject constructor(
         try {
             oneTapClient.signOut().await()
             auth.signOut()
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             Timber.tag("GoogleAuthUiClient").e(e, "signOutGoogleAuth()")
-            if(e is CancellationException) throw e
+            if (e is CancellationException) throw e
         }
     }
 

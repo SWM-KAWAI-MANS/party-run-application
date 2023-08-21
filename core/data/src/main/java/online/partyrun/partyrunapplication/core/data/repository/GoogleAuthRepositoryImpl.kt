@@ -8,6 +8,7 @@ import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserInfo
 import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
+import online.partyrun.partyrunapplication.core.common.result.Result
 import javax.inject.Inject
 
 class GoogleAuthRepositoryImpl @Inject constructor(
@@ -16,7 +17,7 @@ class GoogleAuthRepositoryImpl @Inject constructor(
     /**
      * Google Sign
      */
-    override suspend fun signInGoogle(): IntentSender? {
+    override suspend fun signInGoogle(): Result<IntentSender?> {
         return googleAuthClient.signInGoogle()
     }
 

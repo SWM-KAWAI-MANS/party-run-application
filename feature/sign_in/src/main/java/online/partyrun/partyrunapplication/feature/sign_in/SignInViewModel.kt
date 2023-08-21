@@ -66,12 +66,13 @@ class SignInViewModel @Inject constructor(
 
     fun signInWithGoogle(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) =
         viewModelScope.launch(Dispatchers.IO) {
-            val signInIntentSender = googleSignInUseCase.signInGoogle()
-            launcher.launch(
-                IntentSenderRequest.Builder(
-                    signInIntentSender ?: return@launch
-                ).build()
-            )
+            val signInResult = googleSignInUseCase.signInGoogle()
+            signInResult.onSuccess { result ->
+                launcher.launch(IntentSenderRequest.Builder(result ?: return@onSuccess).build())
+            }.onFailure { errorMessage, code ->
+                _snackbarMessage.value = "로그인된 구글 계정이 없습니다."
+                Timber.tag("BattleMainViewModel").e("$code $errorMessage")
+            }
         }
 
     /**

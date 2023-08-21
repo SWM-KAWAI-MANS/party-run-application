@@ -6,9 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import online.partyrun.partyrunapplication.core.data.repository.GoogleAuthRepository
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserData
 import online.partyrun.partyrunapplication.core.model.auth.GoogleUserInfo
+import online.partyrun.partyrunapplication.core.common.result.Result
 
 class TestGoogleAuthRepository : GoogleAuthRepository{
-    override suspend fun signInGoogle(): IntentSender? {
+    override suspend fun signInGoogle(): Result<IntentSender?> {
         TODO("Not yet implemented")
     }
 

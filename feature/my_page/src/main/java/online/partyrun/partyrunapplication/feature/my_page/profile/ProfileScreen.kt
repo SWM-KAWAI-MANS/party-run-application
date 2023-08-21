@@ -100,16 +100,14 @@ fun Content(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (myPageUiState is MyPageUiState.Success) {
-                if (keyboardController != null) {
-                    ProfileBody(
-                        profileViewModel = profileViewModel,
-                        userData = myPageUiState.user,
-                        profileUiState = profileUiState,
-                        keyboardController = keyboardController,
-                        focusManager = focusManager
-                    )
-                }
+            if (myPageUiState is MyPageUiState.Success && keyboardController != null) {
+                ProfileBody(
+                    profileViewModel = profileViewModel,
+                    userData = myPageUiState.user,
+                    profileUiState = profileUiState,
+                    keyboardController = keyboardController,
+                    focusManager = focusManager
+                )
             }
         }
     }

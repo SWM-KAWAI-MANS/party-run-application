@@ -52,6 +52,7 @@ object PartyRunIcons {
     val MyPageIcon = R.drawable.ic_my_page
     val SelectedMyPageIcon = R.drawable.ic_selected_my_page
     val DistanceIcon = R.drawable.ic_rounded_place
+    val edit = R.drawable.ic_round_edit_24
 }
 
 @Preview(showBackground = true)

@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
@@ -25,8 +26,10 @@ class RunningResultViewModel @Inject constructor(
 ) : ViewModel() {
 
     private lateinit var userId: String
-    private val _runningResultUiState = MutableStateFlow<RunningResultUiState>(RunningResultUiState.Loading)
+    private val _runningResultUiState =
+        MutableStateFlow<RunningResultUiState>(RunningResultUiState.Loading)
     val runningResultUiState = _runningResultUiState.asStateFlow()
+
     init {
         getBattleResult()
         getUserId()
@@ -37,7 +40,12 @@ class RunningResultViewModel @Inject constructor(
             userId = getUserIdUseCase()
             _runningResultUiState.update { state ->
                 when (state) {
-                    is RunningResultUiState.Success -> state.copy(battleResult = state.battleResult.copy(userId = userId))
+                    is RunningResultUiState.Success -> state.copy(
+                        battleResult = state.battleResult.copy(
+                            userId = userId
+                        )
+                    )
+
                     else -> state
                 }
             }
@@ -48,39 +56,30 @@ class RunningResultViewModel @Inject constructor(
         viewModelScope.launch {
             val battleData = getBattleStatusUseCase()
 
-            getBattleResultUseCase().collect {
-                when (it) {
-                    is ApiResponse.Success -> {
-                        // 여기서 battleData의 runnerId와 battleResult의 id를 비교하여 name과 profile을 매핑
-                        val battleResultStatus = mappingRunnerInfo(it, battleData)
+            getBattleResultUseCase().collect { result ->
+                result.onSuccess { data ->
+                    // 여기서 battleData의 runnerId와 battleResult의 id를 비교하여 name과 profile을 매핑
+                    val battleResultStatus = mappingRunnerInfo(data, battleData)
 
-                        _runningResultUiState.value = RunningResultUiState.Success(
-                            battleResult = it.data.copy(
-                                battleRunnerStatus = battleResultStatus
-                            )
+                    _runningResultUiState.value = RunningResultUiState.Success(
+                        battleResult = data.copy(
+                            battleRunnerStatus = battleResultStatus
                         )
-                    }
-
-                    is ApiResponse.Failure -> {
-                        Timber.e("$it")
-                        _runningResultUiState.value =
-                            RunningResultUiState.LoadFailed
-                    }
-
-                    ApiResponse.Loading -> {
-                        _runningResultUiState.value =
-                            RunningResultUiState.Loading
-                    }
+                    )
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    _runningResultUiState.value =
+                        RunningResultUiState.LoadFailed
                 }
             }
         }
     }
 
     private fun mappingRunnerInfo(
-        it: ApiResponse.Success<BattleResult>,
+        it: BattleResult,
         battleData: BattleStatus
     ): List<BattleRunnerStatus> {
-        val battleResultStatus = it.data.battleRunnerStatus.map { battleRunnerStatus ->
+        val battleResultStatus = it.battleRunnerStatus.map { battleRunnerStatus ->
             val runnerStatus =
                 battleData.battleInfo.find { runnerStatus -> runnerStatus.runnerId == battleRunnerStatus.id }
             battleRunnerStatus.copy(
@@ -90,6 +89,5 @@ class RunningResultViewModel @Inject constructor(
         }
         return battleResultStatus
     }
-
 
 }

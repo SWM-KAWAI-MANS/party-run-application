@@ -14,9 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.domain.auth.GetSignInTokenUseCase
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignInUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.auth.SaveTokensUseCase
@@ -94,63 +95,46 @@ class SignInViewModel @Inject constructor(
         }
 
     fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken) = viewModelScope.launch {
-        getSignInTokenUseCase(idToken).collect() {
-            when (it) {
-                is ApiResponse.Success -> {
-                    saveTokensUseCase(
-                        accessToken = it.data.accessToken ?: "",
-                        refreshToken = it.data.refreshToken ?: ""
+        getSignInTokenUseCase(idToken).collect { result ->
+            result.onSuccess { tokenData ->
+                saveTokensUseCase(
+                    accessToken = tokenData.accessToken ?: "",
+                    refreshToken = tokenData.refreshToken ?: ""
+                )
+                _signInGoogleState.update { state ->
+                    state.copy(
+                        isIdTokenSentToServer = true,
+                        isSignInIndicatorOn = false
                     )
-                    _signInGoogleState.update { state ->
-                        state.copy(
-                            isIdTokenSentToServer = true,
-                            isSignInIndicatorOn = false
-                        )
-                    }
                 }
-
-                is ApiResponse.Failure -> {
-                    _snackbarMessage.value = "로그인 실패"
-                    signOutFromGoogle() // 파이어베이스 구글 로그아웃 보장
-                    _signInGoogleState.update { state ->
-                        state.copy(
-                            isSignInSuccessful = false
-                        )
-                    }
-                    Timber.tag("SignInViewModel").e("${it.code} ${it.errorMessage}")
+            }.onFailure { errorMessage, code ->
+                _snackbarMessage.value = "로그인 실패"
+                signOutFromGoogle() // 파이어베이스 구글 로그아웃 보장
+                _signInGoogleState.update { state ->
+                    state.copy(
+                        isSignInSuccessful = false
+                    )
                 }
-
-                ApiResponse.Loading -> {
-                    Timber.tag("SignInViewModel").d("Loading")
-                }
+                Timber.tag("SignInViewModel").e("$code $errorMessage")
             }
         }
     }
 
     fun saveUserData() {
         viewModelScope.launch {
-            getUserDataUseCase().collect {
-                when (it) {
-                    is ApiResponse.Success -> {
-                        saveUserDataUseCase(it.data)
-                        _signInGoogleState.update { state ->
-                            state.copy(
-                                isUserDataSaved = true
-                            )
-                        }
+            getUserDataUseCase().collect { result ->
+                result.onSuccess { userData ->
+                    saveUserDataUseCase(userData)
+                    _signInGoogleState.update { state ->
+                        state.copy(isUserDataSaved = true)
                     }
-
-                    is ApiResponse.Failure -> {
-                        Timber.e("${it.code} ${it.errorMessage}")
-                    }
-
-                    ApiResponse.Loading -> {
-                        Timber.d("$it")
-                    }
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
                 }
             }
         }
     }
+
 
     fun signOutFromGoogle() = viewModelScope.launch {
         googleSignOutUseCase()

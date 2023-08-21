@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.service
 
 import online.partyrun.partyrunapplication.core.network.model.response.SignInTokenResponse
-import online.partyrun.partyrunapplication.core.common.network.ApiResult
+import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.request.GoogleIdTokenRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,7 +20,7 @@ interface SignInApiService {
     @POST("/api/auth")
     suspend fun signInWithGoogleTokenViaServer(
         @Body body: GoogleIdTokenRequest
-    ): ApiResult<SignInTokenResponse>
+    ): ApiResponse<SignInTokenResponse>
 
     @POST("/api/auth/access")
     suspend fun replaceToken(

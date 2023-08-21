@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AgreementViewModel @Inject constructor(
     private val saveAgreementUseCase: SaveAgreementStateUseCase
-): ViewModel() {
+) : ViewModel() {
     private val _agreementUiState = MutableStateFlow(AgreementUiState())
     val agreementUiState: StateFlow<AgreementUiState> = _agreementUiState.asStateFlow()
 

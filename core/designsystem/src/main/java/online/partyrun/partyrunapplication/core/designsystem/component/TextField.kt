@@ -48,7 +48,6 @@ fun PartyRunTextInput(
     modifier: Modifier = Modifier,
     type: TextInputType,
     placeholder: @Composable () -> Unit,
-    enabled: Boolean = true,
     maxLines: Int = 1,
     singleLine: Boolean = true,
     keyboardController: SoftwareKeyboardController? = null,
@@ -62,7 +61,6 @@ fun PartyRunTextInput(
                 inputType = InputType.Email,
                 modifier = modifier,
                 leadingIcon = leadingIconType(InputType.Email),
-                enabled = enabled,
                 placeholder = placeholder,
                 maxLines = maxLines,
                 singleLine = singleLine,
@@ -80,7 +78,6 @@ fun PartyRunTextInput(
                 inputType = InputType.Password,
                 modifier = modifier,
                 leadingIcon = leadingIconType(InputType.Password),
-                enabled = enabled,
                 placeholder = placeholder,
                 maxLines = maxLines,
                 singleLine = singleLine,
@@ -116,16 +113,14 @@ fun PartyRunTextInput(
 @ExperimentalComposeUiApi
 @Composable
 fun TextInput(
-    inputType: InputType,
     modifier: Modifier = Modifier,
+    inputType: InputType,
     leadingIcon: @Composable (() -> Unit)? = null,
-    enabled: Boolean = true,
     placeholder: @Composable () -> Unit,
     maxLines: Int = 1,
     singleLine: Boolean = true,
     focusRequester: FocusRequester? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    isError: State<Boolean> = remember { mutableStateOf(false) },
     onValueChangeListener: (value: String) -> Unit = {},
 ) {
     var textValue by rememberSaveable { mutableStateOf("") }
@@ -171,8 +166,7 @@ fun TextInput(
         keyboardOptions = inputType.keyboardOptions,
         visualTransformation = inputType.visualTransformation,
         keyboardActions = keyboardActions,
-        isError = isError.value,
-        enabled = enabled
+        enabled = true // true로 고정. false 필요한 상황이 생길 시 파라미터로 전달
     )
 }
 

@@ -3,11 +3,8 @@ package online.partyrun.partyrunapplication.feature.my_page
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,9 +12,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.user.User
@@ -44,6 +44,8 @@ fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
+    navigateBack: () -> Unit = {},
+    navigationToProfile: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
@@ -54,11 +56,14 @@ fun MyPageScreen(
         myPageUiState = myPageUiState,
         onSignOut = onSignOut,
         navigateToSettings = navigateToSettings,
+        navigateBack = navigateBack,
+        navigationToProfile = navigationToProfile,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(
     modifier: Modifier = Modifier,
@@ -66,6 +71,8 @@ fun Content(
     myPageUiState: MyPageUiState,
     onSignOut: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateBack: () -> Unit,
+    navigationToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -76,19 +83,67 @@ fun Content(
         }
     }
 
-    Box(modifier = modifier) {
-        when (myPageUiState) {
-            is MyPageUiState.Loading -> LoadingBody()
-            is MyPageUiState.Success -> MyPageBody(
-                viewModel = myPageViewModel,
-                onSignOut = onSignOut,
-                userData = myPageUiState.user,
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            MyPageTopAppBar(
+                modifier = modifier,
+                navigateBack = navigateBack,
                 navigateToSettings = navigateToSettings
             )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (myPageUiState) {
+                is MyPageUiState.Loading -> LoadingBody()
+                is MyPageUiState.Success -> MyPageBody(
+                    viewModel = myPageViewModel,
+                    onSignOut = onSignOut,
+                    userData = myPageUiState.user,
+                    navigationToProfile = navigationToProfile
+                )
 
-            is MyPageUiState.LoadFailed -> LoadingBody()
+                is MyPageUiState.LoadFailed -> LoadingBody()
+            }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MyPageTopAppBar(
+    modifier: Modifier,
+    navigateBack: () -> Unit,
+    navigateToSettings: () -> Unit
+) {
+    PartyRunTopAppBar(
+        modifier = modifier,
+        navigationContent = {
+            IconButton(onClick = { navigateBack() }) {
+                Icon(
+                    painterResource(id = PartyRunIcons.ArrowBackIos),
+                    contentDescription = stringResource(id = R.string.arrow_back_desc)
+                )
+            }
+        },
+        titleContent = {
+            Text(
+                text = stringResource(id = R.string.my_page_title)
+            )
+        },
+        actionsContent = {
+            IconButton(onClick = { navigateToSettings() }) {
+                Icon(
+                    painterResource(id = PartyRunIcons.Settings),
+                    contentDescription = stringResource(id = R.string.setting_desc)
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -107,17 +162,13 @@ private fun MyPageBody(
     viewModel: MyPageViewModel,
     onSignOut: () -> Unit,
     userData: User,
-    navigateToSettings: () -> Unit
+    navigationToProfile: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        TopAppTitle(modifier = Modifier.fillMaxWidth())
-
-        Spacer(modifier = Modifier.height(30.dp))
-
         ProfileSection(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,11 +177,12 @@ private fun MyPageBody(
                 .heightIn(max = max(270.dp, with(LocalDensity.current) { 200.sp.toDp() }))
         ) {
             ProfileContent(
-                navigateToSettings = navigateToSettings,
+                navigationToProfile = navigationToProfile,
                 userName = userData.name,
                 userProfile = userData.profile
             )
         }
+
 
         SignOutButton(
             onClick = {
@@ -144,24 +196,8 @@ private fun MyPageBody(
 }
 
 @Composable
-private fun TopAppTitle(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(id = R.string.my_page_title),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
-
-@Composable
 private fun ProfileContent(
-    navigateToSettings: () -> Unit,
+    navigationToProfile: () -> Unit,
     userName: String,
     userProfile: String,
 ) {
@@ -170,7 +206,7 @@ private fun ProfileContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileHeader(
-            navigateToSettings = navigateToSettings,
+            navigationToProfile = navigationToProfile,
             userName = userName
         )
         ProfileImage(
@@ -181,7 +217,7 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileHeader(
-    navigateToSettings: () -> Unit,
+    navigationToProfile: () -> Unit,
     userName: String
 ) {
     Box(
@@ -201,17 +237,17 @@ private fun ProfileHeader(
 
         IconButton(
             onClick = {
-                navigateToSettings()
+                navigationToProfile()
             },
             modifier = Modifier
+                .size(45.dp)
                 .padding(end = 10.dp)
                 .align(Alignment.CenterEnd)
         ) {
             Icon(
-                painter = painterResource(id = PartyRunIcons.Settings),
-                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = PartyRunIcons.edit),
                 tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = stringResource(id = R.string.setting_desc)
+                contentDescription = stringResource(id = R.string.edit_desc)
             )
         }
     }

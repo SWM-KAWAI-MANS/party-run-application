@@ -6,11 +6,11 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.auth.SignInToken
-import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
+import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResponseCallAdapterFactory
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -35,7 +35,7 @@ class SignInRepositoryImplTest {
                 OkHttpClient.Builder()
                     .build())
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(ApiResultCallAdapterFactory.create())
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
             .create(SignInApiService::class.java)
         repository = SignInRepositoryImpl(SignInDataSourceImpl(service))
@@ -59,7 +59,7 @@ class SignInRepositoryImplTest {
 
 
         val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
-        assertEquals(ApiResponse.Success(tokenSet), actualResponse)
+        assertEquals(Result.Success(tokenSet), actualResponse)
     }
 
     @Test
@@ -72,7 +72,7 @@ class SignInRepositoryImplTest {
         mockWebServer.enqueue(mockResponse)
 
         val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
-        assertTrue(actualResponse is ApiResponse.Failure && actualResponse.code == 400)
+        assertTrue(actualResponse is Result.Failure && actualResponse.code == 400)
     }
 
     @Test
@@ -85,7 +85,7 @@ class SignInRepositoryImplTest {
         mockWebServer.enqueue(mockResponse)
 
         val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
-        assertTrue(actualResponse is ApiResponse.Failure && actualResponse.code == 401)
+        assertTrue(actualResponse is Result.Failure && actualResponse.code == 401)
     }
 
     @Test
@@ -98,6 +98,6 @@ class SignInRepositoryImplTest {
         mockWebServer.enqueue(mockResponse)
 
         val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
-        assertTrue(actualResponse is ApiResponse.Failure && actualResponse.code == HttpURLConnection.HTTP_INTERNAL_ERROR)
+        assertTrue(actualResponse is Result.Failure && actualResponse.code == HttpURLConnection.HTTP_INTERNAL_ERROR)
     }
 }

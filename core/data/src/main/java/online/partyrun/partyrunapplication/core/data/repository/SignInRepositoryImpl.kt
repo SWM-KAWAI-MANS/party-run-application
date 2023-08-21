@@ -2,8 +2,9 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
+import online.partyrun.partyrunapplication.core.common.result.Result
+import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.model.auth.SignInToken
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
@@ -14,15 +15,9 @@ import javax.inject.Inject
 class SignInRepositoryImpl @Inject constructor(
     private val signInDataSource: SignInDataSource,
 ) : SignInRepository {
-    override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<ApiResponse<SignInToken>> {
-        return apiRequestFlow { signInDataSource(idToken.toRequestModel()) }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
-    }
+
+    override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Flow<Result<SignInToken>> =
+        apiRequestFlow { signInDataSource.getSignInToken(idToken.toRequestModel()) }
+            .mapResultToDomainModel { it.toDomainModel() }
 
 }

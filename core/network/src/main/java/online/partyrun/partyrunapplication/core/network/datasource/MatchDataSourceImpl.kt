@@ -6,7 +6,7 @@ import okhttp3.Response
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
-import online.partyrun.partyrunapplication.core.common.network.ApiResult
+import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.request.MatchDecisionRequest
 import online.partyrun.partyrunapplication.core.network.model.response.MatchStatusResponse
 import online.partyrun.partyrunapplication.core.network.di.SSEOkHttpClient
@@ -30,19 +30,19 @@ class MatchDataSourceImpl @Inject constructor(
     private lateinit var matchEventSource: EventSource
     private lateinit var matchResultSource: EventSource
 
-    override suspend fun registerMatch(runningDistanceRequest: RunningDistanceRequest): ApiResult<MatchStatusResponse> =
+    override suspend fun registerMatch(runningDistanceRequest: RunningDistanceRequest): ApiResponse<MatchStatusResponse> =
         waitingMatchApiService.registerMatch(runningDistanceRequest)
 
-    override suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResponse> =
+    override suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResponse<MatchStatusResponse> =
         matchDecisionApiService.acceptMatch(matchDecisionRequest)
 
-    override suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResult<MatchStatusResponse> =
+    override suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResponse<MatchStatusResponse> =
         matchDecisionApiService.declineMatch(matchDecisionRequest)
 
-    override suspend fun getRunnerIds(): ApiResult<MatchInfoResponse> =
+    override suspend fun getRunnerIds(): ApiResponse<MatchInfoResponse> =
         matchApiService.getRunnerIds()
 
-    override suspend fun cancelMatchWaitingEvent(): ApiResult<CancelMatchResponse> =
+    override suspend fun cancelMatchWaitingEvent(): ApiResponse<CancelMatchResponse> =
         matchApiService.cancelMatchWaitingEvent()
 
 

@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.match.CancelMatchWaitingUseCase
 import online.partyrun.partyrunapplication.core.domain.match.ConnectMatchResultEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.match.ConnectWaitingEventSourceUseCase
@@ -124,27 +125,18 @@ class MatchViewModel @Inject constructor(
         }
 
     private suspend fun getRunnerIds() =
-        getRunnerIdsUseCase().collect {
-            when (it) {
-                is ApiResponse.Success -> {
-                    _matchUiState.update { state ->
-                        state.copy(
-                            runnerIds = it.data
-                        )
-                    }
+        getRunnerIdsUseCase().collect { result ->
+            result.onSuccess { data ->
+                _matchUiState.update { state ->
+                    state.copy(
+                        runnerIds = data
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.tag("MainViewModel getRunnerIds").e("${it.code} ${it.errorMessage}")
-                    cancelMatchingProcess()
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.d("$it")
-                }
+            }.onFailure { errorMessage, code ->
+                Timber.tag("MainViewModel getRunnerIds").e("$code $errorMessage")
+                cancelMatchingProcess()
             }
         }
-
 
     private fun verifyMatchSuccess() {
         val matchStatus = matchUiState.value.matchResultEventState.status
@@ -181,78 +173,55 @@ class MatchViewModel @Inject constructor(
 
     /* REST */
     private suspend fun registerMatch(runningDistance: RunningDistance) =
-        sendRegisterMatchUseCase(runningDistance).collect {
-            when (it) {
-                is ApiResponse.Success -> {
-                    _matchUiState.update { state ->
-                        state.copy(
-                            waitingRestState = WaitingRestState(
-                                message = it.data.message
-                            ),
-                        )
-                    }
+        sendRegisterMatchUseCase(runningDistance).collect { result ->
+            result.onSuccess { data ->
+                _matchUiState.update { state ->
+                    state.copy(
+                        waitingRestState = WaitingRestState(
+                            message = data.message
+                        ),
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    cancelMatchingProcess()
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.tag("MatchViewModel").d("Loading")
-                }
+            }.onFailure { errorMessage, code ->
+                Timber.tag("MatchViewModel").e("$code $errorMessage")
+                cancelMatchingProcess()
             }
         }
 
     private suspend fun acceptMatch(matchDecision: MatchDecision) =
-        sendAcceptMatchUseCase(matchDecision).collect() {
-            when (it) {
-                is ApiResponse.Success -> {
-                    _matchUiState.update { state ->
-                        state.copy(
-                            matchProgress = MatchProgress.RESULT,
-                            matchResultRestState = MatchResultRestState(
-                                message = it.data.message
-                            )
+        sendAcceptMatchUseCase(matchDecision).collect { result ->
+            result.onSuccess { data ->
+                _matchUiState.update { state ->
+                    state.copy(
+                        matchProgress = MatchProgress.RESULT,
+                        matchResultRestState = MatchResultRestState(
+                            message = data.message
                         )
-                    }
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    cancelMatchingProcess()
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.tag("MatchViewModel").d("Loading")
-                }
+            }.onFailure { errorMessage, code ->
+                Timber.tag("MatchViewModel").e("$code $errorMessage")
+                cancelMatchingProcess()
             }
         }
 
     private suspend fun declineMatch(matchDecision: MatchDecision) =
-        sendDeclineMatchUseCase(matchDecision).collect() {
-            when (it) {
-                is ApiResponse.Success -> {
-                    _matchUiState.update { state ->
-                        state.copy(
-                            matchProgress = MatchProgress.CANCEL,
-                            matchResultRestState = MatchResultRestState(
-                                message = it.data.message
-                            )
+        sendDeclineMatchUseCase(matchDecision).collect { result ->
+            result.onSuccess { data ->
+                _matchUiState.update { state ->
+                    state.copy(
+                        matchProgress = MatchProgress.CANCEL,
+                        matchResultRestState = MatchResultRestState(
+                            message = data.message
                         )
-                    }
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    cancelMatchingProcess()
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.tag("MatchViewModel").d("Loading")
-                }
+            }.onFailure { errorMessage, code ->
+                Timber.tag("MatchViewModel").e("$code $errorMessage")
+                cancelMatchingProcess()
             }
         }
+
 
     private suspend fun waitForUserDecision(): Boolean {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(10)) {
@@ -357,46 +326,29 @@ class MatchViewModel @Inject constructor(
     }
 
     private suspend fun saveRunnersInfo(runnerIds: RunnerIds) =
-        getRunnersInfoUseCase(runnerIds).collect {
-            when (it) {
-                is ApiResponse.Success -> {
-                    saveRunnersInfoUseCase(it.data)
-                    _matchUiState.update { state ->
-                        state.copy(
-                            runnerInfoData = it.data
-                        )
-                    }
+        getRunnersInfoUseCase(runnerIds).collect { result ->
+            result.onSuccess { runnerInfoData ->
+                saveRunnersInfoUseCase(runnerInfoData)
+                _matchUiState.update { state ->
+                    state.copy(
+                        runnerInfoData = runnerInfoData
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                    cancelMatchingProcess()
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.d("$it")
-                }
+            }.onFailure { errorMessage, code ->
+                Timber.tag("MatchViewModel").e("$code $errorMessage")
+                cancelMatchingProcess()
             }
         }
 
     fun cancelMatchWaitingEvent() = viewModelScope.launch {
-        cancelMatchWaitingUseCase().collect {
-            when (it) {
-                is ApiResponse.Success -> {
-                    Timber.d("정상적으로 매칭 취소 완료")
-                }
-
-                is ApiResponse.Failure -> {
-                    _snackbarMessage.value = "매칭 취소 실패 \n잠시 후 다시 시도 해주세요."
-                    Timber.tag("MatchViewModel").e("${it.code} ${it.errorMessage}")
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.d("$it")
-                }
+        cancelMatchWaitingUseCase().collect { result ->
+            result.onSuccess {
+                Timber.d("정상적으로 매칭 취소 완료")
+            }.onFailure { errorMessage, code ->
+                _snackbarMessage.value = "매칭 취소 실패 \n잠시 후 다시 시도 해주세요."
+                Timber.tag("MatchViewModel").e("$code $errorMessage")
             }
         }
     }
-
 
 }

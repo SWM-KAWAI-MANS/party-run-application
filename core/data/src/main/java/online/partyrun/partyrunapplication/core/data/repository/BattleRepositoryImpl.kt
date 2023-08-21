@@ -2,7 +2,6 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.battle.BattleId
@@ -15,13 +14,15 @@ import online.partyrun.partyrunapplication.core.network.datasource.BattleDataSou
 import online.partyrun.partyrunapplication.core.network.model.request.toRequestModel
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.network.model.toDomainModel
+import online.partyrun.partyrunapplication.core.common.result.Result
+import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
 import javax.inject.Inject
 
 class BattleRepositoryImpl @Inject constructor(
     private val realtimeBattleClient: RealtimeBattleClient,
     private val battleDataSource: BattleDataSource,
     private val battlePreferencesDataSource: BattlePreferencesDataSource
-    ) : BattleRepository {
+) : BattleRepository {
 
     override val battleData: Flow<BattleStatus> =
         battlePreferencesDataSource.battleData
@@ -30,35 +31,18 @@ class BattleRepositoryImpl @Inject constructor(
         battlePreferencesDataSource.setBattleId(battleId)
     }
 
-    override suspend fun getBattleId(): Flow<ApiResponse<BattleId>> {
+    override suspend fun getBattleId(): Flow<Result<BattleId>> {
         return apiRequestFlow { battleDataSource.getBattleId() }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(
-                        apiResponse.errorMessage,
-                        apiResponse.code
-                    )
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override suspend fun terminateOngoingBattle(): Flow<ApiResponse<TerminateBattle>> {
+    override suspend fun terminateOngoingBattle(): Flow<Result<TerminateBattle>> {
         return apiRequestFlow { battleDataSource.terminateOngoingBattle() }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(
-                        apiResponse.errorMessage,
-                        apiResponse.code
-                    )
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override fun getBattleStream(battleId: String) : Flow<BattleEvent> =
+
+    override fun getBattleStream(battleId: String): Flow<BattleEvent> =
         realtimeBattleClient.getBattleStream(battleId).map { it.toDomainModel() }
 
     override suspend fun sendRecordData(battleId: String, recordData: RecordData) =

@@ -23,7 +23,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.running.BattleStreamUseCase
 import online.partyrun.partyrunapplication.core.domain.running.DisposeSocketResourcesUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleIdUseCase
@@ -104,24 +105,14 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    private fun getBattleId() {
-        viewModelScope.launch {
-            getBattleIdUseCase().collect {
-                when (it) {
-                    is ApiResponse.Success -> {
-                        saveBattleIdUseCase(it.data.id) // DataStore에 BattleId 저장
-                        _battleId.value = it.data.id
-                    }
-
-                    is ApiResponse.Failure -> {
-                        _snackbarMessage.value = "배틀 정보를 가져올 수 없습니다."
-                        Timber.e("$it")
-                    }
-
-                    ApiResponse.Loading -> {
-                        Timber.d("Loading")
-                    }
-                }
+    private fun getBattleId() = viewModelScope.launch {
+        getBattleIdUseCase().collect { result ->
+            result.onSuccess { data ->
+                saveBattleIdUseCase(data.id) // DataStore에 BattleId 저장
+                _battleId.value = data.id
+            }.onFailure { errorMessage, code ->
+                _snackbarMessage.value = "배틀 정보를 가져올 수 없습니다."
+                Timber.e("$code $errorMessage")
             }
         }
     }
@@ -171,8 +162,8 @@ class BattleContentViewModel @Inject constructor(
                     }
 
                     else -> {
-                        Timber.d("다른 Type의 BattleEvent 수신", it)
-                    } // Handle other cases as needed
+                        Timber.e("다른 Type의 BattleEvent 수신", it)
+                    }
                 }
             }
         }

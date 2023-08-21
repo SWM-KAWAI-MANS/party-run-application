@@ -3,14 +3,12 @@ package online.partyrun.partyrunapplication.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.member.DeleteAccountUseCase
 import timber.log.Timber
@@ -33,24 +31,16 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun deleteAccount() = viewModelScope.launch {
-        deleteAccountUseCase().collect {
-            when (it) {
-                is ApiResponse.Success -> {
-                    _settingsUiState.update { state ->
-                        state.copy(
-                            isAccountDeletionSuccess = true,
-                        )
-                    }
-                    googleSignOutUseCase()
+        deleteAccountUseCase().collect { result ->
+            result.onSuccess {
+                _settingsUiState.update { state ->
+                    state.copy(
+                        isAccountDeletionSuccess = true,
+                    )
                 }
-
-                is ApiResponse.Failure -> {
-                    Timber.e("$it")
-                }
-
-                ApiResponse.Loading -> {
-                    Timber.d("$it")
-                }
+                googleSignOutUseCase()
+            }.onFailure { errorMessage, code ->
+                Timber.e("$code $errorMessage")
             }
         }
     }

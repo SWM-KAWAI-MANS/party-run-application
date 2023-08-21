@@ -18,7 +18,7 @@ import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
 import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
-import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResultCallAdapterFactory
+import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResponseCallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -61,7 +61,7 @@ object NetworkModule {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(ApiResultCallAdapterFactory.create()) // 빌더에 ApiResultCallAdapterFactory 적용
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create()) // 빌더에 ApiResultCallAdapterFactory 적용
 
     @RESTOkHttpClient
     @Singleton

@@ -1,6 +1,6 @@
 package online.partyrun.partyrunapplication.core.network.datasource
 
-import online.partyrun.partyrunapplication.core.common.network.ApiResult
+import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.response.BattleMembersInfoResponse
 import online.partyrun.partyrunapplication.core.network.model.response.DeleteAccountResponse
 import online.partyrun.partyrunapplication.core.network.model.response.UserResponse
@@ -10,13 +10,13 @@ import javax.inject.Inject
 class MemberDataSourceImpl @Inject constructor(
     private val memberApi: MemberApiService
 ) : MemberDataSource{
-    override suspend fun getUserData(): ApiResult<UserResponse> =
+    override suspend fun getUserData(): ApiResponse<UserResponse> =
         memberApi.getUserData()
 
-    override suspend fun getRunnersInfo(runnerIds: List<String>): ApiResult<BattleMembersInfoResponse> =
+    override suspend fun getRunnersInfo(runnerIds: List<String>): ApiResponse<BattleMembersInfoResponse> =
         memberApi.getRunnersInfo(runnerIds)
 
-    override suspend fun deleteAccount(): ApiResult<DeleteAccountResponse> =
+    override suspend fun deleteAccount(): ApiResponse<DeleteAccountResponse> =
         memberApi.deleteAccount()
 
 }

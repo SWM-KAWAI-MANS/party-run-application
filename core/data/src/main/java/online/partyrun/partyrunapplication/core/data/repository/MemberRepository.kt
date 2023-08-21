@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
 import online.partyrun.partyrunapplication.core.model.user.DeleteAccount
@@ -11,11 +11,11 @@ interface MemberRepository {
 
     val userData: Flow<User>
 
-    suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<ApiResponse<RunnerInfoData>>
+    suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<Result<RunnerInfoData>>
 
-    suspend fun getUserData(): Flow<ApiResponse<User>>
+    suspend fun getUserData(): Flow<Result<User>>
 
-    suspend fun deleteAccount(): Flow<ApiResponse<DeleteAccount>>
+    suspend fun deleteAccount(): Flow<Result<DeleteAccount>>
 
     suspend fun setUserName(userName: String)
 

@@ -1,12 +1,12 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
+import online.partyrun.partyrunapplication.core.common.result.Result
+import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.match.CancelMatch
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
@@ -22,69 +22,44 @@ import javax.inject.Inject
 class MatchRepositoryImpl @Inject constructor(
     private val matchDataSource: MatchDataSource,
     private val battlePreferencesDataSource: BattlePreferencesDataSource,
-    ) : MatchRepository {
+) : MatchRepository {
 
     override suspend fun setRunners(runners: RunnerInfoData) {
         battlePreferencesDataSource.setRunners(runners)
     }
 
-
     /* REST */
-    override suspend fun registerMatch(runningDistance: RunningDistance): Flow<ApiResponse<MatchStatus>> {
-        return apiRequestFlow { matchDataSource.registerMatch(runningDistance.toRequestModel()) }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
+    override suspend fun registerMatch(runningDistance: RunningDistance): Flow<Result<MatchStatus>> {
+        return apiRequestFlow {
+            matchDataSource.registerMatch(runningDistance.toRequestModel())
+        }.mapResultToDomainModel { it.toDomainModel() }
     }
-    override suspend fun acceptMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>> {
+
+    override suspend fun acceptMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
         return apiRequestFlow { matchDataSource.acceptMatch(matchDecision.toRequestModel()) }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override suspend fun declineMatch(matchDecision: MatchDecision): Flow<ApiResponse<MatchStatus>> {
+    override suspend fun declineMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
         return apiRequestFlow { matchDataSource.declineMatch(matchDecision.toRequestModel()) }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override suspend fun getRunnerIds(): Flow<ApiResponse<RunnerIds>> {
+    override suspend fun getRunnerIds(): Flow<Result<RunnerIds>> {
         return apiRequestFlow { matchDataSource.getRunnerIds() }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override suspend fun cancelMatchWaitingEvent(): Flow<ApiResponse<CancelMatch>> {
+    override suspend fun cancelMatchWaitingEvent(): Flow<Result<CancelMatch>> {
         return apiRequestFlow { matchDataSource.cancelMatchWaitingEvent() }
-            .map { apiResponse ->
-                when (apiResponse) {
-                    is ApiResponse.Loading -> ApiResponse.Loading
-                    is ApiResponse.Success -> ApiResponse.Success(apiResponse.data.toDomainModel())
-                    is ApiResponse.Failure -> ApiResponse.Failure(apiResponse.errorMessage, apiResponse.code)
-                }
-            }
+            .mapResultToDomainModel { it.toDomainModel() }
     }
 
-    override fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener {
+    override fun createMatchEventSourceListener(
+        onEvent: (data: String) -> Unit,
+        onClosed: () -> Unit,
+        onFailure: () -> Unit
+    ): EventSourceListener {
         return matchDataSource.createMatchEventSourceListener(onEvent, onClosed, onFailure)
     }
 

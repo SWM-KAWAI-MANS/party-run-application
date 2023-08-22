@@ -99,10 +99,10 @@ private fun ExoPlayerBox(
                 factory = { it.buildPlayerView(exoPlayer) },
                 modifier = Modifier
                     .fillMaxSize()
-                    .alpha(if (visible.value) 1f else 0.2f)
+                    .alpha(if (visible.value) 1f else 0f)
             ) {
                 scope.launch {
-                    delay(500L)
+                    delay(200L)
                     visible.value = true
                 }
             }

@@ -5,12 +5,13 @@ package online.partyrun.partyrunapplication.core.navigation.main
  * sealed 클래스 활용 -> 유연한 경로 정의
  */
 sealed class MainNavRoutes(val route: String) {
-    object Battle: MainNavRoutes("battle")
-    object Single: MainNavRoutes("single")
-    object Challenge: MainNavRoutes("challenge")
-    object MyPage: MainNavRoutes("myPage")
-    object BattleRunning: MainNavRoutes("battle_running")
-    object RunningResult: MainNavRoutes("running_result")
-    object Settings: MainNavRoutes("settings")
+    object Battle : MainNavRoutes("battle")
+    object Single : MainNavRoutes("single")
+    object Challenge : MainNavRoutes("challenge")
+    object MyPage : MainNavRoutes("myPage")
+    object Profile : MainNavRoutes("profile")
+    object BattleRunning : MainNavRoutes("battle_running")
+    object RunningResult : MainNavRoutes("running_result")
+    object Settings : MainNavRoutes("settings")
 
 }

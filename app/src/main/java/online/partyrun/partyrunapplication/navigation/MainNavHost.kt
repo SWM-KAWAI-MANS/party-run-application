@@ -63,6 +63,12 @@ fun SetUpMainNavGraph(
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
             },
+            navigateBack = {
+                navController.popBackStack()
+            },
+            navigationToProfile ={
+                navController.navigate(MainNavRoutes.Profile.route)
+            },
             onShowSnackbar = onShowSnackbar
         )
 

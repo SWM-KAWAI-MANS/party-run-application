@@ -221,6 +221,10 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 위치 업데이트를 주기적으로 요청하며,
+     * 새로운 위치 정보가 도착하면 onLocationResult 콜백 메서드를 통해 처리
+     */
     @SuppressLint("MissingPermission")
     fun startLocationUpdates(
         battleId: String
@@ -231,7 +235,6 @@ class BattleContentViewModel @Inject constructor(
             locationRequest, locationCallback, Looper.getMainLooper(),
         )
     }
-
     private fun setLocationCallback(battleId: String) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {

@@ -59,7 +59,10 @@ class RunningResultViewModel @Inject constructor(
             getBattleResultUseCase().collect { result ->
                 result.onSuccess { data ->
                     // 여기서 battleData의 runnerId와 battleResult의 id를 비교하여 name과 profile을 매핑
-                    val battleResultStatus = mappingRunnerInfo(data, battleData)
+                    val battleResultStatus = mappingRunnerInfo(
+                        data = data,
+                        battleData = battleData
+                    )
 
                     _runningResultUiState.value = RunningResultUiState.Success(
                         battleResult = data.copy(
@@ -76,10 +79,10 @@ class RunningResultViewModel @Inject constructor(
     }
 
     private fun mappingRunnerInfo(
-        it: BattleResult,
+        data: BattleResult,
         battleData: BattleStatus
     ): List<BattleRunnerStatus> {
-        val battleResultStatus = it.battleRunnerStatus.map { battleRunnerStatus ->
+        val battleResultStatus = data.battleRunnerStatus.map { battleRunnerStatus ->
             val runnerStatus =
                 battleData.battleInfo.find { runnerStatus -> runnerStatus.runnerId == battleRunnerStatus.id }
             battleRunnerStatus.copy(

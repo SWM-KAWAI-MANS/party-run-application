@@ -33,13 +33,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
@@ -113,7 +121,7 @@ private fun RunningResultBody(
                     .fillMaxWidth()
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
-                MapWidget(battleResult = battleResult)
+                MapWidget(battleResult)
             }
 
             // 프레임 컴포넌트
@@ -127,7 +135,10 @@ private fun RunningResultBody(
                         .fillMaxSize()
                         .background(
                             color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(topStartPercent = 15, topEndPercent = 15) // 라운딩 모서리
+                            shape = RoundedCornerShape(
+                                topStartPercent = 15,
+                                topEndPercent = 15
+                            ) // 라운딩 모서리
                         )
                 ) {
                     // 유저 정보 디스플레이 (LazyRow)
@@ -198,6 +209,63 @@ private fun RunningResultBody(
 }
 
 @Composable
+private fun MapWidget(
+    battleResult: BattleResult
+) {
+    // battleResult의 첫 번째 battleRunnerStatus에서 records를 가져와서 LatLng 리스트로 변환
+    val points = battleResult.battleRunnerStatus.firstOrNull()?.records?.map {
+        LatLng(it.latitude, it.longitude)
+    } ?: listOf()
+
+    // 전체 좌표들 중 중간 좌표 구하기
+    val centerLatLng = getCenterLatLng(points)
+
+    // centerLatLng 사용하여 카메라의 초기 위치 및 zoom 설정. -> 1000M면 14.5f https://ai-programmer.tistory.com/2
+    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(centerLatLng, 14.5f)
+    }
+
+    GoogleMap(
+        modifier = Modifier
+            .height(400.dp)
+            .fillMaxWidth(),
+        properties = MapProperties(isMyLocationEnabled = true),
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = false,
+            compassEnabled = true
+        ),
+        cameraPositionState = cameraPositionState
+    ) {
+        Polyline(
+            points = points,
+            color = Color.Red
+        )
+    }
+    Box(
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(15.dp))
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+        DistanceBox(battleResult)
+    }
+}
+
+@Composable
+private fun getCenterLatLng(points: List<LatLng>): LatLng {
+    val startLatLng = points.firstOrNull() ?: LatLng(0.0, 0.0)
+    val endLatLng = points.lastOrNull() ?: LatLng(0.0, 0.0)
+
+    val bounds = LatLngBounds.Builder()
+        .include(startLatLng)
+        .include(endLatLng)
+        .build()
+
+    // bounds의 중심점을 구하기
+    return bounds.center
+}
+
+@Composable
 private fun SummaryInfo() {
     Column(
         modifier = Modifier.padding(5.dp),
@@ -256,24 +324,6 @@ private fun TitleAndDateDisplay(battleResult: BattleResult) {
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
-    }
-}
-
-@Composable
-private fun MapWidget(battleResult: BattleResult) {
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.mock_map),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-    Box(
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = MaterialTheme.colorScheme.primary)
-    ) {
-        DistanceBox(battleResult)
     }
 }
 

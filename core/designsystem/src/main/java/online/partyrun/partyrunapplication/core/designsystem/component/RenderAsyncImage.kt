@@ -3,6 +3,7 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 import androidx.compose.foundation.Image
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
@@ -34,6 +35,7 @@ fun RenderAsyncImage(
 
 @Composable
 fun RenderAsyncUrlImage(
+    modifier: Modifier = Modifier,
     imageUrl: String, // URL 문자열.
     contentDescription: String?,
 ) {
@@ -49,6 +51,7 @@ fun RenderAsyncUrlImage(
         CircularProgressIndicator()
     }
     Image(
+        modifier = modifier,
         painter = painter,
         contentDescription = contentDescription
     )

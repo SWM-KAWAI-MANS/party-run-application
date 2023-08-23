@@ -3,6 +3,7 @@ package online.partyrun.partyrunapplication.feature.my_page
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -261,6 +262,7 @@ private fun ProfileImage(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(80.dp)
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(CircleShape)
             .zIndex(1f)
     ) {

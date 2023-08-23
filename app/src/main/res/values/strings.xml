@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PartyRunApplication</string>
+    <string name="app_name">파티런</string>
 
     <string name="navigation_bar_launch_status">준비중</string>
 </resources>

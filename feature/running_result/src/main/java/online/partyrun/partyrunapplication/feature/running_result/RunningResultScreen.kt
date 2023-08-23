@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.feature.running_result
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,25 +27,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
+import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerRecord
 import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
 
 @Composable
@@ -66,7 +80,7 @@ fun RunningResultScreen(
 private fun Content(
     modifier: Modifier = Modifier,
     runningResultUiState: RunningResultUiState,
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
 ) {
     Box(modifier = modifier) {
         when (runningResultUiState) {
@@ -93,12 +107,17 @@ private fun LoadingBody() {
     }
 }
 
-
 @Composable
 private fun RunningResultBody(
     battleResult: BattleResult,
     navigateToTopLevel: () -> Unit
 ) {
+    // userID에 해당하는 러너 찾기
+    val userStatus = battleResult.battleRunnerStatus.find { it.id == battleResult.userId }
+
+    // 선택된 runner의 상태 정보 관리
+    var selectedRunner by remember { mutableStateOf(userStatus) }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -113,7 +132,10 @@ private fun RunningResultBody(
                     .fillMaxWidth()
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
-                MapWidget(battleResult = battleResult)
+                MapWidget(
+                    targetDistance = battleResult.targetDistanceFormatted,
+                    records = selectedRunner?.records
+                )
             }
 
             // 프레임 컴포넌트
@@ -127,7 +149,10 @@ private fun RunningResultBody(
                         .fillMaxSize()
                         .background(
                             color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(topStartPercent = 15, topEndPercent = 15) // 라운딩 모서리
+                            shape = RoundedCornerShape(
+                                topStartPercent = 15,
+                                topEndPercent = 15
+                            ) // 라운딩 모서리
                         )
                 ) {
                     // 유저 정보 디스플레이 (LazyRow)
@@ -139,7 +164,10 @@ private fun RunningResultBody(
                             .offset(y = (-40).dp)
                     ) {
                         UserProfiles(
-                            users = battleResult.battleRunnerStatus
+                            users = battleResult.battleRunnerStatus,
+                            onRunnerSelected = {
+                                selectedRunner = it
+                            } // UserProfile을 클릭할 때 해당 runner의 상태 업데이트
                         )
                     }
 
@@ -195,6 +223,66 @@ private fun RunningResultBody(
             FixedBottomNavigationSheet(navigateToTopLevel)
         }
     }
+}
+
+@Composable
+private fun MapWidget(
+    targetDistance: String,
+    records: List<BattleRunnerRecord>?,
+) {
+    val points = records?.map { LatLng(it.latitude, it.longitude) } ?: listOf()
+    val centerLatLng = getCenterLatLng(points)
+
+    /*
+     * centerLatLng 사용하여 카메라의 초기 위치 및 zoom 설정. -> 1000M면 14.5f https://ai-programmer.tistory.com/2
+     * centerLatLng의 변화를 감지하여 cameraPositionState 업데이트
+     */
+    val cameraPositionState: CameraPositionState = rememberCameraPositionState()
+    LaunchedEffect(centerLatLng) {
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(centerLatLng, 14.5f)
+    }
+
+    GoogleMap(
+        modifier = Modifier
+            .height(400.dp)
+            .fillMaxWidth(),
+        properties = MapProperties(isMyLocationEnabled = true),
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = false,
+            compassEnabled = true
+        ),
+        cameraPositionState = cameraPositionState
+    ) {
+        Polyline(
+            points = points,
+            color = Color.Red
+        )
+    }
+    Box(
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(15.dp))
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+        DistanceBox(targetDistance)
+    }
+}
+
+/**
+ * cameraPosition를 중앙에 위치시키기 위한 points 중앙 좌표를 구하는 작업 수행
+ */
+@Composable
+private fun getCenterLatLng(points: List<LatLng>): LatLng {
+    val startLatLng = points.firstOrNull() ?: LatLng(0.0, 0.0)
+    val endLatLng = points.lastOrNull() ?: LatLng(0.0, 0.0)
+
+    val bounds = LatLngBounds.Builder()
+        .include(startLatLng)
+        .include(endLatLng)
+        .build()
+
+    // bounds의 중심점을 구하기
+    return bounds.center
 }
 
 @Composable
@@ -260,24 +348,6 @@ private fun TitleAndDateDisplay(battleResult: BattleResult) {
 }
 
 @Composable
-private fun MapWidget(battleResult: BattleResult) {
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = painterResource(id = R.drawable.mock_map),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
-    Box(
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = MaterialTheme.colorScheme.primary)
-    ) {
-        DistanceBox(battleResult)
-    }
-}
-
-@Composable
 private fun FixedBottomNavigationSheet(navigateToTopLevel: () -> Unit) {
     Row(
         modifier = Modifier
@@ -299,7 +369,7 @@ private fun FixedBottomNavigationSheet(navigateToTopLevel: () -> Unit) {
 }
 
 @Composable
-private fun DistanceBox(battleResult: BattleResult) {
+private fun DistanceBox(targetDistance: String) {
     Row(
         modifier = Modifier.padding(10.dp)
     ) {
@@ -313,7 +383,7 @@ private fun DistanceBox(battleResult: BattleResult) {
             colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
         )
         Text(
-            text = battleResult.targetDistanceFormatted, // "X,xxx m"로 형식화
+            text = targetDistance, // "X,xxx m" 형식
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
@@ -323,6 +393,7 @@ private fun DistanceBox(battleResult: BattleResult) {
 @Composable
 fun UserProfiles(
     users: List<BattleRunnerStatus>,
+    onRunnerSelected: (BattleRunnerStatus) -> Unit // 러너 프로필 클릭 시 호출될 콜백
 ) {
     LazyRow(
         modifier = Modifier.padding(all = 8.dp),
@@ -330,7 +401,8 @@ fun UserProfiles(
     ) {
         items(users) { runner ->
             UserProfile(
-                runner = runner
+                runner = runner,
+                onRunnerClick = { onRunnerSelected(runner) } // 선택된 runner 정보로 업데이트
             )
         }
     }
@@ -339,9 +411,12 @@ fun UserProfiles(
 @Composable
 fun UserProfile(
     runner: BattleRunnerStatus,
+    onRunnerClick: () -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onRunnerClick) // 사용자 프로필 클릭 시 runner 정보 업데이트
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

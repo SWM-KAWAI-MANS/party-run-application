@@ -28,14 +28,11 @@ import online.partyrun.partyrunapplication.feature.match.R
 
 @Composable
 fun MatchDecisionDialog(
-    setShowDialog: (Boolean) -> Unit,
     onAccept: () -> Unit,
     onDecline: () -> Unit
 ) {
     PartyRunMatchDialog(
-        onDismissRequest = {
-            setShowDialog(false)
-        },
+        onDismissRequest = { },
         modifier = Modifier
             .width(300.dp)
             .height(320.dp)

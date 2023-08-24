@@ -26,14 +26,24 @@ class ApiResponseCallAdapterFactory private constructor() : CallAdapter.Factory(
             return null
         }
 
-        val callType = getParameterUpperBound(0, returnType as ParameterizedType)
+        // returnType이 ParameterizedType인지 확인
+        if (returnType !is ParameterizedType) {
+            return null
+        }
+        val callType = getParameterUpperBound(0, returnType)
+
         if (getRawType(callType) != ApiResponse::class.java) {
             return null
         }
 
-        val resultType = getParameterUpperBound(0, callType as ParameterizedType)
+        // callType이 ParameterizedType인지 확인
+        if (callType !is ParameterizedType) {
+            return null
+        }
+        val resultType = getParameterUpperBound(0, callType)
         return ApiResponseCallAdapter(resultType)
     }
+
 
     companion object {
         fun create(): ApiResponseCallAdapterFactory = ApiResponseCallAdapterFactory()

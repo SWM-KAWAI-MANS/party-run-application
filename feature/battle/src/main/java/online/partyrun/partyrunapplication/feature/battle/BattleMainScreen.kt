@@ -33,6 +33,9 @@ import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
 
+private var lastClickTime = 0L
+private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
+
 @Composable
 fun BattleMainScreen(
     modifier: Modifier = Modifier,
@@ -180,10 +183,14 @@ fun BattleMainBody(
         PartyRunMatchButton(
             modifier = Modifier.padding(bottom = 70.dp),
             onClick = {
-                if (matchUiState.isMatchingBtnEnabled) { // enabled로 할 경우 버튼이 사라지는 현상을 방지하기 위해 조건부로 처리
+                /**
+                 * matchUiState.isMatchingBtnEnabled를 조건부로 처리 ->
+                 * enabled로 할 경우 버튼이 사라지는 현상 방지
+                 */
+                if (isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
                     matchingAction(matchViewModel)
                 }
-            },
+            }
         ) {
             Text(
                 text = stringResource(id = R.string.battle_matching_start),
@@ -202,3 +209,12 @@ private fun matchingAction(matchViewModel: MatchViewModel) {
         )
     )
 }
+
+fun isDebounced(currentTime: Long): Boolean {
+    if (currentTime - lastClickTime > DEBOUNCE_DURATION) {
+        lastClickTime = currentTime
+        return true
+    }
+    return false
+}
+

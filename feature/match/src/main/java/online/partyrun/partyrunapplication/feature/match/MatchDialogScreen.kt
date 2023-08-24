@@ -68,9 +68,9 @@ fun MatchDialog(
                 exoPlayer = exoPlayer,
                 isBuffering = isBuffering
             )
+
         MatchProgress.DECISION.name ->
             MatchDecisionDialog(
-                setShowDialog = setShowDialog,
                 onAccept = {
                     matchViewModel.onUserDecision(true)
                 },
@@ -78,10 +78,12 @@ fun MatchDialog(
                     matchViewModel.onUserDecision(false)
                 }
             )
+
         MatchProgress.RESULT.name ->
             MatchResultDialog(
                 matchUiState = matchUiState
             )
+
         MatchProgress.CANCEL.name ->
             MatchCancelDialog(
                 setShowDialog = setShowDialog
@@ -90,7 +92,8 @@ fun MatchDialog(
 }
 
 private fun getVideoUri(): Uri {
-    val videoUri = "https://partyrun-battle-preparation-video.s3.ap-northeast-2.amazonaws.com/develop/battle_preparation_video.mp4"
+    val videoUri =
+        "https://partyrun-battle-preparation-video.s3.ap-northeast-2.amazonaws.com/develop/battle_preparation_video.mp4"
     return Uri.parse(videoUri)
 }
 

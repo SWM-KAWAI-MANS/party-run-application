@@ -37,6 +37,35 @@ fun FormatElapsedTimer(
 }
 
 @Composable
+fun FormatRunningElapsedTimer(
+    countDown: Int = 5,
+    contentStyle: TextStyle = MaterialTheme.typography.titleMedium,
+    contentColor: Color = MaterialTheme.colorScheme.primary
+) {
+    val elapsedTime = remember { mutableStateOf(0) }
+
+    LaunchedEffect(key1 = countDown) {
+        delay((countDown * 1000).toLong()) // CountDown 시간 대기
+        while (true) {
+            delay(1000L) // 1초 대기
+            elapsedTime.value++ // elapsedTime 증가
+        }
+    }
+
+    val hours = elapsedTime.value / 3600
+    val minutes = (elapsedTime.value % 3600) / 60
+    val seconds = elapsedTime.value % 60
+
+    val displayTime = formatTime(hours, minutes, seconds)
+
+    Text(
+        text = if (countDown > 0 && elapsedTime.value == 0) "00:00" else displayTime,
+        style = contentStyle,
+        color = contentColor
+    )
+}
+
+@Composable
 fun FormatRemainingTimer(totalTime: Int) {
     val remainingTime = remember { mutableStateOf(totalTime) }
 
@@ -61,7 +90,12 @@ fun FormatRemainingTimer(totalTime: Int) {
 
 fun formatTime(hours: Int, minutes: Int, seconds: Int): String {
     if (hours > 0) {
-        return "${String.format("%02d", hours)}:${String.format("%02d", minutes)}:${String.format("%02d", seconds)}"
+        return "${String.format("%02d", hours)}:${
+            String.format(
+                "%02d",
+                minutes
+            )
+        }:${String.format("%02d", seconds)}"
     }
     return "${String.format("%02d", minutes)}:${String.format("%02d", seconds)}"
 }

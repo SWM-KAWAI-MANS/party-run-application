@@ -49,7 +49,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
-import online.partyrun.partyrunapplication.core.ui.FormatElapsedTimer
+import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
@@ -124,7 +124,7 @@ fun BattleRunningScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        FormatElapsedTimer(
+                        FormatRunningElapsedTimer(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                         Row(
@@ -252,7 +252,8 @@ fun TrackWithMultipleUsers(
                 trackWidth = trackWidth,
                 trackHeight = trackHeight
             )
-            val zIndex = if (runner.runnerId == userId) 1f else 0f // 해당 runnerId가 userId와 같으면 z-index를 1로 설정
+            val zIndex =
+                if (runner.runnerId == userId) 1f else 0f // 해당 runnerId가 userId와 같으면 z-index를 1로 설정
             Box(
                 modifier = Modifier
                     .offset(
@@ -290,7 +291,7 @@ fun TrackWithMultipleUsers(
 
 @Composable
 private fun RunnerMarker(runner: RunnerStatus) {
-    Box (
+    Box(
         contentAlignment = Alignment.Center
     ) {
         // 마커 프레임

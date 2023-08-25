@@ -132,19 +132,16 @@ fun BattleMainBody(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        BackgroundBlurImage(
-            modifier = Modifier.fillMaxSize(),
-            image = R.drawable.backgroundblur,
-            contentAlignment = Alignment.BottomCenter
-        )
-        BottomHalfOvalGradientShape(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .height(230.dp)
-        )
-    }
+    BackgroundLayer()
+    MainContent(battleMainViewModel, matchUiState, matchViewModel)
+}
+
+@Composable
+private fun MainContent(
+    battleMainViewModel: BattleMainViewModel,
+    matchUiState: MatchUiState,
+    matchViewModel: MatchViewModel
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -193,6 +190,23 @@ fun BattleMainBody(
                 style = MaterialTheme.typography.titleLarge,
             )
         }
+    }
+}
+
+@Composable
+private fun BackgroundLayer() {
+    Box(modifier = Modifier.fillMaxSize()) {
+        BackgroundBlurImage(
+            modifier = Modifier.fillMaxSize(),
+            image = R.drawable.backgroundblur,
+            contentAlignment = Alignment.BottomCenter
+        )
+        BottomHalfOvalGradientShape(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .height(230.dp)
+        )
     }
 }
 

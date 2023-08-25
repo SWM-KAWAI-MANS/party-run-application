@@ -1,7 +1,7 @@
 plugins {
     id("nohjunh.android.library")
     id("nohjunh.android.hilt")
-    id("com.google.protobuf") version "0.9.3"
+    id("com.google.protobuf") version "0.9.4"
 }
 
 android {

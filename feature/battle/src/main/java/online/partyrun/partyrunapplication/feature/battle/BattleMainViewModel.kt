@@ -21,6 +21,9 @@ class BattleMainViewModel @Inject constructor(
     private val _battleMainUiState = MutableStateFlow<BattleMainUiState>(BattleMainUiState.Success)
     val battleMainUiState = _battleMainUiState.asStateFlow()
 
+    private val _kmState = MutableStateFlow(KmState.KM_1)
+    val kmState: StateFlow<KmState> = _kmState.asStateFlow()
+
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
 
@@ -28,8 +31,22 @@ class BattleMainViewModel @Inject constructor(
         _snackbarMessage.value = ""
     }
 
-    fun onKmChangeButtonClick() = viewModelScope.launch {
-        _snackbarMessage.value = "현재 1km만 지원합니다."
+    fun onLeftKmChangeButtonClick() = viewModelScope.launch {
+        when (_kmState.value) {
+            KmState.KM_1 -> _kmState.value = KmState.KM_10
+            KmState.KM_3 -> _kmState.value = KmState.KM_1
+            KmState.KM_5 -> _kmState.value = KmState.KM_3
+            KmState.KM_10 -> _kmState.value = KmState.KM_5
+        }
+    }
+
+    fun onRightKmChangeButtonClick() = viewModelScope.launch {
+        when (_kmState.value) {
+            KmState.KM_1 -> _kmState.value = KmState.KM_3
+            KmState.KM_3 -> _kmState.value = KmState.KM_5
+            KmState.KM_5 -> _kmState.value = KmState.KM_10
+            KmState.KM_10 -> _kmState.value = KmState.KM_1
+        }
     }
 
     /**

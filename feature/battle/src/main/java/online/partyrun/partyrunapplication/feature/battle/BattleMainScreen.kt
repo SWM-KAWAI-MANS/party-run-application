@@ -167,17 +167,13 @@ fun BattleMainBody(
                 .fillMaxWidth()
                 .weight(1f),
             onLeftClick = {
-                battleMainViewModel.onKmChangeButtonClick()
+                battleMainViewModel.onLeftKmChangeButtonClick()
             },
             onRightClick = {
-                battleMainViewModel.onKmChangeButtonClick()
+                battleMainViewModel.onRightKmChangeButtonClick()
             }
         ) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(id = R.drawable.track_1km),
-                contentDescription = null
-            )
+            TrackImage(battleMainViewModel)
         }
         Spacer(modifier = Modifier.weight(0.1f))
         PartyRunMatchButton(
@@ -188,7 +184,7 @@ fun BattleMainBody(
                  * enabled로 할 경우 버튼이 사라지는 현상 방지
                  */
                 if (isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
-                    matchingAction(matchViewModel)
+                    matchingAction(matchViewModel, battleMainViewModel.kmState.value)
                 }
             }
         ) {
@@ -200,12 +196,30 @@ fun BattleMainBody(
     }
 }
 
-private fun matchingAction(matchViewModel: MatchViewModel) {
+@Composable
+private fun TrackImage(battleMainViewModel: BattleMainViewModel) {
+    val currentKmState by battleMainViewModel.kmState.collectAsStateWithLifecycle()
+
+    val imageRes = when (currentKmState) {
+        KmState.KM_1 -> R.drawable.track_1km
+        KmState.KM_3 -> R.drawable.track_3km
+        KmState.KM_5 -> R.drawable.track_5km
+        KmState.KM_10 -> R.drawable.track_10km
+    }
+
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painterResource(id = imageRes),
+        contentDescription = stringResource(id = R.string.track_img_desc)
+    )
+}
+
+private fun matchingAction(matchViewModel: MatchViewModel, currentKmState: KmState) {
     matchViewModel.setMatchingBtnEnabled(isEnabled = false)
     matchViewModel.openMatchDialog()
     matchViewModel.beginBattleMatchingProcess(
         RunningDistance(
-            distance = 1000
+            distance = currentKmState.toDistance()
         )
     )
 }
@@ -217,4 +231,3 @@ fun isDebounced(currentTime: Long): Boolean {
     }
     return false
 }
-

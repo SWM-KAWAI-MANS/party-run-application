@@ -133,7 +133,8 @@ private fun RunningResultBody(
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
                 MapWidget(
-                    targetDistance = battleResult.targetDistanceFormatted,
+                    targetDistance = battleResult.targetDistance,
+                    targetDistanceFormatted = battleResult.targetDistanceFormatted,
                     records = selectedRunner?.records
                 )
             }
@@ -227,7 +228,8 @@ private fun RunningResultBody(
 
 @Composable
 private fun MapWidget(
-    targetDistance: String,
+    targetDistance: Int?,
+    targetDistanceFormatted: String,
     records: List<BattleRunnerRecord>?,
 ) {
     val points = records?.map { LatLng(it.latitude, it.longitude) } ?: listOf()
@@ -237,9 +239,11 @@ private fun MapWidget(
      * centerLatLng 사용하여 카메라의 초기 위치 및 zoom 설정. -> 1000M면 14.5f https://ai-programmer.tistory.com/2
      * centerLatLng의 변화를 감지하여 cameraPositionState 업데이트
      */
+    val zoomValue = getZoomValueForDistance(targetDistance)
+
     val cameraPositionState: CameraPositionState = rememberCameraPositionState()
     LaunchedEffect(centerLatLng) {
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(centerLatLng, 14.5f)
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(centerLatLng, zoomValue)
     }
 
     GoogleMap(
@@ -264,8 +268,23 @@ private fun MapWidget(
             .clip(RoundedCornerShape(15.dp))
             .background(color = MaterialTheme.colorScheme.primary)
     ) {
-        DistanceBox(targetDistance)
+        DistanceBox(targetDistanceFormatted)
     }
+}
+
+/**
+ * targetDistance 값에 따라 zoom 값 결정
+ */
+@Composable
+private fun getZoomValueForDistance(targetDistance: Int?): Float {
+    val zoomValue = when (targetDistance) {
+        1000 -> 14.5f
+        3000 -> 13.5f
+        5000 -> 12.8f
+        10000 -> 12f
+        else -> 12f  // 기본값 혹은 예기치 않은 값에 대한 대응
+    }
+    return zoomValue
 }
 
 /**

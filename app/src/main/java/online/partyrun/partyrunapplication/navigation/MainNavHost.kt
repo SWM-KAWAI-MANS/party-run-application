@@ -44,8 +44,8 @@ fun SetUpMainNavGraph(
         startDestination = startDestination,
     ) {
         battleRoute(
-            navigateToBattleRunning = {
-                navController.navigate(MainNavRoutes.BattleRunning.route) {
+            navigateToBattleRunningWithDistance = { distance ->
+                navController.navigate("${MainNavRoutes.BattleRunning.route}?distance=$distance") {
                     popUpTo(MainNavRoutes.Battle.route) {
                         inclusive = true
                     }
@@ -66,7 +66,7 @@ fun SetUpMainNavGraph(
             navigateBack = {
                 navController.popBackStack()
             },
-            navigationToProfile ={
+            navigationToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
             },
             onShowSnackbar = onShowSnackbar

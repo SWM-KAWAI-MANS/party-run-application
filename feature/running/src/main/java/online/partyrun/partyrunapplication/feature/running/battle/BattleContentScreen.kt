@@ -38,6 +38,7 @@ import online.partyrun.partyrunapplication.feature.running.battle.running.Battle
 
 @Composable
 fun BattleContentScreen(
+    targetDistance: Int?,
     navigateToBattleOnWebSocketError: () -> Unit = {},
     navigationToRunningResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel = hiltViewModel(),
@@ -49,6 +50,7 @@ fun BattleContentScreen(
     val openRunningExitDialog = remember { mutableStateOf(false) }
 
     Content(
+        targetDistance = targetDistance,
         navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
         navigationToRunningResult = navigationToRunningResult,
         battleContentViewModel = battleContentViewModel,
@@ -62,6 +64,7 @@ fun BattleContentScreen(
 
 @Composable
 fun Content(
+    targetDistance: Int?,
     navigateToBattleOnWebSocketError: () -> Unit = {},
     navigationToRunningResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel,
@@ -71,6 +74,13 @@ fun Content(
     battleContentSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
+    // 사용자가 선택한 거리를 전달받아서 BattleUiState에 업데이트
+    LaunchedEffect(targetDistance) {
+        targetDistance?.let { distance ->
+            battleContentViewModel.updateSelectedDistance(distance)
+        }
+    }
+
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     RunningBackNavigationHandler(
         battleContentViewModel = battleContentViewModel,

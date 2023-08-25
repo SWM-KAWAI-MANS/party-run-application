@@ -41,7 +41,7 @@ fun BattleMainScreen(
     modifier: Modifier = Modifier,
     battleMainViewModel: BattleMainViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel(),
-    navigateToBattleRunning: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     onShowSnackbar: (String) -> Unit,
 ) {
     val battleMainUiState by battleMainViewModel.battleMainUiState.collectAsState()
@@ -54,7 +54,7 @@ fun BattleMainScreen(
         battleMainUiState = battleMainUiState,
         battleMainViewModel = battleMainViewModel,
         matchViewModel = matchViewModel,
-        navigateToBattleRunning = navigateToBattleRunning,
+        navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
         matchUiState = matchUiState,
         battleMainSnackbarMessage = battleMainSnackbarMessage,
         matchSnackbarMessage = matchSnackbarMessage,
@@ -68,14 +68,15 @@ fun Content(
     battleMainUiState: BattleMainUiState,
     battleMainViewModel: BattleMainViewModel,
     matchViewModel: MatchViewModel,
-    navigateToBattleRunning: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     matchUiState: MatchUiState,
     battleMainSnackbarMessage: String,
     matchSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isAllRunnersAccepted) {
-        navigateToBattleRunning()
+        val currentKmState by battleMainViewModel.kmState.collectAsState()
+        navigateToBattleRunningWithDistance(currentKmState.toDistance())
         matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
     }
 

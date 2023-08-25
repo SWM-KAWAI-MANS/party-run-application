@@ -95,6 +95,9 @@ class BattleContentViewModel @Inject constructor(
         _snackbarMessage.value = ""
     }
 
+    fun updateSelectedDistance(distance: Int) {
+        _battleUiState.value = _battleUiState.value.copy(selectedDistance = distance)
+    }
 
     private fun getUserId() = viewModelScope.launch {
         userId = getUserIdUseCase()
@@ -235,6 +238,7 @@ class BattleContentViewModel @Inject constructor(
             locationRequest, locationCallback, Looper.getMainLooper(),
         )
     }
+
     private fun setLocationCallback(battleId: String) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {

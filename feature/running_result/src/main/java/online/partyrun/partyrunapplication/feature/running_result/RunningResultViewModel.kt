@@ -12,7 +12,6 @@ import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUs
 import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
-import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
 import timber.log.Timber

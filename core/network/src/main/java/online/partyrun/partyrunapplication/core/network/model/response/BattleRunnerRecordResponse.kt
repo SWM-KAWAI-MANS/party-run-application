@@ -20,7 +20,6 @@ data class BattleRunnerRecordResponse(
 )
 
 fun BattleRunnerRecordResponse.toDomainModel(): BattleRunnerRecord {
-
     val parsedTime =
         this.time?.let { LocalDateTime.parse(it, localDateTimeFormatter) }
     return BattleRunnerRecord(

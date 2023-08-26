@@ -13,7 +13,8 @@ import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
-import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -61,10 +62,10 @@ class RunningResultViewModel @Inject constructor(
     }
 
     private fun mappingRunnerInfo(
-        data: BattleResult,
+        data: BattleResultUiModel,
         battleData: BattleStatus
-    ): List<BattleRunnerStatus> {
-        val battleResultStatus = data.battleRunnerStatus.map { battleRunnerStatus ->
+    ): List<BattleRunnerStatusUiModel> {
+        val battleResultStatusUiModel = data.battleRunnerStatus.map { battleRunnerStatus ->
             val runnerStatus =
                 battleData.battleInfo.find { runnerStatus -> runnerStatus.runnerId == battleRunnerStatus.id }
             battleRunnerStatus.copy(
@@ -72,7 +73,7 @@ class RunningResultViewModel @Inject constructor(
                 profile = runnerStatus?.runnerProfile ?: battleRunnerStatus.profile
             )
         }
-        return battleResultStatus
+        return battleResultStatusUiModel
     }
 
 }

@@ -10,7 +10,7 @@ import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSource
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
+import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -23,17 +23,17 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<Result<RunnerInfoData>> {
         return apiRequestFlow { memberDataSource.getRunnersInfo(runnerIds.runnerIds) } // runnerIds를 List<String>으로 변환하고 쿼리스트링 전달
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun getUserData(): Flow<Result<User>> {
         return apiRequestFlow { memberDataSource.getUserData() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun deleteAccount(): Flow<Result<DeleteAccount>> {
         return apiRequestFlow { memberDataSource.deleteAccount() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
 

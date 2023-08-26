@@ -6,7 +6,7 @@ import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
+import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.match.CancelMatch
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
@@ -32,27 +32,27 @@ class MatchRepositoryImpl @Inject constructor(
     override suspend fun registerMatch(runningDistance: RunningDistance): Flow<Result<MatchStatus>> {
         return apiRequestFlow {
             matchDataSource.registerMatch(runningDistance.toRequestModel())
-        }.mapResultToDomainModel { it.toDomainModel() }
+        }.mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun acceptMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
         return apiRequestFlow { matchDataSource.acceptMatch(matchDecision.toRequestModel()) }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun declineMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
         return apiRequestFlow { matchDataSource.declineMatch(matchDecision.toRequestModel()) }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun getRunnerIds(): Flow<Result<RunnerIds>> {
         return apiRequestFlow { matchDataSource.getRunnerIds() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun cancelMatchWaitingEvent(): Flow<Result<CancelMatch>> {
         return apiRequestFlow { matchDataSource.cancelMatchWaitingEvent() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override fun createMatchEventSourceListener(

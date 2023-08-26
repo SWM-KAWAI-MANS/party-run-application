@@ -36,8 +36,8 @@ fun calculateElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Stri
     }
 }
 
-fun calculateMinutesElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Long {
-    return Duration.between(startTime, endTime).toMinutes()
+fun calculateSecondsElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Long {
+    return Duration.between(startTime, endTime).toSeconds()
 }
 
 fun formatDate(dateTime: LocalDateTime): String {

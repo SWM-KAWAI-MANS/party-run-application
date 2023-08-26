@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
 import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils.localDateTimeFormatter
 import online.partyrun.partyrunapplication.core.network.model.util.calculateElapsedTime
-import online.partyrun.partyrunapplication.core.network.model.util.calculateMinutesElapsedTime
+import online.partyrun.partyrunapplication.core.network.model.util.calculateSecondsElapsedTime
 import online.partyrun.partyrunapplication.core.network.model.util.formatTime
 import java.time.LocalDateTime
 
@@ -30,7 +30,7 @@ fun BattleRunnerStatusResponse.toDomainModel(startTime: LocalDateTime?): BattleR
         id = this.id ?: "Unknown",
         rank = this.rank ?: -1,
         elapsedTime = calculateElapsedTimeToDomainModel(startTime, parsedEndTime),
-        minutesElapsedTime = calculateMinutesElapsedTimeToDomainModel(startTime, parsedEndTime),
+        secondsElapsedTime = calculateSecondsElapsedTimeToDomainModel(startTime, parsedEndTime),
         records = this.records.map { it.toDomainModel() } // 각 record를 도메인 모델로 변환
     )
 }
@@ -44,11 +44,11 @@ private fun calculateElapsedTimeToDomainModel(
     "00:00"
 }
 
-private fun calculateMinutesElapsedTimeToDomainModel(
+private fun calculateSecondsElapsedTimeToDomainModel(
     startTime: LocalDateTime?,
     parsedEndTime: LocalDateTime?
 ) = if (startTime != null && parsedEndTime != null) {
-    calculateMinutesElapsedTime(startTime, parsedEndTime)
+    calculateSecondsElapsedTime(startTime, parsedEndTime)
 } else {
     0
 }

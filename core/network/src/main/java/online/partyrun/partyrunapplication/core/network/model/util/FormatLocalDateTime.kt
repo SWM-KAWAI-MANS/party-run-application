@@ -36,6 +36,10 @@ fun calculateElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Stri
     }
 }
 
+fun calculateMinutesElapsedTime(startTime: LocalDateTime, endTime: LocalDateTime): Long {
+    return Duration.between(startTime, endTime).toMinutes()
+}
+
 fun formatDate(dateTime: LocalDateTime): String {
     val formatter = DateTimeFormatter.ofPattern("M월 d일")
     return dateTime.format(formatter)

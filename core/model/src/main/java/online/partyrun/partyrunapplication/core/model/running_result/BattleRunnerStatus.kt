@@ -45,7 +45,8 @@ fun calculateAveragePace(runnerStatus: BattleRunnerStatus): String {
 
 fun calculateAverageAltitude(runnerStatus: BattleRunnerStatus): Double {
     return if (runnerStatus.records.isNotEmpty()) {
-        runnerStatus.records.sumOf { it.altitude } / runnerStatus.records.size
+        (runnerStatus.records.sumOf { it.altitude } / runnerStatus.records.size)
+            .roundToInt().toDouble()
     } else {
         0.0
     }

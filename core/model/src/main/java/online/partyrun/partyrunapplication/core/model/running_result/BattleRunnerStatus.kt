@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.model.running_result
 
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
-import kotlin.math.roundToInt
+import java.time.Duration
 
 data class BattleRunnerStatus(
     val endTime: String = "",
@@ -25,7 +25,10 @@ fun BattleRunnerStatus.toUiModel(): BattleRunnerStatusUiModel {
         rank = this.rank,
         records = this.records.map { it.toUiModel() },
         averagePace = calculateAveragePace(this),
-        averageAltitude = calculateAverageAltitude(this)
+        averageAltitude = calculateAverageAltitude(this),
+        pacePerMinute = calculatePacePerMinute(this.records),
+        distanceOverTime = calculateDistanceOverTime(this.records),
+        altitudeOvertime = calculateAltitudeOverTime(this.records)
     )
 }
 
@@ -39,18 +42,63 @@ fun calculateAveragePace(runnerStatus: BattleRunnerStatus): String {
     return formatPace(pace)
 }
 
-private fun formatPace(pace: Double): String {
-    val minutesPart = (pace / 60).toInt()
-    val secondsPart = (pace % 60).roundToInt()
-
-    // %02d는 정수를 두 자리로 표현하는데, 만약 한 자리수면 앞에 0 추가
-    return "${minutesPart}'${String.format("%02d", secondsPart)}''"
-}
-
 fun calculateAverageAltitude(runnerStatus: BattleRunnerStatus): Double {
     return if (runnerStatus.records.isNotEmpty()) {
         runnerStatus.records.sumOf { it.altitude } / runnerStatus.records.size
     } else {
         0.0
     }
+}
+
+fun calculatePacePerMinute(records: List<BattleRunnerRecord>): List<Pair<String, Double>> {
+    val startTime = records.first().time
+    return records.map { record ->
+        val timeElapsed = Duration.between(startTime, record.time)
+        val currentDistanceInKm = record.distance / 1000.0
+
+        if (!timeElapsed.isZero && currentDistanceInKm != 0.0) {
+            val rawPaceInSeconds = timeElapsed.toSeconds().toDouble() / currentDistanceInKm
+            val minutesPart = (rawPaceInSeconds / 60).toInt()
+            val secondsPart = (rawPaceInSeconds % 60).toInt()
+
+            val formattedPace = "$minutesPart.${secondsPart}"
+            Pair(formatDurationToTimeString(timeElapsed), formattedPace.toDouble())
+        } else {
+            Pair(formatDurationToTimeString(timeElapsed), 0.0)
+        }
+    }
+}
+
+fun calculateDistanceOverTime(records: List<BattleRunnerRecord>): List<Pair<String, Double>> {
+    val startTime = records.first().time
+
+    return records.map { record ->
+        val timeElapsed = Duration.between(startTime, record.time)
+        Pair(formatDurationToTimeString(timeElapsed), record.distance)
+    }
+}
+
+fun calculateAltitudeOverTime(records: List<BattleRunnerRecord>): List<Pair<String, Double>> {
+    val startTime = records.first().time
+
+    return records.map { record ->
+        val timeElapsed = Duration.between(startTime, record.time)
+        Pair(formatDurationToTimeString(timeElapsed), record.altitude)
+    }
+}
+
+private fun formatPace(pace: Double): String {
+    val minutesPart = (pace / 60).toInt()
+    val secondsPart = (pace % 60).toInt()
+
+    // %02d는 정수를 두 자리로 표현하는데, 만약 한 자리수면 앞에 0 추가
+    return "${minutesPart}'${String.format("%02d", secondsPart)}''"
+}
+
+fun formatDurationToTimeString(duration: Duration): String {
+    val hours = duration.toHours()
+    val minutes = duration.toMinutes() % 60
+    val seconds = duration.seconds % 60
+
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }

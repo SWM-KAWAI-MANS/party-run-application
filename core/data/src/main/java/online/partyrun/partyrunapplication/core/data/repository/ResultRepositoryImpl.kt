@@ -8,7 +8,7 @@ import online.partyrun.partyrunapplication.core.model.running_result.BattleResul
 import online.partyrun.partyrunapplication.core.network.datasource.ResultDataSource
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
+import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import javax.inject.Inject
 
 class ResultRepositoryImpl @Inject constructor(
@@ -20,7 +20,7 @@ class ResultRepositoryImpl @Inject constructor(
         return apiRequestFlow {
             val battleId = battlePreferencesDataSource.battleData.first().battleId
             resultDataSource.getBattleResults(battleId)
-        }.mapResultToDomainModel { it.toDomainModel() }
+        }.mapResultModel { it.toDomainModel() }
     }
 
 

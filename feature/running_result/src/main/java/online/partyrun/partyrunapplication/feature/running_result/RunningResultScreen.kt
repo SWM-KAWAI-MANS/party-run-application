@@ -57,9 +57,10 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
-import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
-import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerRecord
-import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
+import timber.log.Timber
 
 @Composable
 fun RunningResultScreen(
@@ -109,7 +110,7 @@ private fun LoadingBody() {
 
 @Composable
 private fun RunningResultBody(
-    battleResult: BattleResult,
+    battleResult: BattleResultUiModel,
     navigateToTopLevel: () -> Unit
 ) {
     // userID에 해당하는 러너 찾기
@@ -166,9 +167,9 @@ private fun RunningResultBody(
                     ) {
                         UserProfiles(
                             users = battleResult.battleRunnerStatus,
-                            onRunnerSelected = {
+                            onRunnerSelected = {  // UserProfile을 클릭할 때 해당 runner의 상태 업데이트
                                 selectedRunner = it
-                            } // UserProfile을 클릭할 때 해당 runner의 상태 업데이트
+                            }
                         )
                     }
 
@@ -191,7 +192,7 @@ private fun RunningResultBody(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            SummaryInfo()
+                            selectedRunner?.let { SummaryInfo(it) }
                         }
 
                         // 추가 컨텐츠 부분
@@ -230,7 +231,7 @@ private fun RunningResultBody(
 private fun MapWidget(
     targetDistance: Int?,
     targetDistanceFormatted: String,
-    records: List<BattleRunnerRecord>?,
+    records: List<BattleRunnerRecordUiModel>?,
 ) {
     val points = records?.map { LatLng(it.latitude, it.longitude) } ?: listOf()
     val centerLatLng = getCenterLatLng(points)
@@ -305,21 +306,9 @@ private fun getCenterLatLng(points: List<LatLng>): LatLng {
 }
 
 @Composable
-private fun SummaryInfo() {
-    Column(
-        modifier = Modifier.padding(5.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.avg_pace))
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = "준비 중",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-
+private fun SummaryInfo(
+    selectedRunner: BattleRunnerStatusUiModel
+) {
     Column(
         modifier = Modifier.padding(5.dp),
         verticalArrangement = Arrangement.Center,
@@ -328,7 +317,7 @@ private fun SummaryInfo() {
         Text(text = stringResource(id = R.string.time))
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "준비 중",
+            text = selectedRunner.elapsedTime,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
@@ -339,10 +328,24 @@ private fun SummaryInfo() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(id = R.string.calories))
+        Text(text = stringResource(id = R.string.avg_pace))
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "준비 중",
+            text = selectedRunner.averagePace,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+
+    Column(
+        modifier = Modifier.padding(5.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = stringResource(id = R.string.avg_altitude))
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = selectedRunner.averageAltitude.toString(),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )
@@ -350,7 +353,7 @@ private fun SummaryInfo() {
 }
 
 @Composable
-private fun TitleAndDateDisplay(battleResult: BattleResult) {
+private fun TitleAndDateDisplay(battleResult: BattleResultUiModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -411,8 +414,8 @@ private fun DistanceBox(targetDistance: String) {
 
 @Composable
 fun UserProfiles(
-    users: List<BattleRunnerStatus>,
-    onRunnerSelected: (BattleRunnerStatus) -> Unit // 러너 프로필 클릭 시 호출될 콜백
+    users: List<BattleRunnerStatusUiModel>,
+    onRunnerSelected: (BattleRunnerStatusUiModel) -> Unit // 러너 프로필 클릭 시 호출될 콜백
 ) {
     LazyRow(
         modifier = Modifier.padding(all = 8.dp),
@@ -429,7 +432,7 @@ fun UserProfiles(
 
 @Composable
 fun UserProfile(
-    runner: BattleRunnerStatus,
+    runner: BattleRunnerStatusUiModel,
     onRunnerClick: () -> Unit
 ) {
     Box(

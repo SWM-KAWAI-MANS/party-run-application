@@ -15,7 +15,7 @@ import online.partyrun.partyrunapplication.core.network.model.request.toRequestM
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.network.model.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultToDomainModel
+import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import javax.inject.Inject
 
 class BattleRepositoryImpl @Inject constructor(
@@ -33,12 +33,12 @@ class BattleRepositoryImpl @Inject constructor(
 
     override suspend fun getBattleId(): Flow<Result<BattleId>> {
         return apiRequestFlow { battleDataSource.getBattleId() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
     override suspend fun terminateOngoingBattle(): Flow<Result<TerminateBattle>> {
         return apiRequestFlow { battleDataSource.terminateOngoingBattle() }
-            .mapResultToDomainModel { it.toDomainModel() }
+            .mapResultModel { it.toDomainModel() }
     }
 
 

@@ -1,5 +1,7 @@
 package online.partyrun.partyrunapplication.core.model.running_result
 
+import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
+
 /**
  * 해당 러너가 뛴 각 기록에 대한 세부 정보
  * @param time: 해당 GPS가 찍힌 시간
@@ -12,3 +14,13 @@ data class BattleRunnerRecord(
     val time: String,
     val distance: Double
 )
+
+fun BattleRunnerRecord.toUiModel(): BattleRunnerRecordUiModel {
+    return BattleRunnerRecordUiModel(
+        altitude = this.altitude,
+        latitude = this.latitude,
+        longitude = this.longitude,
+        time = this.time,
+        distance = this.distance
+    )
+}

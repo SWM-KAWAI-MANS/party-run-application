@@ -34,7 +34,7 @@ suspend fun Result<*>.onFailure(
  * Function Parameters:
  * transform: R 타입의 데이터를 받아서 D 타입으로 변환하는 함수
  */
-inline fun <reified R, reified D> Flow<Result<R>>.mapResultToDomainModel(crossinline transform: (R) -> D): Flow<Result<D>> {
+inline fun <reified R, reified D> Flow<Result<R>>.mapResultModel(crossinline transform: (R) -> D): Flow<Result<D>> {
     return this.map { apiResponse ->
         when (apiResponse) {
             is Result.Loading -> Result.Loading

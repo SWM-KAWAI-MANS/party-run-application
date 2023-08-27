@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.core.model.running_result
 
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
 import java.time.Duration
+import kotlin.math.roundToInt
 
 data class BattleRunnerStatus(
     val endTime: String = "",
@@ -52,7 +53,7 @@ fun calculateAverageAltitude(runnerStatus: BattleRunnerStatus): Double {
 
 fun calculatePacePerMinute(records: List<BattleRunnerRecord>): List<Pair<String, Double>> {
     val startTime = records.first().time
-    return records.map { record ->
+    return records.drop(1).mapNotNull { record ->
         val timeElapsed = Duration.between(startTime, record.time)
         val currentDistanceInKm = record.distance / 1000.0
 
@@ -64,7 +65,7 @@ fun calculatePacePerMinute(records: List<BattleRunnerRecord>): List<Pair<String,
             val formattedPace = "$minutesPart.${secondsPart}"
             Pair(formatDurationToTimeString(timeElapsed), formattedPace.toDouble())
         } else {
-            Pair(formatDurationToTimeString(timeElapsed), 0.0)
+            null
         }
     }
 }
@@ -83,7 +84,7 @@ fun calculateAltitudeOverTime(records: List<BattleRunnerRecord>): List<Pair<Stri
 
     return records.map { record ->
         val timeElapsed = Duration.between(startTime, record.time)
-        Pair(formatDurationToTimeString(timeElapsed), record.altitude)
+        Pair(formatDurationToTimeString(timeElapsed), record.altitude.roundToInt().toDouble())
     }
 }
 

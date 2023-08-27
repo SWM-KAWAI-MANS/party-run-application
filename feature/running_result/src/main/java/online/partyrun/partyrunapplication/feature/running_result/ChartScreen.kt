@@ -22,7 +22,7 @@ fun ChartScreen(
     modifier: Modifier = Modifier,
     selectedRunner: BattleRunnerStatusUiModel?
 ) {
-    var selectedChart by remember { mutableStateOf(ChartType.PacePerMinute) }
+    var selectedChart by remember { mutableStateOf(ChartType.DistanceOverTime) }
 
     // selectedChart 값에 따라 reverseYAxis 값을 설정
     val reverseYAxis = selectedChart == ChartType.PacePerMinute

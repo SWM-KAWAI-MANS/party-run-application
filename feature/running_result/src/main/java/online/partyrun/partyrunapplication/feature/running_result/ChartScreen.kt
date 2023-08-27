@@ -24,6 +24,9 @@ fun ChartScreen(
 ) {
     var selectedChart by remember { mutableStateOf(ChartType.PacePerMinute) }
 
+    // selectedChart 값에 따라 reverseYAxis 값을 설정
+    val reverseYAxis = selectedChart == ChartType.PacePerMinute
+
     val data = when (selectedChart) {
         ChartType.DistanceOverTime -> selectedRunner?.distanceOverTime
         ChartType.PacePerMinute -> selectedRunner?.pacePerMinute
@@ -35,9 +38,13 @@ fun ChartScreen(
             selectedChart = chartType
         }
 
-        LineChart(data = data)
+        LineChart(
+            data = data,
+            reverseYAxis = reverseYAxis
+        )
     }
 }
+
 
 @Composable
 fun ChartTabBar(selectedChart: ChartType, onTabSelected: (ChartType) -> Unit) {

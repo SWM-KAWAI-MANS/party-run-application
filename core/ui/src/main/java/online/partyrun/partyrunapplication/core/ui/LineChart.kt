@@ -22,7 +22,8 @@ import kotlin.math.*
 @Composable
 fun LineChart(
     modifier: Modifier = Modifier,
-    data: List<Pair<String, Double>>? = emptyList()
+    data: List<Pair<String, Double>>? = emptyList(),
+    reverseYAxis: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -35,7 +36,8 @@ fun LineChart(
             Spacer(modifier = Modifier.height(50.dp))
             LineChartContent(
                 modifier = modifier.fillMaxSize(),
-                data = data ?: emptyList()
+                data = data ?: emptyList(),
+                reverseYAxis = reverseYAxis
             )
         }
     }
@@ -45,6 +47,7 @@ fun LineChart(
 internal fun LineChartContent(
     modifier: Modifier = Modifier,
     data: List<Pair<String, Double>> = emptyList(),
+    reverseYAxis: Boolean = false
 ) {
     val spacing = 100f
     val graphColor = MaterialTheme.colorScheme.primary
@@ -110,7 +113,12 @@ internal fun LineChartContent(
             val textHeight = textPaint.fontMetrics.run { descent - ascent }
             val textCenterOffset =
                 textHeight / 2 + textPaint.fontMetrics.ascent // ascent는 음수값이므로 더하기로 처리
-            val formattedValue = String.format("%.1f", (lowerValue + yStep * i))
+            val formattedValue =
+                if (reverseYAxis) {
+                    String.format("%.1f", (upperValue - yStep * i))
+                } else {
+                    String.format("%.1f", (lowerValue + yStep * i))
+                }
 
             // Y축에 표시되는 숫자 값 그리기
             drawContext.canvas.nativeCanvas.apply {
@@ -135,8 +143,12 @@ internal fun LineChartContent(
             val height = size.height
             data.indices.forEach { i ->
                 val info = data[i]
-                val ratio = (info.second - lowerValue) / (upperValue - lowerValue)
-
+                val ratio =
+                    if (reverseYAxis) {
+                        1 - ((info.second - lowerValue) / (upperValue - lowerValue)) // Y 좌표 계산 변경
+                    } else {
+                        (info.second - lowerValue) / (upperValue - lowerValue)
+                    }
                 val x1 = spacing + i * spacePerSize + 30f
                 val y1 = height - spacing - (ratio * height).toFloat()
 

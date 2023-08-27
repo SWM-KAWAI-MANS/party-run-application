@@ -3,7 +3,6 @@ package online.partyrun.partyrunapplication.core.network.model.response
 import com.google.gson.annotations.SerializedName
 import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerRecord
 import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils.localDateTimeFormatter
-import online.partyrun.partyrunapplication.core.network.model.util.formatTime
 import java.time.LocalDateTime
 
 data class BattleRunnerRecordResponse(
@@ -21,12 +20,12 @@ data class BattleRunnerRecordResponse(
 
 fun BattleRunnerRecordResponse.toDomainModel(): BattleRunnerRecord {
     val parsedTime =
-        this.time?.let { LocalDateTime.parse(it, localDateTimeFormatter) }
+        this.time?.let { LocalDateTime.parse(it, localDateTimeFormatter) } ?: LocalDateTime.MIN
     return BattleRunnerRecord(
         altitude = this.altitude ?: 0.0,
         latitude = this.latitude ?: 0.0,
         longitude = this.longitude ?: 0.0,
-        time = parsedTime?.let { formatTime(it) } ?: "", // "xx:xx" 형식화
+        time = parsedTime,
         distance = this.distance ?: 0.0
     )
 }

@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.model.running_result
 
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
+import java.time.LocalDateTime
 
 /**
  * 해당 러너가 뛴 각 기록에 대한 세부 정보
@@ -11,7 +12,7 @@ data class BattleRunnerRecord(
     val altitude: Double,
     val latitude: Double,
     val longitude: Double,
-    val time: String,
+    val time: LocalDateTime,
     val distance: Double
 )
 

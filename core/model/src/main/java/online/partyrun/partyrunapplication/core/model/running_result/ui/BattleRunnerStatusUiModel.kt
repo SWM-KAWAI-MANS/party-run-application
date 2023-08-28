@@ -11,4 +11,7 @@ data class BattleRunnerStatusUiModel(
     val records: List<BattleRunnerRecordUiModel> = listOf(),
     val averagePace: String = "0'00''", // 평균 페이스
     val averageAltitude: Double = 0.0, // 평균 고도
+    val pacePerMinute: List<Pair<String, Double>> = listOf(), // 분당 페이스
+    val distanceOverTime: List<Pair<String, Double>> = listOf(), // 시간-거리 쌍 필드
+    val altitudeOvertime: List<Pair<String, Double>> = listOf()
 )

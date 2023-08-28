@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,7 +59,6 @@ import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
-import timber.log.Timber
 
 @Composable
 fun RunningResultScreen(
@@ -125,7 +123,6 @@ private fun RunningResultBody(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
         ) {
             // 구글 맵
             Box(
@@ -143,12 +140,13 @@ private fun RunningResultBody(
             // 프레임 컴포넌트
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 350.dp) // 라운딩 모서리를 위해 지도를 살짝만 가려야 하므로 padding은 350dp
+                    .padding(top = 280.dp) // 라운딩 모서리를 위해 지도를 살짝만 가려야 하므로 padding은 280dp
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 60.dp)
                         .background(
                             color = MaterialTheme.colorScheme.background,
                             shape = RoundedCornerShape(
@@ -195,19 +193,15 @@ private fun RunningResultBody(
                             selectedRunner?.let { SummaryInfo(it) }
                         }
 
-                        // 추가 컨텐츠 부분
+                        // 분석 차트
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .height(400.dp)
+                                .padding(20.dp),
                         ) {
-                            Text(
-                                text = "분석 차트 서비스 준비 중",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
+                            Text(text = stringResource(id = R.string.analysis_chart))
+                            ChartScreen(selectedRunner = selectedRunner)
                         }
                     }
                     Spacer(modifier = Modifier.size(60.dp)) // 바텀 컴포넌트보다 위에서 보이도록 스페이스 설정
@@ -488,15 +482,5 @@ fun UserProfile(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RunningResultScreenPreview() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
     }
 }

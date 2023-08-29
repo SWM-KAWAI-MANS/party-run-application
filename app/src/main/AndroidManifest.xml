@@ -41,7 +41,7 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.PartyRunApplication"
-            >
+            android:launchMode="singleTop">
         </activity>
 
         <service

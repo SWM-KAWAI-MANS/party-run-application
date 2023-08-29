@@ -24,10 +24,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-        <service
-            android:name=".feature.running.battle.RunningService"
-            android:foregroundServiceType="location" />
-
         <activity
             android:name=".AuthActivity"
             android:exported="true"
@@ -44,7 +40,8 @@
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.PartyRunApplication">
+            android:theme="@style/Theme.PartyRunApplication"
+            >
         </activity>
 
     </application>

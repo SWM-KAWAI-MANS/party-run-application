@@ -1,6 +1,8 @@
 package online.partyrun.partyrunapplication.feature.running.battle
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Column
@@ -152,17 +154,39 @@ private fun StartBattleRunning(
     battleId: String,
     viewModel: BattleContentViewModel,
 ) {
+    val context = LocalContext.current // LocalContext를 통해 컨텍스트에 접근
+
     DisposableEffect(Unit) {
-        viewModel.initBattleState() // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
-        battleId.let {
-            viewModel.startLocationUpdates(battleId = it)
-        }
+        setOrDisposeBattleRunning(true, viewModel, battleId, context)
 
         onDispose {
-            viewModel.stopLocationUpdates()
+            setOrDisposeBattleRunning(false, viewModel, battleId, context)
         }
     }
 }
+
+private fun setOrDisposeBattleRunning(
+    isStarting: Boolean,
+    viewModel: BattleContentViewModel,
+    battleId: String,
+    context: Context
+) {
+    if (isStarting) {
+        viewModel.initBattleState() // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
+        viewModel.startLocationUpdates(battleId)
+    } else {
+        viewModel.stopLocationUpdates()
+    }
+    toggleRunningService(isStarting, context)
+}
+
+// Foreground Service 시작/중지
+private fun toggleRunningService(isStarting: Boolean, context: Context) {
+    val intent = Intent(context, RunningService::class.java)
+    intent.action = if (isStarting) "StartRunning" else "StopRunning"
+    context.startService(intent)
+}
+
 
 @Composable
 fun RunningBackNavigationHandler(

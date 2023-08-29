@@ -91,20 +91,27 @@ android {
 dependencies {
     // core modules
     implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:navigation"))
     implementation(project(":core:network"))
+    implementation(project(":core:testing"))
     implementation(project(":core:ui"))
 
     // feature modules
-    implementation(project(":feature:sign_in"))
-    implementation(project(":feature:my_page"))
     implementation(project(":feature:battle"))
+    implementation(project(":feature:challenge"))
+    implementation(project(":feature:match"))
+    implementation(project(":feature:my_page"))
+    implementation(project(":feature:running"))
+    implementation(project(":feature:running_result"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:sign_in"))
     implementation(project(":feature:single"))
     implementation(project(":feature:splash"))
-    implementation(project(":feature:challenge"))
 
     // androidx
     implementation(libs.androidx.appcompat)

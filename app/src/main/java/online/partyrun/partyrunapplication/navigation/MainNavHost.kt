@@ -47,7 +47,7 @@ fun SetUpMainNavGraph(
             navigateToBattleRunningWithDistance = { distance ->
                 navController.navigate("${MainNavRoutes.BattleRunning.route}?distance=$distance") {
                     popUpTo(MainNavRoutes.Battle.route) {
-                        inclusive = true
+                        inclusive = false
                     }
                 }
             },
@@ -75,15 +75,17 @@ fun SetUpMainNavGraph(
         battleRunningRoute(
             navigateToBattleOnWebSocketError = {
                 navController.navigate(MainNavRoutes.Battle.route) {
-                    popUpTo(MainNavRoutes.Battle.route) {
-                        inclusive = true
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
+                    launchSingleTop = true // 자기 자신이 또 스택 푸시가 되지 않도록 방지
+                    restoreState = true
                 }
             },
             navigationToRunningResult = {
                 navController.navigate(MainNavRoutes.RunningResult.route) {
-                    popUpTo(MainNavRoutes.RunningResult.route) {
-                        inclusive = true
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = false
                     }
                 }
             },

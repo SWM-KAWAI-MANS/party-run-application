@@ -39,7 +39,7 @@ fun SurfaceRoundedRect(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 10.dp, start = 20.dp, bottom = 10.dp)
+                .padding(vertical = 10.dp)
         ) {
             content()
         }

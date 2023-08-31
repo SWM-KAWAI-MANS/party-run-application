@@ -141,7 +141,7 @@ fun TermsRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         LeadingIconAgreementText(
-            modifier = Modifier,
+            modifier = Modifier.padding(start = 10.dp),
             toggleButtonChecked = conditionChecked,
             toggleOnCheckedChange = {
                 setToggleButtonChecked()
@@ -153,7 +153,7 @@ fun TermsRow(
             )
         }
         TextButton(
-            modifier = Modifier.padding(end = 10.dp, bottom = 3.dp),
+            modifier = Modifier.padding(end = 5.dp, bottom = 3.dp),
             onClick = navigateToDetailScreen
         ) {
             Text(

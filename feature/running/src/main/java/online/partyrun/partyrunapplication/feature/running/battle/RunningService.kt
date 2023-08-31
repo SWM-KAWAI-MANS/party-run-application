@@ -110,7 +110,9 @@ class RunningService : Service() {
     }
 
     private val sensorEventListener = object : SensorEventListener {
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            // 현재 사용하지 않는 메소드지만 반드시 오버라이드해야 하는 추상 메서드
+        }
 
         override fun onSensorChanged(event: SensorEvent?) {
             event?.let {

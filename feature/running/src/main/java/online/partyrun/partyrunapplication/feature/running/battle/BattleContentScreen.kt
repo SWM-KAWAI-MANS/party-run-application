@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.core.common.Constants.ACTION_START_RUNNING
+import online.partyrun.partyrunapplication.core.common.Constants.ACTION_STOP_RUNNING
+import online.partyrun.partyrunapplication.core.common.Constants.BATTLE_ID_KEY
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedButton
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
@@ -171,22 +174,20 @@ private fun setOrDisposeBattleRunning(
     battleId: String,
     context: Context
 ) {
+    // Foreground Service 시작/중지
     if (isStarting) {
         viewModel.initBattleState() // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
-        viewModel.startLocationUpdates(battleId)
+        val intent = Intent(context, RunningService::class.java).apply {
+            putExtra(BATTLE_ID_KEY, battleId)
+        }
+        intent.action = ACTION_START_RUNNING
+        context.startService(intent)
     } else {
-        viewModel.stopLocationUpdates()
+        val intent = Intent(context, RunningService::class.java)
+        intent.action = ACTION_STOP_RUNNING
+        context.stopService(intent)
     }
-    toggleRunningService(isStarting, context)
 }
-
-// Foreground Service 시작/중지
-private fun toggleRunningService(isStarting: Boolean, context: Context) {
-    val intent = Intent(context, RunningService::class.java)
-    intent.action = if (isStarting) "StartRunning" else "StopRunning"
-    context.startService(intent)
-}
-
 
 @Composable
 fun RunningBackNavigationHandler(

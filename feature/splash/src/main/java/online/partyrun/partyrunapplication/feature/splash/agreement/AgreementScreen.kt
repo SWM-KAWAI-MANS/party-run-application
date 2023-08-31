@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunAnimatedButton
-import online.partyrun.partyrunapplication.core.ui.AgreementBox
+import online.partyrun.partyrunapplication.core.ui.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.core.ui.LeadingIconAgreementText
 import online.partyrun.partyrunapplication.feature.splash.R
@@ -63,7 +63,7 @@ fun AgreementScreen(
                     .padding(start = 20.dp, bottom = 10.dp),
                 toggleButtonChecked = state.isAllChecked,
                 toggleOnCheckedChange = {
-                    agreementViewModel.onCheckedChangeAllAgreement(it)
+                    agreementViewModel.onCheckedChangeAllAgreement()
                 }
             ) {
                 Text(
@@ -74,20 +74,28 @@ fun AgreementScreen(
                 )
             }
 
-            AgreementBox(
+            SurfaceRoundedRect(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .padding(start = 20.dp, end = 20.dp),
+                    .padding(horizontal = 10.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
                 color = MaterialTheme.colorScheme.background
             ) {
                 TermsRow(
+                    conditionChecked = state.isTermsOfServiceChecked,
+                    setToggleButtonChecked = {
+                        agreementViewModel.setTermsOfServiceChecked()
+                    },
                     textId = R.string.terms_of_services_subject,
                 ) {
                     navigationToTermsOfService()
                 }
                 TermsRow(
+                    conditionChecked = state.isPrivacyPolicyChecked,
+                    setToggleButtonChecked = {
+                        agreementViewModel.setPrivacyPolicyChecked()
+                    },
                     textId = R.string.privacy_policy_subject,
                 ) {
                     navigationToPrivacyPolicy()
@@ -121,16 +129,33 @@ fun AgreementScreen(
 }
 
 @Composable
-fun TermsRow(textId: Int, onClick: () -> Unit) {
+fun TermsRow(
+    conditionChecked: Boolean,
+    setToggleButtonChecked: () -> Unit,
+    textId: Int,
+    navigateToDetailScreen: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(id = textId),
-        )
-        TextButton(onClick = onClick) {
+        LeadingIconAgreementText(
+            modifier = Modifier.padding(start = 10.dp),
+            toggleButtonChecked = conditionChecked,
+            toggleOnCheckedChange = {
+                setToggleButtonChecked()
+            }
+        ) {
+            Text(
+                modifier = Modifier.padding(bottom = 3.dp),
+                text = stringResource(id = textId),
+            )
+        }
+        TextButton(
+            modifier = Modifier.padding(end = 5.dp, bottom = 3.dp),
+            onClick = navigateToDetailScreen
+        ) {
             Text(
                 text = stringResource(id = R.string.read_detail)
             )

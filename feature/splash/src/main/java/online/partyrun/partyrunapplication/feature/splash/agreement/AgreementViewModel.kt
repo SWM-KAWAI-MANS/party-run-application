@@ -15,6 +15,7 @@ import javax.inject.Inject
 class AgreementViewModel @Inject constructor(
     private val saveAgreementUseCase: SaveAgreementStateUseCase
 ) : ViewModel() {
+
     private val _agreementUiState = MutableStateFlow(AgreementUiState())
     val agreementUiState: StateFlow<AgreementUiState> = _agreementUiState.asStateFlow()
 
@@ -22,9 +23,36 @@ class AgreementViewModel @Inject constructor(
         saveAgreementUseCase(isChecked)
     }
 
-    fun onCheckedChangeAllAgreement(isChecked: Boolean) {
+    fun onCheckedChangeAllAgreement() {
+        val newStateValue =
+            !(_agreementUiState.value.isTermsOfServiceChecked && _agreementUiState.value.isPrivacyPolicyChecked)
         _agreementUiState.update { state ->
-            state.copy(isAllChecked = isChecked)
+            state.copy(
+                isTermsOfServiceChecked = newStateValue,
+                isPrivacyPolicyChecked = newStateValue
+            )
+        }
+        updateAllConditions()
+    }
+
+    fun setTermsOfServiceChecked() {
+        toggleAndNotify { it.copy(isTermsOfServiceChecked = !it.isTermsOfServiceChecked) }
+    }
+
+    fun setPrivacyPolicyChecked() {
+        toggleAndNotify { it.copy(isPrivacyPolicyChecked = !it.isPrivacyPolicyChecked) }
+    }
+
+    private fun toggleAndNotify(updater: (AgreementUiState) -> AgreementUiState) {
+        _agreementUiState.update(updater)
+        updateAllConditions()
+    }
+
+    private fun updateAllConditions() {
+        val isAllChecked =
+            _agreementUiState.value.isTermsOfServiceChecked && _agreementUiState.value.isPrivacyPolicyChecked
+        _agreementUiState.update { state ->
+            state.copy(isAllChecked = isAllChecked)
         }
     }
 }

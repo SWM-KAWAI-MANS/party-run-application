@@ -9,4 +9,7 @@ object Constants {
     const val NOTIFICATION_CHANNEL_NAME = "Running_location_updates"
     const val NOTIFICATION_ID = 1050
 
+    const val ACTION_START_RUNNING = "StartRunning"
+    const val ACTION_STOP_RUNNING = "StopRunning"
+    const val BATTLE_ID_KEY = "BATTLE_ID_KEY"
 }

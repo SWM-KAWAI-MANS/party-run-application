@@ -24,7 +24,7 @@ import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.UnChecked
 
 @Composable
-fun AgreementBox(
+fun SurfaceRoundedRect(
     modifier: Modifier = Modifier,
     border: BorderStroke = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
     color: Color = MaterialTheme.colorScheme.background,
@@ -50,7 +50,7 @@ fun AgreementBox(
 fun LeadingIconAgreementText(
     modifier: Modifier = Modifier,
     toggleButtonChecked: Boolean,
-    toggleOnCheckedChange: (Boolean) -> Unit,
+    toggleOnCheckedChange: () -> Unit,
     content: @Composable () -> Unit
 ) {
     Row(
@@ -61,7 +61,7 @@ fun LeadingIconAgreementText(
         PartyRunIconToggleButton(
             checked = toggleButtonChecked,
             onCheckedChange = {
-                toggleOnCheckedChange(it)
+                toggleOnCheckedChange()
             },
             modifier = Modifier
                 .width(32.dp)

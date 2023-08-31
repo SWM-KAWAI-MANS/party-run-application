@@ -1,15 +1,7 @@
 package online.partyrun.partyrunapplication.feature.running.battle
 
-import android.annotation.SuppressLint
-import android.location.Location
-import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,39 +23,30 @@ import online.partyrun.partyrunapplication.core.domain.running.GetBattleIdUseCas
 import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
 import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.SaveBattleIdUseCase
-import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
-import online.partyrun.partyrunapplication.core.model.running.GpsData
-import online.partyrun.partyrunapplication.core.model.running.RecordData
 import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
 import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class BattleContentViewModel @Inject constructor(
     private val battleStreamUseCase: BattleStreamUseCase,
-    private val sendRecordDataUseCase: SendRecordDataUseCase,
     private val getBattleIdUseCase: GetBattleIdUseCase,
     private val getBattleStatusUseCase: GetBattleStatusUseCase,
     private val saveBattleIdUseCase: SaveBattleIdUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val disposeSocketResourcesUseCase: DisposeSocketResourcesUseCase,
-    private val fusedLocationProviderClient: FusedLocationProviderClient
 ) : ViewModel() {
     companion object {
-        const val LOCATION_UPDATE_INTERVAL_SECONDS = 1L
         const val COUNTDOWN_SECONDS = 5
         const val STATE_SHARE_SUBSCRIPTION_TIMEOUT = 3000L
     }
 
     private lateinit var userId: String
-    private lateinit var locationCallback: LocationCallback
-    private val locationRequest: LocationRequest
     private var isFirstBattleStreamCall = true // onEach 분기를 위한 boolean
 
     private val _battleUiState = MutableStateFlow(BattleUiState())
@@ -77,16 +60,7 @@ class BattleContentViewModel @Inject constructor(
 
     private lateinit var runnersState: StateFlow<BattleEvent>
 
-    private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
-
     init {
-        val priority = Priority.PRIORITY_HIGH_ACCURACY
-        locationRequest = LocationRequest.Builder(
-            priority, TimeUnit.SECONDS.toMillis(
-                LOCATION_UPDATE_INTERVAL_SECONDS
-            )
-        ).build()
-
         getBattleId()
         getUserId()
     }
@@ -224,62 +198,8 @@ class BattleContentViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 위치 업데이트를 주기적으로 요청하며,
-     * 새로운 위치 정보가 도착하면 onLocationResult 콜백 메서드를 통해 처리
-     */
-    @SuppressLint("MissingPermission")
-    fun startLocationUpdates(
-        battleId: String
-    ) {
-        setLocationCallback(battleId)
-
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper(),
-        )
-    }
-
-    private fun setLocationCallback(battleId: String) {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { location ->
-
-                    addGpsDataToRecordData(location)
-                    if (recordData.size >= 3) {
-                        sendRecordData(battleId, RecordData(recordData))
-                        recordData.clear() // clear the location update list
-                    }
-                }
-            }
-        }
-    }
-
-    private fun addGpsDataToRecordData(location: Location) {
-        recordData.add(
-            GpsData(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                altitude = location.altitude,
-                time = LocalDateTime.now()
-            )
-        )
-    }
-
-    fun stopLocationUpdates() {
-        if (::locationCallback.isInitialized) { // 초기화 여부 판단
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
-    private fun sendRecordData(battleId: String, recordData: RecordData) {
-        viewModelScope.launch {
-            sendRecordDataUseCase(battleId, recordData)
-        }
-    }
-
     override fun onCleared() {
         super.onCleared()
-        stopLocationUpdates()
 
         viewModelScope.launch {
             battleStreamUseCase.close()

@@ -4,4 +4,5 @@ data class ProfileUiState(
     val nickName: String = "",
     val nickNameError: Boolean = false,
     val nickNameSupportingText: String = "",
+    val isProfileUpdateSuccess: Boolean = false
 )

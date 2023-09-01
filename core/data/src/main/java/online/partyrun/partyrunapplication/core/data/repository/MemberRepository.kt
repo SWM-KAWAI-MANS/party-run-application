@@ -22,4 +22,6 @@ interface MemberRepository {
     suspend fun setUserProfile(userProfile: String)
 
     suspend fun setUserId(userId: String)
+
+    suspend fun updateUserData(userData: User): Flow<Result<Unit>>
 }

@@ -10,6 +10,7 @@
     <string name="profile_img_desc">프로필 이미지</string>
 
     <string name="profile_nickname_title">닉네임</string>
+    <string name="profile_alarm_icon_desc">경고 아이콘</string>
     <string name="profile_nickname_placeholder">변경할 닉네임을 입력해 주세요.</string>
 
     <string name="profile_edit_completed">완료</string>

@@ -27,6 +27,10 @@ class MyPageViewModel @Inject constructor(
     val snackbarMessage: StateFlow<String> = _snackbarMessage
 
     init {
+        getMyPageData()
+    }
+
+    private fun getMyPageData() {
         viewModelScope.launch {
             try {
                 val user = getMyPageDataUseCase()

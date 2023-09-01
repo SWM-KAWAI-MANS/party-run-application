@@ -17,11 +17,16 @@ fun <T : Any> apiRequestFlow(call: suspend () -> ApiResponse<T>): Flow<Result<T>
             }
             onError { code, message ->
                 val errorMessage = when (code) {
+                    204 -> "No Content"
                     400 -> message ?: "Bad Request"
                     404 -> message ?: "Not Found"
                     else -> message ?: "Error"
                 }
-                emit(Result.Failure(errorMessage, code))
+                if(code == 204) {
+                    emit(Result.Empty)
+                } else {
+                    emit(Result.Failure(errorMessage, code))
+                }
             }
             onException { e ->
                 emit(Result.Failure(e.message ?: "Unknown Error", -1))

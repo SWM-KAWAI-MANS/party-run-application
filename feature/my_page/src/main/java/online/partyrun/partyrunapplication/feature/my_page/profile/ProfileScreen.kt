@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -58,12 +59,14 @@ import online.partyrun.partyrunapplication.feature.my_page.R
 fun ProfileScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     profileViewModel: ProfileViewModel = hiltViewModel(),
-    navigateBack: () -> Unit = {},
+    navigateToMyPage: () -> Unit = {},
+    onShowSnackbar: (String) -> Unit
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val profileSnackbarMessage by profileViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         profileViewModel = profileViewModel,
@@ -71,7 +74,9 @@ fun ProfileScreen(
         profileUiState = profileUiState,
         keyboardController = keyboardController,
         focusManager = focusManager,
-        navigateBack = navigateBack,
+        navigateToMyPage = navigateToMyPage,
+        onShowSnackbar = onShowSnackbar,
+        profileSnackbarMessage = profileSnackbarMessage
     )
 }
 
@@ -84,14 +89,27 @@ fun Content(
     profileUiState: ProfileUiState,
     keyboardController: SoftwareKeyboardController? = null,
     focusManager: FocusManager,
-    navigateBack: () -> Unit,
+    navigateToMyPage: () -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    profileSnackbarMessage: String
 ) {
+    LaunchedEffect(profileSnackbarMessage) {
+        if (profileSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(profileSnackbarMessage)
+            profileViewModel.clearSnackbarMessage()
+        }
+    }
+
+    if (profileUiState.isProfileUpdateSuccess) {
+        navigateToMyPage()
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
             ProfileTopAppBar(
                 modifier = modifier,
-                navigateBack = navigateBack
+                navigateToMyPage = navigateToMyPage
             )
         }
     ) { paddingValues ->
@@ -117,12 +135,12 @@ fun Content(
 @Composable
 private fun ProfileTopAppBar(
     modifier: Modifier,
-    navigateBack: () -> Unit,
+    navigateToMyPage: () -> Unit,
 ) {
     PartyRunTopAppBar(
         modifier = modifier,
         navigationContent = {
-            IconButton(onClick = { navigateBack() }) {
+            IconButton(onClick = { navigateToMyPage() }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),
                     contentDescription = stringResource(id = R.string.arrow_back_desc)
@@ -235,7 +253,7 @@ private fun FixedBottomNavigationSheet(
         horizontalArrangement = Arrangement.Center,
     ) {
         PartyRunGradientButton(
-            onClick = { profileViewModel.passAllConditions() }
+            onClick = { profileViewModel.updateUserData() }
         ) {
             Text(
                 text = stringResource(id = R.string.profile_edit_completed),
@@ -299,7 +317,7 @@ private fun ProfileImage(
     ) {
         RenderAsyncUrlImage(
             imageUrl = userProfile,
-            contentDescription = null
+            contentDescription = stringResource(id = R.string.profile_img_desc)
         )
     }
 }
@@ -316,7 +334,7 @@ private fun NickNameSupportingText(profileUiState: ProfileUiState) {
         ) {
             Icon(
                 painter = painterResource(id = PartyRunIcons.ErrorOutline),
-                contentDescription = "",
+                contentDescription = stringResource(id = R.string.profile_alarm_icon_desc),
                 tint = MaterialTheme.colorScheme.error
             )
             Spacer(modifier = Modifier.width(3.dp))

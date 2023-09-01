@@ -66,6 +66,13 @@ fun SetUpMainNavGraph(
             navigateBack = {
                 navController.popBackStack()
             },
+            navigateToMyPage = {
+                navController.navigate(MainNavRoutes.MyPage.route) {
+                    popUpTo(MainNavRoutes.MyPage.route) {
+                        inclusive = true
+                    }
+                }
+            },
             navigationToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
             },

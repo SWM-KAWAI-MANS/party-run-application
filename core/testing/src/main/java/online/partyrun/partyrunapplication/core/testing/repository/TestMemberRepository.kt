@@ -41,4 +41,8 @@ class TestMemberRepository : MemberRepository {
     override suspend fun setUserId(userId: String) {
         this.userId = userId
     }
+
+    override suspend fun updateUserData(userData: User): Flow<Result<Unit>> {
+        TODO("Not yet implemented")
+    }
 }

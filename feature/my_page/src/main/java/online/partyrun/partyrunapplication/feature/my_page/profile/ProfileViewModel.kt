@@ -1,19 +1,38 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.common.result.onEmpty
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
+import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
+import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
+import online.partyrun.partyrunapplication.core.domain.member.UpdateUserDataUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-
+    private val updateUserDataUseCase: UpdateUserDataUseCase,
+    private val getUserDataUseCase: GetUserDataUseCase,
+    private val saveUserDataUseCase: SaveUserDataUseCase
 ) : ViewModel() {
+
     private val _profileUiState = MutableStateFlow(ProfileUiState())
     val profileUiState = _profileUiState.asStateFlow()
+
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
 
     fun setNickName(nickName: String) {
         _profileUiState.update {
@@ -50,9 +69,37 @@ class ProfileViewModel @Inject constructor(
         return condition
     }
 
-    fun passAllConditions(): Boolean {
+    private fun passAllConditions(): Boolean {
         return !isNickNameEmpty() && !isInvalidNickNameLength()
     }
 
-}
+    fun updateUserData() = viewModelScope.launch {
+        if (passAllConditions()) {
+            updateUserDataUseCase(
+                name = _profileUiState.value.nickName
+            ).collect { result ->
+                result.onEmpty {
+                    saveUserData()
+                    _profileUiState.update {
+                        it.copy(
+                            isProfileUpdateSuccess = true
+                        )
+                    }
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
+                }
+            }
+        }
+    }
 
+    private suspend fun saveUserData() {
+        getUserDataUseCase().collect { result ->
+            result.onSuccess { userData ->
+                saveUserDataUseCase(userData)
+            }.onFailure { errorMessage, code ->
+                Timber.e("$code $errorMessage")
+            }
+        }
+    }
+}

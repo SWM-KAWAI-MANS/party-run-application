@@ -7,6 +7,7 @@ sealed interface Result<out T> {
     data class Success<T>(val data: T) : Result<T>
     data class Failure(val errorMessage: String, val code: Int) : Result<Nothing>
     object Loading : Result<Nothing>
+    object Empty : Result<Nothing>  // 204나 null 대응
 }
 
 suspend fun <T> Result<T>.onSuccess(
@@ -26,6 +27,15 @@ suspend fun Result<*>.onFailure(
         }
     }
 
+suspend fun Result<*>.onEmpty(
+    action: suspend () -> Unit
+): Result<*> =
+    apply {
+        if (this is Result.Empty) {
+            action()
+        }
+    }
+
 /**
  * Result<R> 형식의 Flow를 받아서 그 내용을 변환한 후 Result<D> 형식의 Flow로 반환
  * Generic Parameters:
@@ -40,6 +50,7 @@ inline fun <reified R, reified D> Flow<Result<R>>.mapResultModel(crossinline tra
             is Result.Loading -> Result.Loading
             is Result.Success -> Result.Success(transform(apiResponse.data))
             is Result.Failure -> Result.Failure(apiResponse.errorMessage, apiResponse.code)
+            is Result.Empty -> Result.Empty
         }
     }
 }

@@ -11,6 +11,7 @@ import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSou
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.network.model.request.toRequestModel
 import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
@@ -47,6 +48,10 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun setUserId(userId: String) {
         userPreferencesDataSource.setUserId(userId)
+    }
+
+    override suspend fun updateUserData(userData: User): Flow<Result<Unit>> {
+        return apiRequestFlow { memberDataSource.updateUserData(userData.toRequestModel()) }
     }
 
 }

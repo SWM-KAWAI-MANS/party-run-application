@@ -17,15 +17,15 @@ fun distanceToCoordinatesMapper(
     val ratio = distance / totalTrackDistance
 
     // 타원형 트랙의 x축, y축 좌표 계산
-    val x = horizontalRadius * kotlin.math.cos(2 * kotlin.math.PI * ratio)
-    val y = verticalRadius * kotlin.math.sin(2 * kotlin.math.PI * ratio)
+    val x = horizontalRadius * kotlin.math.cos(2 * kotlin.math.PI * ratio + kotlin.math.PI)
+    val y = -verticalRadius * kotlin.math.sin(2 * kotlin.math.PI * ratio)
 
     // 그림의 크기에 따라 좌표를 스케일링
     val scaledX = scaleCoordinate(x, trackWidth, horizontalRadius)
     val scaledY = scaleCoordinate(y, trackHeight, verticalRadius)
 
-    val currentX = adjustXCoordinate(scaledX)
-    val currentY = adjustYCoordinate(scaledY)
+    val currentX = adjustXCoordinate(scaledX, trackWidth)
+    val currentY = adjustYCoordinate(scaledY, trackHeight)
 
     return Pair(currentX, currentY)
 }
@@ -42,19 +42,19 @@ fun scaleCoordinate(coordinate: Double, trackSize: Double, radius: Double): Doub
 /**
  * 거리를 총 트랙 거리에 대한 비율로 변환하고 트랙 그림에 따라 좌표를 스케일링했을 경우 나오는 좌표 기준으로 오차보정 수행.
  */
-fun adjustXCoordinate(x: Double): Double {
+fun adjustXCoordinate(x: Double, trackWidth: Double): Double {
     return when {
-        x < 0 -> x + 20
-        x > 0 -> x - 20
-        else -> x - 45
+        x < 0 -> x + 0.02 * trackWidth
+        x > 0 -> x - 0.02 * trackWidth
+        else -> x - 0.045 * trackWidth
     }
 }
 
-fun adjustYCoordinate(y: Double): Double {
+fun adjustYCoordinate(y: Double, trackHeight: Double): Double {
     return when {
-        y < 0 -> y - 40
-        y > 0 -> y - 50
-        else -> y - 45
+        y < 0 -> y - 0.15 * trackHeight
+        y > 0 -> y - 0.2 * trackHeight
+        else -> y - 0.17 * trackHeight
     }
 }
 

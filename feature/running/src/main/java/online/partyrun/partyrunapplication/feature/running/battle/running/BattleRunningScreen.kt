@@ -26,7 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
@@ -223,7 +229,14 @@ fun TrackWithMultipleUsers(
     userId: String,
     runners: List<RunnerStatus>
 ) {
-    // 트랙 이미지 리소스를 사용
+    var showArrivalFlag by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(35000)
+        showArrivalFlag = true
+    }
+
+    // 트랙 이미지 리소스 사용
     val trackImage = painterResource(R.drawable.runnning_track)
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -238,11 +251,37 @@ fun TrackWithMultipleUsers(
         val trackHeight = this.maxHeight.value / aspectRatio
 
         // 트랙 이미지 표시
-        Image(
-            painter = trackImage,
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = stringResource(id = R.string.track_img)
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = trackImage,
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = stringResource(id = R.string.track_img)
+            )
+        }
+
+        // 도착 깃발 표시
+        if (showArrivalFlag) {
+            // 도착 깃발 좌표 계산
+            val (flagX, flagY) = battleContentViewModel.mapDistanceToCoordinates(
+                totalTrackDistance = totalTrackDistance.toDouble(),
+                distance = 0.0, // 0m 지점
+                trackWidth = trackWidth,
+                trackHeight = trackHeight
+            )
+            Box(
+                modifier = Modifier
+                    .offset(
+                        x = flagX.dp,
+                        y = flagY.dp + (0.08 * trackHeight).dp // 깃발이므로 마커 오차보정 결과를 다시 되돌림
+                    )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.arrival_flag),
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+        }
 
         // 각 유저의 위치 표시
         runners.forEach { runner ->

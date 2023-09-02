@@ -15,6 +15,8 @@ dependencies {
     implementation(libs.okhttp.sse)
     implementation(libs.gson.code)
 
+    implementation(libs.google.accompanist.permission)
+
     implementation(libs.exo.player)
 
     implementation(libs.google.location)

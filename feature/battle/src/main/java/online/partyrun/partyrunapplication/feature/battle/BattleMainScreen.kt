@@ -208,12 +208,7 @@ private fun MainContent(
         PartyRunMatchButton(
             modifier = Modifier.padding(bottom = 70.dp),
             onClick = {
-                /**
-                 * 1. 러닝을 위한 모든 권한이 부여됐는지 파악
-                 * 2. matchUiState.isMatchingBtnEnabled를 조건부로 처리 ->
-                 * enabled로 할 경우 버튼이 사라지는 현상 방지
-                 */
-                if (permissionState.allPermissionsGranted && isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
+                if (shouldExecuteMatchingAction(permissionState, matchUiState)) {
                     matchingAction(matchViewModel, battleMainViewModel.kmState.value)
                 } else {
                     matchViewModel.closeMatchDialog()
@@ -227,6 +222,22 @@ private fun MainContent(
             )
         }
     }
+}
+
+/**
+ * shouldExecuteMatchingAction 러닝이 가능한 상태인지에 대한 여부 파악
+ * 1. 러닝을 위한 모든 권한이 부여됐는지 파악
+ * 2. matchUiState.isMatchingBtnEnabled를 조건부로 처리 ->
+ * enabled로 할 경우 버튼이 사라지는 현상 방지
+ */
+@OptIn(ExperimentalPermissionsApi::class)
+private fun shouldExecuteMatchingAction(
+    permissionState: MultiplePermissionsState,
+    matchUiState: MatchUiState
+): Boolean {
+    return permissionState.allPermissionsGranted &&
+            isDebounced(System.currentTimeMillis()) &&
+            matchUiState.isMatchingBtnEnabled
 }
 
 @Composable

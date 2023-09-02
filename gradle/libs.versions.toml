@@ -33,6 +33,7 @@ firebaseBom = "32.2.2"
 firebaseCrashlyticsPlugin = "2.9.2"
 firebasePerfPlugin = "1.4.2"
 firebaseAuth = "22.0.0"
+accompanistPermission = "0.25.1"
 firebaseStroage ="20.2.0"
 gmsPlugin = "4.3.15"
 composeMap = "2.8.0"
@@ -133,6 +134,7 @@ firebase-auth = { module = "com.google.firebase:firebase-auth-ktx", version.ref 
 firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStroage" }
 google-service = { group = "com.google.gms", name = "google-services", version.ref = "gmsPlugin" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "gmsAuth" }
+google-accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermission"}
 
 # maps
 google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "composeMap"}

@@ -1,5 +1,7 @@
 package online.partyrun.partyrunapplication.feature.battle
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,6 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
@@ -119,12 +127,26 @@ private fun LoadingBody() {
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BattleMainBody(
     battleMainViewModel: BattleMainViewModel,
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState
 ) {
+    val showPermissionDialog = remember { mutableStateOf(false) }
+
+    val permissionsList = listOfNotNull(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
+    )
+    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+
+    HandlePermissionActions(
+        permissionState = permissionState,
+        showPermissionDialog = showPermissionDialog
+    )
+
     if (matchUiState.isOpen) {
         MatchDialog(
             setShowDialog = {
@@ -134,14 +156,23 @@ fun BattleMainBody(
     }
 
     BackgroundLayer()
-    MainContent(battleMainViewModel, matchUiState, matchViewModel)
+    MainContent(
+        battleMainViewModel,
+        matchUiState,
+        matchViewModel,
+        permissionState,
+        showPermissionDialog
+    )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MainContent(
     battleMainViewModel: BattleMainViewModel,
     matchUiState: MatchUiState,
-    matchViewModel: MatchViewModel
+    matchViewModel: MatchViewModel,
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -178,11 +209,15 @@ private fun MainContent(
             modifier = Modifier.padding(bottom = 70.dp),
             onClick = {
                 /**
-                 * matchUiState.isMatchingBtnEnabled를 조건부로 처리 ->
+                 * 1. 러닝을 위한 모든 권한이 부여됐는지 파악
+                 * 2. matchUiState.isMatchingBtnEnabled를 조건부로 처리 ->
                  * enabled로 할 경우 버튼이 사라지는 현상 방지
                  */
-                if (isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
+                if (permissionState.allPermissionsGranted && isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
                     matchingAction(matchViewModel, battleMainViewModel.kmState.value)
+                } else {
+                    matchViewModel.closeMatchDialog()
+                    showPermissionDialog.value = true
                 }
             }
         ) {
@@ -237,6 +272,22 @@ private fun matchingAction(matchViewModel: MatchViewModel, currentKmState: KmSta
             distance = currentKmState.toDistance()
         )
     )
+}
+
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun HandlePermissionActions(
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>
+) {
+    if (showPermissionDialog.value) {
+        CheckMultiplePermissions(
+            permissionState = permissionState,
+            onPermissionResult = { if (it) showPermissionDialog.value = false },
+            showPermissionDialog = showPermissionDialog
+        )
+    }
 }
 
 fun isDebounced(currentTime: Long): Boolean {

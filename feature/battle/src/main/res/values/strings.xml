@@ -4,4 +4,17 @@
     <string name="battle_head_line_1">지금 바로</string>
     <string name="battle_head_line_2">매칭을 잡아보세요!</string>
     <string name="track_img_desc">트랙 이미지</string>
+
+    <string name="permission_confirm">권한 설정</string>
+    <string name="permission_cancel">취소</string>
+
+    <string name="notification_permission_title">[필수] 알림 설정</string>
+    <string name="notification_permission_description">스마트폰이 닫힌 상태에서도 러닝 중 지속적인 알림을 받을 수 있도록 알림 액세스를 허용해주세요.</string>
+    <string name="notification_permission_additional_instruction">[설정] -> [알림]에서 권한을 설정해주세요.</string>
+
+    <string name="location_permission_title">[필수] 위치 정보</string>
+    <string name="location_permission_description">정확한 GPS 신호를 통한 러닝 추적을 위해 위치 정보 액세스를 허용해주세요.</string>
+    <string name="location_permission_additional_instruction">[설정] -> [권한] -> [위치]에서 권한을 설정해주세요.</string>
+
 </resources>
+

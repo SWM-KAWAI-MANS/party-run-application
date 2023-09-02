@@ -20,6 +20,7 @@ androidxMeterialCore = "1.4.3"
 exoplayer = "2.18.7"
 timber = "5.0.1"
 stomp = "2.0.5"
+inAppUpdate = "2.1.0"
 mockito = "4.11.0"
 mockk = "1.13.54"
 lottie = "6.0.0"
@@ -135,6 +136,8 @@ firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", versio
 google-service = { group = "com.google.gms", name = "google-services", version.ref = "gmsPlugin" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "gmsAuth" }
 google-accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermission"}
+google-in-app-update = { group = "com.google.android.play", name = "app-update", version.ref = "inAppUpdate"}
+google-in-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref =" inAppUpdate"}
 
 # maps
 google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "composeMap"}

@@ -58,16 +58,16 @@ import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
-import online.partyrun.partyrunapplication.feature.running.battle.BattleUiState
+import online.partyrun.partyrunapplication.feature.running.battle.BattleContentUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BattleRunningScreen(
-    battleUiState: BattleUiState,
+    battleContentUiState: BattleContentUiState,
     openRunningExitDialog: MutableState<Boolean>,
     battleContentViewModel: BattleContentViewModel = hiltViewModel()
 ) {
-    val battleState = battleUiState.battleState // 배틀 상태 state
+    val battleState = battleContentUiState.battleState // 배틀 상태 state
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,7 +99,7 @@ fun BattleRunningScreen(
                     .height(50.dp)
             ) {
                 TrackDistanceDistanceBox(
-                    totalTrackDistance = battleUiState.selectedDistance
+                    totalTrackDistance = battleContentUiState.selectedDistance
                 )
             }
             Spacer(modifier = Modifier.size(15.dp))
@@ -111,8 +111,8 @@ fun BattleRunningScreen(
                 ) {
                     TrackWithMultipleUsers(
                         battleContentViewModel = battleContentViewModel,
-                        totalTrackDistance = battleUiState.selectedDistance,
-                        userId = battleUiState.userId,
+                        totalTrackDistance = battleContentUiState.selectedDistance,
+                        userId = battleContentUiState.userId,
                         runners = battleState.battleInfo
                     )
                 }

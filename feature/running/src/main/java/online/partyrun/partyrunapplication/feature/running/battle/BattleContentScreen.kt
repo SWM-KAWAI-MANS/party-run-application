@@ -49,7 +49,7 @@ fun BattleContentScreen(
     battleContentViewModel: BattleContentViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
-    val battleUiState by battleContentViewModel.battleUiState.collectAsStateWithLifecycle()
+    val battleContentUiState by battleContentViewModel.battleContentUiState.collectAsStateWithLifecycle()
     val battleId by battleContentViewModel.battleId.collectAsStateWithLifecycle()
     val battleContentSnackbarMessage by battleContentViewModel.snackbarMessage.collectAsStateWithLifecycle()
     val openRunningExitDialog = remember { mutableStateOf(false) }
@@ -59,7 +59,7 @@ fun BattleContentScreen(
         navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
         navigationToRunningResult = navigationToRunningResult,
         battleContentViewModel = battleContentViewModel,
-        battleUiState = battleUiState,
+        battleContentUiState = battleContentUiState,
         battleId = battleId,
         openRunningExitDialog = openRunningExitDialog,
         battleContentSnackbarMessage = battleContentSnackbarMessage,
@@ -73,7 +73,7 @@ fun Content(
     navigateToBattleOnWebSocketError: () -> Unit = {},
     navigationToRunningResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel,
-    battleUiState: BattleUiState,
+    battleContentUiState: BattleContentUiState,
     battleId: String?,
     openRunningExitDialog: MutableState<Boolean>,
     battleContentSnackbarMessage: String,
@@ -104,7 +104,7 @@ fun Content(
     /**
      * 목표 거리에 도달했다면, 4초 대기 후 결과 스크린으로 이동
      */
-    if (battleUiState.isFinished) {
+    if (battleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
             delay(4000)
             navigationToRunningResult()
@@ -118,17 +118,17 @@ fun Content(
         }
     }
 
-    CheckStartTime(battleUiState, battleId, battleContentViewModel)
+    CheckStartTime(battleContentUiState, battleId, battleContentViewModel)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        when (battleUiState.screenState) {
-            is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleUiState.isConnecting)
+        when (battleContentUiState.screenState) {
+            is BattleScreenState.Ready -> BattleReadyScreen(isConnecting = battleContentUiState.isConnecting)
             is BattleScreenState.Running ->
                 BattleRunningScreen(
-                    battleUiState = battleUiState,
+                    battleContentUiState = battleContentUiState,
                     openRunningExitDialog = openRunningExitDialog
                 )
 
@@ -139,12 +139,12 @@ fun Content(
 
 @Composable
 private fun CheckStartTime(
-    battleUiState: BattleUiState,
+    battleContentUiState: BattleContentUiState,
     battleId: String?,
     battleContentViewModel: BattleContentViewModel,
 ) {
-    when (battleUiState.timeRemaining) {
-        in 1..5 -> CountdownDialog(timeRemaining = battleUiState.timeRemaining)
+    when (battleContentUiState.timeRemaining) {
+        in 1..5 -> CountdownDialog(timeRemaining = battleContentUiState.timeRemaining)
         0 -> battleId?.let {
             // 위치 업데이트 시작 및 정지 로직
             StartBattleRunning(battleId, battleContentViewModel)

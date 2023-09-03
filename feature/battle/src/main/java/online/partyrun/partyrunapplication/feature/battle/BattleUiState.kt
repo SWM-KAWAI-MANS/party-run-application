@@ -12,11 +12,11 @@ fun KmState.toDistance(): Int = when (this) {
 }
 
 
-sealed class BattleMainUiState {
-    object Loading : BattleMainUiState()
+sealed class BattleUiState {
+    object Loading : BattleUiState()
 
-    object Success : BattleMainUiState()
+    object Success : BattleUiState()
 
-    object LoadFailed : BattleMainUiState()
+    object LoadFailed : BattleUiState()
 
 }

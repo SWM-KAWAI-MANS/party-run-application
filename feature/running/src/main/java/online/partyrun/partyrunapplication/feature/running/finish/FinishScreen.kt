@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.battle.finish
+package online.partyrun.partyrunapplication.feature.running.finish
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.battle.ready
+package online.partyrun.partyrunapplication.feature.running.ready
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

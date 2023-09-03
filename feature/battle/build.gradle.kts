@@ -21,4 +21,5 @@ dependencies {
 
     implementation(libs.google.location)
     implementation(project(":feature:match"))
+    implementation(project(":feature:running"))
 }

@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.battle
+package online.partyrun.partyrunapplication.feature.running.permission
 
 import android.Manifest
 import android.content.Context
@@ -9,7 +9,11 @@ import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.permissions.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.shouldShowRationale
+import online.partyrun.partyrunapplication.feature.running.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

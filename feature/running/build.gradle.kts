@@ -20,5 +20,7 @@ dependencies {
     // google Location
     implementation(libs.google.location)
 
+    implementation(libs.google.accompanist.permission)
+
     implementation(project(":core:network"))
 }

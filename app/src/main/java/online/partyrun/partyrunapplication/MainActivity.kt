@@ -17,13 +17,13 @@ import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.ui.PartyRunMain
 import online.partyrun.partyrunapplication.core.common.extension.setIntentActivity
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyRunApplicationTheme
-import online.partyrun.partyrunapplication.feature.battle.BattleMainViewModel
+import online.partyrun.partyrunapplication.feature.battle.BattleViewModel
 import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val battleViewModel: BattleMainViewModel by viewModels()
+    private val battleViewModel: BattleViewModel by viewModels()
 
     /**
      * 사용자로부터 권한을 요청하고 그 결과를 받아 처리하기 위한 코드

@@ -49,8 +49,8 @@ class BattleContentViewModel @Inject constructor(
     private lateinit var userId: String
     private var isFirstBattleStreamCall = true // onEach 분기를 위한 boolean
 
-    private val _battleUiState = MutableStateFlow(BattleUiState())
-    val battleUiState: StateFlow<BattleUiState> = _battleUiState
+    private val _battleContentUiState = MutableStateFlow(BattleContentUiState())
+    val battleContentUiState: StateFlow<BattleContentUiState> = _battleContentUiState
 
     private val _battleId = MutableStateFlow<String?>(null)
     val battleId: StateFlow<String?> = _battleId
@@ -70,12 +70,12 @@ class BattleContentViewModel @Inject constructor(
     }
 
     fun updateSelectedDistance(distance: Int) {
-        _battleUiState.value = _battleUiState.value.copy(selectedDistance = distance)
+        _battleContentUiState.value = _battleContentUiState.value.copy(selectedDistance = distance)
     }
 
     private fun getUserId() = viewModelScope.launch {
         userId = getUserIdUseCase()
-        _battleUiState.update { state ->
+        _battleContentUiState.update { state ->
             state.copy(
                 userId = userId
             )
@@ -113,7 +113,7 @@ class BattleContentViewModel @Inject constructor(
 
     private fun onWebSocketConnected() {
         if (isFirstBattleStreamCall) {
-            _battleUiState.update { state ->
+            _battleContentUiState.update { state ->
                 state.copy(
                     isConnecting = false // false = 연결 완료
                 )
@@ -147,7 +147,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun onStartBattleStream() {
-        _battleUiState.update { state ->
+        _battleContentUiState.update { state ->
             state.copy(
                 isConnecting = true
             )
@@ -158,7 +158,7 @@ class BattleContentViewModel @Inject constructor(
         t: Throwable,
         navigateToBattleOnWebSocketError: () -> Unit
     ) {
-        _battleUiState.update { state ->
+        _battleContentUiState.update { state ->
             state.copy(showConnectionError = t is ConnectException)
         }
         if (t is ConnectException) {
@@ -167,7 +167,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun updateBattleStateWithRunnerResult(result: BattleEvent.BattleRunning) {
-        val currentBattleState = _battleUiState.value.battleState.battleInfo.toMutableList()
+        val currentBattleState = _battleContentUiState.value.battleState.battleInfo.toMutableList()
         val existingRunnerState = currentBattleState.find { it.runnerId == result.runnerId }
 
         val updatedRunnerState = existingRunnerState?.copy(
@@ -191,7 +191,7 @@ class BattleContentViewModel @Inject constructor(
         }
 
         // 업데이트된 상태로 저장
-        _battleUiState.update { state ->
+        _battleContentUiState.update { state ->
             state.copy(
                 battleState = BattleStatus(battleInfo = rankedRunners)
             )
@@ -211,7 +211,7 @@ class BattleContentViewModel @Inject constructor(
             val battleData = getBattleStatusUseCase()
 
             // 생성된 RunnerState 객체들로 BattleState 객체 생성
-            _battleUiState.update { state ->
+            _battleContentUiState.update { state ->
                 state.copy(
                     battleState = battleData
                 )
@@ -231,7 +231,7 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun changeScreenToRunning() {
-        _battleUiState.update { state ->
+        _battleContentUiState.update { state ->
             state.copy(
                 screenState = BattleScreenState.Running
             )
@@ -252,7 +252,7 @@ class BattleContentViewModel @Inject constructor(
     private suspend fun countDown() {
         for (i in COUNTDOWN_SECONDS downTo 0) {
             delay(1000)
-            _battleUiState.update { state ->
+            _battleContentUiState.update { state ->
                 state.copy(
                     timeRemaining = i
                 )
@@ -267,7 +267,7 @@ class BattleContentViewModel @Inject constructor(
 
     private fun handleBattleFinished(runnerId: String) {
         if (runnerId == userId) {  // 내 아이디와 비교하는 작업 수행
-            _battleUiState.update { state ->
+            _battleContentUiState.update { state ->
                 state.copy(
                     isFinished = true,
                     screenState = BattleScreenState.Finish
@@ -297,7 +297,7 @@ class BattleContentViewModel @Inject constructor(
 
     fun getRunnerDistance(): String {
         val runnerStatus =
-            _battleUiState.value.battleState.battleInfo.find { it.runnerId == userId }
+            _battleContentUiState.value.battleState.battleInfo.find { it.runnerId == userId }
         val distance = runnerStatus?.distance?.toInt() ?: 0
         return "${distance}m"
     }

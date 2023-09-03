@@ -2,7 +2,7 @@ package online.partyrun.partyrunapplication.feature.running.battle
 
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 
-data class BattleUiState(
+data class BattleContentUiState(
     // 웹소켓 연결 과정을 진행하고 있는지 여부 판단
     val isConnecting: Boolean = true,
     // 목표 거리에 도달했는지 여부 판단

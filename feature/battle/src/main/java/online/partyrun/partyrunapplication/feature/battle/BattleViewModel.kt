@@ -14,12 +14,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class BattleMainViewModel @Inject constructor(
+class BattleViewModel @Inject constructor(
     private val terminateOngoingBattleUseCase: TerminateOngoingBattleUseCase
 ) : ViewModel() {
 
-    private val _battleMainUiState = MutableStateFlow<BattleMainUiState>(BattleMainUiState.Success)
-    val battleMainUiState = _battleMainUiState.asStateFlow()
+    private val _battleUiState = MutableStateFlow<BattleUiState>(BattleUiState.Success)
+    val battleUiState = _battleUiState.asStateFlow()
 
     private val _kmState = MutableStateFlow(KmState.KM_1)
     val kmState: StateFlow<KmState> = _kmState.asStateFlow()
@@ -55,10 +55,10 @@ class BattleMainViewModel @Inject constructor(
     fun terminateOngoingBattle() = viewModelScope.launch {
         terminateOngoingBattleUseCase().collect { result ->
             result.onSuccess {
-                Timber.tag("BattleMainViewModel").d("현재 진행 중인 배틀이 있다면 종료 요청 성공")
+                Timber.tag("BattleViewModel").d("현재 진행 중인 배틀이 있다면 종료 요청 성공")
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "기존 대결을 종료할 수 없습니다."
-                Timber.tag("BattleMainViewModel").e("$code $errorMessage")
+                Timber.tag("BattleViewModel").e("$code $errorMessage")
             }
         }
     }

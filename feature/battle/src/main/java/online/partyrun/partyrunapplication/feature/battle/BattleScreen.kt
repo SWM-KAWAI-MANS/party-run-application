@@ -45,26 +45,26 @@ private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
 
 @Composable
-fun BattleMainScreen(
+fun BattleScreen(
     modifier: Modifier = Modifier,
-    battleMainViewModel: BattleMainViewModel = hiltViewModel(),
+    battleViewModel: BattleViewModel = hiltViewModel(),
     matchViewModel: MatchViewModel = hiltViewModel(),
     navigateToBattleRunningWithDistance: (Int) -> Unit,
     onShowSnackbar: (String) -> Unit,
 ) {
-    val battleMainUiState by battleMainViewModel.battleMainUiState.collectAsState()
+    val battleUiState by battleViewModel.battleUiState.collectAsState()
     val matchUiState by matchViewModel.matchUiState.collectAsState()
-    val battleMainSnackbarMessage by battleMainViewModel.snackbarMessage.collectAsStateWithLifecycle()
+    val battleSnackbarMessage by battleViewModel.snackbarMessage.collectAsStateWithLifecycle()
     val matchSnackbarMessage by matchViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
-        battleMainUiState = battleMainUiState,
-        battleMainViewModel = battleMainViewModel,
+        battleUiState = battleUiState,
+        battleViewModel = battleViewModel,
         matchViewModel = matchViewModel,
         navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
         matchUiState = matchUiState,
-        battleMainSnackbarMessage = battleMainSnackbarMessage,
+        battleSnackbarMessage = battleSnackbarMessage,
         matchSnackbarMessage = matchSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
@@ -73,25 +73,25 @@ fun BattleMainScreen(
 @Composable
 fun Content(
     modifier: Modifier = Modifier,
-    battleMainUiState: BattleMainUiState,
-    battleMainViewModel: BattleMainViewModel,
+    battleUiState: BattleUiState,
+    battleViewModel: BattleViewModel,
     matchViewModel: MatchViewModel,
     navigateToBattleRunningWithDistance: (Int) -> Unit,
     matchUiState: MatchUiState,
-    battleMainSnackbarMessage: String,
+    battleSnackbarMessage: String,
     matchSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit,
 ) {
     if (matchUiState.isAllRunnersAccepted) {
-        val currentKmState by battleMainViewModel.kmState.collectAsState()
+        val currentKmState by battleViewModel.kmState.collectAsState()
         navigateToBattleRunningWithDistance(currentKmState.toDistance())
         matchViewModel.closeMatchDialog() // 다이얼로그를 닫고 초기화 수행
     }
 
-    LaunchedEffect(battleMainSnackbarMessage) {
-        if (battleMainSnackbarMessage.isNotEmpty()) {
-            onShowSnackbar(battleMainSnackbarMessage)
-            battleMainViewModel.clearSnackbarMessage()
+    LaunchedEffect(battleSnackbarMessage) {
+        if (battleSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(battleSnackbarMessage)
+            battleViewModel.clearSnackbarMessage()
         }
     }
 
@@ -103,15 +103,15 @@ fun Content(
     }
 
     Box(modifier = modifier) {
-        when (battleMainUiState) {
-            is BattleMainUiState.Loading -> LoadingBody()
-            is BattleMainUiState.Success -> BattleMainBody(
-                battleMainViewModel = battleMainViewModel,
+        when (battleUiState) {
+            is BattleUiState.Loading -> LoadingBody()
+            is BattleUiState.Success -> BattleMainBody(
+                battleViewModel = battleViewModel,
                 matchViewModel = matchViewModel,
                 matchUiState = matchUiState
             )
 
-            is BattleMainUiState.LoadFailed -> LoadingBody()
+            is BattleUiState.LoadFailed -> LoadingBody()
         }
     }
 }
@@ -130,7 +130,7 @@ private fun LoadingBody() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BattleMainBody(
-    battleMainViewModel: BattleMainViewModel,
+    battleViewModel: BattleViewModel,
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState
 ) {
@@ -157,7 +157,7 @@ fun BattleMainBody(
 
     BackgroundLayer()
     MainContent(
-        battleMainViewModel,
+        battleViewModel,
         matchUiState,
         matchViewModel,
         permissionState,
@@ -168,7 +168,7 @@ fun BattleMainBody(
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MainContent(
-    battleMainViewModel: BattleMainViewModel,
+    battleViewModel: BattleViewModel,
     matchUiState: MatchUiState,
     matchViewModel: MatchViewModel,
     permissionState: MultiplePermissionsState,
@@ -196,13 +196,13 @@ private fun MainContent(
                 .fillMaxWidth()
                 .weight(1f),
             onLeftClick = {
-                battleMainViewModel.onLeftKmChangeButtonClick()
+                battleViewModel.onLeftKmChangeButtonClick()
             },
             onRightClick = {
-                battleMainViewModel.onRightKmChangeButtonClick()
+                battleViewModel.onRightKmChangeButtonClick()
             }
         ) {
-            TrackImage(battleMainViewModel)
+            TrackImage(battleViewModel)
         }
         Spacer(modifier = Modifier.weight(0.1f))
         PartyRunMatchButton(
@@ -214,7 +214,7 @@ private fun MainContent(
                  * enabled로 할 경우 버튼이 사라지는 현상 방지
                  */
                 if (permissionState.allPermissionsGranted && isDebounced(System.currentTimeMillis()) && matchUiState.isMatchingBtnEnabled) {
-                    matchingAction(matchViewModel, battleMainViewModel.kmState.value)
+                    matchingAction(matchViewModel, battleViewModel.kmState.value)
                 } else {
                     matchViewModel.closeMatchDialog()
                     showPermissionDialog.value = true
@@ -247,8 +247,8 @@ private fun BackgroundLayer() {
 }
 
 @Composable
-private fun TrackImage(battleMainViewModel: BattleMainViewModel) {
-    val currentKmState by battleMainViewModel.kmState.collectAsStateWithLifecycle()
+private fun TrackImage(battleViewModel: BattleViewModel) {
+    val currentKmState by battleViewModel.kmState.collectAsStateWithLifecycle()
 
     val imageRes = when (currentKmState) {
         KmState.KM_1 -> R.drawable.track_1km

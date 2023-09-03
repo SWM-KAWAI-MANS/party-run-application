@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.battle
+package online.partyrun.partyrunapplication.feature.running.permission
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedButton
+import online.partyrun.partyrunapplication.feature.running.R
 
 @Composable
 fun PermissionDialog(

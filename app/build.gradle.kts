@@ -175,5 +175,8 @@ dependencies {
     // Lottie
     implementation (libs.lottie.compose)
 
+    // In-App-Update
+    implementation(libs.google.`in`.app.update)
+    implementation(libs.google.`in`.app.update.ktx)
 }
 tasks.register("prepareKotlinBuildScriptModel"){}

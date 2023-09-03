@@ -20,6 +20,7 @@ androidxMeterialCore = "1.4.3"
 exoplayer = "2.18.7"
 timber = "5.0.1"
 stomp = "2.0.5"
+inAppUpdate = "2.1.0"
 mockito = "4.11.0"
 mockk = "1.13.54"
 lottie = "6.0.0"
@@ -34,7 +35,7 @@ firebaseCrashlyticsPlugin = "2.9.2"
 firebasePerfPlugin = "1.4.2"
 firebaseAuth = "22.0.0"
 accompanistPermission = "0.25.1"
-firebaseStroage ="20.2.0"
+firebaseStroage = "20.2.0"
 gmsPlugin = "4.3.15"
 composeMap = "2.8.0"
 gmsMap = "18.1.0"
@@ -60,7 +61,7 @@ secrets = "2.0.1"
 # android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom"}
+kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
 androidx-lifecycle-viwemodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viwemodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -90,13 +91,13 @@ androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espres
 androidx-test-ext = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExt" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
-androidx-test-truth = { group = "androidx.test.ext", name = "truth", version.ref = "androidxTestTruth"}
+androidx-test-truth = { group = "androidx.test.ext", name = "truth", version.ref = "androidxTestTruth" }
 
 # compose splashscreen
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 
 # timber
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # dataStore
 androidx-dataStore-core = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDataStore" }
@@ -115,10 +116,10 @@ coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 coil-kt-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 # ExoPlayer
-exo-player = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer"}
+exo-player = { group = "com.google.android.exoplayer", name = "exoplayer", version.ref = "exoplayer" }
 
 # Lottie
-lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie"}
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 # protobuf
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
@@ -134,14 +135,16 @@ firebase-auth = { module = "com.google.firebase:firebase-auth-ktx", version.ref 
 firebase-storage = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStroage" }
 google-service = { group = "com.google.gms", name = "google-services", version.ref = "gmsPlugin" }
 google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "gmsAuth" }
-google-accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermission"}
+google-accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermission" }
+google-in-app-update = { group = "com.google.android.play", name = "app-update", version.ref = "inAppUpdate" }
+google-in-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "inAppUpdate" }
 
 # maps
-google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "composeMap"}
-google-maps =  { group = "com.google.android.gms", name = "play-services-maps", version.ref = "gmsMap"}
-google-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "gmsLocation"}
-google-maps-sdk = { group = "com.google.maps.android", name = "maps-ktx", version.ref = "gmsMapKtx"}
-google-maps-utility = { group = "com.google.maps.android", name = "maps-utils-ktx", version.ref = "gmsMapKtx"}
+google-maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "composeMap" }
+google-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "gmsMap" }
+google-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "gmsLocation" }
+google-maps-sdk = { group = "com.google.maps.android", name = "maps-ktx", version.ref = "gmsMapKtx" }
+google-maps-utility = { group = "com.google.maps.android", name = "maps-utils-ktx", version.ref = "gmsMapKtx" }
 
 # coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
@@ -150,7 +153,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-playservices = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
 
 # gson
-gson-code = { group = "com.google.code.gson", name = "gson", version.ref = "gson"}
+gson-code = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
@@ -161,20 +164,20 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 # okhttp, retrofit
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
-okhttp-sse = { group = "com.squareup.okhttp3", name = "okhttp-sse", version.ref = "sse"}
+okhttp-sse = { group = "com.squareup.okhttp3", name = "okhttp-sse", version.ref = "sse" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializationJson" }
 
 # stomp
-stomp-github = { module = "com.github.bishoybasily:stomp", version.ref = "stomp"}
+stomp-github = { module = "com.github.bishoybasily:stomp", version.ref = "stomp" }
 
 # mock server
-mockserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref ="mock"}
+mockserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mock" }
 
 # mockito
-mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito"}
-mockito-inline = { group = 'org.mockito', name = 'mockito-inline', version.ref = "mockito"}
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-inline = { group = 'org.mockito', name = 'mockito-inline', version.ref = "mockito" }
 
 # room
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

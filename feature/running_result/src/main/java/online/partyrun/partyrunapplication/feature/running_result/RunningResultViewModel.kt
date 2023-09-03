@@ -32,7 +32,7 @@ class RunningResultViewModel @Inject constructor(
         getBattleResult()
     }
 
-    private fun getBattleResult() {
+    fun getBattleResult() {
         viewModelScope.launch {
             val battleData = getBattleStatusUseCase()
             val userId = getUserIdUseCase()

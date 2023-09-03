@@ -71,6 +71,7 @@ fun RunningResultScreen(
     Content(
         modifier = modifier,
         runningResultUiState = runningResultUiState,
+        runningResultViewModel = runningResultViewModel,
         navigateToTopLevel = navigateToTopLevel
     )
 }
@@ -79,6 +80,7 @@ fun RunningResultScreen(
 private fun Content(
     modifier: Modifier = Modifier,
     runningResultUiState: RunningResultUiState,
+    runningResultViewModel: RunningResultViewModel,
     navigateToTopLevel: () -> Unit,
 ) {
     Box(modifier = modifier) {
@@ -90,7 +92,10 @@ private fun Content(
                     navigateToTopLevel = navigateToTopLevel
                 )
 
-            is RunningResultUiState.LoadFailed -> LoadingBody()
+            is RunningResultUiState.LoadFailed ->
+                LoadFailedBody(
+                    runningResultViewModel = runningResultViewModel
+                )
         }
     }
 }
@@ -103,6 +108,27 @@ private fun LoadingBody() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun LoadFailedBody(
+    runningResultViewModel: RunningResultViewModel
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PartyRunGradientButton(
+            onClick = { runningResultViewModel.getBattleResult() }
+        ) {
+            Text(
+                text = stringResource(id = R.string.re_loading),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }
 

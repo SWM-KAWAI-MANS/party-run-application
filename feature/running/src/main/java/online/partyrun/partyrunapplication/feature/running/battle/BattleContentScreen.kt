@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -79,6 +80,9 @@ fun Content(
     battleContentSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as? Activity
+
     // 사용자가 선택한 거리를 전달받아서 BattleUiState에 업데이트
     LaunchedEffect(targetDistance) {
         targetDistance?.let { distance ->
@@ -88,6 +92,7 @@ fun Content(
 
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     RunningBackNavigationHandler(
+        activity = activity,
         battleContentViewModel = battleContentViewModel,
         openRunningExitDialog = openRunningExitDialog,
     )
@@ -191,12 +196,27 @@ private fun setOrDisposeBattleRunning(
 
 @Composable
 fun RunningBackNavigationHandler(
+    activity: Activity?,
     battleContentViewModel: BattleContentViewModel,
     openRunningExitDialog: MutableState<Boolean>
 ) {
-    val context = LocalContext.current
-    val activity = context as? Activity
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val onBackPressedCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                openRunningExitDialog.value = true
+            }
+        }
+    }
+
+    // lifecycleOwner와 backDispatcher가 변경될 때마다 실행
+    DisposableEffect(lifecycleOwner, onBackPressedDispatcher) {
+        onBackPressedDispatcher?.addCallback(lifecycleOwner, onBackPressedCallback)
+        onDispose {
+            onBackPressedCallback.remove()
+        }
+    }
 
     RunningExitConfirmationDialog(
         openRunningExitDialog = openRunningExitDialog,
@@ -211,18 +231,6 @@ fun RunningBackNavigationHandler(
             it.finish()
             it.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
-    }
-
-    DisposableEffect(Unit) {
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                openRunningExitDialog.value = true
-            }
-        }
-
-        onBackPressedDispatcher?.addCallback(onBackPressedCallback)
-
-        onDispose { onBackPressedCallback.remove() }
     }
 }
 

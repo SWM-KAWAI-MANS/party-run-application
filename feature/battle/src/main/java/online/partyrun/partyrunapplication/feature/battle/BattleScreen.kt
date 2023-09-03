@@ -40,6 +40,7 @@ import online.partyrun.partyrunapplication.core.ui.KmInfoCard
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
+import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
 
 private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds

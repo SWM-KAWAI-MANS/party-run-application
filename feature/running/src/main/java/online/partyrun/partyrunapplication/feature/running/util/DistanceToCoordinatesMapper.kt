@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.battle.util
+package online.partyrun.partyrunapplication.feature.running.util
 
 /**
  * 비율 기반 거리 매핑 함수

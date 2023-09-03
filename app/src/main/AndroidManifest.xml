@@ -45,7 +45,7 @@
         </activity>
 
         <service
-            android:name=".feature.running.battle.RunningService"
+            android:name=".feature.running.service.BattleRunningService"
             android:foregroundServiceType="location" />
     </application>
 

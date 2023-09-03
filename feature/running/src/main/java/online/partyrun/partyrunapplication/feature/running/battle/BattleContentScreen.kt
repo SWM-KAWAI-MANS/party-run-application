@@ -37,9 +37,10 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedButton
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
-import online.partyrun.partyrunapplication.feature.running.battle.finish.FinishScreen
-import online.partyrun.partyrunapplication.feature.running.battle.ready.BattleReadyScreen
-import online.partyrun.partyrunapplication.feature.running.battle.running.BattleRunningScreen
+import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
+import online.partyrun.partyrunapplication.feature.running.ready.BattleReadyScreen
+import online.partyrun.partyrunapplication.feature.running.running.BattleRunningScreen
+import online.partyrun.partyrunapplication.feature.running.service.BattleRunningService
 
 @Composable
 fun BattleContentScreen(
@@ -177,13 +178,13 @@ private fun setOrDisposeBattleRunning(
     // Foreground Service 시작/중지
     if (isStarting) {
         viewModel.initBattleState() // 러너 데이터를 기반으로 BattleState를 초기화하고 시작
-        val intent = Intent(context, RunningService::class.java).apply {
+        val intent = Intent(context, BattleRunningService::class.java).apply {
             putExtra(BATTLE_ID_KEY, battleId)
         }
         intent.action = ACTION_START_RUNNING
         context.startService(intent)
     } else {
-        val intent = Intent(context, RunningService::class.java)
+        val intent = Intent(context, BattleRunningService::class.java)
         intent.action = ACTION_STOP_RUNNING
         context.stopService(intent)
     }

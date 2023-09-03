@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.battle
+package online.partyrun.partyrunapplication.feature.running.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -40,7 +40,7 @@ import kotlin.math.ceil
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class RunningService : Service() {
+class BattleRunningService : Service() {
     companion object {
         const val LOCATION_UPDATE_INTERVAL_SECONDS = 1L
         private const val THRESHOLD = 0.05

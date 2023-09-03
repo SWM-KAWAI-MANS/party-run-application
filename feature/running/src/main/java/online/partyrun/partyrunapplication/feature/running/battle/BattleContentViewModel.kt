@@ -25,7 +25,7 @@ import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
-import online.partyrun.partyrunapplication.feature.running.battle.util.distanceToCoordinatesMapper
+import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
 import timber.log.Timber
 import java.net.ConnectException
 import java.time.LocalDateTime

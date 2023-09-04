@@ -22,6 +22,7 @@ object PartyRunIcons {
     val Menu = R.drawable.ic_round_menu_24
     val Close = R.drawable.ic_round_close_24
     val Add = R.drawable.ic_round_add_24
+    val Remove = R.drawable.ic_round_remove_24
     val CheckCircle = R.drawable.ic_round_check_circle_outline_24
     val AddCircle = R.drawable.ic_round_add_circle_outline_24
     val RemoveCircle = R.drawable.ic_round_remove_circle_outline_24

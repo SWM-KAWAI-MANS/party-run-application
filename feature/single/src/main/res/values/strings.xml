@@ -3,4 +3,13 @@
     <string name="single_preparing_service_comment_1">싱글 서비스 준비 중</string>
     <string name="single_preparing_service_comment_2">이전에 뛴 나의 기록과 실시간으로 함께 달리는 서비스를 제공할 예정이에요.</string>
 
+    <string name="single_start">시작</string>
+    <string name="single_headline_1">함께 뛸 그림자 러너의 목표를 설정하고</string>
+    <string name="single_headline_2">대결에서 승리하세요!</string>
+
+    <string name="target_distance">목표 거리</string>
+    <string name="target_time">목표 시간</string>
+    <string name="target_distance_unit">KM</string>
+    <string name="target_time_unit">분</string>
+
 </resources>

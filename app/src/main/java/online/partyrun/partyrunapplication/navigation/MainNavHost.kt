@@ -54,7 +54,9 @@ fun SetUpMainNavGraph(
             onShowSnackbar = onShowSnackbar
         )
 
-        singleRoute()
+        singleRoute(
+            onShowSnackbar = onShowSnackbar
+        )
 
         challengeRoute()
 

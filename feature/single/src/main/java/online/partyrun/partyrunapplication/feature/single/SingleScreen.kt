@@ -1,5 +1,7 @@
 package online.partyrun.partyrunapplication.feature.single
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,11 +31,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunCircularIconButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.ui.HeadLine
+import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
+
+private var lastClickTime = 0L
+private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
 
 @Composable
 fun SingleScreen(
@@ -97,22 +109,41 @@ private fun LoadingBody() {
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SingleMainBody(
     singleViewModel: SingleViewModel,
     targetDistance: Int,
     targetTime: Int
 ) {
+    val showPermissionDialog = remember { mutableStateOf(false) }
+
+    val permissionsList = listOfNotNull(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
+    )
+    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+
+    HandlePermissionActions(
+        permissionState = permissionState,
+        showPermissionDialog = showPermissionDialog
+    )
+
     SingleContent(
         singleViewModel = singleViewModel,
+        permissionState = permissionState,
+        showPermissionDialog = showPermissionDialog,
         targetDistance = targetDistance,
         targetTime = targetTime
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun SingleContent(
     singleViewModel: SingleViewModel,
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>,
     targetDistance: Int,
     targetTime: Int
 ) {
@@ -179,7 +210,13 @@ private fun SingleContent(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape),
-                onClick = { /*TODO*/ }
+                onClick = {
+                    if (shouldExecuteStartAction(permissionState)) {
+                        // TODO: 싱글모드 수행
+                    } else {
+                        showPermissionDialog.value = true
+                    }
+                }
             ) {
                 Text(
                     text = stringResource(R.string.single_start)
@@ -219,6 +256,7 @@ private fun TargetTimeSetting(singleViewModel: SingleViewModel, targetTime: Int)
         onDecrement = { singleViewModel.decrementTargetTime() }
     )
 }
+
 
 @Composable
 private fun TargetSettingRow(
@@ -275,5 +313,40 @@ private fun TargetSettingRow(
                 contentDescription = null
             )
         }
+    }
+}
+
+/**
+ * shouldExecuteStartAction 러닝이 가능한 상태인지에 대한 여부 파악
+ * 러닝을 위한 모든 권한이 부여됐는지 파악
+ */
+@OptIn(ExperimentalPermissionsApi::class)
+private fun shouldExecuteStartAction(
+    permissionState: MultiplePermissionsState
+): Boolean {
+    return permissionState.allPermissionsGranted &&
+            isDebounced(System.currentTimeMillis())
+}
+
+fun isDebounced(currentTime: Long): Boolean {
+    if (currentTime - lastClickTime > DEBOUNCE_DURATION) {
+        lastClickTime = currentTime
+        return true
+    }
+    return false
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun HandlePermissionActions(
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>
+) {
+    if (showPermissionDialog.value) {
+        CheckMultiplePermissions(
+            permissionState = permissionState,
+            onPermissionResult = { if (it) showPermissionDialog.value = false },
+            showPermissionDialog = showPermissionDialog
+        )
     }
 }

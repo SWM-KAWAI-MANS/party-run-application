@@ -13,4 +13,7 @@ dependencies {
     // Timber
     implementation (libs.timber)
 
+    implementation(libs.google.accompanist.permission)
+
+    implementation(project(":feature:running"))
 }

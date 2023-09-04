@@ -234,9 +234,9 @@ private fun TargetDistanceSetting(
     val displayTargetDistance =
         String.format("%04.2f", (targetDistance.toFloat() / 1000f) * 100f / 100)
     TargetSettingRow(
-        title = "목표 거리",
+        title = stringResource(id = R.string.target_distance),
         displayValue = displayTargetDistance,
-        unit = "KM",
+        unit = stringResource(id = R.string.target_distance_unit),
         onIncrement = { singleViewModel.incrementTargetDistance() },
         onDecrement = { singleViewModel.decrementTargetDistance() }
     )
@@ -249,14 +249,13 @@ private fun TargetTimeSetting(singleViewModel: SingleViewModel, targetTime: Int)
     val displayTargetTime = String.format("%02d.%02d", hours, minutes)
 
     TargetSettingRow(
-        title = "목표 시간",
+        title = stringResource(id = R.string.target_time),
         displayValue = displayTargetTime,
-        unit = "분",
+        unit = stringResource(id = R.string.target_time_unit),
         onIncrement = { singleViewModel.incrementTargetTime() },
         onDecrement = { singleViewModel.decrementTargetTime() }
     )
 }
-
 
 @Composable
 private fun TargetSettingRow(

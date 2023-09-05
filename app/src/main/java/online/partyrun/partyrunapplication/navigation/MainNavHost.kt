@@ -19,11 +19,12 @@ import online.partyrun.partyrunapplication.R
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBar
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunNavigationBarItem
 import online.partyrun.partyrunapplication.core.navigation.battle.battleRoute
-import online.partyrun.partyrunapplication.core.navigation.battle_running.battleRunningRoute
+import online.partyrun.partyrunapplication.core.navigation.running.battleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRoute
 import online.partyrun.partyrunapplication.core.navigation.main.BottomNavBarItems
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
+import online.partyrun.partyrunapplication.core.navigation.running.singleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
 import online.partyrun.partyrunapplication.core.navigation.settings.SettingsNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.settings.settingsRoute
@@ -55,6 +56,13 @@ fun SetUpMainNavGraph(
         )
 
         singleRoute(
+            navigateToSingleRunningWithDistanceAndTime = { distance, time ->
+                navController.navigate("${MainNavRoutes.SingleRunning.route}?distance=$distance&time=$time") {
+                    popUpTo(MainNavRoutes.Single.route) {
+                        inclusive = false
+                    }
+                }
+            },
             onShowSnackbar = onShowSnackbar
         )
 
@@ -94,6 +102,17 @@ fun SetUpMainNavGraph(
             navigationToRunningResult = {
                 navController.navigate(MainNavRoutes.RunningResult.route) {
                     popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            onShowSnackbar = onShowSnackbar
+        )
+
+        singleRunningRoute(
+            navigationToRunningResult = {
+                navController.navigate(MainNavRoutes.RunningResult.route) {
+                    popUpTo(MainNavRoutes.Single.route) {
                         inclusive = false
                     }
                 }

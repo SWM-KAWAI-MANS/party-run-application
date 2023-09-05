@@ -28,3 +28,30 @@ fun NavGraphBuilder.battleRunningRoute(
         )
     }
 }
+
+fun NavGraphBuilder.singleRunningRoute(
+    navigationToRunningResult: () -> Unit,
+    onShowSnackbar: (String) -> Unit
+) {
+    composable(
+        route = "${MainNavRoutes.SingleRunning.route}?distance={distance}&time={time}",
+        arguments = listOf(
+            navArgument("distance") {
+                type = NavType.IntType
+                defaultValue = 0
+            },
+            navArgument("time") {
+                type = NavType.IntType
+                defaultValue = 0
+            }
+        )
+    ) { backStackEntry ->
+        val distance = backStackEntry.arguments?.getInt("distance")
+        val time = backStackEntry.arguments?.getInt("time")
+        SingleContentScreen(
+            targetDistance = distance,
+            targetTime = time,
+            onShowSnackbar = onShowSnackbar
+        )
+    }
+}

@@ -22,6 +22,12 @@ class SingleContentViewModel @Inject constructor(
     private val _singleContentUiState = MutableStateFlow(SingleContentUiState())
     val singleContentUiState: StateFlow<SingleContentUiState> = _singleContentUiState
 
+    private val _snackbarMessage = MutableStateFlow("")
+    val snackbarMessage: StateFlow<String> = _snackbarMessage
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
 
     suspend fun countDownWhenReady() {
         withContext(Dispatchers.Main) {

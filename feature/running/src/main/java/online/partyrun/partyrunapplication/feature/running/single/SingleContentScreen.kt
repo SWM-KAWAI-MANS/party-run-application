@@ -21,27 +21,48 @@ import online.partyrun.partyrunapplication.feature.running.service.SingleRunning
 
 @Composable
 fun SingleContentScreen(
+    targetDistance: Int?,
+    targetTime: Int?,
+    navigateToRunningResult: () -> Unit = {},
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
     val singleContentUiState by singleContentViewModel.singleContentUiState.collectAsStateWithLifecycle()
+    val singleContentSnackbarMessage by singleContentViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
+        targetDistance = targetDistance,
+        targetTime = targetTime,
         singleContentViewModel = singleContentViewModel,
         singleContentUiState = singleContentUiState,
+        singleContentSnackbarMessage = singleContentSnackbarMessage,
+        onShowSnackbar = onShowSnackbar
     )
 }
 
 @Composable
 fun Content(
+    targetDistance: Int?,
+    targetTime: Int?,
     singleContentViewModel: SingleContentViewModel,
     singleContentUiState: SingleContentUiState,
+    singleContentSnackbarMessage: String,
+    onShowSnackbar: (String) -> Unit
 ) {
 
+    // 대결 모드과는 다르게 다른 사용자의 입장을 기다릴 필요가 없으므로 카운트다운 바로 시작
     LaunchedEffect(Unit) {
         singleContentViewModel.countDownWhenReady()
     }
 
-    CheckStartTime(singleContentUiState)
+    LaunchedEffect(singleContentSnackbarMessage) {
+        if (singleContentSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(singleContentSnackbarMessage)
+            singleContentViewModel.clearSnackbarMessage()
+        }
+    }
+
+    CheckStartTime(singleContentUiState, singleContentViewModel)
 
     Column(
         modifier = Modifier
@@ -59,29 +80,33 @@ fun Content(
 
 @Composable
 private fun CheckStartTime(
-    singleContentUiState: SingleContentUiState
+    singleContentUiState: SingleContentUiState,
+    singleContentViewModel: SingleContentViewModel,
 ) {
     when (singleContentUiState.timeRemaining) {
         in 1..5 -> CountdownDialog(timeRemaining = singleContentUiState.timeRemaining)
-        0 -> StartSingleRunning()
+        0 -> StartSingleRunning(singleContentViewModel)
     }
 }
 
 @Composable
-private fun StartSingleRunning() {
+private fun StartSingleRunning(
+    singleContentViewModel: SingleContentViewModel,
+) {
     val context = LocalContext.current
 
     DisposableEffect(Unit) {
-        setOrDisposeSingleRunning(true, context)
+        setOrDisposeSingleRunning(true, singleContentViewModel, context)
 
         onDispose {
-            setOrDisposeSingleRunning(false, context)
+            setOrDisposeSingleRunning(false, singleContentViewModel, context)
         }
     }
 }
 
 private fun setOrDisposeSingleRunning(
     isStarting: Boolean,
+    singleContentViewModel: SingleContentViewModel,
     context: Context
 ) {
     // Foreground Service 시작/중지

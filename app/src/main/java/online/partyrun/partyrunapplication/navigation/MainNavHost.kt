@@ -109,7 +109,16 @@ fun SetUpMainNavGraph(
             onShowSnackbar = onShowSnackbar
         )
 
-        singleRunningRoute()
+        singleRunningRoute(
+            navigationToRunningResult = {
+                navController.navigate(MainNavRoutes.RunningResult.route) {
+                    popUpTo(MainNavRoutes.Single.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            onShowSnackbar = onShowSnackbar
+        )
 
         runningResultRoute(
             navigateToTopLevel = {

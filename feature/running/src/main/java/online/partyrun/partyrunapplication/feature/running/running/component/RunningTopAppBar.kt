@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.running
+package online.partyrun.partyrunapplication.feature.running.running.component
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon

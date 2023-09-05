@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.running
+package online.partyrun.partyrunapplication.feature.running.running.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

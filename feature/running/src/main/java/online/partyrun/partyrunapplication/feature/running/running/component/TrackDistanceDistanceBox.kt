@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running.running
+package online.partyrun.partyrunapplication.feature.running.running.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

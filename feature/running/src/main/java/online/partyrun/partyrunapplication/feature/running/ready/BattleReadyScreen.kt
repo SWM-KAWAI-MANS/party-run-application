@@ -63,7 +63,7 @@ fun ReadyInfo() {
                 .align(Alignment.TopCenter)
         ) {
             Text(
-                text = stringResource(id = R.string.comment_before_starts),
+                text = stringResource(id = R.string.battle_comment_before_starts),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )

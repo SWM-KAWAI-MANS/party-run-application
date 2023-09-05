@@ -36,6 +36,13 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
+    fun updateSelectedDistanceAndTime(distance: Int, time: Int) {
+        _singleContentUiState.value =
+            _singleContentUiState.value.copy(
+                selectedDistance = distance,
+                selectedTime = time
+            )
+    }
 
     private suspend fun countDown() {
         delay(300) // UI 확인 시간

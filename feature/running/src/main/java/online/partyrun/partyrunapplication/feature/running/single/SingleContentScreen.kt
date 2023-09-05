@@ -62,6 +62,15 @@ fun Content(
         }
     }
 
+    // 사용자가 선택한 거리와 시간을 전달 받아 SingleUiState에 업데이트
+    LaunchedEffect(targetDistance, targetTime) {
+        targetTime?.also { targetTime ->
+            targetDistance?.also { targetDistance ->
+                singleContentViewModel.updateSelectedDistanceAndTime(targetDistance, targetTime)
+            }
+        }
+    }
+
     CheckStartTime(singleContentUiState, singleContentViewModel)
 
     Column(

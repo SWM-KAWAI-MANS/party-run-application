@@ -1,21 +1,30 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
+import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
+import online.partyrun.partyrunapplication.feature.running.running.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
 
@@ -29,12 +38,14 @@ fun SingleContentScreen(
 ) {
     val singleContentUiState by singleContentViewModel.singleContentUiState.collectAsStateWithLifecycle()
     val singleContentSnackbarMessage by singleContentViewModel.snackbarMessage.collectAsStateWithLifecycle()
+    val openRunningExitDialog = remember { mutableStateOf(false) }
 
     Content(
         targetDistance = targetDistance,
         targetTime = targetTime,
         singleContentViewModel = singleContentViewModel,
         singleContentUiState = singleContentUiState,
+        openRunningExitDialog = openRunningExitDialog,
         singleContentSnackbarMessage = singleContentSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
@@ -46,9 +57,12 @@ fun Content(
     targetTime: Int?,
     singleContentViewModel: SingleContentViewModel,
     singleContentUiState: SingleContentUiState,
+    openRunningExitDialog: MutableState<Boolean>,
     singleContentSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val activity = context as? Activity
 
     // 대결 모드과는 다르게 다른 사용자의 입장을 기다릴 필요가 없으므로 카운트다운 바로 시작
     LaunchedEffect(Unit) {
@@ -70,6 +84,13 @@ fun Content(
             }
         }
     }
+
+    // 대결 중 BackPressed 수행 시 처리할 핸들러
+    RunningBackNavigationHandler(
+        activity = activity,
+        singleContentViewModel = singleContentViewModel,
+        openRunningExitDialog = openRunningExitDialog
+    )
 
     CheckStartTime(singleContentUiState, singleContentViewModel)
 
@@ -127,5 +148,44 @@ private fun setOrDisposeSingleRunning(
         val intent = Intent(context, SingleRunningService::class.java)
         intent.action = Constants.ACTION_STOP_RUNNING
         context.stopService(intent)
+    }
+}
+
+@Composable
+fun RunningBackNavigationHandler(
+    activity: Activity?,
+    singleContentViewModel: SingleContentViewModel,
+    openRunningExitDialog: MutableState<Boolean>
+) {
+    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val onBackPressedCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                openRunningExitDialog.value = true
+            }
+        }
+    }
+
+    // lifecycleOwner와 backDispatcher가 변경될 때마다 실행
+    DisposableEffect(lifecycleOwner, onBackPressedDispatcher) {
+        onBackPressedDispatcher?.addCallback(lifecycleOwner, onBackPressedCallback)
+        onDispose {
+            onBackPressedCallback.remove()
+        }
+    }
+
+    RunningExitConfirmationDialog(
+        openRunningExitDialog = openRunningExitDialog,
+    ) {
+        // 액티비티 재시작
+        activity?.let {
+            val intent = it.intent
+            it.startActivity(intent)
+            it.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+
+            it.finish()
+            it.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
     }
 }

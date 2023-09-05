@@ -24,7 +24,7 @@ import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
-import online.partyrun.partyrunapplication.feature.running.running.RunningExitConfirmationDialog
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
 
@@ -101,7 +101,10 @@ fun Content(
         when (singleContentUiState.screenState) {
             is SingleScreenState.Ready -> SingleReadyScreen()
             is SingleScreenState.Running ->
-                SingleRunningScreen()
+                SingleRunningScreen(
+                    singleContentUiState = singleContentUiState,
+                    openRunningExitDialog = openRunningExitDialog
+                )
 
             SingleScreenState.Finish -> FinishScreen()
         }
@@ -141,6 +144,7 @@ private fun setOrDisposeSingleRunning(
 ) {
     // Foreground Service 시작/중지
     if (isStarting) {
+        singleContentViewModel.initSingleState() // 사용자와 로봇 데이터 초기화
         val intent = Intent(context, SingleRunningService::class.java)
         intent.action = Constants.ACTION_START_RUNNING
         context.startService(intent)

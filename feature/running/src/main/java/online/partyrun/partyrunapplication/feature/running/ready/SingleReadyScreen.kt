@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,39 +19,24 @@ import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.feature.running.R
 
 @Composable
-fun BattleReadyScreen(
-    isConnecting: Boolean
+fun SingleReadyScreen(
+
 ) {
-    ReadyScreenContent(isConnecting = isConnecting)
+    ReadyScreenContent()
 }
 
 @Composable
-fun ReadyScreenContent(isConnecting: Boolean) {
+fun ReadyScreenContent() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        if (isConnecting) {
-            ConnectingIndicator()
-        } else {
-            ReadyInfo()
-        }
+        SingleReadyInfo()
     }
 }
 
 @Composable
-fun ConnectingIndicator() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-fun ReadyInfo() {
+fun SingleReadyInfo() {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -63,20 +47,20 @@ fun ReadyInfo() {
                 .align(Alignment.TopCenter)
         ) {
             Text(
-                text = stringResource(id = R.string.battle_comment_before_starts),
+                text = stringResource(id = R.string.single_comment_before_starts),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.size(10.dp))
             Text(
-                text = stringResource(id = R.string.configuring_tracks),
+                text = stringResource(id = R.string.configuring_robot),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
         LottieImage(
             modifier = Modifier.padding(top = 150.dp),
-            rawAnimation = R.raw.ready
+            rawAnimation = R.raw.single_ready
         )
     }
 }

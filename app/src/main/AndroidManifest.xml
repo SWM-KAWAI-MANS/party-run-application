@@ -43,9 +43,14 @@
             android:theme="@style/Theme.PartyRunApplication"
             android:launchMode="singleTop">
         </activity>
-
+        <service
+            android:name=".feature.running.service.BaseRunningService"
+            android:foregroundServiceType="location" />
         <service
             android:name=".feature.running.service.BattleRunningService"
+            android:foregroundServiceType="location" />
+        <service
+            android:name=".feature.running.service.SingleRunningService"
             android:foregroundServiceType="location" />
     </application>
 

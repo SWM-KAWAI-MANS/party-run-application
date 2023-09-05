@@ -47,6 +47,7 @@ private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
 @Composable
 fun SingleScreen(
     modifier: Modifier = Modifier,
+    navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
     singleViewModel: SingleViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
@@ -61,6 +62,7 @@ fun SingleScreen(
         singleViewModel = singleViewModel,
         targetDistance = targetDistance,
         targetTime = targetTime,
+        navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime,
         singleSnackbarMessage = singleSnackbarMessage,
         onShowSnackbar = onShowSnackbar
     )
@@ -73,10 +75,10 @@ fun Content(
     singleViewModel: SingleViewModel,
     targetDistance: Int,
     targetTime: Int,
+    navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
     singleSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
-
     LaunchedEffect(singleSnackbarMessage) {
         if (singleSnackbarMessage.isNotEmpty()) {
             onShowSnackbar(singleSnackbarMessage)
@@ -90,7 +92,8 @@ fun Content(
             is SingleUiState.Success -> SingleMainBody(
                 singleViewModel = singleViewModel,
                 targetDistance = targetDistance,
-                targetTime = targetTime
+                targetTime = targetTime,
+                navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
             )
 
             is SingleUiState.LoadFailed -> LoadingBody()
@@ -114,7 +117,8 @@ private fun LoadingBody() {
 fun SingleMainBody(
     singleViewModel: SingleViewModel,
     targetDistance: Int,
-    targetTime: Int
+    targetTime: Int,
+    navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
     val showPermissionDialog = remember { mutableStateOf(false) }
 
@@ -134,7 +138,8 @@ fun SingleMainBody(
         permissionState = permissionState,
         showPermissionDialog = showPermissionDialog,
         targetDistance = targetDistance,
-        targetTime = targetTime
+        targetTime = targetTime,
+        navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
     )
 }
 
@@ -145,9 +150,9 @@ private fun SingleContent(
     permissionState: MultiplePermissionsState,
     showPermissionDialog: MutableState<Boolean>,
     targetDistance: Int,
-    targetTime: Int
+    targetTime: Int,
+    navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -184,8 +189,7 @@ private fun SingleContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TargetDistanceSetting(
-                        singleViewModel = singleViewModel,
-                        targetDistance = targetDistance
+                        singleViewModel = singleViewModel
                     )
                 }
                 Column(
@@ -193,8 +197,7 @@ private fun SingleContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TargetTimeSetting(
-                        singleViewModel = singleViewModel,
-                        targetTime = targetTime
+                        singleViewModel = singleViewModel
                     )
                 }
             }
@@ -212,7 +215,10 @@ private fun SingleContent(
                     .clip(CircleShape),
                 onClick = {
                     if (shouldExecuteStartAction(permissionState)) {
-                        // TODO: 싱글모드 수행
+                        navigateToSingleRunningWithDistanceAndTime(
+                            targetDistance,
+                            targetTime
+                        )
                     } else {
                         showPermissionDialog.value = true
                     }
@@ -228,11 +234,10 @@ private fun SingleContent(
 
 @Composable
 private fun TargetDistanceSetting(
-    singleViewModel: SingleViewModel,
-    targetDistance: Int
+    singleViewModel: SingleViewModel
 ) {
-    val displayTargetDistance =
-        String.format("%04.2f", (targetDistance.toFloat() / 1000f) * 100f / 100)
+    val displayTargetDistance = singleViewModel.getFormattedTargetDistance()
+
     TargetSettingRow(
         title = stringResource(id = R.string.target_distance),
         displayValue = displayTargetDistance,
@@ -243,10 +248,10 @@ private fun TargetDistanceSetting(
 }
 
 @Composable
-private fun TargetTimeSetting(singleViewModel: SingleViewModel, targetTime: Int) {
-    val hours = targetTime / 60
-    val minutes = targetTime % 60
-    val displayTargetTime = String.format("%02d.%02d", hours, minutes)
+private fun TargetTimeSetting(
+    singleViewModel: SingleViewModel
+) {
+    val displayTargetTime = singleViewModel.getFormattedTargetTime()
 
     TargetSettingRow(
         title = stringResource(id = R.string.target_time),
@@ -321,7 +326,7 @@ private fun TargetSettingRow(
  */
 @OptIn(ExperimentalPermissionsApi::class)
 private fun shouldExecuteStartAction(
-    permissionState: MultiplePermissionsState
+    permissionState: MultiplePermissionsState,
 ): Boolean {
     return permissionState.allPermissionsGranted &&
             isDebounced(System.currentTimeMillis())

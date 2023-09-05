@@ -7,37 +7,26 @@ import android.os.Looper
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.Constants
-import online.partyrun.partyrunapplication.core.common.Constants.BATTLE_ID_KEY
-import online.partyrun.partyrunapplication.core.common.Constants.NOTIFICATION_ID
-import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
 import online.partyrun.partyrunapplication.core.model.running.GpsData
-import online.partyrun.partyrunapplication.core.model.running.RecordData
 import java.time.LocalDateTime
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class BattleRunningService : BaseRunningService() {
-
-    @Inject
-    lateinit var sendRecordDataUseCase: SendRecordDataUseCase
+class SingleRunningService : BaseRunningService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            Constants.ACTION_START_RUNNING -> startRunningService(intent)
+            Constants.ACTION_START_RUNNING -> startRunningService()
             Constants.ACTION_STOP_RUNNING -> stopRunningService()
         }
         return START_NOT_STICKY
     }
 
     @SuppressLint("MissingPermission")
-    fun startRunningService(intent: Intent) {
-        val battleId = intent.getStringExtra(BATTLE_ID_KEY) ?: return
-
+    fun startRunningService() {
         registerSensors()
-        startForeground(NOTIFICATION_ID, createNotification())
-        setLocationCallback(battleId)
+        startForeground(Constants.NOTIFICATION_ID, createNotification())
+        setLocationCallback()
 
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
@@ -51,7 +40,7 @@ class BattleRunningService : BaseRunningService() {
         stopSelf()
     }
 
-    private fun setLocationCallback(battleId: String) {
+    private fun setLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
@@ -59,12 +48,6 @@ class BattleRunningService : BaseRunningService() {
                         return@let
                     }
                     addGpsDataToRecordData(location)
-                    if (recordData.size >= 3) {
-                        serviceScope.launch {
-                            sendRecordDataUseCase(battleId, RecordData(recordData))
-                            recordData.clear() // clear the location update list
-                        }
-                    }
                 }
             }
         }

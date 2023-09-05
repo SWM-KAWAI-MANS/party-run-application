@@ -46,4 +46,13 @@ class SingleViewModel @Inject constructor(
         }
     }
 
+    fun getFormattedTargetTime(): String {
+        val hours = _targetTime.value / 60
+        val minutes = _targetTime.value % 60
+        return String.format("%02d:%02d", hours, minutes)
+    }
+
+    fun getFormattedTargetDistance(): String {
+        return String.format("%04.2f", (_targetDistance.value.toFloat() / 1000f) * 100f / 100)
+    }
 }

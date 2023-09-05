@@ -47,6 +47,9 @@
         <service
             android:name=".feature.running.service.BattleRunningService"
             android:foregroundServiceType="location" />
+        <service
+            android:name=".feature.running.service.SingleRunningService"
+            android:foregroundServiceType="location" />
     </application>
 
 </manifest>

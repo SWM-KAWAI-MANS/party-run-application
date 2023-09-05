@@ -17,7 +17,7 @@ import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
 import online.partyrun.partyrunapplication.feature.running.R
 
 @Composable
-fun RunnerMarker(runner: RunnerStatus) {
+fun BattleRunnerMarker(runner: RunnerStatus) {
     Box(
         contentAlignment = Alignment.Center
     ) {

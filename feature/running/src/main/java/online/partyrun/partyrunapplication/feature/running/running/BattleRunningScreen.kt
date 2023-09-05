@@ -56,7 +56,7 @@ import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentUiState
-import online.partyrun.partyrunapplication.feature.running.running.component.RunnerMarker
+import online.partyrun.partyrunapplication.feature.running.running.component.BattleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningTopAppBar
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 
@@ -295,7 +295,7 @@ private fun TrackWithMultipleUsers(
                         )
                     }
 
-                    RunnerMarker(runner)
+                    BattleRunnerMarker(runner)
                 }
             }
         }

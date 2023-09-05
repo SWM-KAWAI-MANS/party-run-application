@@ -28,7 +28,7 @@ import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.BattleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.BattleRunningScreen
-import online.partyrun.partyrunapplication.feature.running.running.RunningExitConfirmationDialog
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.BattleRunningService
 
 @Composable

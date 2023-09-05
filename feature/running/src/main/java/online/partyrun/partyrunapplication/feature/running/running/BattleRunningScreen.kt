@@ -20,8 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,7 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
@@ -380,31 +377,6 @@ fun RealtimeBattleScreenItem(runner: RunnerStatus) {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
-    }
-}
-
-@Composable
-fun TrackDistanceDistanceBox(
-    modifier: Modifier = Modifier,
-    totalTrackDistance: Int
-) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Image(
-            modifier = modifier
-                .align(Alignment.Center),
-            painter = painterResource(id = R.drawable.distance_display),
-            contentDescription = null
-        )
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(start = 30.dp, bottom = 5.dp),
-            text = "$totalTrackDistance" + "m",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
     }
 }
 

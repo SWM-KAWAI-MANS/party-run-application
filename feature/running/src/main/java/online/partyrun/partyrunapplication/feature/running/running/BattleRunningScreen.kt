@@ -194,7 +194,7 @@ private fun UserDistanceDisplay(battleContentViewModel: BattleContentViewModel) 
 }
 
 @Composable
-fun TrackWithMultipleUsers(
+private fun TrackWithMultipleUsers(
     battleContentViewModel: BattleContentViewModel,
     totalTrackDistance: Int,
     userId: String,

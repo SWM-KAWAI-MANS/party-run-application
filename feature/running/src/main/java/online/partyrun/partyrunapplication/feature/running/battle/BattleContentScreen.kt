@@ -7,14 +7,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -23,24 +15,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants.ACTION_START_RUNNING
 import online.partyrun.partyrunapplication.core.common.Constants.ACTION_STOP_RUNNING
 import online.partyrun.partyrunapplication.core.common.Constants.BATTLE_ID_KEY
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedButton
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.BattleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.BattleRunningScreen
+import online.partyrun.partyrunapplication.feature.running.running.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.BattleRunningService
 
 @Composable
@@ -232,71 +220,5 @@ fun RunningBackNavigationHandler(
             it.finish()
             it.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
-    }
-}
-
-@Composable
-fun RunningExitConfirmationDialog(
-    openRunningExitDialog: MutableState<Boolean>,
-    confirmExit: () -> Unit
-) {
-    if (openRunningExitDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openRunningExitDialog.value = false
-            },
-            title = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.exit_dialog_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Text(
-                        text = stringResource(id = R.string.exit_dialog_subtitle),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            confirmButton = {
-                PartyRunGradientButton(
-                    onClick = {
-                        openRunningExitDialog.value = false
-                        confirmExit()
-                    },
-                    modifier = Modifier
-                        .width(90.dp)
-                        .height(50.dp)
-                        .shadow(5.dp, shape = CircleShape)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.exit_dialog_confirm),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            dismissButton = {
-                PartyRunOutlinedButton(
-                    onClick = {
-                        openRunningExitDialog.value = false
-                    },
-                    shape = RoundedCornerShape(35.dp),
-                    borderStrokeWidth = 5.dp,
-                    modifier = Modifier
-                        .height(50.dp)
-                        .shadow(5.dp, shape = CircleShape),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.exit_dialog_cancel),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-        )
     }
 }

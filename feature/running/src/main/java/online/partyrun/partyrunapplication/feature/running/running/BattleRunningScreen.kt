@@ -196,32 +196,6 @@ private fun UserDistanceDisplay(battleContentViewModel: BattleContentViewModel) 
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RunningTopAppBar(
-    openRunningExitDialog: MutableState<Boolean>
-) {
-    PartyRunTopAppBar(
-        modifier = Modifier,
-        navigationContent = {
-            IconButton(onClick = { openRunningExitDialog.value = true }) {
-                Icon(
-                    painterResource(id = PartyRunIcons.ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.arrow_back_desc)
-                )
-            }
-        },
-        actionsContent = {
-            IconButton(onClick = { }) {
-                Icon(
-                    painterResource(id = PartyRunIcons.Menu),
-                    contentDescription = stringResource(id = R.string.menu_desc)
-                )
-            }
-        }
-    )
-}
-
 @Composable
 fun TrackWithMultipleUsers(
     battleContentViewModel: BattleContentViewModel,

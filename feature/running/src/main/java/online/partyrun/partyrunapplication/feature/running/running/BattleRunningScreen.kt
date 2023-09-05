@@ -56,6 +56,9 @@ import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentUiState
+import online.partyrun.partyrunapplication.feature.running.running.component.RunnerMarker
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningTopAppBar
+import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -298,33 +301,6 @@ private fun TrackWithMultipleUsers(
         }
     }
 }
-
-@Composable
-private fun RunnerMarker(runner: RunnerStatus) {
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
-        // 마커 프레임
-        Image(
-            modifier = Modifier.size(70.dp),
-            painter = painterResource(id = R.drawable.runner_img_marker),
-            contentDescription = stringResource(id = R.string.runner_img_marker)
-        )
-        // 유저 프로필 이미지
-        Box(
-            modifier = Modifier
-                .size(42.dp)
-                .offset(y = (-6).dp)
-                .clip(CircleShape)
-        ) {
-            RenderAsyncUrlImage(
-                imageUrl = runner.runnerProfile,
-                contentDescription = null
-            )
-        }
-    }
-}
-
 
 @Composable
 fun RealtimeBattleScreenItem(runner: RunnerStatus) {

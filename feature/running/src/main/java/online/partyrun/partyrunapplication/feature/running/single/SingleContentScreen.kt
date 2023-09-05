@@ -21,37 +21,27 @@ import online.partyrun.partyrunapplication.feature.running.service.SingleRunning
 
 @Composable
 fun SingleContentScreen(
-    targetDistance: Int?,
-    targetTime: Int?,
-    navigateToRunningResult: () -> Unit = {},
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
-    onShowSnackbar: (String) -> Unit
 ) {
     val singleContentUiState by singleContentViewModel.singleContentUiState.collectAsStateWithLifecycle()
 
     Content(
-        targetDistance = targetDistance,
-        targetTime = targetTime,
         singleContentViewModel = singleContentViewModel,
         singleContentUiState = singleContentUiState,
-        onShowSnackbar = onShowSnackbar
     )
 }
 
 @Composable
 fun Content(
-    targetDistance: Int?,
-    targetTime: Int?,
     singleContentViewModel: SingleContentViewModel,
     singleContentUiState: SingleContentUiState,
-    onShowSnackbar: (String) -> Unit
 ) {
 
     LaunchedEffect(Unit) {
         singleContentViewModel.countDownWhenReady()
     }
 
-    CheckStartTime(singleContentUiState, singleContentViewModel)
+    CheckStartTime(singleContentUiState)
 
     Column(
         modifier = Modifier
@@ -69,33 +59,29 @@ fun Content(
 
 @Composable
 private fun CheckStartTime(
-    singleContentUiState: SingleContentUiState,
-    singleContentViewModel: SingleContentViewModel,
+    singleContentUiState: SingleContentUiState
 ) {
     when (singleContentUiState.timeRemaining) {
         in 1..5 -> CountdownDialog(timeRemaining = singleContentUiState.timeRemaining)
-        0 -> StartSingleRunning(singleContentViewModel)
+        0 -> StartSingleRunning()
     }
 }
 
 @Composable
-private fun StartSingleRunning(
-    singleContentViewModel: SingleContentViewModel,
-) {
+private fun StartSingleRunning() {
     val context = LocalContext.current
 
     DisposableEffect(Unit) {
-        setOrDisposeSingleRunning(true, singleContentViewModel, context)
+        setOrDisposeSingleRunning(true, context)
 
         onDispose {
-            setOrDisposeSingleRunning(false, singleContentViewModel, context)
+            setOrDisposeSingleRunning(false, context)
         }
     }
 }
 
 private fun setOrDisposeSingleRunning(
     isStarting: Boolean,
-    singleContentViewModel: SingleContentViewModel,
     context: Context
 ) {
     // Foreground Service 시작/중지

@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.feature.running.running
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
@@ -41,7 +43,6 @@ import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.feature.running.R
-import online.partyrun.partyrunapplication.feature.running.running.component.RunningTopAppBar
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
@@ -54,15 +55,8 @@ fun SingleRunningScreen(
     openRunningExitDialog: MutableState<Boolean>,
     singleContentViewModel: SingleContentViewModel = hiltViewModel()
 ) {
-    val singleState = singleContentUiState.singleState // 싱글 상태 state
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            RunningTopAppBar(
-                openRunningExitDialog = openRunningExitDialog
-            )
-        }
     ) { paddingValues ->
         BackgroundBlurImage(
             modifier = Modifier.fillMaxSize(),
@@ -79,6 +73,7 @@ fun SingleRunningScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.size(10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -90,27 +85,74 @@ fun SingleRunningScreen(
             }
             Spacer(modifier = Modifier.size(15.dp))
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                TrackWithUserAndRobot(
+                    singleContentViewModel = singleContentViewModel,
+                    targetDistance = singleContentUiState.selectedDistance,
+                    user = singleContentUiState.userState,
+                    robot = singleContentUiState.robotState
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    TrackWithUserAndRobot(
-                        singleContentViewModel = singleContentViewModel,
-                        targetDistance = singleContentUiState.selectedDistance,
-                        userName = singleContentUiState.userName,
-                        runners = singleState.singleInfo
+                    RunningMetricsPanel(
+                        record = singleContentUiState.distanceInKm,
+                        title = stringResource(id = R.string.Kilometer)
+                    )
+                    RunningMetricsPanel(
+                        record = "대체",
+                        title = stringResource(id = R.string.pace)
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.size(15.dp))
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-
+                RunningMetricsPanel(
+                    record = singleContentUiState.elapsedFormattedTime,
+                    title = stringResource(id = R.string.progress_time)
+                )
+                Spacer(modifier = Modifier.size(5.dp))
+                PartyRunImageButton(
+                    modifier = Modifier.size(80.dp),
+                    image = R.drawable.stop,
+                ) {
+                    openRunningExitDialog.value = true
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun RunningMetricsPanel(
+    record: String,
+    title: String
+) {
+    Column(
+        modifier = Modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = record,
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -118,8 +160,8 @@ fun SingleRunningScreen(
 private fun TrackWithUserAndRobot(
     singleContentViewModel: SingleContentViewModel,
     targetDistance: Int,
-    userName: String,
-    runners: List<SingleRunnerStatus>
+    user: SingleRunnerStatus,
+    robot: SingleRunnerStatus
 ) {
     var showArrivalFlag by remember { mutableStateOf(false) }
 
@@ -129,11 +171,16 @@ private fun TrackWithUserAndRobot(
     }
 
     // 트랙 이미지 리소스 사용
-    val trackImage = painterResource(R.drawable.runnning_track)
+    val trackImage =
+        if (showArrivalFlag) {
+            painterResource(R.drawable.running_track_arrival)
+        } else {
+            painterResource(R.drawable.running_track)
+        }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val context = LocalContext.current
-        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.runnning_track)
+        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.running_track)
 
         // 트랙 이미지의 실제 비율
         val aspectRatio = imageBitmap.width.toDouble() / imageBitmap.height.toDouble()
@@ -146,76 +193,95 @@ private fun TrackWithUserAndRobot(
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = trackImage,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = stringResource(id = R.string.track_img)
             )
         }
 
-        // 도착 깃발 표시
-        if (showArrivalFlag) {
-            // 도착 깃발 좌표 계산
-            val (flagX, flagY) = singleContentViewModel.mapDistanceToCoordinates(
-                totalTrackDistance = targetDistance.toDouble(),
-                distance = 0.0, // 0m 지점
-                trackWidth = trackWidth,
-                trackHeight = trackHeight
+        // 유저 렌더링
+        RenderRunner(
+            singleContentViewModel,
+            targetDistance,
+            user,
+            trackWidth,
+            trackHeight,
+            isUser = true
+        )
+
+        // 로봇 렌더링
+        RenderRunner(
+            singleContentViewModel,
+            targetDistance,
+            robot,
+            trackWidth,
+            trackHeight,
+            isUser = false
+        )
+    }
+}
+
+@Composable
+private fun RenderRunner(
+    singleContentViewModel: SingleContentViewModel,
+    targetDistance: Int,
+    runner: SingleRunnerStatus,
+    trackWidth: Double,
+    trackHeight: Double,
+    isUser: Boolean
+) {
+    val (currentX, currentY) = singleContentViewModel.mapDistanceToCoordinates(
+        totalTrackDistance = targetDistance.toDouble(),
+        distance = runner.distance,
+        trackWidth = trackWidth,
+        trackHeight = trackHeight
+    )
+    val zIndex = if (isUser) 1f else 0f
+
+    Box(
+        modifier = Modifier
+            .offset(
+                x = currentX.dp,
+                y = currentY.dp
             )
+            .zIndex(zIndex)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .offset(
-                        x = flagX.dp,
-                        y = flagY.dp + (0.08 * trackHeight).dp // 깃발이므로 마커 오차보정 결과를 다시 되돌림
+                    .height(40.dp)
+                    .background(
+                        color = Color.Black.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(25.dp)
                     )
+                    .padding(10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.arrival_flag),
-                    contentDescription = null,
-                    modifier = Modifier.size(50.dp)
+                Text(
+                    text = runner.runnerName,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
-        }
-
-        // 자신과 로봇의 위치 표시
-        runners.forEach { runner ->
-            val (currentX, currentY) = singleContentViewModel.mapDistanceToCoordinates(
-                totalTrackDistance = targetDistance.toDouble(),
-                distance = runner.distance,
-                trackWidth = trackWidth,
-                trackHeight = trackHeight
-            )
-            val zIndex =
-                if (runner.runnerName == userName) 1f else 0f // 사용자가 항상 위에 위치하도록 고정
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = currentX.dp,
-                        y = currentY.dp
-                    )
-                    .zIndex(zIndex) // 여기에 z-index 설정하여 user라면 최상단에 마커를 위치
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .height(40.dp)
-                            .background(
-                                color = Color.Black.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(25.dp) // 모서리를 둥글게 하기 위한 값
-                            )
-                            .padding(10.dp)
-                    ) {
-                        Text(
-                            text = runner.runnerName,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-
-                    SingleRunnerMarker(runner)
-                }
-            }
+            SingleRunnerMarker(runner)
         }
     }
 }
+
+@Composable
+fun PartyRunImageButton(
+    modifier: Modifier = Modifier,
+    image: Int,
+    onClick: () -> Unit
+) {
+    Image(
+        painter = painterResource(id = image),
+        contentDescription = stringResource(id = R.string.image_btn_desc),
+        modifier = modifier.clickable {
+            onClick()
+        }
+    )
+}
+

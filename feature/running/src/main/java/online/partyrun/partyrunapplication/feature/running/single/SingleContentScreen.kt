@@ -24,8 +24,8 @@ import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
-import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
 
 @Composable
@@ -64,7 +64,6 @@ fun Content(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    // 대결 모드과는 다르게 다른 사용자의 입장을 기다릴 필요가 없으므로 카운트다운 바로 시작
     LaunchedEffect(Unit) {
         singleContentViewModel.countDownWhenReady()
     }
@@ -88,11 +87,11 @@ fun Content(
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     RunningBackNavigationHandler(
         activity = activity,
-        singleContentViewModel = singleContentViewModel,
         openRunningExitDialog = openRunningExitDialog
     )
 
-    CheckStartTime(singleContentUiState, singleContentViewModel)
+    CheckStartTime(singleContentUiState)
+    StartRunningService(singleContentUiState, singleContentViewModel)
 
     Column(
         modifier = Modifier
@@ -113,18 +112,26 @@ fun Content(
 
 @Composable
 private fun CheckStartTime(
-    singleContentUiState: SingleContentUiState,
-    singleContentViewModel: SingleContentViewModel,
+    singleContentUiState: SingleContentUiState
 ) {
     when (singleContentUiState.timeRemaining) {
         in 1..5 -> CountdownDialog(timeRemaining = singleContentUiState.timeRemaining)
-        0 -> StartSingleRunning(singleContentViewModel)
+    }
+}
+
+@Composable
+private fun StartRunningService(
+    singleContentUiState: SingleContentUiState,
+    singleContentViewModel: SingleContentViewModel,
+) {
+    if (singleContentUiState.startRunningService) {
+        StartSingleRunning(singleContentViewModel)
     }
 }
 
 @Composable
 private fun StartSingleRunning(
-    singleContentViewModel: SingleContentViewModel,
+    singleContentViewModel: SingleContentViewModel
 ) {
     val context = LocalContext.current
 
@@ -158,7 +165,6 @@ private fun setOrDisposeSingleRunning(
 @Composable
 fun RunningBackNavigationHandler(
     activity: Activity?,
-    singleContentViewModel: SingleContentViewModel,
     openRunningExitDialog: MutableState<Boolean>
 ) {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher

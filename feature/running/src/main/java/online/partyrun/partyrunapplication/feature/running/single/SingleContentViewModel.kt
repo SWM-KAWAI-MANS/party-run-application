@@ -54,7 +54,7 @@ class SingleContentViewModel @Inject constructor(
     }
 
     private suspend fun countDown() {
-        val initialDelay = 300L
+        val initialDelay = 700L
         val countDownInterval = 1000L
         val startCount = COUNTDOWN_SECONDS
 

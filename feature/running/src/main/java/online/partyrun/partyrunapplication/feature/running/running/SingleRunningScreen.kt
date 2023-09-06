@@ -1,10 +1,8 @@
 package online.partyrun.partyrunapplication.feature.running.running
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,22 +25,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.feature.running.R
+import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningTrack
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
+import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
 
@@ -170,34 +164,12 @@ private fun TrackWithUserAndRobot(
         showArrivalFlag = true
     }
 
-    // 트랙 이미지 리소스 사용
-    val trackImage =
-        if (showArrivalFlag) {
-            painterResource(R.drawable.running_track_arrival)
-        } else {
-            painterResource(R.drawable.running_track)
-        }
-
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val context = LocalContext.current
-        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.running_track)
-
-        // 트랙 이미지의 실제 비율
-        val aspectRatio = imageBitmap.width.toDouble() / imageBitmap.height.toDouble()
-
-        // 컴포넌트의 최대 크기와 비교하여 가로 또는 세로 크기 조절
-        val trackWidth = this.maxWidth.value / aspectRatio
-        val trackHeight = this.maxHeight.value / aspectRatio
+        val (trackWidth, trackHeight) = trackRatio(context) // 트랙 이미지의 실제 비율에 대한 컴포넌트 크기
 
         // 트랙 이미지 표시
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = trackImage,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = stringResource(id = R.string.track_img)
-            )
-        }
+        RunningTrack(showArrivalFlag)
 
         // 유저 렌더링
         RenderRunner(
@@ -238,36 +210,21 @@ private fun RenderRunner(
     )
     val zIndex = if (isUser) 1f else 0f
 
-    Box(
-        modifier = Modifier
-            .offset(
-                x = currentX.dp,
-                y = currentY.dp
+    RunnerGraphic(
+        currentX = currentX,
+        currentY = currentY,
+        zIndex = zIndex,
+        RunnerNameContent = {
+            Text(
+                text = runner.runnerName,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onPrimary
             )
-            .zIndex(zIndex)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .height(40.dp)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(25.dp)
-                    )
-                    .padding(10.dp)
-            ) {
-                Text(
-                    text = runner.runnerName,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+        },
+        RunnerMarker = {
             SingleRunnerMarker(runner)
         }
-    }
+    )
 }
 
 @Composable

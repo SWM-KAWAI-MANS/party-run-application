@@ -36,15 +36,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
@@ -58,8 +54,11 @@ import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentUiState
 import online.partyrun.partyrunapplication.feature.running.running.component.BattleRunnerMarker
+import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningTopAppBar
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningTrack
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
+import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -211,34 +210,12 @@ private fun TrackWithMultipleUsers(
         showArrivalFlag = true
     }
 
-    // 트랙 이미지 리소스 사용
-    val trackImage =
-        if (showArrivalFlag) {
-            painterResource(R.drawable.running_track_arrival)
-        } else {
-            painterResource(R.drawable.running_track)
-        }
-
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val context = LocalContext.current
-        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.running_track)
-
-        // 트랙 이미지의 실제 비율
-        val aspectRatio = imageBitmap.width.toDouble() / imageBitmap.height.toDouble()
-
-        // 컴포넌트의 최대 크기와 비교하여 가로 또는 세로 크기 조절
-        val trackWidth = this.maxWidth.value / aspectRatio
-        val trackHeight = this.maxHeight.value / aspectRatio
+        val (trackWidth, trackHeight) = trackRatio(context) // 트랙 이미지의 실제 비율에 대한 컴포넌트 크기
 
         // 트랙 이미지 표시
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = trackImage,
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = stringResource(id = R.string.track_img)
-            )
-        }
+        RunningTrack(showArrivalFlag)
 
         // 각 유저의 위치 표시
         runners.forEach { runner ->
@@ -250,37 +227,22 @@ private fun TrackWithMultipleUsers(
             )
             val zIndex =
                 if (runner.runnerId == userId) 1f else 0f // 해당 runnerId가 userId와 같으면 z-index를 1로 설정
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = currentX.dp,
-                        y = currentY.dp
-                    )
-                    .zIndex(zIndex) // 여기에 z-index 설정하여 user라면 최상단에 마커를 위치
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .height(40.dp)
-                            .background(
-                                color = Color.Black.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(25.dp) // 모서리를 둥글게 하기 위한 값
-                            )
-                            .padding(10.dp)
-                    ) {
-                        Text(
-                            text = runner.runnerName,
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
 
+            RunnerGraphic(
+                currentX = currentX,
+                currentY = currentY,
+                zIndex = zIndex,
+                RunnerNameContent = {
+                    Text(
+                        text = runner.runnerName,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
+                RunnerMarker = {
                     BattleRunnerMarker(runner)
                 }
-            }
+            )
         }
     }
 }

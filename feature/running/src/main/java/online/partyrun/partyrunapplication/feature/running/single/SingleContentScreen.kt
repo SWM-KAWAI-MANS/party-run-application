@@ -32,7 +32,6 @@ import online.partyrun.partyrunapplication.feature.running.service.SingleRunning
 fun SingleContentScreen(
     targetDistance: Int?,
     targetTime: Int?,
-    navigateToRunningResult: () -> Unit = {},
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {

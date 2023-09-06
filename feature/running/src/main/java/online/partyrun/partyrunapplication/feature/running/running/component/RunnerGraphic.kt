@@ -19,8 +19,8 @@ fun RunnerGraphic(
     currentX: Double,
     currentY: Double,
     zIndex: Float,
-    RunnerNameContent: @Composable () -> Unit,
-    RunnerMarker: @Composable () -> Unit
+    runnerNameContent: @Composable () -> Unit,
+    runnerMarker: @Composable () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -43,9 +43,9 @@ fun RunnerGraphic(
                     )
                     .padding(10.dp)
             ) {
-                RunnerNameContent()
+                runnerNameContent()
             }
-            RunnerMarker()
+            runnerMarker()
         }
     }
 }

@@ -232,14 +232,14 @@ private fun TrackWithMultipleUsers(
                 currentX = currentX,
                 currentY = currentY,
                 zIndex = zIndex,
-                RunnerNameContent = {
+                runnerNameContent = {
                     Text(
                         text = runner.runnerName,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 },
-                RunnerMarker = {
+                runnerMarker = {
                     BattleRunnerMarker(runner)
                 }
             )

@@ -6,9 +6,12 @@
     <string name="single_comment_before_starts">5초 뒤 배틀이 시작 됩니다 !</string>
     <string name="configuring_robot">로봇 구성 중...</string>
     <string name="progress_time">진행 시간</string>
+    <string name="Kilometer">KM</string>
     <string name="average_pace">평균 페이스</string>
+    <string name="pace">페이스</string>
     <string name="arrow_back_desc">뒤로 가기 아이콘</string>
     <string name="menu_desc">메뉴 아이콘</string>
+    <string name="image_btn_desc">이미지 버튼 아이콘</string>
     <string name="track_img">달리기 트랙 이미지</string>
     <string name="runner_img_marker">러너 프로필 이미지</string>
     <string name="running_distance">달린 거리</string>
@@ -16,6 +19,7 @@
     <string name="schedule_desc">진행 시간 아이콘</string>
     <string name="pace_desc">평균 페이스 아이콘</string>
     <string name="background_finish_blur">투명한 배경 블러 이미지</string>
+    <string name="ic_robot_desc">로봇 이미지</string>
     <string name="finish">Finish</string>
     <string name="finish_comment">대결이 종료됐습니다.</string>
 

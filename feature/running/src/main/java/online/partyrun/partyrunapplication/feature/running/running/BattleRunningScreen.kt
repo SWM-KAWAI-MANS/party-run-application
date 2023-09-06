@@ -211,11 +211,16 @@ private fun TrackWithMultipleUsers(
     }
 
     // 트랙 이미지 리소스 사용
-    val trackImage = painterResource(R.drawable.runnning_track)
+    val trackImage =
+        if (showArrivalFlag) {
+            painterResource(R.drawable.running_track_arrival)
+        } else {
+            painterResource(R.drawable.running_track)
+        }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         val context = LocalContext.current
-        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.runnning_track)
+        val imageBitmap = ImageBitmap.imageResource(context.resources, R.drawable.running_track)
 
         // 트랙 이미지의 실제 비율
         val aspectRatio = imageBitmap.width.toDouble() / imageBitmap.height.toDouble()
@@ -231,30 +236,6 @@ private fun TrackWithMultipleUsers(
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = stringResource(id = R.string.track_img)
             )
-        }
-
-        // 도착 깃발 표시
-        if (showArrivalFlag) {
-            // 도착 깃발 좌표 계산
-            val (flagX, flagY) = battleContentViewModel.mapDistanceToCoordinates(
-                totalTrackDistance = totalTrackDistance.toDouble(),
-                distance = 0.0, // 0m 지점
-                trackWidth = trackWidth,
-                trackHeight = trackHeight
-            )
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = flagX.dp,
-                        y = flagY.dp + (0.08 * trackHeight).dp // 깃발이므로 마커 오차보정 결과를 다시 되돌림
-                    )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.arrival_flag),
-                    contentDescription = null,
-                    modifier = Modifier.size(50.dp)
-                )
-            }
         }
 
         // 각 유저의 위치 표시

@@ -1,5 +1,7 @@
 package online.partyrun.partyrunapplication.feature.running.util
 
+import kotlin.math.abs
+
 /**
  * 비율 기반 거리 매핑 함수
  */
@@ -43,25 +45,36 @@ fun scaleCoordinate(coordinate: Double, trackSize: Double, radius: Double): Doub
  * 거리를 총 트랙 거리에 대한 비율로 변환하고 트랙 그림에 따라 좌표를 스케일링했을 경우 나오는 좌표 기준으로 오차보정 수행.
  */
 fun adjustXCoordinate(x: Double, trackWidth: Double): Double {
+    val epsilon = 0.01  // x가 이 값 이내로 0에 가까워지면 보간을 실행
+
     return when {
-        x < 0 -> x + 0.02 * trackWidth
-        x > 0 -> x - 0.02 * trackWidth
-        else -> x - 0.045 * trackWidth
+        x < -epsilon -> x + 0.02 * trackWidth
+        x > epsilon -> x - 0.02 * trackWidth
+        else -> {
+            val weight = (epsilon - abs(x)) / (2 * epsilon)
+            weight * (x + 0.02 * trackWidth) + (1 - weight) * (x - 0.02 * trackWidth)
+        }
     }
 }
 
 fun adjustYCoordinate(y: Double, trackHeight: Double): Double {
+    val epsilon = 0.01  // y가 이 값 이내로 0에 가까워지면 보간을 실행
+
     return when {
-        y < 0 -> y - 0.15 * trackHeight
-        y > 0 -> y - 0.2 * trackHeight
-        else -> y - 0.17 * trackHeight
+        y < -epsilon -> y - 0.15 * trackHeight
+        y > epsilon -> y - 0.2 * trackHeight
+        else -> {
+            val weight = (epsilon - abs(y)) / (2 * epsilon)
+            weight * (y - 0.15 * trackHeight) + (1 - weight) * (y - 0.2 * trackHeight)
+        }
     }
 }
+
 
 /**
  * 수치가 특정 임계값 이하일 경우 0으로 처리
  * @param threshold: 원하는 임계값. 이 값보다 작은 절대값을 가진 수는 0으로 처리
  */
 fun handleSmallNumbers(value: Double, threshold: Double = 1e-10): Double {
-    return if (kotlin.math.abs(value) < threshold) 0.0 else value
+    return if (abs(value) < threshold) 0.0 else value
 }

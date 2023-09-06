@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.util
 
+import timber.log.Timber
 import kotlin.math.abs
 
 /**
@@ -61,15 +62,14 @@ fun adjustYCoordinate(y: Double, trackHeight: Double): Double {
     val epsilon = 0.01  // y가 이 값 이내로 0에 가까워지면 보간을 실행
 
     return when {
-        y < -epsilon -> y - 0.15 * trackHeight
-        y > epsilon -> y - 0.2 * trackHeight
+        y < -epsilon -> y - 0.17 * trackHeight
+        y > epsilon -> y - 0.17 * trackHeight
         else -> {
             val weight = (epsilon - abs(y)) / (2 * epsilon)
-            weight * (y - 0.15 * trackHeight) + (1 - weight) * (y - 0.2 * trackHeight)
+            weight * (y - 0.17 * trackHeight) + (1 - weight) * (y - 0.17 * trackHeight)
         }
     }
 }
-
 
 /**
  * 수치가 특정 임계값 이하일 경우 0으로 처리

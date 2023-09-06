@@ -56,5 +56,7 @@ private fun SelectRunnerImage(runner: SingleRunnerStatus) {
                 contentDescription = stringResource(id = R.string.ic_robot_desc)
             )
         }
+
+        else -> {}
     }
 }

@@ -7,7 +7,7 @@ sealed class ProfileImageSource {
 
 data class SingleRunnerStatus(
     val runnerName: String = "",
-    val runnerProfile: ProfileImageSource,
+    val runnerProfile: ProfileImageSource? = null,
     val distance: Double = 0.0,
     val currentRank: Int = 0
 )

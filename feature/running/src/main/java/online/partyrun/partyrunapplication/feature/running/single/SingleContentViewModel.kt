@@ -142,16 +142,8 @@ class SingleContentViewModel @Inject constructor(
     private fun startUserMovement() {
         viewModelScope.launch {
             singleRepository.totalDistance.collect { totalDistance ->
-                val previousState = _singleContentUiState.value
-                val previousUser = previousState.userState
-
-                // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
-                val distanceInKm = totalDistance.toDouble() / 1000
-                val formattedDistance = String.format("%.2f", distanceInKm)
-
-                val updatedUser = previousUser.copy(
-                    distance = totalDistance.toDouble()
-                )
+                checkTargetDistanceReached(totalDistance)
+                val (updatedUser, formattedDistance) = getUpdatedMovementData(totalDistance)
 
                 _singleContentUiState.update { state ->
                     state.copy(
@@ -163,15 +155,40 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
+    private fun getUpdatedMovementData(totalDistance: Int): Pair<SingleRunnerStatus, String> {
+        val previousState = _singleContentUiState.value
+        val previousUser = previousState.userState
+
+        // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
+        val distanceInKm = totalDistance.toDouble() / 1000
+        val formattedDistance = String.format("%.2f", distanceInKm)
+
+        val updatedUser = previousUser.copy(
+            distance = totalDistance.toDouble()
+        )
+        return Pair(updatedUser, formattedDistance)
+    }
+
+    private fun checkTargetDistanceReached(totalDistance: Int) {
+        if (totalDistance >= _singleContentUiState.value.selectedDistance) {
+            _singleContentUiState.update { state ->
+                state.copy(
+                    isFinished = true,
+                    screenState = SingleScreenState.Finish
+                )
+            }
+        }
+    }
+
     private fun startRobotMovement() {
         viewModelScope.launch {
             while (true) {
                 val previousState = _singleContentUiState.value
-
                 // 현재 경과 시간이 선택된 시간을 넘어갔는지 확인
                 if (previousState.elapsedSecondsTime >= previousState.selectedTime) break
 
-                delay(500)
+                delay(500) // 0.5초마다 움직임
+
                 val robotStep =
                     previousState.selectedDistance.toDouble() / previousState.selectedTime
                 val currentElapsedTime = previousState.elapsedSecondsTime

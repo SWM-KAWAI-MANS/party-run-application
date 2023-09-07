@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
@@ -33,6 +34,7 @@ fun SingleContentScreen(
     targetDistance: Int?,
     targetTime: Int?,
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
+    navigateToSingle: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     val singleContentUiState by singleContentViewModel.singleContentUiState.collectAsStateWithLifecycle()
@@ -42,6 +44,7 @@ fun SingleContentScreen(
     Content(
         targetDistance = targetDistance,
         targetTime = targetTime,
+        navigateToSingle = navigateToSingle,
         singleContentViewModel = singleContentViewModel,
         singleContentUiState = singleContentUiState,
         openRunningExitDialog = openRunningExitDialog,
@@ -54,6 +57,7 @@ fun SingleContentScreen(
 fun Content(
     targetDistance: Int?,
     targetTime: Int?,
+    navigateToSingle: () -> Unit,
     singleContentViewModel: SingleContentViewModel,
     singleContentUiState: SingleContentUiState,
     openRunningExitDialog: MutableState<Boolean>,
@@ -88,6 +92,16 @@ fun Content(
         activity = activity,
         openRunningExitDialog = openRunningExitDialog
     )
+
+    /**
+     * 목표 거리에 도달했다면, 4초 대기 후 결과 스크린으로 이동
+     */
+    if (singleContentUiState.isFinished) {
+        LaunchedEffect(Unit) {
+            delay(4000)
+            navigateToSingle()
+        }
+    }
 
     CheckStartTime(singleContentUiState)
     StartRunningService(singleContentUiState, singleContentViewModel)

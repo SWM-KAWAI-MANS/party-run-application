@@ -67,10 +67,16 @@ class SignInViewModel @Inject constructor(
     fun signInWithGoogle(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) =
         viewModelScope.launch(Dispatchers.IO) {
             val signInResult = googleSignInUseCase.signInGoogle()
+
             signInResult.onSuccess { result ->
                 launcher.launch(IntentSenderRequest.Builder(result ?: return@onSuccess).build())
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "로그인된 구글 계정이 없습니다."
+                _signInGoogleState.update { state ->
+                    state.copy(
+                        isSignInBtnEnabled = true
+                    )
+                }
                 Timber.tag("BattleMainViewModel").e("$code $errorMessage")
             }
         }
@@ -83,6 +89,8 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             if (resultCode == ComponentActivity.RESULT_OK) {
                 signInWithGoogleWithIntent(intent = data)
+            } else { // 구글 로그인 액티비티를 그냥 닫을 경우
+                enableSignInButton()
             }
         }
 
@@ -102,22 +110,32 @@ class SignInViewModel @Inject constructor(
                     accessToken = tokenData.accessToken ?: "",
                     refreshToken = tokenData.refreshToken ?: ""
                 )
-                _signInGoogleState.update { state ->
-                    state.copy(
-                        isIdTokenSentToServer = true,
-                        isSignInIndicatorOn = false
-                    )
-                }
+                updateSignInGoogleStateForSuccess() // 성공 시 상태 변경
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "로그인 실패"
                 signOutFromGoogle() // 파이어베이스 구글 로그아웃 보장
-                _signInGoogleState.update { state ->
-                    state.copy(
-                        isSignInSuccessful = false
-                    )
-                }
+                updateSignInGoogleStateForFailure() // 실패 시 상태 변경
                 Timber.tag("SignInViewModel").e("$code $errorMessage")
             }
+        }
+    }
+
+    private fun updateSignInGoogleStateForSuccess() {
+        _signInGoogleState.update { state ->
+            state.copy(
+                isIdTokenSentToServer = true,
+                isSignInIndicatorOn = false
+            )
+        }
+    }
+
+    private fun updateSignInGoogleStateForFailure() {
+        _signInGoogleState.update { state ->
+            state.copy(
+                isSignInSuccessful = false,
+                isSignInIndicatorOn = false,
+                isSignInBtnEnabled = true
+            )
         }
     }
 
@@ -136,8 +154,25 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+    fun disableSignInButton() {
+        viewModelScope.launch {
+            _signInGoogleState.update { state ->
+                state.copy(
+                    isSignInBtnEnabled = false
+                )
+            }
+        }
+    }
 
-    fun signOutFromGoogle() = viewModelScope.launch {
+    private fun enableSignInButton() {
+        _signInGoogleState.update { state ->
+            state.copy(
+                isSignInBtnEnabled = true
+            )
+        }
+    }
+
+    private fun signOutFromGoogle() = viewModelScope.launch {
         googleSignOutUseCase()
     }
 

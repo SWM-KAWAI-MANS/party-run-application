@@ -8,6 +8,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,7 +47,7 @@ fun SignInScreen(
     val context = LocalContext.current
     val state by signInViewModel.signInGoogleState.collectAsStateWithLifecycle()
     val launcher = managedActivityResultLauncher(viewModel = signInViewModel)
-    var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정, Line: 84
+    var modifierSignIn = Modifier.alpha(1f) // 로그인 진행시 스크린의 투명도 설정
     val signInSnackbarMessage by signInViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = state.hasSignInError) {
@@ -94,18 +96,11 @@ fun SignInScreen(
         }
     }
 
+    SignInBackground()
+
     if (state.isSignInIndicatorOn) {
         modifierSignIn = Modifier.alpha(0.2f)
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(50.dp),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
+        ShowProgressIndicator()
     }
 
     Column(
@@ -114,41 +109,95 @@ fun SignInScreen(
             .padding(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            modifier = Modifier.padding(top = 80.dp, bottom = 20.dp),
-            painter = painterResource(R.drawable.logo),
-            contentDescription = stringResource(R.string.logo_content_desc),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-        )
+        TitleImage()
         Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.weight(1f)
         ) {
-            LottieImage(
-                modifier = Modifier
-                    .size(300.dp),
-                rawAnimation = R.raw.running
-            )
+            // 로고 혹은 안내문 삽입
         }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 30.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GoogleSignInButton(
-                /* Firebase Google SignIn process */
-                onClick = {
-                    signInViewModel.signInWithGoogle(launcher)
-                }
+            ShowSignInLoading(state.isSignInBtnEnabled)
+            Row(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(id = R.string.google_sign_in_button_title),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                GoogleSignInButton(signInViewModel, launcher, state)
             }
         }
+    }
+}
+
+@Composable
+private fun ShowProgressIndicator() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(50.dp),
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+@Composable
+private fun GoogleSignInButton(
+    signInViewModel: SignInViewModel,
+    launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    state: SignInGoogleState
+) {
+    GoogleSignInButton(
+        /* Firebase Google SignIn process */
+        onClick = {
+            signInViewModel.signInWithGoogle(launcher)
+            signInViewModel.disableSignInButton()
+        },
+        enabled = state.isSignInBtnEnabled
+    ) {
+        Text(
+            text = stringResource(id = R.string.google_sign_in_button_title),
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
+@Composable
+private fun TitleImage() {
+    Image(
+        modifier = Modifier.padding(top = 90.dp, bottom = 20.dp),
+        painter = painterResource(R.drawable.logo),
+        contentDescription = stringResource(R.string.logo_content_desc),
+        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+    )
+}
+
+@Composable
+private fun SignInBackground() {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize(),
+            alignment = Alignment.Center
+        )
+    }
+}
+
+@Composable
+private fun ShowSignInLoading(isSignInBtnEnabled: Boolean) {
+    if (!isSignInBtnEnabled) { // 반대 처리
+        LottieImage(
+            modifier = Modifier.size(80.dp),
+            rawAnimation = R.raw.loading
+        )
     }
 }
 

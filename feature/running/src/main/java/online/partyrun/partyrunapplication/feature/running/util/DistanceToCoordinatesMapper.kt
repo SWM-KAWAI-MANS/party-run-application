@@ -1,8 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.util
 
-import timber.log.Timber
 import kotlin.math.abs
-import kotlin.math.sign
 
 /**
  * 비율 기반 거리 매핑 함수
@@ -28,10 +26,7 @@ fun distanceToCoordinatesMapper(
     val scaledX = scaleCoordinate(x, trackWidth, horizontalRadius)
     val scaledY = scaleCoordinate(y, trackHeight, verticalRadius)
 
-    val currentX = adjustXCoordinate(scaledX, trackWidth)
-    val currentY = adjustYCoordinate(scaledY, trackHeight)
-
-    return Pair(currentX, currentY)
+    return Pair(scaledX, scaledY)
 }
 
 /**
@@ -41,37 +36,6 @@ fun distanceToCoordinatesMapper(
  */
 fun scaleCoordinate(coordinate: Double, trackSize: Double, radius: Double): Double {
     return handleSmallNumbers(coordinate * (trackSize / (radius * 2)))
-}
-
-/**
- * 거리를 총 트랙 거리에 대한 비율로 변환하고 트랙 그림에 따라 좌표를 스케일링했을 경우 나오는 좌표 기준으로 오차보정 수행.
- */
-fun adjustXCoordinate(x: Double, trackWidth: Double): Double {
-    val epsilon = 0.01  // x가 이 값 이내로 0에 가까워지면 보간을 실행
-    val zeroThreshold = 0.02 * trackWidth  // 이 값 이내면 0으로 간주
-
-    return when {
-        abs(x) <= zeroThreshold -> 0.0  // -0.02 * trackWidth ~ +0.02 * trackWidth 범위 내에서는 0.0으로 처리
-        x < -epsilon -> x + 0.02 * trackWidth
-        x > epsilon -> x - 0.02 * trackWidth
-        else -> {
-            val weight = (epsilon - abs(x)) / (2 * epsilon)
-            weight * (x + 0.02 * trackWidth) + (1 - weight) * (x - 0.02 * trackWidth)
-        }
-    }
-}
-
-fun adjustYCoordinate(y: Double, trackHeight: Double): Double {
-    val epsilon = 0.01  // y가 이 값 이내로 0에 가까워지면 보간을 실행
-
-    return when {
-        y < -epsilon -> y - 0.17 * trackHeight
-        y > epsilon -> y - 0.17 * trackHeight
-        else -> {
-            val weight = (epsilon - abs(y)) / (2 * epsilon)
-            weight * (y - 0.17 * trackHeight) + (1 - weight) * (y - 0.17 * trackHeight)
-        }
-    }
 }
 
 /**

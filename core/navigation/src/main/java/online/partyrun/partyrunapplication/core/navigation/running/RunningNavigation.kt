@@ -29,7 +29,9 @@ fun NavGraphBuilder.battleRunningRoute(
     }
 }
 
-fun NavGraphBuilder.singleRunningRoute() {
+fun NavGraphBuilder.singleRunningRoute(
+    onShowSnackbar: (String) -> Unit
+) {
     composable(
         route = "${MainNavRoutes.SingleRunning.route}?distance={distance}&time={time}",
         arguments = listOf(
@@ -42,7 +44,13 @@ fun NavGraphBuilder.singleRunningRoute() {
                 defaultValue = 0
             }
         )
-    ) {
-        SingleContentScreen()
+    ) { backStackEntry ->
+        val distance = backStackEntry.arguments?.getInt("distance")
+        val time = backStackEntry.arguments?.getInt("time")
+        SingleContentScreen(
+            targetDistance = distance,
+            targetTime = time,
+            onShowSnackbar = onShowSnackbar
+        )
     }
 }

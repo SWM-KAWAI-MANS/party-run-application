@@ -250,12 +250,23 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private suspend fun countDown() {
-        for (i in COUNTDOWN_SECONDS downTo 0) {
-            delay(1000)
+        val initialDelay = 300L
+        val countDownInterval = 1000L
+        val startCount = COUNTDOWN_SECONDS
+
+        fun updateCountdownState(timeRemaining: Int) {
             _battleContentUiState.update { state ->
-                state.copy(
-                    timeRemaining = i
-                )
+                state.copy(timeRemaining = timeRemaining)
+            }
+        }
+
+        delay(initialDelay)
+
+        for (remainingSeconds in startCount downTo 0) {
+            updateCountdownState(remainingSeconds)
+
+            if (remainingSeconds > 0) {
+                delay(countDownInterval)
             }
         }
     }

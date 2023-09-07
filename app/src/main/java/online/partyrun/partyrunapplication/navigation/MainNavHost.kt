@@ -109,7 +109,9 @@ fun SetUpMainNavGraph(
             onShowSnackbar = onShowSnackbar
         )
 
-        singleRunningRoute()
+        singleRunningRoute(
+            onShowSnackbar = onShowSnackbar
+        )
 
         runningResultRoute(
             navigateToTopLevel = {

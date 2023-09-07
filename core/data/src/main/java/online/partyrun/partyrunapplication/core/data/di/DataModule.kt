@@ -20,6 +20,8 @@ import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepository
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepositoryImpl
+import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
+import online.partyrun.partyrunapplication.core.data.repository.SingleRepositoryImpl
 import javax.inject.Singleton
 
 /*
@@ -31,50 +33,55 @@ import javax.inject.Singleton
 internal interface DataModule {
     @Singleton
     @Binds
-    fun bindSignInRepository (
+    fun bindSignInRepository(
         signInRepository: SignInRepositoryImpl
     ): SignInRepository
 
     @Singleton
     @Binds
-    fun bindGoogleAuthRepository (
+    fun bindGoogleAuthRepository(
         googleAuthRepository: GoogleAuthRepositoryImpl
     ): GoogleAuthRepository
 
     @Singleton
     @Binds
-    abstract fun bindMatchRepository (
+    abstract fun bindMatchRepository(
         matchRepository: MatchRepositoryImpl
     ): MatchRepository
 
     @Singleton
     @Binds
-    fun bindAgreementRepository (
+    fun bindAgreementRepository(
         agreementRepository: AgreementRepositoryImpl
     ): AgreementRepository
 
     @Singleton
     @Binds
-    fun bindTokenRepository (
+    fun bindTokenRepository(
         tokenRepository: TokenRepositoryImpl
     ): TokenRepository
 
     @Singleton
     @Binds
-    fun bindBattleRepository (
+    fun bindBattleRepository(
         battleRepository: BattleRepositoryImpl
     ): BattleRepository
 
     @Singleton
     @Binds
-    fun bindResultRepository (
+    fun bindSingleRepository(
+        singleRepository: SingleRepositoryImpl
+    ): SingleRepository
+
+    @Singleton
+    @Binds
+    fun bindResultRepository(
         resultRepository: ResultRepositoryImpl
     ): ResultRepository
 
     @Singleton
     @Binds
-    fun bindMemberRepository (
+    fun bindMemberRepository(
         memberRepository: MemberRepositoryImpl
     ): MemberRepository
-
 }

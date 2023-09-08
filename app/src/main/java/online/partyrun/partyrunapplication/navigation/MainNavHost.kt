@@ -110,6 +110,13 @@ fun SetUpMainNavGraph(
         )
 
         singleRunningRoute(
+            navigateToSingle = {
+                navController.navigate(MainNavRoutes.Single.route) {
+                    popUpTo(MainNavRoutes.Single.route) {
+                        inclusive = true
+                    }
+                }
+            },
             onShowSnackbar = onShowSnackbar
         )
 

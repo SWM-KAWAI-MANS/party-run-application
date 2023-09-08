@@ -230,7 +230,7 @@ private fun TrackWithMultipleUsers(
 
             RunnerGraphic(
                 currentX = currentX,
-                currentY = currentY,
+                currentY = currentY - 50, // 네임과 마커 프레임의 합 height가 110이므로 중간에 맞춰주기 위한 -50 오차보정
                 zIndex = zIndex,
                 runnerNameContent = {
                     Text(

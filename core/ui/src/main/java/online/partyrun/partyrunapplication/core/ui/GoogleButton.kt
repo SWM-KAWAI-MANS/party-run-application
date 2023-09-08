@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 @Composable
 fun GoogleSignInButton(
     onClick: () -> Unit,
+    enabled: Boolean,
     content: @Composable () -> Unit
 ) {
     TextButton(
@@ -33,7 +34,8 @@ fun GoogleSignInButton(
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.background,
             containerColor = MaterialTheme.colorScheme.onPrimary
-        )
+        ),
+        enabled = enabled
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(

@@ -254,12 +254,6 @@ class BattleContentViewModel @Inject constructor(
         val countDownInterval = 1000L
         val startCount = COUNTDOWN_SECONDS
 
-        fun updateCountdownState(timeRemaining: Int) {
-            _battleContentUiState.update { state ->
-                state.copy(timeRemaining = timeRemaining)
-            }
-        }
-
         delay(initialDelay)
 
         for (remainingSeconds in startCount downTo 0) {
@@ -268,6 +262,21 @@ class BattleContentViewModel @Inject constructor(
             if (remainingSeconds > 0) {
                 delay(countDownInterval)
             }
+        }
+    }
+
+    private fun startBattleRunningService() {
+        _battleContentUiState.update { state ->
+            state.copy(startRunningService = true)
+        }
+    }
+
+    private fun updateCountdownState(timeRemaining: Int) {
+        if (timeRemaining == 3) { // 3초가 남았을 때 러닝 서비스 시작
+            startBattleRunningService()
+        }
+        _battleContentUiState.update { state ->
+            state.copy(timeRemaining = timeRemaining)
         }
     }
 

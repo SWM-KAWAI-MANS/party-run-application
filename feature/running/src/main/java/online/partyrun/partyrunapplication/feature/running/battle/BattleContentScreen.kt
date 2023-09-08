@@ -112,7 +112,8 @@ fun Content(
         }
     }
 
-    CheckStartTime(battleContentUiState, battleId, battleContentViewModel)
+    CheckStartTime(battleContentUiState)
+    StartRunningService(battleContentUiState, battleId, battleContentViewModel)
 
     Column(
         modifier = Modifier
@@ -133,13 +134,21 @@ fun Content(
 
 @Composable
 private fun CheckStartTime(
+    battleContentUiState: BattleContentUiState
+) {
+    when (battleContentUiState.timeRemaining) {
+        in 1..5 -> CountdownDialog(timeRemaining = battleContentUiState.timeRemaining)
+    }
+}
+
+@Composable
+private fun StartRunningService(
     battleContentUiState: BattleContentUiState,
     battleId: String?,
     battleContentViewModel: BattleContentViewModel,
 ) {
-    when (battleContentUiState.timeRemaining) {
-        in 1..5 -> CountdownDialog(timeRemaining = battleContentUiState.timeRemaining)
-        0 -> battleId?.let {
+    if (battleContentUiState.startRunningService) {
+        battleId?.let {
             // 위치 업데이트 시작 및 정지 로직
             StartBattleRunning(battleId, battleContentViewModel)
         }

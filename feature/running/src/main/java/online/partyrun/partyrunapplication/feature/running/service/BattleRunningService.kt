@@ -22,6 +22,7 @@ class BattleRunningService : BaseRunningService() {
 
     @Inject
     lateinit var sendRecordDataUseCase: SendRecordDataUseCase
+    private var isFirstLocationUpdate = true  // 플래그 초기화
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -54,6 +55,12 @@ class BattleRunningService : BaseRunningService() {
     private fun setLocationCallback(battleId: String) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
+                // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
+                if (isFirstLocationUpdate) {
+                    isFirstLocationUpdate = false  // 플래그 업데이트
+                    return
+                }
+
                 result.lastLocation?.let { location ->
                     if (lastSensorVelocity <= THRESHOLD) {
                         return@let

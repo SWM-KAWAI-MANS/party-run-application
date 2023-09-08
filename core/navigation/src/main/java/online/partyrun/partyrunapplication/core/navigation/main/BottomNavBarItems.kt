@@ -24,7 +24,7 @@ object BottomNavBarItems {
             image = SingleIcon,
             selectedImage = SelectedSingleIcon,
             route = MainNavRoutes.Single.route,
-            isLaunched = false
+            isLaunched = true
         ),
         BottomBarItem(
             title = R.string.challenge_title,

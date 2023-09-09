@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.domain.running
+package online.partyrun.partyrunapplication.core.domain.running.battle
 
 import online.partyrun.partyrunapplication.core.data.repository.BattleRepository
 import online.partyrun.partyrunapplication.core.model.running.RecordData

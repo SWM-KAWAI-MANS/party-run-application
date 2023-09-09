@@ -176,7 +176,7 @@ private fun SingleContent(
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f)
-                .padding(10.dp)
+                .padding(30.dp)
         ) {
             Column(
                 modifier = Modifier

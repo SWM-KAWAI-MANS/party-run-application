@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.common.Constants.BATTLE_ID_KEY
 import online.partyrun.partyrunapplication.core.common.Constants.NOTIFICATION_ID
-import online.partyrun.partyrunapplication.core.domain.running.SendRecordDataUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.SendRecordDataUseCase
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running.RecordData
 import java.time.LocalDateTime

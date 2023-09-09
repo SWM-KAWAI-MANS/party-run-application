@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
-import online.partyrun.partyrunapplication.core.domain.running.TerminateOngoingBattleUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.TerminateOngoingBattleUseCase
 import timber.log.Timber
 import javax.inject.Inject
 

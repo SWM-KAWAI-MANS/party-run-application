@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
-import online.partyrun.partyrunapplication.core.domain.running.GetBattleStatusUseCase
-import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.GetBattleStatusUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel

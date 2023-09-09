@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.domain.running
+package online.partyrun.partyrunapplication.core.domain.running.battle
 
 import kotlinx.coroutines.flow.first
 import online.partyrun.partyrunapplication.core.data.repository.BattleRepository

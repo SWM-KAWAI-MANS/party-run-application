@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.core.network.model.util
 
+import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils
 import java.text.NumberFormat
 import java.time.Duration
 import java.time.LocalDateTime
@@ -16,6 +17,24 @@ fun formatTime(time: LocalDateTime): String {
     } else {
         time.format(DateTimeFormatter.ofPattern("mm:ss"))
     }
+}
+
+fun calculateElapsedTimeToDomainModel(
+    startTime: LocalDateTime?,
+    parsedEndTime: LocalDateTime?
+) = if (startTime != null && parsedEndTime != null) {
+    calculateElapsedTime(startTime, parsedEndTime)
+} else {
+    "00:00"
+}
+
+fun calculateSecondsElapsedTimeToDomainModel(
+    startTime: LocalDateTime?,
+    parsedEndTime: LocalDateTime?
+) = if (startTime != null && parsedEndTime != null) {
+    calculateSecondsElapsedTime(startTime, parsedEndTime)
+} else {
+    0
 }
 
 /**
@@ -51,4 +70,16 @@ fun formatDistanceWithComma(distance: Int): String {
 
 fun formatDistanceInKm(distance: Int): String {
     return (distance / 1000).toString().plus("km")
+}
+
+fun parseEndTime(endTime: String?): LocalDateTime? {
+    /**
+     *  LocalDateTime.parse() :
+     *  문자열 형태로 표현된 날짜와 시간 정보를 LocalDateTime 객체로 변환 수행
+     */
+    return endTime?.let { LocalDateTime.parse(it, DateTimeUtils.localDateTimeFormatter) }
+}
+
+fun formatEndTime(parsedEndTime: LocalDateTime?): String {
+    return parsedEndTime?.let { formatTime(it) } ?: "00:00"
 }

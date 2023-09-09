@@ -30,7 +30,7 @@ fun NavGraphBuilder.battleRunningRoute(
 }
 
 fun NavGraphBuilder.singleRunningRoute(
-    navigateToSingle: () -> Unit,
+    navigateToSingleResult: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     ) {
     composable(
@@ -51,7 +51,7 @@ fun NavGraphBuilder.singleRunningRoute(
         SingleContentScreen(
             targetDistance = distance,
             targetTime = time,
-            navigateToSingle = navigateToSingle,
+            navigateToSingleResult = navigateToSingleResult,
             onShowSnackbar = onShowSnackbar
         )
     }

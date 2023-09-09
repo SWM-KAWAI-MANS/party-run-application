@@ -34,7 +34,7 @@ fun SingleContentScreen(
     targetDistance: Int?,
     targetTime: Int?,
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
-    navigateToSingle: () -> Unit,
+    navigateToSingleResult: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val singleContentUiState by singleContentViewModel.singleContentUiState.collectAsStateWithLifecycle()
@@ -44,7 +44,7 @@ fun SingleContentScreen(
     Content(
         targetDistance = targetDistance,
         targetTime = targetTime,
-        navigateToSingle = navigateToSingle,
+        navigateToSingleResult = navigateToSingleResult,
         singleContentViewModel = singleContentViewModel,
         singleContentUiState = singleContentUiState,
         openRunningExitDialog = openRunningExitDialog,
@@ -57,7 +57,7 @@ fun SingleContentScreen(
 fun Content(
     targetDistance: Int?,
     targetTime: Int?,
-    navigateToSingle: () -> Unit,
+    navigateToSingleResult: () -> Unit,
     singleContentViewModel: SingleContentViewModel,
     singleContentUiState: SingleContentUiState,
     openRunningExitDialog: MutableState<Boolean>,
@@ -99,7 +99,7 @@ fun Content(
     if (singleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
             delay(4000)
-            navigateToSingle()
+            navigateToSingleResult()
         }
     }
 

@@ -31,7 +31,7 @@ class SingleViewModel @Inject constructor(
     }
 
     fun decrementTargetDistance() {
-        if (_targetDistance.value >= 250) {
+        if (_targetDistance.value > 250) {
             _targetDistance.value -= 250
         }
     }

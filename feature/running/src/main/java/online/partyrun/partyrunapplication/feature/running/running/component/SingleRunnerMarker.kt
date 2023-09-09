@@ -15,11 +15,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.model.single.ProfileImageSource
-import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
 
 @Composable
-fun SingleRunnerMarker(runner: SingleRunnerStatus) {
+fun SingleRunnerMarker(runner: SingleRunnerDisplayStatus) {
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -42,7 +42,7 @@ fun SingleRunnerMarker(runner: SingleRunnerStatus) {
 }
 
 @Composable
-private fun SelectRunnerImage(runner: SingleRunnerStatus) {
+private fun SelectRunnerImage(runner: SingleRunnerDisplayStatus) {
     when (val profile = runner.runnerProfile) {
         is ProfileImageSource.Url -> {
             RenderAsyncUrlImage(

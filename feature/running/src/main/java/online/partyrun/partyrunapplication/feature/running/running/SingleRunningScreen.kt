@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
-import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
@@ -86,8 +86,8 @@ fun SingleRunningScreen(
                 TrackWithUserAndRobot(
                     singleContentViewModel = singleContentViewModel,
                     targetDistance = singleContentUiState.selectedDistance,
-                    user = singleContentUiState.userState,
-                    robot = singleContentUiState.robotState
+                    user = singleContentUiState.userStatus,
+                    robot = singleContentUiState.robotStatus
                 )
             }
             Column(
@@ -154,8 +154,8 @@ private fun RunningMetricsPanel(
 private fun TrackWithUserAndRobot(
     singleContentViewModel: SingleContentViewModel,
     targetDistance: Int,
-    user: SingleRunnerStatus,
-    robot: SingleRunnerStatus
+    user: SingleRunnerDisplayStatus,
+    robot: SingleRunnerDisplayStatus
 ) {
     var showArrivalFlag by remember { mutableStateOf(false) }
 
@@ -197,7 +197,7 @@ private fun TrackWithUserAndRobot(
 private fun RenderRunner(
     singleContentViewModel: SingleContentViewModel,
     targetDistance: Int,
-    runner: SingleRunnerStatus,
+    runner: SingleRunnerDisplayStatus,
     trackWidth: Double,
     trackHeight: Double,
     isUser: Boolean

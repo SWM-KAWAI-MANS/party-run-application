@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
 import online.partyrun.partyrunapplication.core.model.single.ProfileImageSource
-import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
 import javax.inject.Inject
@@ -118,11 +118,11 @@ class SingleContentViewModel @Inject constructor(
     fun initSingleState() {
         viewModelScope.launch {
             val userData = getMyPageDataUseCase()
-            val userState = SingleRunnerStatus(
+            val userStatus = SingleRunnerDisplayStatus(
                 runnerName = userData.name,
                 runnerProfile = ProfileImageSource.Url(userData.profile) // 서버에서 관리하는 사용자 프로필 이미지 URL
             )
-            val robotState = SingleRunnerStatus(
+            val robotStatus = SingleRunnerDisplayStatus(
                 runnerName = "파티런 봇",
                 runnerProfile = ProfileImageSource.ResourceId(R.drawable.robot)  // 로컬 리소스 ID
             )
@@ -130,8 +130,8 @@ class SingleContentViewModel @Inject constructor(
             _singleContentUiState.update { state ->
                 state.copy(
                     userName = userData.name,
-                    userState = userState,
-                    robotState = robotState
+                    userStatus = userStatus,
+                    robotStatus = robotStatus
                 )
             }
             startUserMovement()
@@ -147,7 +147,7 @@ class SingleContentViewModel @Inject constructor(
 
                 _singleContentUiState.update { state ->
                     state.copy(
-                        userState = updatedUser,
+                        userStatus = updatedUser,
                         distanceInKm = formattedDistance
                     )
                 }
@@ -155,9 +155,9 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    private fun getUpdatedMovementData(totalDistance: Int): Pair<SingleRunnerStatus, String> {
+    private fun getUpdatedMovementData(totalDistance: Int): Pair<SingleRunnerDisplayStatus, String> {
         val previousState = _singleContentUiState.value
-        val previousUser = previousState.userState
+        val previousUser = previousState.userStatus
 
         // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
         val distanceInKm = totalDistance.toDouble() / 1000
@@ -192,7 +192,7 @@ class SingleContentViewModel @Inject constructor(
                 val robotStep =
                     previousState.selectedDistance.toDouble() / previousState.selectedTime
                 val currentElapsedTime = previousState.elapsedSecondsTime
-                val previousRobot = previousState.robotState
+                val previousRobot = previousState.robotStatus
 
                 val updatedRobot = previousRobot.copy(
                     distance = robotStep * currentElapsedTime
@@ -200,7 +200,7 @@ class SingleContentViewModel @Inject constructor(
 
                 _singleContentUiState.update { state ->
                     state.copy(
-                        robotState = updatedRobot
+                        robotStatus = updatedRobot
                     )
                 }
             }

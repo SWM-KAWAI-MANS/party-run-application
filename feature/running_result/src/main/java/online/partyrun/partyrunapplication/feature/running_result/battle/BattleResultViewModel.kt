@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running_result
+package online.partyrun.partyrunapplication.feature.running_result.battle
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

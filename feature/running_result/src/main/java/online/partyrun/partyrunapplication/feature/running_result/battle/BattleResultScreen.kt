@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running_result
+package online.partyrun.partyrunapplication.feature.running_result.battle
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,6 +44,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
+import online.partyrun.partyrunapplication.feature.running_result.R
 import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
 import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
 import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget

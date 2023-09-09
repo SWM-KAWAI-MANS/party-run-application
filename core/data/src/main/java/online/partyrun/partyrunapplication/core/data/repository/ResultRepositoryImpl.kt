@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
-import online.partyrun.partyrunapplication.core.model.running_result.BattleResult
+import online.partyrun.partyrunapplication.core.model.running_result.battle.BattleResult
 import online.partyrun.partyrunapplication.core.network.datasource.ResultDataSource
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result

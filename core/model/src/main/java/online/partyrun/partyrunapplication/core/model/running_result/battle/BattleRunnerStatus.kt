@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.core.model.running_result
+package online.partyrun.partyrunapplication.core.model.running_result.battle
 
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
 import online.partyrun.partyrunapplication.core.model.util.formatDurationToTimeString

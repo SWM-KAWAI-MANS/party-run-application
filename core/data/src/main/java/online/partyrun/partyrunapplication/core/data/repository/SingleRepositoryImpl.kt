@@ -2,14 +2,10 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleRunnerRecord
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleRunnerStatus
-import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils
-import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.network.model.util.calculateElapsedTimeToDomainModel
 import online.partyrun.partyrunapplication.core.network.model.util.calculateSecondsElapsedTimeToDomainModel
 import online.partyrun.partyrunapplication.core.network.model.util.formatDate
@@ -17,7 +13,6 @@ import online.partyrun.partyrunapplication.core.network.model.util.formatDistanc
 import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceWithComma
 import online.partyrun.partyrunapplication.core.network.model.util.formatEndTime
 import online.partyrun.partyrunapplication.core.network.model.util.formatTime
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class SingleRepositoryImpl @Inject constructor() : SingleRepository {

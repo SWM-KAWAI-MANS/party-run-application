@@ -23,20 +23,20 @@ fun SetUpAuthNavGraph(
     ) {
         splashRoute(
             setIntentMainActivity = intentToMainActivity,
-            navigationToAgreement = {
+            navigateToAgreement = {
                 navController.navigate(AuthNavRoutes.Agreement.route)
             }
         )
 
         agreementRoute(
             navController = navController,
-            navigationToSignIn = {
+            navigateToSignIn = {
                 navController.navigate(AuthNavRoutes.SignIn.route)
             },
-            navigationToTermsOfService = {
+            navigateToTermsOfService = {
                 navController.navigate(AuthNavRoutes.TermsOfService.route)
             },
-            navigationToPrivacyPolicy = {
+            navigateToPrivacyPolicy = {
                 navController.navigate(AuthNavRoutes.PrivacyPolicy.route)
             }
         )

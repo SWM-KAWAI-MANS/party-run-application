@@ -23,7 +23,7 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     splashViewModel: SplashViewModel = hiltViewModel(),
     setIntentMainActivity: () -> Unit,
-    navigationToAgreement: () -> Unit
+    navigateToAgreement: () -> Unit
 ) {
     val splashUiState by splashViewModel.splashUiState.collectAsStateWithLifecycle()
 
@@ -33,7 +33,7 @@ fun SplashScreen(
         if (isUserLoggedInAndAgreed(splashUiState)) { // Google 로그인이 되어있는 상태라면
             setIntentMainActivity()
         } else {
-            navigationToAgreement()
+            navigateToAgreement()
         }
     }
 

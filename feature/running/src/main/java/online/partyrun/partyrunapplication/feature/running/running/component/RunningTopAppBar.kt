@@ -19,7 +19,7 @@ fun RunningTopAppBar(
 ) {
     PartyRunTopAppBar(
         modifier = Modifier,
-        navigationContent = {
+        navigateToContent = {
             IconButton(onClick = { openRunningExitDialog.value = true }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),

@@ -19,7 +19,7 @@ fun SettingsTopAppBar(navigateBack: () -> Unit) {
         titleContent = {
             Text(stringResource(id = R.string.settings))
         },
-        navigationContent = {
+        navigateToContent = {
             IconButton(
                 onClick = {
                     navigateBack()

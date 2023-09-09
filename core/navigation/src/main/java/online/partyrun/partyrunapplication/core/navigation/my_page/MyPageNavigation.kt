@@ -11,7 +11,7 @@ fun NavGraphBuilder.myPageRoute(
     navigateToSettings: () -> Unit,
     navigateBack: () -> Unit,
     navigateToMyPage: () -> Unit,
-    navigationToProfile: () -> Unit,
+    navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     composable(route = MainNavRoutes.MyPage.route) {
@@ -19,7 +19,7 @@ fun NavGraphBuilder.myPageRoute(
             onSignOut = onSignOut,
             navigateToSettings = navigateToSettings,
             navigateBack = navigateBack,
-            navigationToProfile = navigationToProfile,
+            navigateToProfile = navigateToProfile,
             onShowSnackbar = onShowSnackbar
         )
     }

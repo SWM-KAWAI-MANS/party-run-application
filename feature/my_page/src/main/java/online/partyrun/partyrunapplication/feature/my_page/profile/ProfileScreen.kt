@@ -139,7 +139,7 @@ private fun ProfileTopAppBar(
 ) {
     PartyRunTopAppBar(
         modifier = modifier,
-        navigationContent = {
+        navigateToContent = {
             IconButton(onClick = { navigateToMyPage() }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),

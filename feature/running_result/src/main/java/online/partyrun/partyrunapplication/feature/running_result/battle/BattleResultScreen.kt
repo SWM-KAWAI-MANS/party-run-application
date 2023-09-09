@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
@@ -47,7 +45,9 @@ import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerSt
 import online.partyrun.partyrunapplication.feature.running_result.R
 import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
 import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
+import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadFailedBody
 import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadingBody
 import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
 
 @Composable
@@ -75,7 +75,7 @@ private fun Content(
 ) {
     Box(modifier = modifier) {
         when (battleResultUiState) {
-            is BattleResultUiState.Loading -> LoadingBody()
+            is BattleResultUiState.Loading -> ResultLoadingBody()
             is BattleResultUiState.Success ->
                 BattleResultBody(
                     battleResult = battleResultUiState.battleResult,
@@ -83,41 +83,9 @@ private fun Content(
                 )
 
             is BattleResultUiState.LoadFailed ->
-                LoadFailedBody(
-                    battleResultViewModel = battleResultViewModel
-                )
-        }
-    }
-}
-
-@Composable
-private fun LoadingBody() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun LoadFailedBody(
-    battleResultViewModel: BattleResultViewModel
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PartyRunGradientButton(
-            onClick = { battleResultViewModel.getBattleResult() }
-        ) {
-            Text(
-                text = stringResource(id = R.string.re_loading),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+                ResultLoadFailedBody {
+                    battleResultViewModel.getBattleResult()
+                }
         }
     }
 }

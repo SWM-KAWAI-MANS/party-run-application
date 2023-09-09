@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.feature.running_result
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,41 +35,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Polyline
-import com.google.maps.android.compose.rememberCameraPositionState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
-import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
-import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
-import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
+import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
+import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
+import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
 
 @Composable
-fun RunningResultScreen(
+fun BattleResultScreen(
     modifier: Modifier = Modifier,
-    runningResultViewModel: RunningResultViewModel = hiltViewModel(),
+    battleResultViewModel: BattleResultViewModel = hiltViewModel(),
     navigateToTopLevel: () -> Unit
 ) {
-    val runningResultUiState by runningResultViewModel.runningResultUiState.collectAsStateWithLifecycle()
+    val battleResultUiState by battleResultViewModel.battleResultUiState.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
-        runningResultUiState = runningResultUiState,
-        runningResultViewModel = runningResultViewModel,
+        battleResultUiState = battleResultUiState,
+        battleResultViewModel = battleResultViewModel,
         navigateToTopLevel = navigateToTopLevel
     )
 }
@@ -79,22 +68,22 @@ fun RunningResultScreen(
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
-    runningResultUiState: RunningResultUiState,
-    runningResultViewModel: RunningResultViewModel,
+    battleResultUiState: BattleResultUiState,
+    battleResultViewModel: BattleResultViewModel,
     navigateToTopLevel: () -> Unit,
 ) {
     Box(modifier = modifier) {
-        when (runningResultUiState) {
-            is RunningResultUiState.Loading -> LoadingBody()
-            is RunningResultUiState.Success ->
-                RunningResultBody(
-                    battleResult = runningResultUiState.battleResult,
+        when (battleResultUiState) {
+            is BattleResultUiState.Loading -> LoadingBody()
+            is BattleResultUiState.Success ->
+                BattleResultBody(
+                    battleResult = battleResultUiState.battleResult,
                     navigateToTopLevel = navigateToTopLevel
                 )
 
-            is RunningResultUiState.LoadFailed ->
+            is BattleResultUiState.LoadFailed ->
                 LoadFailedBody(
-                    runningResultViewModel = runningResultViewModel
+                    battleResultViewModel = battleResultViewModel
                 )
         }
     }
@@ -113,7 +102,7 @@ private fun LoadingBody() {
 
 @Composable
 private fun LoadFailedBody(
-    runningResultViewModel: RunningResultViewModel
+    battleResultViewModel: BattleResultViewModel
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -121,7 +110,7 @@ private fun LoadFailedBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PartyRunGradientButton(
-            onClick = { runningResultViewModel.getBattleResult() }
+            onClick = { battleResultViewModel.getBattleResult() }
         ) {
             Text(
                 text = stringResource(id = R.string.re_loading),
@@ -133,7 +122,7 @@ private fun LoadFailedBody(
 }
 
 @Composable
-private fun RunningResultBody(
+private fun BattleResultBody(
     battleResult: BattleResultUiModel,
     navigateToTopLevel: () -> Unit
 ) {
@@ -207,7 +196,7 @@ private fun RunningResultBody(
                             .shadow(elevation = 5.dp, shape = RoundedCornerShape(15.dp))
                             .background(color = MaterialTheme.colorScheme.surface)
                     ) {
-                        TitleAndDateDisplay(battleResult)
+                        BattleTitleAndDateDisplay(battleResult)
 
                         Row(
                             modifier = Modifier
@@ -227,13 +216,14 @@ private fun RunningResultBody(
                                 .padding(20.dp),
                         ) {
                             Text(text = stringResource(id = R.string.analysis_chart))
-                            ChartScreen(selectedRunner = selectedRunner)
+                            ChartScreen(runnerStatus = selectedRunner)
                         }
                     }
                     Spacer(modifier = Modifier.size(60.dp)) // 바텀 컴포넌트보다 위에서 보이도록 스페이스 설정
                 }
             }
         }
+
         // 스크린 위치에 상관없이 항상 바텀에 고정으로 보이는 컴포넌트
         Surface(
             modifier = Modifier
@@ -248,132 +238,7 @@ private fun RunningResultBody(
 }
 
 @Composable
-private fun MapWidget(
-    targetDistance: Int?,
-    targetDistanceFormatted: String,
-    records: List<BattleRunnerRecordUiModel>?,
-) {
-    val points = records?.map { LatLng(it.latitude, it.longitude) } ?: listOf()
-    val centerLatLng = getCenterLatLng(points)
-
-    /*
-     * centerLatLng 사용하여 카메라의 초기 위치 및 zoom 설정. -> 1000M면 14.5f https://ai-programmer.tistory.com/2
-     * centerLatLng의 변화를 감지하여 cameraPositionState 업데이트
-     */
-    val zoomValue = getZoomValueForDistance(targetDistance)
-
-    val cameraPositionState: CameraPositionState = rememberCameraPositionState()
-    LaunchedEffect(centerLatLng) {
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(centerLatLng, zoomValue)
-    }
-
-    GoogleMap(
-        modifier = Modifier
-            .height(400.dp)
-            .fillMaxWidth(),
-        properties = MapProperties(isMyLocationEnabled = true),
-        uiSettings = MapUiSettings(
-            zoomControlsEnabled = false,
-            compassEnabled = true
-        ),
-        cameraPositionState = cameraPositionState
-    ) {
-        Polyline(
-            points = points,
-            color = Color.Red
-        )
-    }
-    Box(
-        modifier = Modifier
-            .padding(10.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(color = MaterialTheme.colorScheme.primary)
-    ) {
-        DistanceBox(targetDistanceFormatted)
-    }
-}
-
-/**
- * targetDistance 값에 따라 zoom 값 결정
- */
-@Composable
-private fun getZoomValueForDistance(targetDistance: Int?): Float {
-    val zoomValue = when (targetDistance) {
-        1000 -> 14.5f
-        3000 -> 13.5f
-        5000 -> 12.8f
-        10000 -> 12f
-        else -> 12f  // 기본값 혹은 예기치 않은 값에 대한 대응
-    }
-    return zoomValue
-}
-
-/**
- * cameraPosition를 중앙에 위치시키기 위한 points 중앙 좌표를 구하는 작업 수행
- */
-@Composable
-private fun getCenterLatLng(points: List<LatLng>): LatLng {
-    val startLatLng = points.firstOrNull() ?: LatLng(0.0, 0.0)
-    val endLatLng = points.lastOrNull() ?: LatLng(0.0, 0.0)
-
-    val bounds = LatLngBounds.Builder()
-        .include(startLatLng)
-        .include(endLatLng)
-        .build()
-
-    // bounds의 중심점을 구하기
-    return bounds.center
-}
-
-@Composable
-private fun SummaryInfo(
-    selectedRunner: BattleRunnerStatusUiModel
-) {
-    Column(
-        modifier = Modifier.padding(5.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.time))
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = selectedRunner.elapsedTime,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-
-    Column(
-        modifier = Modifier.padding(5.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.avg_pace))
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = selectedRunner.averagePace,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-
-    Column(
-        modifier = Modifier.padding(5.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.avg_altitude))
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = selectedRunner.averageAltitude.toString(),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
-
-@Composable
-private fun TitleAndDateDisplay(battleResult: BattleResultUiModel) {
+private fun BattleTitleAndDateDisplay(battleResult: BattleResultUiModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -390,52 +255,9 @@ private fun TitleAndDateDisplay(battleResult: BattleResultUiModel) {
 }
 
 @Composable
-private fun FixedBottomNavigationSheet(navigateToTopLevel: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .heightIn(50.dp)
-            .padding(15.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        PartyRunGradientButton(
-            onClick = { navigateToTopLevel() }
-        ) {
-            Text(
-                text = stringResource(id = R.string.navigate_to_top_level),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
-
-@Composable
-private fun DistanceBox(targetDistance: String) {
-    Row(
-        modifier = Modifier.padding(10.dp)
-    ) {
-        Image(
-            painter = painterResource(id = PartyRunIcons.DistanceIcon),
-            contentDescription = null,
-            modifier = Modifier
-                .size(30.dp)
-                .clip(CircleShape)
-                .padding(top = 3.dp),
-            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimary)
-        )
-        Text(
-            text = targetDistance, // "X,xxx m" 형식
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
-
-@Composable
 fun UserProfiles(
-    users: List<BattleRunnerStatusUiModel>,
-    onRunnerSelected: (BattleRunnerStatusUiModel) -> Unit // 러너 프로필 클릭 시 호출될 콜백
+    users: List<RunnerStatusUiModel>,
+    onRunnerSelected: (RunnerStatusUiModel) -> Unit // 러너 프로필 클릭 시 호출될 콜백
 ) {
     LazyRow(
         modifier = Modifier.padding(all = 8.dp),
@@ -452,7 +274,7 @@ fun UserProfiles(
 
 @Composable
 fun UserProfile(
-    runner: BattleRunnerStatusUiModel,
+    runner: RunnerStatusUiModel,
     onRunnerClick: () -> Unit
 ) {
     Box(

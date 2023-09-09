@@ -110,10 +110,10 @@ fun SetUpMainNavGraph(
         )
 
         singleRunningRoute(
-            navigateToSingle = {
-                navController.navigate(MainNavRoutes.Single.route) {
+            navigateToSingleResult = {
+                navController.navigate(MainNavRoutes.SingleResult.route) {
                     popUpTo(MainNavRoutes.Single.route) {
-                        inclusive = true
+                        inclusive = false
                     }
                 }
             },

@@ -13,6 +13,7 @@ sealed class MainNavRoutes(val route: String) {
     object BattleRunning : MainNavRoutes("battle_running")
     object SingleRunning : MainNavRoutes("single_running")
     object BattleResult : MainNavRoutes("battle_result")
+    object SingleResult : MainNavRoutes("single_result")
     object Settings : MainNavRoutes("settings")
 
 }

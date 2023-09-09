@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.core.model.running_result.battle
 
+import online.partyrun.partyrunapplication.core.model.running_result.common.RunnerRecord
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import java.time.LocalDateTime
 
@@ -9,12 +10,12 @@ import java.time.LocalDateTime
  * @param distance: 해당 GPS까지의 달린 총 거리
  */
 data class BattleRunnerRecord(
-    val altitude: Double,
-    val latitude: Double,
-    val longitude: Double,
-    val time: LocalDateTime,
-    val distance: Double
-)
+    override val altitude: Double,
+    override val latitude: Double,
+    override val longitude: Double,
+    override val time: LocalDateTime,
+    override val distance: Double
+) : RunnerRecord
 
 fun BattleRunnerRecord.toUiModel(): RunnerRecordUiModel {
     return RunnerRecordUiModel(

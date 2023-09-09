@@ -30,9 +30,9 @@ import online.partyrun.partyrunapplication.feature.splash.R
 
 @Composable
 fun AgreementScreen(
-    navigationToTermsOfService: () -> Unit,
-    navigationToPrivacyPolicy: () -> Unit,
-    navigationToSignIn: () -> Unit,
+    navigateToTermsOfService: () -> Unit,
+    navigateToPrivacyPolicy: () -> Unit,
+    navigateToSignIn: () -> Unit,
     agreementViewModel: AgreementViewModel = hiltViewModel()
 ) {
     val state by agreementViewModel.agreementUiState.collectAsStateWithLifecycle()
@@ -89,7 +89,7 @@ fun AgreementScreen(
                     },
                     textId = R.string.terms_of_services_subject,
                 ) {
-                    navigationToTermsOfService()
+                    navigateToTermsOfService()
                 }
                 TermsRow(
                     conditionChecked = state.isPrivacyPolicyChecked,
@@ -98,7 +98,7 @@ fun AgreementScreen(
                     },
                     textId = R.string.privacy_policy_subject,
                 ) {
-                    navigationToPrivacyPolicy()
+                    navigateToPrivacyPolicy()
                 }
             }
             Spacer(modifier = Modifier.size(80.dp))
@@ -114,7 +114,7 @@ fun AgreementScreen(
                 modifier = Modifier.padding(horizontal = 40.dp),
                 onClick = {
                     agreementViewModel.saveAgreementState(isChecked = true)
-                    navigationToSignIn()
+                    navigateToSignIn()
                 },
                 visible = state.isAllChecked
             ) {

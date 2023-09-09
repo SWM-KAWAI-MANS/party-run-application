@@ -46,7 +46,7 @@ fun MyPageScreen(
     onSignOut: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
     navigateBack: () -> Unit = {},
-    navigationToProfile: () -> Unit = {},
+    navigateToProfile: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
@@ -58,7 +58,7 @@ fun MyPageScreen(
         onSignOut = onSignOut,
         navigateToSettings = navigateToSettings,
         navigateBack = navigateBack,
-        navigationToProfile = navigationToProfile,
+        navigateToProfile = navigateToProfile,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
     )
@@ -73,7 +73,7 @@ fun Content(
     onSignOut: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateBack: () -> Unit,
-    navigationToProfile: () -> Unit,
+    navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -105,7 +105,7 @@ fun Content(
                     viewModel = myPageViewModel,
                     onSignOut = onSignOut,
                     userData = myPageUiState.user,
-                    navigationToProfile = navigationToProfile
+                    navigateToProfile = navigateToProfile
                 )
 
                 is MyPageUiState.LoadFailed -> LoadingBody()
@@ -123,7 +123,7 @@ private fun MyPageTopAppBar(
 ) {
     PartyRunTopAppBar(
         modifier = modifier,
-        navigationContent = {
+        navigateToContent = {
             IconButton(onClick = { navigateBack() }) {
                 Icon(
                     painterResource(id = PartyRunIcons.ArrowBackIos),
@@ -163,7 +163,7 @@ private fun MyPageBody(
     viewModel: MyPageViewModel,
     onSignOut: () -> Unit,
     userData: User,
-    navigationToProfile: () -> Unit,
+    navigateToProfile: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -178,7 +178,7 @@ private fun MyPageBody(
                 .heightIn(max = max(270.dp, with(LocalDensity.current) { 200.sp.toDp() }))
         ) {
             ProfileContent(
-                navigationToProfile = navigationToProfile,
+                navigateToProfile = navigateToProfile,
                 userName = userData.name,
                 userProfile = userData.profile
             )
@@ -198,7 +198,7 @@ private fun MyPageBody(
 
 @Composable
 private fun ProfileContent(
-    navigationToProfile: () -> Unit,
+    navigateToProfile: () -> Unit,
     userName: String,
     userProfile: String,
 ) {
@@ -207,7 +207,7 @@ private fun ProfileContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ProfileHeader(
-            navigationToProfile = navigationToProfile,
+            navigateToProfile = navigateToProfile,
             userName = userName
         )
         ProfileImage(
@@ -218,7 +218,7 @@ private fun ProfileContent(
 
 @Composable
 private fun ProfileHeader(
-    navigationToProfile: () -> Unit,
+    navigateToProfile: () -> Unit,
     userName: String
 ) {
     Box(
@@ -238,7 +238,7 @@ private fun ProfileHeader(
 
         IconButton(
             onClick = {
-                navigationToProfile()
+                navigateToProfile()
             },
             modifier = Modifier
                 .size(45.dp)

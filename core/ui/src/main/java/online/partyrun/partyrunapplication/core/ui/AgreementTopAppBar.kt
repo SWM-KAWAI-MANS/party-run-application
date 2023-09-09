@@ -22,7 +22,7 @@ fun AgreementTopAppBar(
         titleContent = {
             titleContent()
         },
-        navigationContent = {
+        navigateToContent = {
             IconButton(onClick = { action() }) {
                 Icon(
                     painterResource(id = ArrowBackIos),

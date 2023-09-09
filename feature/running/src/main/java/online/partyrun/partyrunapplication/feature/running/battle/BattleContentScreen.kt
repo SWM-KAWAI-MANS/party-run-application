@@ -35,7 +35,7 @@ import online.partyrun.partyrunapplication.feature.running.service.BattleRunning
 fun BattleContentScreen(
     targetDistance: Int?,
     navigateToBattleOnWebSocketError: () -> Unit = {},
-    navigationToBattleResult: () -> Unit = {},
+    navigateToBattleResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
@@ -47,7 +47,7 @@ fun BattleContentScreen(
     Content(
         targetDistance = targetDistance,
         navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
-        navigationToBattleResult = navigationToBattleResult,
+        navigateToBattleResult = navigateToBattleResult,
         battleContentViewModel = battleContentViewModel,
         battleContentUiState = battleContentUiState,
         battleId = battleId,
@@ -61,7 +61,7 @@ fun BattleContentScreen(
 fun Content(
     targetDistance: Int?,
     navigateToBattleOnWebSocketError: () -> Unit = {},
-    navigationToBattleResult: () -> Unit = {},
+    navigateToBattleResult: () -> Unit = {},
     battleContentViewModel: BattleContentViewModel,
     battleContentUiState: BattleContentUiState,
     battleId: String?,
@@ -101,7 +101,7 @@ fun Content(
     if (battleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
             delay(4000)
-            navigationToBattleResult()
+            navigateToBattleResult()
         }
     }
 

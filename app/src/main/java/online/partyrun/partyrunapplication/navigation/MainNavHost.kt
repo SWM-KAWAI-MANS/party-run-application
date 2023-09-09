@@ -83,7 +83,7 @@ fun SetUpMainNavGraph(
                     }
                 }
             },
-            navigationToProfile = {
+            navigateToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
             },
             onShowSnackbar = onShowSnackbar
@@ -99,7 +99,7 @@ fun SetUpMainNavGraph(
                     restoreState = true
                 }
             },
-            navigationToBattleResult = {
+            navigateToBattleResult = {
                 navController.navigate(MainNavRoutes.BattleResult.route) {
                     popUpTo(MainNavRoutes.Battle.route) {
                         inclusive = false

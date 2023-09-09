@@ -11,27 +11,27 @@ import online.partyrun.partyrunapplication.feature.splash.agreement.TermsOfServi
 
 fun NavGraphBuilder.splashRoute(
     setIntentMainActivity: () -> Unit,
-    navigationToAgreement: () -> Unit
+    navigateToAgreement: () -> Unit
 ) {
     composable(AuthNavRoutes.Splash.route) {
         SplashScreen(
             setIntentMainActivity = setIntentMainActivity,
-            navigationToAgreement = navigationToAgreement
+            navigateToAgreement = navigateToAgreement
         )
     }
 }
 
 fun NavGraphBuilder.agreementRoute(
     navController: NavHostController,
-    navigationToSignIn: () -> Unit,
-    navigationToTermsOfService: () -> Unit,
-    navigationToPrivacyPolicy: () -> Unit
+    navigateToSignIn: () -> Unit,
+    navigateToTermsOfService: () -> Unit,
+    navigateToPrivacyPolicy: () -> Unit
 ) {
     composable(AuthNavRoutes.Agreement.route) {
         AgreementScreen(
-            navigationToSignIn = navigationToSignIn,
-            navigationToTermsOfService = navigationToTermsOfService,
-            navigationToPrivacyPolicy = navigationToPrivacyPolicy
+            navigateToSignIn = navigateToSignIn,
+            navigateToTermsOfService = navigateToTermsOfService,
+            navigateToPrivacyPolicy = navigateToPrivacyPolicy
         )
     }
     composable(AuthNavRoutes.TermsOfService.route) {

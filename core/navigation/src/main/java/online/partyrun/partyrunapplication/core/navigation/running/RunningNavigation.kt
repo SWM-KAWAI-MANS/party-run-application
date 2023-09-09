@@ -10,7 +10,7 @@ import online.partyrun.partyrunapplication.feature.running.single.SingleContentS
 
 fun NavGraphBuilder.battleRunningRoute(
     navigateToBattleOnWebSocketError: () -> Unit,
-    navigationToBattleResult: () -> Unit,
+    navigateToBattleResult: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     composable(
@@ -23,7 +23,7 @@ fun NavGraphBuilder.battleRunningRoute(
         BattleContentScreen(
             targetDistance = backStackEntry.arguments?.getInt("distance"),
             navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError,
-            navigationToBattleResult = navigationToBattleResult,
+            navigateToBattleResult = navigateToBattleResult,
             onShowSnackbar = onShowSnackbar
         )
     }

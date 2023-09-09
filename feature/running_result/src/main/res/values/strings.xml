@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="battle_title">대결모드</string>
+    <string name="single_title">싱글모드</string>
     <string name="avg_pace">평균 페이스</string>
     <string name="time">시간</string>
     <string name="avg_altitude">평균 고도</string>

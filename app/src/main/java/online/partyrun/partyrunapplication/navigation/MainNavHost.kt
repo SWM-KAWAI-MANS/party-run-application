@@ -122,7 +122,11 @@ fun SetUpMainNavGraph(
 
         runningResultRoute(
             navigateToTopLevel = {
-                navController.navigate(MainNavRoutes.Battle.route)
+                navController.navigate(MainNavRoutes.Battle.route) {
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = true
+                    }
+                }
             }
         )
 

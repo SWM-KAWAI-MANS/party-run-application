@@ -13,11 +13,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
-import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
+import online.partyrun.partyrunapplication.core.model.battle.BattleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
 
 @Composable
-fun BattleRunnerMarker(runner: RunnerStatus) {
+fun BattleRunnerMarker(runner: BattleRunnerDisplayStatus) {
     Box(
         contentAlignment = Alignment.Center
     ) {

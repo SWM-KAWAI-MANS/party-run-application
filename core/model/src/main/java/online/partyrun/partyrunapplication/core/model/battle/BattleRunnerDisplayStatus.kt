@@ -1,6 +1,6 @@
 package online.partyrun.partyrunapplication.core.model.battle
 
-data class RunnerStatus (
+data class BattleRunnerDisplayStatus (
     val runnerId: String,
     val runnerName: String = "",
     val runnerProfile: String = "",

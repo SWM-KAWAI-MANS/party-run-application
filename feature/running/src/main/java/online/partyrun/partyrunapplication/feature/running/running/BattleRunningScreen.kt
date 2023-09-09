@@ -47,7 +47,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunOutlinedText
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
-import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
+import online.partyrun.partyrunapplication.core.model.battle.BattleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
@@ -201,7 +201,7 @@ private fun TrackWithMultipleUsers(
     battleContentViewModel: BattleContentViewModel,
     totalTrackDistance: Int,
     userId: String,
-    runners: List<RunnerStatus>
+    runners: List<BattleRunnerDisplayStatus>
 ) {
     var showArrivalFlag by remember { mutableStateOf(false) }
 
@@ -248,7 +248,7 @@ private fun TrackWithMultipleUsers(
 }
 
 @Composable
-fun RealtimeBattleScreenItem(runner: RunnerStatus) {
+fun RealtimeBattleScreenItem(runner: BattleRunnerDisplayStatus) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

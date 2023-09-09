@@ -1,6 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
-import online.partyrun.partyrunapplication.core.model.single.SingleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 
 data class SingleContentUiState(
     // 목표 거리에 도달했는지 여부 판단
@@ -21,8 +21,8 @@ data class SingleContentUiState(
     val elapsedSecondsTime: Int = 0,
     val elapsedFormattedTime: String = "00:00:00",
     // 대결에 참여 중인 자신과 로봇의 현재 상태 정보
-    val userState: SingleRunnerStatus = SingleRunnerStatus(),
-    val robotState: SingleRunnerStatus = SingleRunnerStatus(),
+    val userStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
+    val robotStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     // 대결 시작까지 남은 시간
     val timeRemaining: Int = -1,
 )

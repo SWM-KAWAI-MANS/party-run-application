@@ -1,6 +1,6 @@
-package online.partyrun.partyrunapplication.core.model.running_result
+package online.partyrun.partyrunapplication.core.model.running_result.battle
 
-import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerRecordUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import java.time.LocalDateTime
 
 /**
@@ -16,8 +16,8 @@ data class BattleRunnerRecord(
     val distance: Double
 )
 
-fun BattleRunnerRecord.toUiModel(): BattleRunnerRecordUiModel {
-    return BattleRunnerRecordUiModel(
+fun BattleRunnerRecord.toUiModel(): RunnerRecordUiModel {
+    return RunnerRecordUiModel(
         altitude = this.altitude,
         latitude = this.latitude,
         longitude = this.longitude,

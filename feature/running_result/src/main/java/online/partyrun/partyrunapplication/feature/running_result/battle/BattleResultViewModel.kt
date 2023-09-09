@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running_result
+package online.partyrun.partyrunapplication.feature.running_result.battle
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,20 +13,20 @@ import online.partyrun.partyrunapplication.core.domain.running.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
-import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class RunningResultViewModel @Inject constructor(
+class BattleResultViewModel @Inject constructor(
     private val getBattleResultUseCase: GetBattleResultUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val getBattleStatusUseCase: GetBattleStatusUseCase
 ) : ViewModel() {
 
-    private val _runningResultUiState =
-        MutableStateFlow<RunningResultUiState>(RunningResultUiState.Loading)
-    val runningResultUiState = _runningResultUiState.asStateFlow()
+    private val _battleResultUiState =
+        MutableStateFlow<BattleResultUiState>(BattleResultUiState.Loading)
+    val battleResultUiState = _battleResultUiState.asStateFlow()
 
     init {
         getBattleResult()
@@ -45,7 +45,7 @@ class RunningResultViewModel @Inject constructor(
                         battleData = battleData
                     )
 
-                    _runningResultUiState.value = RunningResultUiState.Success(
+                    _battleResultUiState.value = BattleResultUiState.Success(
                         battleResult = data.copy(
                             userId = userId,
                             battleRunnerStatus = battleResultStatus
@@ -53,8 +53,8 @@ class RunningResultViewModel @Inject constructor(
                     )
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
-                    _runningResultUiState.value =
-                        RunningResultUiState.LoadFailed
+                    _battleResultUiState.value =
+                        BattleResultUiState.LoadFailed
                 }
             }
         }
@@ -63,7 +63,7 @@ class RunningResultViewModel @Inject constructor(
     private fun mappingRunnerInfo(
         data: BattleResultUiModel,
         battleData: BattleStatus
-    ): List<BattleRunnerStatusUiModel> {
+    ): List<RunnerStatusUiModel> {
         val battleResultStatusUiModel = data.battleRunnerStatus.map { battleRunnerStatus ->
             val runnerStatus =
                 battleData.battleInfo.find { runnerStatus -> runnerStatus.runnerId == battleRunnerStatus.id }

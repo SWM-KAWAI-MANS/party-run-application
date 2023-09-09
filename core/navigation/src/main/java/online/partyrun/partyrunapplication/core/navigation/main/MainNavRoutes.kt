@@ -12,7 +12,7 @@ sealed class MainNavRoutes(val route: String) {
     object Profile : MainNavRoutes("profile")
     object BattleRunning : MainNavRoutes("battle_running")
     object SingleRunning : MainNavRoutes("single_running")
-    object RunningResult : MainNavRoutes("running_result")
+    object BattleResult : MainNavRoutes("battle_result")
     object Settings : MainNavRoutes("settings")
 
 }

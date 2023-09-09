@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.map
 import online.partyrun.partyrunapplication.core.datastore.BattlePreferences
 import online.partyrun.partyrunapplication.core.datastore.BattleRunner
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
-import online.partyrun.partyrunapplication.core.model.battle.RunnerStatus
+import online.partyrun.partyrunapplication.core.model.battle.BattleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class BattlePreferencesDataSource @Inject constructor(
             BattleStatus(
                 battleId = preferences.battleId,
                 battleInfo = preferences.runnersList.map {
-                    RunnerStatus(
+                    BattleRunnerDisplayStatus(
                         runnerId = it.id,
                         runnerName = it.name,
                         runnerProfile = it.profile

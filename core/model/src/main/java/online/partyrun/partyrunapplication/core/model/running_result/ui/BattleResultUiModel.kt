@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.model.running_result.ui
 
 data class BattleResultUiModel(
-    val battleRunnerStatus: List<BattleRunnerStatusUiModel> = emptyList(),
+    val battleRunnerStatus: List<RunnerStatusUiModel> = emptyList(),
     val userId: String = "", // 자신의 ID
     val startTime: String? = "", // "xx:xx" 형식화
     val targetDistance: Int? = 0,

@@ -99,8 +99,8 @@ fun SetUpMainNavGraph(
                     restoreState = true
                 }
             },
-            navigationToRunningResult = {
-                navController.navigate(MainNavRoutes.RunningResult.route) {
+            navigationToBattleResult = {
+                navController.navigate(MainNavRoutes.BattleResult.route) {
                     popUpTo(MainNavRoutes.Battle.route) {
                         inclusive = false
                     }

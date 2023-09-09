@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import online.partyrun.partyrunapplication.core.model.running_result.BattleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.running_result.battle.BattleRunnerStatus
 import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils.localDateTimeFormatter
 import online.partyrun.partyrunapplication.core.network.model.util.calculateElapsedTime
 import online.partyrun.partyrunapplication.core.network.model.util.calculateSecondsElapsedTime

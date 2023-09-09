@@ -1,6 +1,8 @@
-package online.partyrun.partyrunapplication.core.model.running_result
+package online.partyrun.partyrunapplication.core.model.running_result.battle
 
-import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRunnerStatusUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
+import online.partyrun.partyrunapplication.core.model.util.formatDurationToTimeString
+import online.partyrun.partyrunapplication.core.model.util.formatPace
 import java.time.Duration
 import kotlin.math.roundToInt
 
@@ -15,8 +17,8 @@ data class BattleRunnerStatus(
     val records: List<BattleRunnerRecord> = listOf() // records 필드 추가
 )
 
-fun BattleRunnerStatus.toUiModel(): BattleRunnerStatusUiModel {
-    return BattleRunnerStatusUiModel(
+fun BattleRunnerStatus.toUiModel(): RunnerStatusUiModel {
+    return RunnerStatusUiModel(
         endTime = this.endTime,
         id = this.id,
         name = this.name,
@@ -87,20 +89,4 @@ fun calculateAltitudeOverTime(records: List<BattleRunnerRecord>): List<Pair<Stri
         val timeElapsed = Duration.between(startTime, record.time)
         Pair(formatDurationToTimeString(timeElapsed), record.altitude.roundToInt().toDouble())
     }
-}
-
-private fun formatPace(pace: Double): String {
-    val minutesPart = (pace / 60).toInt()
-    val secondsPart = (pace % 60).toInt()
-
-    // %02d는 정수를 두 자리로 표현하는데, 만약 한 자리수면 앞에 0 추가
-    return "${minutesPart}'${String.format("%02d", secondsPart)}''"
-}
-
-fun formatDurationToTimeString(duration: Duration): String {
-    val hours = duration.toHours()
-    val minutes = duration.toMinutes() % 60
-    val seconds = duration.seconds % 60
-
-    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }

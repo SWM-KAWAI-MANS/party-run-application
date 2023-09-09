@@ -1,6 +1,6 @@
 package online.partyrun.partyrunapplication.core.model.running_result.ui
 
-data class BattleRunnerStatusUiModel(
+data class RunnerStatusUiModel(
     val endTime: String = "",
     val id: String = "", // 해당 Runner ID
     val name: String = "",
@@ -8,7 +8,7 @@ data class BattleRunnerStatusUiModel(
     val secondsElapsedTime: Long = 0,
     val profile: String = "",
     val rank: Int = 0,
-    val records: List<BattleRunnerRecordUiModel> = listOf(),
+    val records: List<RunnerRecordUiModel> = listOf(),
     val averagePace: String = "0'00''", // 평균 페이스
     val averageAltitude: Double = 0.0, // 평균 고도
     val pacePerMinute: List<Pair<String, Double>> = listOf(), // 분당 페이스

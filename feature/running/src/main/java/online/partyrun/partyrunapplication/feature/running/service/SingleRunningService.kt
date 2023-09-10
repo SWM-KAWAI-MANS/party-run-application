@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.model.running.GpsData
+import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -24,10 +25,13 @@ class SingleRunningService : BaseRunningService() {
     private var lastLocation: Location? = null // 이전 위치 저장
     private var totalDistance: Int = 0  // 누적 거리 저장
     private var isFirstLocationUpdate = true  // 플래그 초기화
+    private lateinit var runningServiceState: RunningServiceState // 상태 변수를 통해 현재 서비스 상태 추적
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Constants.ACTION_START_RUNNING -> startRunningService()
+            Constants.ACTION_PAUSE_RUNNING -> pauseRunningService()
+            Constants.ACTION_RESUME_RUNNING -> resumeRunningService()
             Constants.ACTION_STOP_RUNNING -> stopRunningService()
         }
         return START_NOT_STICKY
@@ -35,6 +39,7 @@ class SingleRunningService : BaseRunningService() {
 
     @SuppressLint("MissingPermission")
     fun startRunningService() {
+        runningServiceState = RunningServiceState.STARTED
         registerSensors()
         setLocationCallback()
         startForeground(Constants.NOTIFICATION_ID, createNotification())
@@ -45,10 +50,19 @@ class SingleRunningService : BaseRunningService() {
     }
 
     override fun stopRunningService() {
+        runningServiceState = RunningServiceState.STOPPED
         stopLocationUpdates()
         sensorManager.unregisterListener(sensorEventListener)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    private fun pauseRunningService() {
+        runningServiceState = RunningServiceState.PAUSED
+    }
+
+    private fun resumeRunningService() {
+        runningServiceState = RunningServiceState.RESUMED
     }
 
     private fun setLocationCallback() {
@@ -71,6 +85,11 @@ class SingleRunningService : BaseRunningService() {
     }
 
     override fun addGpsDataToRecordData(location: Location) {
+        if (runningServiceState == RunningServiceState.PAUSED) {
+            lastLocation = location // 일시정지 상태일 때는 마지막 위치만 업데이트
+            return
+        }
+
         val gpsData = GpsData(
             latitude = location.latitude,
             longitude = location.longitude,
@@ -80,12 +99,11 @@ class SingleRunningService : BaseRunningService() {
 
         // 이전 위치가 있으면 거리를 계산
         lastLocation?.let {
-            val distance = it.distanceTo(location) // 거리를 미터 단위로 계산
+            val distance = it.distanceTo(location)  // 거리를 미터 단위로 계산
             val roundedDistance = distance.roundToInt()  // 소수점을 반올림
-            totalDistance += roundedDistance  // 누적 거리에 더함
+            totalDistance += roundedDistance // 누적 거리에 더함
         }
 
-        // 현재 위치를 이전 위치로 저장
         lastLocation = location
 
         // Repository에 GPS 데이터 추가
@@ -95,3 +113,4 @@ class SingleRunningService : BaseRunningService() {
         }
     }
 }
+

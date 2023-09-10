@@ -26,6 +26,7 @@ class SingleRunningService : BaseRunningService() {
     private var totalDistance: Int = 0  // 누적 거리 저장
     private var isFirstLocationUpdate = true  // 플래그 초기화
     private lateinit var runningServiceState: RunningServiceState // 상태 변수를 통해 현재 서비스 상태 추적
+    private var belowThresholdCount: Int = 0  // 임계값 카운트를 통해 일시정지, 재시작을 구현하기 위함
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -40,6 +41,8 @@ class SingleRunningService : BaseRunningService() {
     @SuppressLint("MissingPermission")
     fun startRunningService() {
         runningServiceState = RunningServiceState.STARTED
+        belowThresholdCount = 0  // 시작 시 카운트 초기화
+
         registerSensors()
         setLocationCallback()
         startForeground(Constants.NOTIFICATION_ID, createNotification())
@@ -57,14 +60,6 @@ class SingleRunningService : BaseRunningService() {
         stopSelf()
     }
 
-    private fun pauseRunningService() {
-        runningServiceState = RunningServiceState.PAUSED
-    }
-
-    private fun resumeRunningService() {
-        runningServiceState = RunningServiceState.RESUMED
-    }
-
     private fun setLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
@@ -76,12 +71,34 @@ class SingleRunningService : BaseRunningService() {
 
                 result.lastLocation?.let { location ->
                     if (lastSensorVelocity <= THRESHOLD) {
+                        belowThresholdCount++
+                        if (shouldPauseService()) {
+                            pauseRunningService()
+                        }
                         return@let
+                    }
+                    if (runningServiceState == RunningServiceState.PAUSED) {
+                        resumeRunningService()
                     }
                     addGpsDataToRecordData(location)
                 }
             }
         }
+    }
+
+    private fun pauseRunningService() {
+        runningServiceState = RunningServiceState.PAUSED
+        sendBroadcast(
+            Intent(RunningServiceState.PAUSED.name)
+        )
+    }
+
+    private fun resumeRunningService() {
+        runningServiceState = RunningServiceState.RESUMED
+        belowThresholdCount = 0  // 재시작 시 카운트 초기화
+        sendBroadcast(
+            Intent(RunningServiceState.RESUMED.name)
+        )
     }
 
     override fun addGpsDataToRecordData(location: Location) {
@@ -112,5 +129,8 @@ class SingleRunningService : BaseRunningService() {
             singleRepository.addGpsData(gpsData)
         }
     }
-}
 
+    private fun shouldPauseService(): Boolean {
+        return belowThresholdCount >= 3 && runningServiceState != RunningServiceState.PAUSED
+    }
+}

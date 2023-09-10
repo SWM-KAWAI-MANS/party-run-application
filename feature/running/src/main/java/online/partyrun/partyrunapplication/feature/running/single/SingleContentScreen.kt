@@ -1,8 +1,10 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScre
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
+import timber.log.Timber
 
 @Composable
 fun SingleContentScreen(
@@ -138,29 +141,34 @@ private fun StartRunningService(
     singleContentViewModel: SingleContentViewModel,
 ) {
     val context = LocalContext.current
+    val receiver = remember { createBroadcastReceiver(singleContentViewModel) }
 
     when (singleContentUiState.runningServiceState) {
         RunningServiceState.STARTED -> ControlRunningService(
             singleContentViewModel,
             Constants.ACTION_START_RUNNING,
+            receiver,
             context
         )
 
         RunningServiceState.PAUSED -> ControlRunningService(
             singleContentViewModel,
             Constants.ACTION_PAUSE_RUNNING,
+            receiver,
             context
         )
 
         RunningServiceState.RESUMED -> ControlRunningService(
             singleContentViewModel,
             Constants.ACTION_RESUME_RUNNING,
+            receiver,
             context
         )
 
         RunningServiceState.STOPPED -> ControlRunningService(
             singleContentViewModel,
             Constants.ACTION_STOP_RUNNING,
+            receiver,
             context
         )
     }
@@ -170,22 +178,67 @@ private fun StartRunningService(
 private fun ControlRunningService(
     singleContentViewModel: SingleContentViewModel,
     action: String,
+    receiver: BroadcastReceiver,
     context: Context
 ) {
+
     DisposableEffect(action) {
         if (action == Constants.ACTION_START_RUNNING) {
-            singleContentViewModel.initSingleState() // 사용자와 로봇 데이터 초기화
+            initializeStateAndRegisterReceiver(singleContentViewModel, context, receiver)
         }
-        val intent = Intent(context, SingleRunningService::class.java)
-        intent.action = action
+        val intent = createServiceIntent(context, action)
         context.startService(intent)
 
         onDispose {
             if (action == Constants.ACTION_STOP_RUNNING) {
-                context.stopService(intent)
+                unregisterReceiverAndStopService(context, receiver, intent)
             }
         }
     }
+}
+
+private fun createServiceIntent(context: Context, action: String): Intent {
+    return Intent(context, SingleRunningService::class.java).apply {
+        this.action = action
+    }
+}
+
+private fun createBroadcastReceiver(singleContentViewModel: SingleContentViewModel): BroadcastReceiver {
+    return object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                RunningServiceState.PAUSED.name -> {
+                    singleContentViewModel.pauseSingleRunningService()
+                }
+
+                RunningServiceState.RESUMED.name -> {
+                    singleContentViewModel.resumeSingleRunningService()
+                }
+            }
+        }
+    }
+}
+
+private fun initializeStateAndRegisterReceiver(
+    viewModel: SingleContentViewModel,
+    context: Context,
+    receiver: BroadcastReceiver
+) {
+    viewModel.initSingleState()
+    val filter = IntentFilter().apply {
+        addAction(RunningServiceState.PAUSED.name)
+        addAction(RunningServiceState.RESUMED.name)
+    }
+    context.registerReceiver(receiver, filter)
+}
+
+private fun unregisterReceiverAndStopService(
+    context: Context,
+    receiver: BroadcastReceiver,
+    intent: Intent
+) {
+    context.unregisterReceiver(receiver)
+    context.stopService(intent)
 }
 
 @Composable

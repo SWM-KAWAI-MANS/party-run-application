@@ -39,6 +39,7 @@ import online.partyrun.partyrunapplication.feature.running.running.component.Run
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
+import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
 
@@ -116,12 +117,53 @@ fun SingleRunningScreen(
                     title = stringResource(id = R.string.progress_time)
                 )
                 Spacer(modifier = Modifier.size(5.dp))
-                PartyRunImageButton(
-                    modifier = Modifier.size(80.dp),
-                    image = R.drawable.stop,
-                ) {
-                    openRunningExitDialog.value = true
-                }
+                RunControlPanel(
+                    pausedState = singleContentUiState.runningServiceState,
+                    pauseAction = {
+                        singleContentViewModel.pauseSingleRunningService()
+                    },
+                    resumeAction = {
+                        singleContentViewModel.resumeSingleRunningService()
+                    },
+                    stopAction = {
+                        openRunningExitDialog.value = true
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RunControlPanel(
+    pausedState: RunningServiceState,
+    pauseAction: () -> Unit,
+    resumeAction: () -> Unit,
+    stopAction: () -> Unit,
+) {
+    if (pausedState != RunningServiceState.PAUSED) {
+        PartyRunImageButton(
+            modifier = Modifier.size(80.dp),
+            image = R.drawable.pause,
+        ) {
+            pauseAction()
+        }
+    } else {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            PartyRunImageButton(
+                modifier = Modifier.size(80.dp),
+                image = R.drawable.restart,
+            ) {
+                resumeAction()
+            }
+            PartyRunImageButton(
+                modifier = Modifier.size(80.dp),
+                image = R.drawable.stop,
+            ) {
+                stopAction()
             }
         }
     }

@@ -69,12 +69,6 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    private fun startSingleRunningService() {
-        _singleContentUiState.update { state ->
-            state.copy(startRunningService = true)
-        }
-    }
-
     private fun updateCountdownState(timeRemaining: Int) {
         if (timeRemaining == 3) { // 3초가 남았을 때 러닝 서비스 시작
             startSingleRunningService()
@@ -84,10 +78,42 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        _singleContentUiState.value = SingleContentUiState()
-        singleRepository.initialize()
+    private fun startSingleRunningService() {
+        _singleContentUiState.update { state ->
+            state.copy(runningServiceState = RunningServiceState.STARTED)
+        }
+    }
+
+    fun pauseSingleRunningService() {
+        _singleContentUiState.update { state ->
+            state.copy(runningServiceState = RunningServiceState.PAUSED)
+        }
+    }
+
+    fun stopSingleRunningService() {
+        _singleContentUiState.update { state ->
+            state.copy(runningServiceState = RunningServiceState.STOPPED)
+        }
+    }
+
+    fun resumeSingleRunningService() {
+        _singleContentUiState.update { state ->
+            state.copy(runningServiceState = RunningServiceState.RESUMED)
+        }
+    }
+
+    private fun stopRunningState() {
+        _singleContentUiState.update { state ->
+            state.copy(
+                isFinished = true,
+                screenState = SingleScreenState.Finish
+            )
+        }
+    }
+
+    fun stopRunningProcess() {
+        stopSingleRunningService()
+        stopRunningState()
     }
 
     private fun changeScreenToRunning() {
@@ -103,15 +129,21 @@ class SingleContentViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 delay(1000)  // 1초 대기
-                _singleContentUiState.update { state ->
-                    val newElapsedSeconds = state.elapsedSecondsTime + 1
-                    val formattedTime = formatTime(newElapsedSeconds)
-                    state.copy(
-                        elapsedSecondsTime = newElapsedSeconds,
-                        elapsedFormattedTime = formattedTime
-                    )
-                }
+                if (_singleContentUiState.value.runningServiceState == RunningServiceState.PAUSED) continue
+
+                secondCountState()
             }
+        }
+    }
+
+    private fun secondCountState() {
+        _singleContentUiState.update { state ->
+            val newElapsedSeconds = state.elapsedSecondsTime + 1
+            val formattedTime = formatTime(newElapsedSeconds)
+            state.copy(
+                elapsedSecondsTime = newElapsedSeconds,
+                elapsedFormattedTime = formattedTime
+            )
         }
     }
 
@@ -144,7 +176,6 @@ class SingleContentViewModel @Inject constructor(
             singleRepository.totalDistance.collect { totalDistance ->
                 checkTargetDistanceReached(totalDistance)
                 val (updatedUser, formattedDistance) = getUpdatedMovementData(totalDistance)
-
                 _singleContentUiState.update { state ->
                     state.copy(
                         userStatus = updatedUser,
@@ -171,12 +202,8 @@ class SingleContentViewModel @Inject constructor(
 
     private fun checkTargetDistanceReached(totalDistance: Int) {
         if (totalDistance >= _singleContentUiState.value.selectedDistance) {
-            _singleContentUiState.update { state ->
-                state.copy(
-                    isFinished = true,
-                    screenState = SingleScreenState.Finish
-                )
-            }
+            stopSingleRunningService()
+            stopRunningState()
         }
     }
 
@@ -232,4 +259,11 @@ class SingleContentViewModel @Inject constructor(
 
         return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        _singleContentUiState.value = SingleContentUiState()
+        singleRepository.initialize()
+    }
+
 }

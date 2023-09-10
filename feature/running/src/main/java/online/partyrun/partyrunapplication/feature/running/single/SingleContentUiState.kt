@@ -2,6 +2,10 @@ package online.partyrun.partyrunapplication.feature.running.single
 
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 
+enum class RunningServiceState {
+    STARTED, PAUSED, RESUMED, STOPPED
+}
+
 data class SingleContentUiState(
     // 목표 거리에 도달했는지 여부 판단
     val isFinished: Boolean = false,
@@ -9,8 +13,8 @@ data class SingleContentUiState(
     val selectedDistance: Int = 0,
     // 사용자가 선택한 목표 시간
     val selectedTime: Int = 0,
-    // 러닝 서비스 시작
-    val startRunningService: Boolean = false,
+    // 러닝 서비스 상태 추적
+    val runningServiceState: RunningServiceState = RunningServiceState.PAUSED,
     // 현재 보여줘야 할 스크린
     val screenState: SingleScreenState = SingleScreenState.Ready,
     // 유저 이름

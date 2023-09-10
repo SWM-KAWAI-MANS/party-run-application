@@ -22,7 +22,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
-import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
@@ -90,15 +89,16 @@ fun Content(
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     RunningBackNavigationHandler(
         activity = activity,
+        singleContentViewModel = singleContentViewModel,
         openRunningExitDialog = openRunningExitDialog
     )
 
     /**
-     * 목표 거리에 도달했다면, 4초 대기 후 결과 스크린으로 이동
+     * 목표 거리에 도달했거나 중간에 종료했다면, 3초 대기 후 결과 스크린으로 이동
      */
     if (singleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
-            delay(4000)
+            delay(3000)
             navigateToSingleResult()
         }
     }
@@ -137,47 +137,61 @@ private fun StartRunningService(
     singleContentUiState: SingleContentUiState,
     singleContentViewModel: SingleContentViewModel,
 ) {
-    if (singleContentUiState.startRunningService) {
-        StartSingleRunning(singleContentViewModel)
+    val context = LocalContext.current
+
+    when (singleContentUiState.runningServiceState) {
+        RunningServiceState.STARTED -> ControlRunningService(
+            singleContentViewModel,
+            Constants.ACTION_START_RUNNING,
+            context
+        )
+
+        RunningServiceState.PAUSED -> ControlRunningService(
+            singleContentViewModel,
+            Constants.ACTION_PAUSE_RUNNING,
+            context
+        )
+
+        RunningServiceState.RESUMED -> ControlRunningService(
+            singleContentViewModel,
+            Constants.ACTION_RESUME_RUNNING,
+            context
+        )
+
+        RunningServiceState.STOPPED -> ControlRunningService(
+            singleContentViewModel,
+            Constants.ACTION_STOP_RUNNING,
+            context
+        )
     }
 }
 
 @Composable
-private fun StartSingleRunning(
-    singleContentViewModel: SingleContentViewModel
-) {
-    val context = LocalContext.current
-
-    DisposableEffect(Unit) {
-        setOrDisposeSingleRunning(true, singleContentViewModel, context)
-
-        onDispose {
-            setOrDisposeSingleRunning(false, singleContentViewModel, context)
-        }
-    }
-}
-
-private fun setOrDisposeSingleRunning(
-    isStarting: Boolean,
+private fun ControlRunningService(
     singleContentViewModel: SingleContentViewModel,
+    action: String,
     context: Context
 ) {
-    // Foreground Service 시작/중지
-    if (isStarting) {
-        singleContentViewModel.initSingleState() // 사용자와 로봇 데이터 초기화
+    DisposableEffect(action) {
+        if (action == Constants.ACTION_START_RUNNING) {
+            singleContentViewModel.initSingleState() // 사용자와 로봇 데이터 초기화
+        }
         val intent = Intent(context, SingleRunningService::class.java)
-        intent.action = Constants.ACTION_START_RUNNING
+        intent.action = action
         context.startService(intent)
-    } else {
-        val intent = Intent(context, SingleRunningService::class.java)
-        intent.action = Constants.ACTION_STOP_RUNNING
-        context.stopService(intent)
+
+        onDispose {
+            if (action == Constants.ACTION_STOP_RUNNING) {
+                context.stopService(intent)
+            }
+        }
     }
 }
 
 @Composable
 fun RunningBackNavigationHandler(
     activity: Activity?,
+    singleContentViewModel: SingleContentViewModel,
     openRunningExitDialog: MutableState<Boolean>
 ) {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -201,14 +215,7 @@ fun RunningBackNavigationHandler(
     RunningExitConfirmationDialog(
         openRunningExitDialog = openRunningExitDialog,
     ) {
-        // 액티비티 재시작
-        activity?.let {
-            val intent = it.intent
-            it.startActivity(intent)
-            it.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-
-            it.finish()
-            it.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
+        singleContentViewModel.stopSingleRunningService()
+        singleContentViewModel.stopRunningProcess()
     }
 }

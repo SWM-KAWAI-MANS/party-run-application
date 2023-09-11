@@ -120,7 +120,7 @@ fun SingleRunningScreen(
                 RunControlPanel(
                     pausedState = singleContentUiState.runningServiceState,
                     pauseAction = {
-                        singleContentViewModel.pauseSingleRunningService()
+                        singleContentViewModel.pauseSingleRunningService(isUserPaused = true)
                     },
                     resumeAction = {
                         singleContentViewModel.resumeSingleRunningService()

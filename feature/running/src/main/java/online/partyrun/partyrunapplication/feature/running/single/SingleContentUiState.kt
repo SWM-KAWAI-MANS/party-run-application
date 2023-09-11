@@ -13,6 +13,8 @@ data class SingleContentUiState(
     val selectedDistance: Int = 0,
     // 사용자가 선택한 목표 시간
     val selectedTime: Int = 0,
+    // 사용자가 직접 일시정지를 누른 것인지를 확인하기 위함
+    val isUserPaused: Boolean = false,
     // 러닝 서비스 상태 추적
     val runningServiceState: RunningServiceState = RunningServiceState.PAUSED,
     // 현재 보여줘야 할 스크린

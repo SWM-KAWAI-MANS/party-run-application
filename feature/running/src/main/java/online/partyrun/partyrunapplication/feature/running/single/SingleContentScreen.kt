@@ -23,13 +23,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants
+import online.partyrun.partyrunapplication.core.common.Constants.EXTRA_IS_USER_PAUSED
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
-import timber.log.Timber
 
 @Composable
 fun SingleContentScreen(
@@ -155,7 +155,8 @@ private fun StartRunningService(
             singleContentViewModel,
             Constants.ACTION_PAUSE_RUNNING,
             receiver,
-            context
+            context,
+            isUserPaused = singleContentUiState.isUserPaused
         )
 
         RunningServiceState.RESUMED -> ControlRunningService(
@@ -179,14 +180,18 @@ private fun ControlRunningService(
     singleContentViewModel: SingleContentViewModel,
     action: String,
     receiver: BroadcastReceiver,
-    context: Context
+    context: Context,
+    isUserPaused: Boolean = false // 유저가 직접 일시정지 혹은 재시작을 누른 것인지를 파악하기 위함
 ) {
-
     DisposableEffect(action) {
         if (action == Constants.ACTION_START_RUNNING) {
             initializeStateAndRegisterReceiver(singleContentViewModel, context, receiver)
         }
         val intent = createServiceIntent(context, action)
+        if (isUserPaused) {
+            intent.putExtra(EXTRA_IS_USER_PAUSED, true)
+        }
+
         context.startService(intent)
 
         onDispose {
@@ -208,7 +213,7 @@ private fun createBroadcastReceiver(singleContentViewModel: SingleContentViewMod
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 RunningServiceState.PAUSED.name -> {
-                    singleContentViewModel.pauseSingleRunningService()
+                    singleContentViewModel.pauseSingleRunningService(isUserPaused = false)
                 }
 
                 RunningServiceState.RESUMED.name -> {

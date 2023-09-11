@@ -13,7 +13,6 @@ import online.partyrun.partyrunapplication.core.common.Constants.EXTRA_IS_USER_P
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
-import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -123,7 +122,6 @@ class SingleRunningService : BaseRunningService() {
         if (lastSensorVelocity <= THRESHOLD) {
             belowThresholdCount++
             if (runningServiceState == RunningServiceState.PAUSED) {
-                Timber.tag("자동").e("자동 일시정지")
                 lastLocation = it // 일시정지 상태일 때는 마지막 위치만 업데이트
                 return true
             }
@@ -140,7 +138,6 @@ class SingleRunningService : BaseRunningService() {
 
     private fun handleUserPause(location: Location): Boolean {
         if (isUserPaused) { // 사용자가 직접 일시정지 한 경우, 위치 업데이트만 수행하고 리턴
-            Timber.tag("유저").e("사용자 일시정지")
             lastLocation = location
             return true
         }
@@ -148,7 +145,6 @@ class SingleRunningService : BaseRunningService() {
     }
 
     override fun addGpsDataToRecordData(location: Location) {
-        Timber.tag("GPS").e("GPS 데이터 수집")
         val gpsData = createGpsData(location)
 
         // 이전 위치가 있으면 거리를 계산

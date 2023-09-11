@@ -84,9 +84,12 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    fun pauseSingleRunningService() {
+    fun pauseSingleRunningService(isUserPaused: Boolean) {
         _singleContentUiState.update { state ->
-            state.copy(runningServiceState = RunningServiceState.PAUSED)
+            state.copy(
+                runningServiceState = RunningServiceState.PAUSED,
+                isUserPaused = isUserPaused // 사용자가 일시정지를 직접 누른 것인지 판단
+            )
         }
     }
 
@@ -98,7 +101,10 @@ class SingleContentViewModel @Inject constructor(
 
     fun resumeSingleRunningService() {
         _singleContentUiState.update { state ->
-            state.copy(runningServiceState = RunningServiceState.RESUMED)
+            state.copy(
+                runningServiceState = RunningServiceState.RESUMED,
+                isUserPaused = false // 재시작일 때는 사용자가 직접 누른 것이든, 디바이스 움직임 재시작이든지 상관없이 false로 고정
+            )
         }
     }
 

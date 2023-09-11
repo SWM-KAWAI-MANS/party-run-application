@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants
+import online.partyrun.partyrunapplication.core.common.Constants.EXTRA_IS_USER_PAUSED
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
@@ -155,7 +156,7 @@ private fun StartRunningService(
             Constants.ACTION_PAUSE_RUNNING,
             receiver,
             context,
-            singleContentUiState.isUserPaused
+            isUserPaused = singleContentUiState.isUserPaused
         )
 
         RunningServiceState.RESUMED -> ControlRunningService(
@@ -188,7 +189,7 @@ private fun ControlRunningService(
         }
         val intent = createServiceIntent(context, action)
         if (isUserPaused) {
-            intent.putExtra("isUserPaused", true)
+            intent.putExtra(EXTRA_IS_USER_PAUSED, true)
         }
 
         context.startService(intent)

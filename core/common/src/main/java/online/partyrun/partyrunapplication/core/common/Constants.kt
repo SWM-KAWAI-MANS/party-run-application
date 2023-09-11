@@ -14,5 +14,7 @@ object Constants {
     const val ACTION_STOP_RUNNING = "StopRunning"
     const val ACTION_PAUSE_RUNNING = "PauseRunning"
     const val ACTION_RESUME_RUNNING = "ResumeRunning"
+    const val EXTRA_IS_USER_PAUSED = "isUserPaused"
+
     const val BATTLE_ID_KEY = "BATTLE_ID_KEY"
 }

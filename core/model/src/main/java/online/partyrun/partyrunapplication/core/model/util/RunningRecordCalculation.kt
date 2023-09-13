@@ -41,7 +41,7 @@ fun calculateAverageAltitude(runnerStatus: RunnerStatus): Double {
     }
 }
 
-fun calculatePacePerMinute(records: List<RunnerRecord>): List<Pair<String, Double>> {
+fun calculateCumulativePacePerMinute(records: List<RunnerRecord>): List<Pair<String, Double>> {
     val startTime = records.first().time
     return records.drop(1).mapNotNull { record ->
         val timeElapsed = Duration.between(startTime, record.time)

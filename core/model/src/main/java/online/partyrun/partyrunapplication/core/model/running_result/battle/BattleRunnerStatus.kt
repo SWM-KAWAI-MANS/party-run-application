@@ -6,7 +6,7 @@ import online.partyrun.partyrunapplication.core.model.util.calculateAltitudeOver
 import online.partyrun.partyrunapplication.core.model.util.calculateAverageAltitude
 import online.partyrun.partyrunapplication.core.model.util.calculateAveragePace
 import online.partyrun.partyrunapplication.core.model.util.calculateDistanceOverTime
-import online.partyrun.partyrunapplication.core.model.util.calculatePacePerMinute
+import online.partyrun.partyrunapplication.core.model.util.calculateCumulativePacePerMinute
 
 data class BattleRunnerStatus(
     val id: String = "", // 해당 Runner ID
@@ -31,7 +31,7 @@ fun BattleRunnerStatus.toUiModel(): RunnerStatusUiModel {
         records = this.records.map { it.toUiModel() },
         averagePace = calculateAveragePace(this),
         averageAltitude = calculateAverageAltitude(this),
-        pacePerMinute = calculatePacePerMinute(this.records),
+        pacePerMinute = calculateCumulativePacePerMinute(this.records),
         distanceOverTime = calculateDistanceOverTime(this.records),
         altitudeOvertime = calculateAltitudeOverTime(this.records)
     )

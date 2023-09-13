@@ -30,6 +30,7 @@ import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScre
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RESULT_SCREEN_TRANSITION_DELAY
 
 @Composable
 fun SingleContentScreen(
@@ -97,11 +98,11 @@ fun Content(
     )
 
     /**
-     * 목표 거리에 도달했거나 중간에 종료했다면, 3초 대기 후 결과 스크린으로 이동
+     * 목표 거리에 도달했거나 중간에 종료했다면, RESULT_SCREEN_TRANSITION_DELAY만큼 대기 후 결과 스크린으로 이동
      */
     if (singleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
-            delay(3000)
+            delay(RESULT_SCREEN_TRANSITION_DELAY)
             navigateToSingleResult()
         }
     }

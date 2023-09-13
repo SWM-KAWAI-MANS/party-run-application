@@ -30,6 +30,7 @@ import online.partyrun.partyrunapplication.feature.running.ready.BattleReadyScre
 import online.partyrun.partyrunapplication.feature.running.running.BattleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.BattleRunningService
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RESULT_SCREEN_TRANSITION_DELAY
 
 @Composable
 fun BattleContentScreen(
@@ -96,11 +97,11 @@ fun Content(
     }
 
     /**
-     * 목표 거리에 도달했다면, 4초 대기 후 결과 스크린으로 이동
+     * 목표 거리에 도달했다면, RESULT_SCREEN_TRANSITION_DELAY만큼 대기 후 결과 스크린으로 이동
      */
     if (battleContentUiState.isFinished) {
         LaunchedEffect(Unit) {
-            delay(4000)
+            delay(RESULT_SCREEN_TRANSITION_DELAY)
             navigateToBattleResult()
         }
     }

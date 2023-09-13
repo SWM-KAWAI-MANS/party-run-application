@@ -53,6 +53,8 @@ import online.partyrun.partyrunapplication.core.ui.FormatRunningElapsedTimer
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.battle.BattleContentUiState
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RUNNER_GRAPHIC_Y_OFFSET
 import online.partyrun.partyrunapplication.feature.running.running.component.BattleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningTopAppBar
@@ -206,7 +208,7 @@ private fun TrackWithMultipleUsers(
     var showArrivalFlag by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(35000)
+        delay(ARRIVAL_FLAG_DELAY)
         showArrivalFlag = true
     }
 
@@ -230,7 +232,7 @@ private fun TrackWithMultipleUsers(
 
             RunnerGraphic(
                 currentX = currentX,
-                currentY = currentY - 50, // 네임과 마커 프레임의 합 height가 110이므로 중간에 맞춰주기 위한 -50 오차보정
+                currentY = currentY - RUNNER_GRAPHIC_Y_OFFSET, // 네임과 마커 프레임의 합 height가 110이므로 중간에 맞춰주기 위한 RUNNER_GRAPHIC_Y_OFFSET 오차보정
                 zIndex = zIndex,
                 runnerNameContent = {
                     Text(

@@ -15,6 +15,9 @@ import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseC
 import online.partyrun.partyrunapplication.core.model.single.ProfileImageSource
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_INTERVAL
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_SECONDS
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ROBOT_MOVEMENT_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
 import javax.inject.Inject
 
@@ -23,10 +26,6 @@ class SingleContentViewModel @Inject constructor(
     private val singleRepository: SingleRepository,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
-
-    companion object {
-        const val COUNTDOWN_SECONDS = 5
-    }
 
     private val _singleContentUiState = MutableStateFlow(SingleContentUiState())
     val singleContentUiState: StateFlow<SingleContentUiState> = _singleContentUiState
@@ -55,7 +54,6 @@ class SingleContentViewModel @Inject constructor(
 
     private suspend fun countDown() {
         val initialDelay = 700L
-        val countDownInterval = 1000L
         val startCount = COUNTDOWN_SECONDS
 
         delay(initialDelay)
@@ -64,7 +62,7 @@ class SingleContentViewModel @Inject constructor(
             updateCountdownState(remainingSeconds)
 
             if (remainingSeconds > 0) {
-                delay(countDownInterval)
+                delay(COUNTDOWN_INTERVAL)
             }
         }
     }
@@ -220,7 +218,7 @@ class SingleContentViewModel @Inject constructor(
                 // 현재 경과 시간이 선택된 시간을 넘어갔는지 확인
                 if (previousState.elapsedSecondsTime >= previousState.selectedTime) break
 
-                delay(500) // 0.5초마다 움직임
+                delay(ROBOT_MOVEMENT_DELAY) // ROBOT_MOVEMENT_DELAY 마다 움직임
 
                 val robotStep =
                     previousState.selectedDistance.toDouble() / previousState.selectedTime

@@ -20,6 +20,7 @@
         android:roundIcon="@mipmap/ic_partyrun_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PartyRunApplication"
+        tools:replace="android:allowBackup"
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"

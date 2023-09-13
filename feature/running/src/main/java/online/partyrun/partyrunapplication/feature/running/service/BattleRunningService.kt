@@ -20,6 +20,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BattleRunningService : BaseRunningService() {
 
+    companion object {
+        private const val SEND_THRESHOLD = 3
+    }
+
     @Inject
     lateinit var sendRecordDataUseCase: SendRecordDataUseCase
 
@@ -41,7 +45,6 @@ class BattleRunningService : BaseRunningService() {
         setLocationCallback(battleId)
         startForeground(NOTIFICATION_ID, createNotification())
         requestLocationUpdates()
-
     }
 
     @SuppressLint("MissingPermission")
@@ -78,7 +81,7 @@ class BattleRunningService : BaseRunningService() {
             if (shouldSkipDueToVelocity()) return@let
 
             addGpsDataToRecordData(it)
-            if (recordData.size >= 3) {
+            if (recordData.size >= SEND_THRESHOLD) {
                 sendRecordData(battleId)
             }
         }

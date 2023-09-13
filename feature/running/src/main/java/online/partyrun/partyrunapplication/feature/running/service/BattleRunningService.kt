@@ -22,7 +22,9 @@ class BattleRunningService : BaseRunningService() {
 
     @Inject
     lateinit var sendRecordDataUseCase: SendRecordDataUseCase
-    private var isFirstLocationUpdate = true  // 플래그 초기화
+
+    private var isFirstLocationUpdate = true
+    private val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -32,14 +34,18 @@ class BattleRunningService : BaseRunningService() {
         return START_NOT_STICKY
     }
 
-    @SuppressLint("MissingPermission")
-    fun startRunningService(intent: Intent) {
+    private fun startRunningService(intent: Intent) {
         val battleId = intent.getStringExtra(BATTLE_ID_KEY) ?: return
 
         registerSensors()
-        startForeground(NOTIFICATION_ID, createNotification())
         setLocationCallback(battleId)
+        startForeground(NOTIFICATION_ID, createNotification())
+        requestLocationUpdates()
 
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocationUpdates() {
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, locationCallback, Looper.getMainLooper()
         )
@@ -55,26 +61,38 @@ class BattleRunningService : BaseRunningService() {
     private fun setLocationCallback(battleId: String) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
-                if (isFirstLocationUpdate) {
-                    isFirstLocationUpdate = false  // 플래그 업데이트
-                    return
-                }
+                if (handleFirstLocationUpdate()) return
 
-                result.lastLocation?.let { location ->
-                    if (lastSensorVelocity <= THRESHOLD) {
-                        return@let
-                    }
-                    addGpsDataToRecordData(location)
-                    if (recordData.size >= 3) {
-                        serviceScope.launch {
-                            sendRecordDataUseCase(battleId, RecordData(recordData))
-                            recordData.clear() // clear the location update list
-                        }
-                    }
-                }
+                processLocationResult(result.lastLocation, battleId)
             }
         }
+    }
+
+    // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
+    private fun handleFirstLocationUpdate(): Boolean {
+        return isFirstLocationUpdate.also { isFirstLocationUpdate = false }
+    }
+
+    private fun processLocationResult(location: Location?, battleId: String) {
+        location?.let {
+            if (shouldSkipDueToVelocity()) return@let
+
+            addGpsDataToRecordData(it)
+            if (recordData.size >= 3) {
+                sendRecordData(battleId)
+            }
+        }
+    }
+
+    private fun sendRecordData(battleId: String) {
+        serviceScope.launch {
+            sendRecordDataUseCase(battleId, RecordData(recordData))
+            recordData.clear()
+        }
+    }
+
+    private fun shouldSkipDueToVelocity(): Boolean {
+        return lastSensorVelocity <= THRESHOLD
     }
 
     override fun addGpsDataToRecordData(location: Location) {

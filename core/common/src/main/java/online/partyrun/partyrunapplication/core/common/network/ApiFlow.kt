@@ -7,24 +7,21 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withTimeoutOrNull
 import online.partyrun.partyrunapplication.core.common.result.Result
 
+const val TIMEOUT_DURATION = 20000L
+
 fun <T : Any> apiRequestFlow(call: suspend () -> ApiResponse<T>): Flow<Result<T>> = flow {
     emit(Result.Loading)
 
-    withTimeoutOrNull(20000L) {
+    withTimeoutOrNull(TIMEOUT_DURATION) {
         call().apply {
             onSuccess { data ->
                 emit(Result.Success(data))
             }
             onError { code, message ->
-                val errorMessage = when (code) {
-                    204 -> "No Content"
-                    400 -> message ?: "Bad Request"
-                    404 -> message ?: "Not Found"
-                    else -> message ?: "Error"
-                }
-                if(code == 204) {
+                if (code == 204) {
                     emit(Result.Empty)
                 } else {
+                    val errorMessage = message ?: "Error"
                     emit(Result.Failure(errorMessage, code))
                 }
             }
@@ -32,14 +29,19 @@ fun <T : Any> apiRequestFlow(call: suspend () -> ApiResponse<T>): Flow<Result<T>
                 emit(Result.Failure(e.message ?: "Unknown Error", -1))
             }
         }
-    } ?: emit(Result.Failure("Timeout! Please try again.", -1)) // -1은 타임아웃에 대한 코드로 임의로 지정
+    } ?: emit(
+        Result.Failure(
+            "Timeout: ${TIMEOUT_DURATION / 1000} seconds",
+            -1
+        )
+    )
 }.flowOn(Dispatchers.IO)
 
 fun <T : Any> apiBaseRequestFlow(call: suspend () -> ApiResponse<BaseResponse<T>>): Flow<Result<T>> =
     flow {
         emit(Result.Loading)
 
-        withTimeoutOrNull(20000L) {
+        withTimeoutOrNull(TIMEOUT_DURATION) {
             call().apply {
                 onSuccess { baseResponse ->
                     emit(Result.Success(baseResponse.data))
@@ -52,5 +54,10 @@ fun <T : Any> apiBaseRequestFlow(call: suspend () -> ApiResponse<BaseResponse<T>
                     emit(Result.Failure(e.message ?: "Unknown Error", -1))
                 }
             }
-        } ?: emit(Result.Failure("Timeout! Please try again.", -1))
+        } ?: emit(
+            Result.Failure(
+                "Timeout: ${TIMEOUT_DURATION / 1000} seconds",
+                -1
+            )
+        )
     }.flowOn(Dispatchers.IO)

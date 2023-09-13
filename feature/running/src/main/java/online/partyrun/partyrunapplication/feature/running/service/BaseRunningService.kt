@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import online.partyrun.partyrunapplication.core.common.Constants
-import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.feature.running.R
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -59,8 +58,6 @@ abstract class BaseRunningService : Service() {
 
     lateinit var locationRequest: LocationRequest
     lateinit var locationCallback: LocationCallback
-
-    val recordData = mutableListOf<GpsData>() // 1초마다 업데이트한 GPS 데이터를 쌓기 위함
 
     override fun onCreate() {
         super.onCreate()

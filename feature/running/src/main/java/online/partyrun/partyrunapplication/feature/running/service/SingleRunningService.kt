@@ -19,20 +19,22 @@ import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class SingleRunningService : BaseRunningService() {
+    companion object {
+        private const val MIN_DURATION_SECOND: Double = 0.0
+        private const val PAUSE_THRESHOLD_COUNT = 3
+        private const val MAXIMUM_RUNNER_SPEED_OF_METERS_PER_SECOND = 12.42
+    }
 
     @Inject
     lateinit var singleRepository: SingleRepository
 
-    private var lastLocation: Location? = null // 이전 위치 저장
-    private var totalDistance: Int = 0  // 누적 거리 저장
-    private var isFirstLocationUpdate = true  // 플래그 초기화
+    private var lastLocation: Location? = null
+    private var accumulatedDistance: Int = 0
+    private var isFirstLocationUpdate = true
+    private var isSecondLocationUpdate = true
     private lateinit var runningServiceState: RunningServiceState // 상태 변수를 통해 현재 서비스 상태 추적
     private var belowThresholdCount: Int = 0  // 임계값 카운트를 통해 일시정지, 재시작을 구현하기 위함
     private var isUserPaused: Boolean = false // 사용자가 직접 일시정지를 누른 것인지 파악
-
-    companion object {
-        private const val PAUSE_THRESHOLD_COUNT = 3
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         extractUserPauseStatusFromIntent(intent)
@@ -100,21 +102,33 @@ class SingleRunningService : BaseRunningService() {
     private fun setLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                if (shouldSkipLocationUpdate()) return
+                if (handleFirstLocationUpdate()) return
+                if (handleSecondLocationUpdate(result.lastLocation)) return
                 processLocationResult(result.lastLocation)
             }
         }
     }
 
     // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
-    private fun shouldSkipLocationUpdate(): Boolean {
+    private fun handleFirstLocationUpdate(): Boolean {
         return isFirstLocationUpdate.also { isFirstLocationUpdate = false }
+    }
+
+    // 두번 째 값은 LastLocation 업데이트
+    private fun handleSecondLocationUpdate(location: Location?): Boolean {
+        return isSecondLocationUpdate.also {
+            if (it) {
+                lastLocation = location
+                isSecondLocationUpdate = false
+            }
+        }
     }
 
     private fun processLocationResult(location: Location?) {
         location?.let {
             if (handleUserPause(it)) return@let
             if (handleAutomaticPause(it)) return@let
+            if (!isValidSpeed(it)) return@let
             addGpsDataToRecordData(it)
         }
     }
@@ -128,22 +142,16 @@ class SingleRunningService : BaseRunningService() {
     }
 
     private fun handleAutomaticPause(currentLocation: Location): Boolean {
-        return when {
-            isBelowThreshold() -> {
-                handleBelowThresholdSituation(currentLocation)
-                true
-            }
-
-            runningServiceState == RunningServiceState.PAUSED -> {
-                resumeRunningService()
-                false
-            }
-
-            else -> false
+        if (lastSensorVelocity <= THRESHOLD) {
+            handleBelowThresholdSituation(currentLocation)
+            return true
         }
+        if (runningServiceState == RunningServiceState.PAUSED) {
+            resumeRunningService()
+            return false
+        }
+        return false
     }
-
-    private fun isBelowThreshold() = lastSensorVelocity <= THRESHOLD
 
     private fun handleBelowThresholdSituation(currentLocation: Location) {
         belowThresholdCount++
@@ -158,12 +166,35 @@ class SingleRunningService : BaseRunningService() {
         }
     }
 
+    private fun isValidSpeed(currentLocation: Location): Boolean {
+        val movingDistanceMeter = calculateDistanceTo(currentLocation)
+        val durationSeconds = calculateDurationInSeconds(currentLocation)
+
+        if (durationSeconds == MIN_DURATION_SECOND || MAXIMUM_RUNNER_SPEED_OF_METERS_PER_SECOND < movingDistanceMeter / durationSeconds) {
+            return false
+        }
+        return true
+    }
+
+    private fun calculateDistanceTo(currentLocation: Location): Float {
+        // 두 위치 사이의 거리 계산
+        return lastLocation?.distanceTo(currentLocation) ?: 0f
+    }
+
+    private fun calculateDurationInSeconds(currentLocation: Location): Double {
+        // 두 위치의 시간 차이를 나노초로 계산
+        val timeDifferenceNanos =
+            currentLocation.elapsedRealtimeNanos - (lastLocation?.elapsedRealtimeNanos ?: 0L)
+        // 초 단위로 변환
+        return timeDifferenceNanos / 1_000_000_000.0
+    }
+
     override fun addGpsDataToRecordData(location: Location) {
         val gpsData = createGpsData(location)
 
         // 이전 위치가 있으면 거리를 계산
         lastLocation?.let {
-            totalDistance += it.distanceTo(location).roundToInt()
+            accumulatedDistance += it.distanceTo(location).roundToInt()
         }
         lastLocation = location
 
@@ -182,7 +213,7 @@ class SingleRunningService : BaseRunningService() {
 
     private fun storeGpsData(gpsData: GpsData) {
         serviceScope.launch {
-            singleRepository.setDistance(totalDistance)
+            singleRepository.setDistance(accumulatedDistance)
             singleRepository.addGpsData(gpsData)
         }
     }

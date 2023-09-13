@@ -8,4 +8,5 @@ object RunningConstants {
     const val COUNTDOWN_INTERVAL = 1000L
     const val ROBOT_MOVEMENT_DELAY = 500L
     const val CHECK_START_INTERVAL = 1000L // 배틆 시간 간격을 체크하는 딜레이
+    const val ELAPSED_SECONDS_COUNT = 1000L
 }

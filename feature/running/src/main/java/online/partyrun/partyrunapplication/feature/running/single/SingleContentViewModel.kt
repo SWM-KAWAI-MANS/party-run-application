@@ -17,6 +17,7 @@ import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplay
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_INTERVAL
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_SECONDS
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ELAPSED_SECONDS_COUNT
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ROBOT_MOVEMENT_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
 import javax.inject.Inject
@@ -132,7 +133,7 @@ class SingleContentViewModel @Inject constructor(
     private fun startOneSecondCounter() {
         viewModelScope.launch {
             while (true) {
-                delay(1000)  // 1초 대기
+                delay(ELAPSED_SECONDS_COUNT)  // ELAPSED_SECONDS_COUNT만큼 대기
                 if (_singleContentUiState.value.runningServiceState == RunningServiceState.PAUSED) continue
 
                 secondCountState()

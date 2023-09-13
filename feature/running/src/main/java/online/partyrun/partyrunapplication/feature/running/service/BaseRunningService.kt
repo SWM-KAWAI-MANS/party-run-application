@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import online.partyrun.partyrunapplication.core.common.Constants
-import online.partyrun.partyrunapplication.core.model.running.GpsData
 import online.partyrun.partyrunapplication.feature.running.R
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

@@ -100,14 +100,15 @@ class SingleRunningService : BaseRunningService() {
     private fun setLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
-                if (isFirstLocationUpdate) {
-                    isFirstLocationUpdate = false  // 플래그 업데이트
-                    return
-                }
+                if (shouldSkipLocationUpdate()) return
                 processLocationResult(result.lastLocation)
             }
         }
+    }
+
+    // onLocationResult의 반환 값이 이전 위치일수도 있는 첫 번째 값은 무시
+    private fun shouldSkipLocationUpdate(): Boolean {
+        return isFirstLocationUpdate.also { isFirstLocationUpdate = false }
     }
 
     private fun processLocationResult(location: Location?) {
@@ -118,30 +119,43 @@ class SingleRunningService : BaseRunningService() {
         }
     }
 
-    private fun handleAutomaticPause(it: Location): Boolean {
-        if (lastSensorVelocity <= THRESHOLD) {
-            belowThresholdCount++
-            if (runningServiceState == RunningServiceState.PAUSED) {
-                lastLocation = it // 일시정지 상태일 때는 마지막 위치만 업데이트
-                return true
-            }
-            if (shouldPauseService()) {
-                pauseRunningService()
-            }
-            return true
-        }
-        if (runningServiceState == RunningServiceState.PAUSED) {
-            resumeRunningService()
-        }
-        return false
-    }
-
     private fun handleUserPause(location: Location): Boolean {
         if (isUserPaused) { // 사용자가 직접 일시정지 한 경우, 위치 업데이트만 수행하고 리턴
             lastLocation = location
             return true
         }
         return false
+    }
+
+    private fun handleAutomaticPause(currentLocation: Location): Boolean {
+        return when {
+            isBelowThreshold() -> {
+                handleBelowThresholdSituation(currentLocation)
+                true
+            }
+
+            runningServiceState == RunningServiceState.PAUSED -> {
+                resumeRunningService()
+                false
+            }
+
+            else -> false
+        }
+    }
+
+    private fun isBelowThreshold() = lastSensorVelocity <= THRESHOLD
+
+    private fun handleBelowThresholdSituation(currentLocation: Location) {
+        belowThresholdCount++
+
+        if (runningServiceState == RunningServiceState.PAUSED) {
+            lastLocation = currentLocation
+            return
+        }
+
+        if (shouldPauseService()) {
+            pauseRunningService()
+        }
     }
 
     override fun addGpsDataToRecordData(location: Location) {

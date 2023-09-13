@@ -143,36 +143,22 @@ private fun StartRunningService(
     val context = LocalContext.current
     val receiver = remember { createBroadcastReceiver(singleContentViewModel) }
 
-    when (singleContentUiState.runningServiceState) {
-        RunningServiceState.STARTED -> ControlRunningService(
-            singleContentViewModel,
-            Constants.ACTION_START_RUNNING,
-            receiver,
-            context
-        )
-
-        RunningServiceState.PAUSED -> ControlRunningService(
-            singleContentViewModel,
-            Constants.ACTION_PAUSE_RUNNING,
-            receiver,
-            context,
-            isUserPaused = singleContentUiState.isUserPaused
-        )
-
-        RunningServiceState.RESUMED -> ControlRunningService(
-            singleContentViewModel,
-            Constants.ACTION_RESUME_RUNNING,
-            receiver,
-            context
-        )
-
-        RunningServiceState.STOPPED -> ControlRunningService(
-            singleContentViewModel,
-            Constants.ACTION_STOP_RUNNING,
-            receiver,
-            context
-        )
+    val action = when (singleContentUiState.runningServiceState) {
+        RunningServiceState.STARTED -> Constants.ACTION_START_RUNNING
+        RunningServiceState.PAUSED -> Constants.ACTION_PAUSE_RUNNING
+        RunningServiceState.RESUMED -> Constants.ACTION_RESUME_RUNNING
+        RunningServiceState.STOPPED -> Constants.ACTION_STOP_RUNNING
     }
+
+    ControlRunningService(
+        singleContentViewModel = singleContentViewModel,
+        action = action,
+        receiver = receiver,
+        context = context,
+        isUserPaused = if (singleContentUiState.runningServiceState == RunningServiceState.PAUSED) {
+            singleContentUiState.isUserPaused
+        } else false
+    )
 }
 
 @Composable

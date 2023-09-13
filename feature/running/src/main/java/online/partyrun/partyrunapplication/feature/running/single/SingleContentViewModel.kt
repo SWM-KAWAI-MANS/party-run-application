@@ -117,7 +117,7 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    fun stopRunningProcess() {
+    fun finishRunningProcess() {
         stopSingleRunningService()
         stopRunningState()
     }
@@ -185,6 +185,7 @@ class SingleContentViewModel @Inject constructor(
                 _singleContentUiState.update { state ->
                     state.copy(
                         userStatus = updatedUser,
+                        distanceInMeter = totalDistance,
                         distanceInKm = formattedDistance
                     )
                 }

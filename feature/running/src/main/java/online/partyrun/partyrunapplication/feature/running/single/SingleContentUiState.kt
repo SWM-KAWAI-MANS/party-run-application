@@ -22,6 +22,7 @@ data class SingleContentUiState(
     // 유저 이름
     val userName: String = "",
     // 이동 거리
+    val distanceInMeter: Int = 0,
     val distanceInKm: String = "0.00",
     // 경과 시간
     val elapsedSecondsTime: Int = 0,

@@ -25,11 +25,14 @@ import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.common.Constants.EXTRA_IS_USER_PAUSED
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
+import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
+
+const val MINIMUM_FINISH_DISTANCE = 100
 
 @Composable
 fun SingleContentScreen(
@@ -93,6 +96,7 @@ fun Content(
     RunningBackNavigationHandler(
         activity = activity,
         singleContentViewModel = singleContentViewModel,
+        singleContentUiState = singleContentUiState,
         openRunningExitDialog = openRunningExitDialog
     )
 
@@ -236,6 +240,7 @@ private fun unregisterReceiverAndStopService(
 fun RunningBackNavigationHandler(
     activity: Activity?,
     singleContentViewModel: SingleContentViewModel,
+    singleContentUiState: SingleContentUiState,
     openRunningExitDialog: MutableState<Boolean>
 ) {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -259,7 +264,35 @@ fun RunningBackNavigationHandler(
     RunningExitConfirmationDialog(
         openRunningExitDialog = openRunningExitDialog,
     ) {
+        handleRunningExit(
+            activity = activity,
+            distanceInMeter = singleContentUiState.distanceInMeter,
+            singleContentViewModel = singleContentViewModel,
+            minimumFinishDistance = MINIMUM_FINISH_DISTANCE
+        )
+    }
+}
+
+fun handleRunningExit(
+    activity: Activity?,
+    distanceInMeter: Int,
+    singleContentViewModel: SingleContentViewModel,
+    minimumFinishDistance: Int
+) {
+    if (distanceInMeter < minimumFinishDistance) { // 일정 거리를 못넘기면 저장하지 않는 GPS 데이터
         singleContentViewModel.stopSingleRunningService()
-        singleContentViewModel.stopRunningProcess()
+        restartActivity(activity)
+    } else {
+        singleContentViewModel.finishRunningProcess()
+    }
+}
+
+fun restartActivity(activity: Activity?) {
+    activity?.let {
+        val intent = it.intent
+        it.startActivity(intent)
+        it.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        it.finish()
+        it.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

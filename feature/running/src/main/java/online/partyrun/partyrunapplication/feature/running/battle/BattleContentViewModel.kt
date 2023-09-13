@@ -25,6 +25,9 @@ import online.partyrun.partyrunapplication.core.domain.running.battle.GetUserIdU
 import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
 import online.partyrun.partyrunapplication.core.model.running.BattleEvent
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.CHECK_START_INTERVAL
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_INTERVAL
+import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.COUNTDOWN_SECONDS
 import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
 import timber.log.Timber
 import java.net.ConnectException
@@ -42,7 +45,6 @@ class BattleContentViewModel @Inject constructor(
     private val disposeSocketResourcesUseCase: DisposeSocketResourcesUseCase,
 ) : ViewModel() {
     companion object {
-        const val COUNTDOWN_SECONDS = 5
         const val STATE_SHARE_SUBSCRIPTION_TIMEOUT = 3000L
     }
 
@@ -245,13 +247,12 @@ class BattleContentViewModel @Inject constructor(
             val currentTime = LocalDateTime.now()
             val remainingTime = ChronoUnit.SECONDS.between(currentTime, battleStartTime)
             remainingTimeInSeconds = remainingTime
-            delay(1000) // Check every 1 second
+            delay(CHECK_START_INTERVAL)
         } while (remainingTimeInSeconds > COUNTDOWN_SECONDS)
     }
 
     private suspend fun countDown() {
         val initialDelay = 300L
-        val countDownInterval = 1000L
         val startCount = COUNTDOWN_SECONDS
 
         delay(initialDelay)
@@ -260,7 +261,7 @@ class BattleContentViewModel @Inject constructor(
             updateCountdownState(remainingSeconds)
 
             if (remainingSeconds > 0) {
-                delay(countDownInterval)
+                delay(COUNTDOWN_INTERVAL)
             }
         }
     }

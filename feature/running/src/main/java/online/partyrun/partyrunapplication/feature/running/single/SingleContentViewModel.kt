@@ -70,7 +70,7 @@ class SingleContentViewModel @Inject constructor(
     }
 
     private fun updateCountdownState(timeRemaining: Int) {
-        if (timeRemaining == 3) { // 3초가 남았을 때 러닝 서비스 시작
+        if (timeRemaining == 5) { // 카운트다운 시작 시 러닝 서비스 활성화
             startSingleRunningService()
         }
         _singleContentUiState.update { state ->

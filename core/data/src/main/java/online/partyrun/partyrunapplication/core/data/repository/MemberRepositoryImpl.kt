@@ -1,6 +1,8 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.UserPreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
@@ -54,4 +56,24 @@ class MemberRepositoryImpl @Inject constructor(
         return apiRequestFlow { memberDataSource.updateUserData(userData.toRequestModel()) }
     }
 
+    override suspend fun updateProfileImage(
+        requestBody: RequestBody,
+        fileName: String?
+    ): Flow<Result<Unit>> {
+        return apiRequestFlow {
+            memberDataSource.updateProfileImage(
+                createMultipartBodyPart(
+                    fileName,
+                    requestBody
+                )
+            )
+        }
+    }
+
+    private fun createMultipartBodyPart(
+        fileName: String?,
+        requestBody: RequestBody
+    ): MultipartBody.Part {
+        return MultipartBody.Part.createFormData("profile", fileName, requestBody)
+    }
 }

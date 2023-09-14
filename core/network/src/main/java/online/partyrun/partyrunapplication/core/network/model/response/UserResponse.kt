@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
+import online.partyrun.partyrunapplication.core.common.Constants.S3_URL
 import online.partyrun.partyrunapplication.core.model.user.User
 
 data class UserResponse(
@@ -15,5 +16,5 @@ data class UserResponse(
 fun UserResponse.toDomainModel() = User(
     id = this.userId ?: "",
     name = this.userName ?: "",
-    profile = this.userProfile ?: ""
+    profile = S3_URL.plus(this.userProfile)
 )

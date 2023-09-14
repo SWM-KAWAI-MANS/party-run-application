@@ -4,6 +4,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
+import okhttp3.RequestBody
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepository
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
@@ -19,7 +20,7 @@ class TestMemberRepository : MemberRepository {
     private var userProfile: String? = null
 
     override val userData: Flow<User>
-        get() = flowOf(User(id = userId ?: "", name = userName ?: "", profile = userProfile ?: ""))
+        get() = flowOf(User(id = userId ?: "", nickName = userName ?: "", profileImage = userProfile ?: ""))
 
     override suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<Result<RunnerInfoData>> {
         TODO("Not yet implemented")
@@ -45,4 +46,12 @@ class TestMemberRepository : MemberRepository {
     override suspend fun updateUserData(userData: User): Flow<Result<Unit>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun updateProfileImage(
+        requestBody: RequestBody,
+        fileName: String?
+    ): Flow<Result<Unit>> {
+        TODO("Not yet implemented")
+    }
+
 }

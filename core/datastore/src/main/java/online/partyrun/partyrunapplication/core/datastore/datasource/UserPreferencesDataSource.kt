@@ -14,8 +14,8 @@ class UserPreferencesDataSource @Inject constructor(
         .map { preferences ->
             User(
                 id = preferences.id,
-                name = preferences.name,
-                profile = preferences.profile
+                nickName = preferences.name,
+                profileImage = preferences.profile
             )
         }
 

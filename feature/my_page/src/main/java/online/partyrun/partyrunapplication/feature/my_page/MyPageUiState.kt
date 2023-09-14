@@ -8,8 +8,8 @@ sealed class MyPageUiState {
     data class Success(
         val user: User = User(
             id = "",
-            name = "",
-            profile = ""
+            nickName = "",
+            profileImage = ""
         )
     ) : MyPageUiState()
 

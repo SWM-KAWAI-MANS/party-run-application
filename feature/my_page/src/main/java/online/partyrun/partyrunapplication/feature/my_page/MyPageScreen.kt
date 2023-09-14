@@ -180,8 +180,8 @@ private fun MyPageBody(
         ) {
             ProfileContent(
                 navigateToProfile = navigateToProfile,
-                userName = userData.name,
-                userProfile = userData.profile
+                userName = userData.nickName,
+                userProfile = userData.profileImage
             )
         }
 

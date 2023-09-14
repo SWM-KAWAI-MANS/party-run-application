@@ -156,8 +156,8 @@ class SingleContentViewModel @Inject constructor(
         viewModelScope.launch {
             val userData = getMyPageDataUseCase()
             val userStatus = SingleRunnerDisplayStatus(
-                runnerName = userData.name,
-                runnerProfile = ProfileImageSource.Url(userData.profile) // 서버에서 관리하는 사용자 프로필 이미지 URL
+                runnerName = userData.nickName,
+                runnerProfile = ProfileImageSource.Url(userData.profileImage) // 서버에서 관리하는 사용자 프로필 이미지 URL
             )
             val robotStatus = SingleRunnerDisplayStatus(
                 runnerName = "파티런 봇",
@@ -166,7 +166,7 @@ class SingleContentViewModel @Inject constructor(
 
             _singleContentUiState.update { state ->
                 state.copy(
-                    userName = userData.name,
+                    userName = userData.nickName,
                     userStatus = userStatus,
                     robotStatus = robotStatus
                 )

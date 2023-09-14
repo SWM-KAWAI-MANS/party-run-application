@@ -8,13 +8,13 @@ data class UserResponse(
     @SerializedName("id")
     val userId: String?,
     @SerializedName("name")
-    val userName: String?,
+    val nickName: String?,
     @SerializedName("profile")
-    val userProfile: String?,
+    val profileImage: String?,
 )
 
 fun UserResponse.toDomainModel() = User(
     id = this.userId ?: "",
-    name = this.userName ?: "",
-    profile = S3_URL.plus(this.userProfile)
+    nickName = this.nickName ?: "",
+    profileImage = S3_URL.plus(this.profileImage)
 )

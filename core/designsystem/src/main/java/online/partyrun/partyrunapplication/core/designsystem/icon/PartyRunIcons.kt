@@ -35,6 +35,7 @@ object PartyRunIcons {
     val Step = R.drawable.ic_outline_step
     val Pace = R.drawable.ic_outline_pace
     val Schedule = R.drawable.ic_outline_schedule
+    val AddCircleFiled = R.drawable.ic_add_circle_filed_24
     val CheckCircleFilled = R.drawable.ic_round_check_circle_24
     val PauseCircleFilled = R.drawable.ic_round_pause_circle_filled_24
     val PlayCircleFilled = R.drawable.ic_round_play_circle_filled_24

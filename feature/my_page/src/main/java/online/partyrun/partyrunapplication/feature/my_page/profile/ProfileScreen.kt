@@ -61,7 +61,6 @@ import online.partyrun.partyrunapplication.feature.my_page.MyPageUiState
 import online.partyrun.partyrunapplication.feature.my_page.MyPageViewModel
 import online.partyrun.partyrunapplication.feature.my_page.R
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
@@ -72,8 +71,6 @@ fun ProfileScreen(
     val context = LocalContext.current
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
     val profileSnackbarMessage by profileViewModel.snackbarMessage.collectAsStateWithLifecycle()
     val photoPickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -84,7 +81,6 @@ fun ProfileScreen(
         profileViewModel = profileViewModel,
         myPageUiState = myPageUiState,
         profileUiState = profileUiState,
-        keyboardController = keyboardController,
         photoPicker = {
             photoPickerLauncher.launch(
                 PickVisualMediaRequest(
@@ -92,7 +88,6 @@ fun ProfileScreen(
                 )
             )
         },
-        focusManager = focusManager,
         navigateToMyPage = navigateToMyPage,
         onShowSnackbar = onShowSnackbar,
         profileSnackbarMessage = profileSnackbarMessage
@@ -106,13 +101,14 @@ fun Content(
     profileViewModel: ProfileViewModel,
     myPageUiState: MyPageUiState,
     profileUiState: ProfileUiState,
-    keyboardController: SoftwareKeyboardController? = null,
     photoPicker: () -> Unit,
-    focusManager: FocusManager,
     navigateToMyPage: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     profileSnackbarMessage: String
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     LaunchedEffect(profileSnackbarMessage) {
         if (profileSnackbarMessage.isNotEmpty()) {
             onShowSnackbar(profileSnackbarMessage)

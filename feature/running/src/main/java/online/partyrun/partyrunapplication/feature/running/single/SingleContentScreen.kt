@@ -276,7 +276,7 @@ fun RunningBackNavigationHandler(
 
 fun handleRunningExit(
     activity: Activity?,
-    distanceInMeter: Int,
+    distanceInMeter: Double,
     singleContentViewModel: SingleContentViewModel,
     minimumFinishDistance: Int
 ) {

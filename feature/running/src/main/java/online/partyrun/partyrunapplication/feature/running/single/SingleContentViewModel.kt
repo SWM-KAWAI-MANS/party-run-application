@@ -146,7 +146,6 @@ class SingleContentViewModel @Inject constructor(
             while (true) {
                 delay(ELAPSED_SECONDS_COUNT)  // ELAPSED_SECONDS_COUNT만큼 대기
                 if (_singleContentUiState.value.runningServiceState == RunningServiceState.PAUSED) continue
-
                 secondCountState()
             }
         }
@@ -154,36 +153,38 @@ class SingleContentViewModel @Inject constructor(
 
     private fun secondCountState() {
         _singleContentUiState.update { state ->
-            val newElapsedSeconds = state.elapsedSecondsTime + 1
-            val formattedTime = formatTime(newElapsedSeconds)
             state.copy(
-                elapsedSecondsTime = newElapsedSeconds,
-                elapsedFormattedTime = formattedTime
+                elapsedSecondsTime = state.incrementElapsedSeconds(),
+                elapsedFormattedTime = state.formatTime(state.elapsedSecondsTime)
             )
         }
     }
 
     fun initSingleState() {
         viewModelScope.launch {
-            val userData = getMyPageDataUseCase()
-            val userStatus = SingleRunnerDisplayStatus(
-                runnerName = userData.nickName,
-                runnerProfile = ProfileImageSource.Url(userData.profileImage) // 서버에서 관리하는 사용자 프로필 이미지 URL
-            )
-            val robotStatus = SingleRunnerDisplayStatus(
-                runnerName = "파티런 봇",
-                runnerProfile = ProfileImageSource.ResourceId(R.drawable.robot)  // 로컬 리소스 ID
-            )
-
-            _singleContentUiState.update { state ->
-                state.copy(
-                    userName = userData.nickName,
-                    userStatus = userStatus,
-                    robotStatus = robotStatus
-                )
-            }
+            setupInitialStatus()
             startUserMovement()
             startRobotMovement()
+        }
+    }
+
+    private suspend fun setupInitialStatus() {
+        val userData = getMyPageDataUseCase()
+        val userStatus = SingleRunnerDisplayStatus(
+            runnerName = userData.nickName,
+            runnerProfile = ProfileImageSource.Url(userData.profileImage) // 서버에서 관리하는 사용자 프로필 이미지 URL
+        )
+        val robotStatus = SingleRunnerDisplayStatus(
+            runnerName = "파티런 봇",
+            runnerProfile = ProfileImageSource.ResourceId(R.drawable.robot)  // 로컬 리소스 ID
+        )
+
+        _singleContentUiState.update { state ->
+            state.copy(
+                userName = userData.nickName,
+                userStatus = userStatus,
+                robotStatus = robotStatus
+            )
         }
     }
 
@@ -191,12 +192,14 @@ class SingleContentViewModel @Inject constructor(
         viewModelScope.launch {
             getRecordDataWithDistanceUseCase().collect { record ->
                 val currentDistance = record.records.lastOrNull()?.distance ?: 0.0
-                checkTargetDistanceReached(currentDistance.toInt())
-                val (updatedUser, formattedDistance) = getUpdatedMovementData(currentDistance.toInt())
+                checkTargetDistanceReached(currentDistance)
+                val (updatedUser, formattedDistance) =
+                    _singleContentUiState.value.getUpdatedMovementData(currentDistance)
+
                 _singleContentUiState.update { state ->
                     state.copy(
                         userStatus = updatedUser,
-                        distanceInMeter = currentDistance.toInt(),
+                        distanceInMeter = currentDistance,
                         distanceInKm = formattedDistance,
                         instantPace = record.calculateInstantPace()
                     )
@@ -205,21 +208,7 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    private fun getUpdatedMovementData(totalDistance: Int): Pair<SingleRunnerDisplayStatus, String> {
-        val previousState = _singleContentUiState.value
-        val previousUser = previousState.userStatus
-
-        // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
-        val distanceInKm = totalDistance.toDouble() / 1000
-        val formattedDistance = String.format("%.2f", distanceInKm)
-
-        val updatedUser = previousUser.copy(
-            distance = totalDistance.toDouble()
-        )
-        return Pair(updatedUser, formattedDistance)
-    }
-
-    private fun checkTargetDistanceReached(totalDistance: Int) {
+    private fun checkTargetDistanceReached(totalDistance: Double) {
         if (totalDistance >= _singleContentUiState.value.selectedDistance) {
             sendRecordDataWithDistance {
                 finishRunningProcess()
@@ -247,27 +236,9 @@ class SingleContentViewModel @Inject constructor(
 
     private fun startRobotMovement() {
         viewModelScope.launch {
-            while (true) {
-                val previousState = _singleContentUiState.value
-                // 현재 경과 시간이 선택된 시간을 넘어갔는지 확인
-                if (previousState.elapsedSecondsTime >= previousState.selectedTime) break
-
-                delay(ROBOT_MOVEMENT_DELAY) // ROBOT_MOVEMENT_DELAY 마다 움직임
-
-                val robotStep =
-                    previousState.selectedDistance.toDouble() / previousState.selectedTime
-                val currentElapsedTime = previousState.elapsedSecondsTime
-                val previousRobot = previousState.robotStatus
-
-                val updatedRobot = previousRobot.copy(
-                    distance = robotStep * currentElapsedTime
-                )
-
-                _singleContentUiState.update { state ->
-                    state.copy(
-                        robotStatus = updatedRobot
-                    )
-                }
+            while (!_singleContentUiState.value.isElapsedBeyondSelectedTime()) {
+                delay(ROBOT_MOVEMENT_DELAY)
+                _singleContentUiState.update { state -> state.updatedRobotStatus() }
             }
         }
     }
@@ -288,14 +259,6 @@ class SingleContentViewModel @Inject constructor(
             trackWidth = trackWidth,
             trackHeight = trackHeight
         )
-    }
-
-    private fun formatTime(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val remainingSeconds = seconds % 60
-
-        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
     }
 
     override fun onCleared() {

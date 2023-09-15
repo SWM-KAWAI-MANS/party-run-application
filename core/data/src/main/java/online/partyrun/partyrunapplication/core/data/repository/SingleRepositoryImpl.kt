@@ -2,10 +2,13 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import online.partyrun.partyrunapplication.core.model.running.GpsData
+import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
+import online.partyrun.partyrunapplication.core.model.running.RecordDataWithDistance
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleRunnerRecord
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleRunnerStatus
+import online.partyrun.partyrunapplication.core.model.single.SingleId
+import online.partyrun.partyrunapplication.core.network.datasource.SingleDataSource
 import online.partyrun.partyrunapplication.core.network.model.util.calculateElapsedTimeToDomainModel
 import online.partyrun.partyrunapplication.core.network.model.util.calculateSecondsElapsedTimeToDomainModel
 import online.partyrun.partyrunapplication.core.network.model.util.formatDate
@@ -13,35 +16,40 @@ import online.partyrun.partyrunapplication.core.network.model.util.formatDistanc
 import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceWithComma
 import online.partyrun.partyrunapplication.core.network.model.util.formatEndTime
 import online.partyrun.partyrunapplication.core.network.model.util.formatTime
+import online.partyrun.partyrunapplication.core.common.result.Result
+import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.model.running.GpsDataWithDistance
+import online.partyrun.partyrunapplication.core.model.running.RunningTime
+import online.partyrun.partyrunapplication.core.network.model.request.toRequestModel
+import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import javax.inject.Inject
 
-class SingleRepositoryImpl @Inject constructor() : SingleRepository {
-    private val _gpsDataList = MutableStateFlow<List<GpsData>>(emptyList())
-    override val gpsDataList: Flow<List<GpsData>> = _gpsDataList
-
-    private val _totalDistance = MutableStateFlow(0)
-    override val totalDistance: Flow<Int> = _totalDistance
+class SingleRepositoryImpl @Inject constructor(
+    private val singleDataSource: SingleDataSource
+) : SingleRepository {
+    private val _recordData = MutableStateFlow(RecordDataWithDistance(emptyList()))
+    override val recordData: Flow<RecordDataWithDistance> = _recordData
 
     override fun initialize() {
-        _gpsDataList.value = emptyList()
-        _totalDistance.value = 0
+        _recordData.value = RecordDataWithDistance(emptyList())
     }
 
-    override suspend fun addGpsData(gpsData: GpsData) {
-        val updatedList = _gpsDataList.value + gpsData
-        _gpsDataList.value = updatedList
+    override suspend fun addGpsData(gpsData: GpsDataWithDistance) {
+        val updatedList = _recordData.value.records + gpsData
+        _recordData.value = RecordDataWithDistance(updatedList)
     }
 
-    override suspend fun getGpsData(): List<GpsData> {
-        return _gpsDataList.value
+    override suspend fun getRecordData(): RecordDataWithDistance {
+        return _recordData.value
     }
 
     /**
      * 싱글 UI 테스트를 위한 임시 메소드
      */
     override suspend fun getGpsDataTest(): SingleResult {
-        val endTimeLocalDateType = _gpsDataList.value.lastOrNull()?.time
-        val startTimeLocalDateType = _gpsDataList.value.firstOrNull()?.time
+        val endTimeLocalDateType = _recordData.value.records.lastOrNull()?.time
+        val startTimeLocalDateType = _recordData.value.records.firstOrNull()?.time
+        val distance = _recordData.value.records.lastOrNull()?.distance?.toInt() ?: 0
 
         return SingleResult(
             singleRunnerStatus = SingleRunnerStatus(
@@ -54,29 +62,31 @@ class SingleRepositoryImpl @Inject constructor() : SingleRepository {
                     startTimeLocalDateType,
                     endTimeLocalDateType
                 ),
-                records = _gpsDataList.value.mapIndexed { index, gpsData ->
+                records = _recordData.value.records.mapIndexed { _, gpsData ->
                     SingleRunnerRecord(
                         altitude = gpsData.altitude,
                         latitude = gpsData.latitude,
                         longitude = gpsData.longitude,
                         time = gpsData.time,
-                        distance = (index + 1) * 50.0  // 인덱스는 0부터 시작하므로, index + 1을 하여 1부터 시작하도록
+                        distance = gpsData.distance
                     )
                 }
             ),
             startTime = startTimeLocalDateType?.let { formatTime(it) },
-            targetDistance = this._totalDistance.value,
-            targetDistanceFormatted = this._totalDistance.value.let {
-                formatDistanceWithComma(it)
-            },
-            targetDistanceInKm = this._totalDistance.value.let {
-                formatDistanceInKm(it)
-            },
+            targetDistance = distance,
+            targetDistanceFormatted = formatDistanceWithComma(distance),
+            targetDistanceInKm = formatDistanceInKm(distance),
             singleDate = startTimeLocalDateType?.let { formatDate(it) } ?: ""
         )
     }
 
-    override suspend fun setDistance(totalDistance: Int) {
-        _totalDistance.emit(totalDistance)
+    override suspend fun sendRecordData(runningTime: RunningTime): Flow<Result<SingleId>> {
+        return apiRequestFlow {
+            singleDataSource.sendRecordData(
+                _recordData.value.toRequestModel(
+                    runningTime
+                )
+            )
+        }.mapResultModel { it.toDomainModel() }
     }
 }

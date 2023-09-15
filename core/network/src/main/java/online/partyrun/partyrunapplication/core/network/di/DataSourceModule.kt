@@ -16,12 +16,15 @@ import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSou
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
+import online.partyrun.partyrunapplication.core.network.datasource.SingleDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.SingleDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.service.BattleApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.ResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
+import online.partyrun.partyrunapplication.core.network.service.SingleApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import javax.inject.Singleton
 
@@ -64,4 +67,11 @@ object DataSourceModule {
     fun provideBattleDataSource(
         battleApiService: BattleApiService
     ): BattleDataSource = BattleDataSourceImpl(battleApiService)
+
+    @Singleton
+    @Provides
+    fun provideSingleDataSource(
+        singleApiService: SingleApiService
+    ): SingleDataSource = SingleDataSourceImpl(singleApiService)
+
 }

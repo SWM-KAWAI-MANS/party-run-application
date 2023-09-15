@@ -41,8 +41,8 @@ class SingleRepositoryImpl @Inject constructor(
         _recordData.value = RecordDataWithDistance(updatedList)
     }
 
-    override suspend fun getRecordData(): RecordDataWithDistance {
-        return _recordData.value
+    override suspend fun getRecordData(): Flow<RecordDataWithDistance> {
+        return recordData
     }
 
     override suspend fun saveSingleId(singleId: String) {

@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
-import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
+import online.partyrun.partyrunapplication.core.domain.running.single.GetRecordDataWithDistanceUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.InitializeSingleUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SendRecordDataWithDistanceUseCase
@@ -34,6 +34,7 @@ import javax.inject.Inject
 class SingleContentViewModel @Inject constructor(
     private val sendRecordDataWithDistanceUseCase: SendRecordDataWithDistanceUseCase,
     private val saveSingleIdUseCase: SaveSingleIdUseCase,
+    private val getRecordDataWithDistanceUseCase: GetRecordDataWithDistanceUseCase,
     private val initializeSingleUseCase: InitializeSingleUseCase,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
@@ -188,7 +189,7 @@ class SingleContentViewModel @Inject constructor(
 
     private fun startUserMovement() {
         viewModelScope.launch {
-            singleRepository.recordData.collect { record ->
+            getRecordDataWithDistanceUseCase().collect { record ->
                 val currentDistance = record.records.lastOrNull()?.distance ?: 0.0
                 checkTargetDistanceReached(currentDistance.toInt())
                 val (updatedUser, formattedDistance) = getUpdatedMovementData(currentDistance.toInt())

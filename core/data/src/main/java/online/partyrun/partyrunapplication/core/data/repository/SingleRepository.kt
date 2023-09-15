@@ -13,7 +13,7 @@ interface SingleRepository {
 
     fun initialize()
     suspend fun addGpsData(gpsData: GpsDataWithDistance)
-    suspend fun getRecordData(): RecordDataWithDistance
+    suspend fun getRecordData(): Flow<RecordDataWithDistance>
     suspend fun getGpsDataTest(): SingleResult
     suspend fun sendRecordData(runningTime: RunningTime): Flow<Result<SingleId>>
 

@@ -17,4 +17,7 @@ interface SingleRepository {
     suspend fun getGpsDataTest(): SingleResult
     suspend fun sendRecordData(runningTime: RunningTime): Flow<Result<SingleId>>
 
+    suspend fun saveSingleId(singleId: String)
+    suspend fun getSingleId(): Flow<String?>
+
 }

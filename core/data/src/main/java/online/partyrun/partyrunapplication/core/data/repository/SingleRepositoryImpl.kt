@@ -18,6 +18,7 @@ import online.partyrun.partyrunapplication.core.network.model.util.formatEndTime
 import online.partyrun.partyrunapplication.core.network.model.util.formatTime
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.running.GpsDataWithDistance
 import online.partyrun.partyrunapplication.core.model.running.RunningTime
 import online.partyrun.partyrunapplication.core.network.model.request.toRequestModel
@@ -25,7 +26,8 @@ import online.partyrun.partyrunapplication.core.network.model.response.toDomainM
 import javax.inject.Inject
 
 class SingleRepositoryImpl @Inject constructor(
-    private val singleDataSource: SingleDataSource
+    private val singleDataSource: SingleDataSource,
+    private val singlePreferencesDataSource: SinglePreferencesDataSource
 ) : SingleRepository {
     private val _recordData = MutableStateFlow(RecordDataWithDistance(emptyList()))
     override val recordData: Flow<RecordDataWithDistance> = _recordData
@@ -41,6 +43,14 @@ class SingleRepositoryImpl @Inject constructor(
 
     override suspend fun getRecordData(): RecordDataWithDistance {
         return _recordData.value
+    }
+
+    override suspend fun saveSingleId(singleId: String) {
+        singlePreferencesDataSource.saveSingleId(singleId)
+    }
+
+    override suspend fun getSingleId(): Flow<String?> {
+        return singlePreferencesDataSource.getSingleId()
     }
 
     /**

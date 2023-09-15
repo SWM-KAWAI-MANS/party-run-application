@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -218,8 +217,27 @@ class SingleContentViewModel @Inject constructor(
 
     private fun checkTargetDistanceReached(totalDistance: Int) {
         if (totalDistance >= _singleContentUiState.value.selectedDistance) {
-            stopSingleRunningService()
-            stopRunningState()
+            sendRecordDataWithDistance {
+                finishRunningProcess()
+            }
+        }
+    }
+
+    private fun sendRecordDataWithDistance(
+        finishRunningProcess: () -> Unit
+    ) {
+        viewModelScope.launch {
+            val runningTime =
+                RunningTime.fromSeconds(_singleContentUiState.value.elapsedSecondsTime)
+            sendRecordDataWithDistanceUseCase(runningTime).collect { result ->
+                result.onSuccess { data ->
+                    singleRepository.saveSingleId(data.id)
+                    finishRunningProcess()
+                }.onFailure { errorMessage, code ->
+                    _snackbarMessage.value = "싱글 결과 전송 실패"
+                    Timber.e("$code $errorMessage")
+                }
+            }
         }
     }
 

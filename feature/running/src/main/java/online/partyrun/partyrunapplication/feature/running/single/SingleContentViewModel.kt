@@ -14,6 +14,7 @@ import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
+import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SendRecordDataWithDistanceUseCase
 import online.partyrun.partyrunapplication.core.model.running.RunningTime
 import online.partyrun.partyrunapplication.core.model.running.calculateInstantPace
@@ -30,8 +31,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SingleContentViewModel @Inject constructor(
-    private val singleRepository: SingleRepository,
     private val sendRecordDataWithDistanceUseCase: SendRecordDataWithDistanceUseCase,
+    private val saveSingleIdUseCase: SaveSingleIdUseCase,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
 
@@ -231,7 +232,7 @@ class SingleContentViewModel @Inject constructor(
                 RunningTime.fromSeconds(_singleContentUiState.value.elapsedSecondsTime)
             sendRecordDataWithDistanceUseCase(runningTime).collect { result ->
                 result.onSuccess { data ->
-                    singleRepository.saveSingleId(data.id)
+                    saveSingleIdUseCase(data.id)
                     finishRunningProcess()
                 }.onFailure { errorMessage, code ->
                     _snackbarMessage.value = "싱글 결과 전송 실패"

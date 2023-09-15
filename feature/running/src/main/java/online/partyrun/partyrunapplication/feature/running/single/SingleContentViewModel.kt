@@ -7,11 +7,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
+import online.partyrun.partyrunapplication.core.domain.running.single.SendRecordDataWithDistanceUseCase
+import online.partyrun.partyrunapplication.core.model.running.RunningTime
+import online.partyrun.partyrunapplication.core.model.running.calculateInstantPace
 import online.partyrun.partyrunapplication.core.model.single.ProfileImageSource
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
@@ -20,11 +26,13 @@ import online.partyrun.partyrunapplication.feature.running.util.RunningConstants
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ELAPSED_SECONDS_COUNT
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ROBOT_MOVEMENT_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.distanceToCoordinatesMapper
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SingleContentViewModel @Inject constructor(
     private val singleRepository: SingleRepository,
+    private val sendRecordDataWithDistanceUseCase: SendRecordDataWithDistanceUseCase,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
 
@@ -178,14 +186,16 @@ class SingleContentViewModel @Inject constructor(
 
     private fun startUserMovement() {
         viewModelScope.launch {
-            singleRepository.totalDistance.collect { totalDistance ->
-                checkTargetDistanceReached(totalDistance)
-                val (updatedUser, formattedDistance) = getUpdatedMovementData(totalDistance)
+            singleRepository.recordData.collect { record ->
+                val currentDistance = record.records.lastOrNull()?.distance ?: 0.0
+                checkTargetDistanceReached(currentDistance.toInt())
+                val (updatedUser, formattedDistance) = getUpdatedMovementData(currentDistance.toInt())
                 _singleContentUiState.update { state ->
                     state.copy(
                         userStatus = updatedUser,
-                        distanceInMeter = totalDistance,
-                        distanceInKm = formattedDistance
+                        distanceInMeter = currentDistance.toInt(),
+                        distanceInKm = formattedDistance,
+                        instantPace = record.calculateInstantPace()
                     )
                 }
             }

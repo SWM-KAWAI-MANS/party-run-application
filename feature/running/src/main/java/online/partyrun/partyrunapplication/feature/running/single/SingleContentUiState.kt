@@ -27,6 +27,8 @@ data class SingleContentUiState(
     // 경과 시간
     val elapsedSecondsTime: Int = 0,
     val elapsedFormattedTime: String = "00:00:00",
+    // 현재 페이스
+    val instantPace: String = "",
     // 대결에 참여 중인 자신과 로봇의 현재 상태 정보
     val userStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     val robotStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),

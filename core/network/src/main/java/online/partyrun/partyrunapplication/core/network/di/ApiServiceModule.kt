@@ -11,6 +11,7 @@ import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.BattleApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
+import online.partyrun.partyrunapplication.core.network.service.SingleApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import retrofit2.Retrofit
 import retrofit2.Retrofit.Builder
@@ -67,6 +68,13 @@ object ApiServiceModule {
             .build()
             .create(BattleApiService::class.java)
 
+    @Provides
+    fun provideSingleApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): SingleApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(SingleApiService::class.java)
+
     @Singleton
     @Provides
     fun provideMatchApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): MatchApiService =
@@ -74,6 +82,5 @@ object ApiServiceModule {
             .client(okHttpClient)
             .build()
             .create(MatchApiService::class.java)
-
 
 }

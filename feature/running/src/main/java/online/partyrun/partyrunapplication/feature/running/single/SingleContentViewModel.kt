@@ -14,6 +14,7 @@ import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
+import online.partyrun.partyrunapplication.core.domain.running.single.InitializeSingleUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SendRecordDataWithDistanceUseCase
 import online.partyrun.partyrunapplication.core.model.running.RunningTime
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class SingleContentViewModel @Inject constructor(
     private val sendRecordDataWithDistanceUseCase: SendRecordDataWithDistanceUseCase,
     private val saveSingleIdUseCase: SaveSingleIdUseCase,
+    private val initializeSingleUseCase: InitializeSingleUseCase,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
 
@@ -298,7 +300,6 @@ class SingleContentViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         _singleContentUiState.value = SingleContentUiState()
-        singleRepository.initialize()
+        initializeSingleUseCase()
     }
-
 }

@@ -5,6 +5,7 @@ object Constants {
 
     // App 모듈의 Build.gradle.kts -> BuildType에 따른 BASE_URL 분기 처리
     const val BASE_URL = BuildConfig.BASE_URL
+    const val S3_URL = BuildConfig.PARTY_RUN_S3_URL
 
     const val NOTIFICATION_CHANNEL_ID = "Running_notification_id"
     const val NOTIFICATION_CHANNEL_NAME = "Running_location_updates"

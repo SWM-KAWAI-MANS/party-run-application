@@ -9,7 +9,7 @@ class SaveUserDataUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(userData: User) {
         memberRepository.setUserId(userData.id)
-        memberRepository.setUserName(userData.name)
-        memberRepository.setUserProfile(userData.profile)
+        memberRepository.setUserName(userData.nickName)
+        memberRepository.setUserProfile(userData.profileImage)
     }
 }

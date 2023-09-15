@@ -1,5 +1,11 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +35,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -54,7 +61,6 @@ import online.partyrun.partyrunapplication.feature.my_page.MyPageUiState
 import online.partyrun.partyrunapplication.feature.my_page.MyPageViewModel
 import online.partyrun.partyrunapplication.feature.my_page.R
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
@@ -62,18 +68,26 @@ fun ProfileScreen(
     navigateToMyPage: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
+    val context = LocalContext.current
     val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
     val profileSnackbarMessage by profileViewModel.snackbarMessage.collectAsStateWithLifecycle()
+    val photoPickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { profileViewModel.handlePickedImage(context, it) }
+        }
 
     Content(
         profileViewModel = profileViewModel,
         myPageUiState = myPageUiState,
         profileUiState = profileUiState,
-        keyboardController = keyboardController,
-        focusManager = focusManager,
+        photoPicker = {
+            photoPickerLauncher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        },
         navigateToMyPage = navigateToMyPage,
         onShowSnackbar = onShowSnackbar,
         profileSnackbarMessage = profileSnackbarMessage
@@ -87,12 +101,14 @@ fun Content(
     profileViewModel: ProfileViewModel,
     myPageUiState: MyPageUiState,
     profileUiState: ProfileUiState,
-    keyboardController: SoftwareKeyboardController? = null,
-    focusManager: FocusManager,
+    photoPicker: () -> Unit,
     navigateToMyPage: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     profileSnackbarMessage: String
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     LaunchedEffect(profileSnackbarMessage) {
         if (profileSnackbarMessage.isNotEmpty()) {
             onShowSnackbar(profileSnackbarMessage)
@@ -122,6 +138,7 @@ fun Content(
                 ProfileBody(
                     profileViewModel = profileViewModel,
                     userData = myPageUiState.user,
+                    photoPicker = photoPicker,
                     profileUiState = profileUiState,
                     keyboardController = keyboardController,
                     focusManager = focusManager
@@ -160,10 +177,18 @@ private fun ProfileTopAppBar(
 private fun ProfileBody(
     profileViewModel: ProfileViewModel,
     userData: User,
+    photoPicker: () -> Unit,
     profileUiState: ProfileUiState,
     keyboardController: SoftwareKeyboardController,
     focusManager: FocusManager
 ) {
+    LaunchedEffect(Unit) {
+        profileViewModel.initProfileContent(
+            name = userData.nickName,
+            profileImage = userData.profileImage
+        )
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -185,8 +210,9 @@ private fun ProfileBody(
                     .heightIn(max = max(270.dp, with(LocalDensity.current) { 200.sp.toDp() }))
             ) {
                 ProfileContent(
-                    userName = userData.name,
-                    userProfile = userData.profile
+                    userName = profileUiState.nickName,
+                    userProfile = profileUiState.profileImage,
+                    photoPicker = photoPicker
                 )
             }
             Spacer(modifier = Modifier.heightIn(30.dp))
@@ -268,6 +294,7 @@ private fun FixedBottomNavigationSheet(
 private fun ProfileContent(
     userName: String,
     userProfile: String,
+    photoPicker: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -277,7 +304,8 @@ private fun ProfileContent(
             userName = userName
         )
         ProfileImage(
-            userProfile = userProfile
+            userProfile = userProfile,
+            photoPicker = photoPicker
         )
     }
 }
@@ -306,18 +334,37 @@ private fun ProfileHeader(
 
 @Composable
 private fun ProfileImage(
-    userProfile: String
+    userProfile: String,
+    photoPicker: () -> Unit
 ) {
     Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(80.dp)
-            .clip(CircleShape)
-            .zIndex(1f)
+        contentAlignment = Alignment.Center
     ) {
-        RenderAsyncUrlImage(
-            imageUrl = userProfile,
-            contentDescription = stringResource(id = R.string.profile_img_desc)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape)
+                .border(3.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
+                .clickable {
+                    photoPicker()
+                }
+        ) {
+            RenderAsyncUrlImage(
+                modifier = Modifier.fillMaxSize(),
+                imageUrl = userProfile,
+                contentDescription = stringResource(id = R.string.profile_img_desc)
+            )
+        }
+        Icon(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .clip(CircleShape)
+                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .size(24.dp),
+            painter = painterResource(id = PartyRunIcons.AddCircleFiled),
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = null
         )
     }
 }

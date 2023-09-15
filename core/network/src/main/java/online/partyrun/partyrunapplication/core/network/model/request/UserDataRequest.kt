@@ -8,6 +8,6 @@ data class UserDataRequest(
 
 fun User.toRequestModel(): UserDataRequest {
     return UserDataRequest(
-        name = this.name
+        name = this.nickName
     )
 }

@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.core.network.service
 
+import okhttp3.MultipartBody
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.request.UserDataRequest
 import online.partyrun.partyrunapplication.core.network.model.response.BattleMembersInfoResponse
@@ -8,7 +9,9 @@ import online.partyrun.partyrunapplication.core.network.model.response.UserRespo
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface MemberApiService {
@@ -23,4 +26,11 @@ interface MemberApiService {
 
     @PATCH("/api/members/name")
     suspend fun updateUserData(@Body userData: UserDataRequest): ApiResponse<Unit>
+
+    @Multipart
+    @PATCH("/api/members/profile")
+    suspend fun updateProfileImage(
+        @Part image: MultipartBody.Part
+    ): ApiResponse<Unit>
+
 }

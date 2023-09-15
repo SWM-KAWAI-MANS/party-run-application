@@ -10,15 +10,16 @@ import javax.inject.Inject
 class UpdateUserDataUseCase @Inject constructor(
     private val memberRepository: MemberRepository
 ) {
-    suspend operator fun invoke(name: String): Flow<Result<Unit>> {
+    suspend operator fun invoke(nickName: String): Flow<Result<Unit>> {
         val currentUserData = memberRepository.userData.first()
 
         return memberRepository.updateUserData(
             User(
                 id = currentUserData.id,
-                name = name,
-                profile = currentUserData.profile
+                nickName = nickName,
+                profileImage = currentUserData.profileImage
             )
         )
     }
+
 }

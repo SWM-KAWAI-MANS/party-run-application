@@ -1,5 +1,8 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
+import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,11 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import online.partyrun.partyrunapplication.core.common.result.onEmpty
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.member.GetUserDataUseCase
 import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCase
+import online.partyrun.partyrunapplication.core.domain.member.UpdateProfileImageUseCase
 import online.partyrun.partyrunapplication.core.domain.member.UpdateUserDataUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val updateUserDataUseCase: UpdateUserDataUseCase,
+    private val updateProfileImageUseCase: UpdateProfileImageUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val saveUserDataUseCase: SaveUserDataUseCase
 ) : ViewModel() {
@@ -34,15 +42,24 @@ class ProfileViewModel @Inject constructor(
         _snackbarMessage.value = ""
     }
 
-    fun setNickName(nickName: String) {
-        _profileUiState.update {
-            it.copy(nickName = nickName)
+    fun initProfileContent(name: String, profileImage: String) {
+        _profileUiState.update { state ->
+            state.copy(
+                nickName = name,
+                profileImage = profileImage
+            )
         }
-        Timber.tag("ProfileViewModel").d(_profileUiState.value.nickName)
+    }
+
+    fun setNickName(nickName: String) {
+        _profileUiState.update { state ->
+            state.copy(newNickName = nickName)
+        }
+        Timber.tag("ProfileViewModel").d(_profileUiState.value.newNickName)
     }
 
     private fun isNickNameEmpty(): Boolean {
-        val condition = _profileUiState.value.nickName.isEmpty()
+        val condition = _profileUiState.value.newNickName.isEmpty()
         return getResultOfNickNameCondition(
             condition,
             ProfileErrorState.PROFILE_EMPTY
@@ -50,7 +67,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun isInvalidNickNameLength(minLen: Int = 1, maxLen: Int = 6): Boolean {
-        val length = _profileUiState.value.nickName.length
+        val length = _profileUiState.value.newNickName.length
         val condition = length < minLen || length > maxLen
         return getResultOfNickNameCondition(
             condition,
@@ -73,15 +90,33 @@ class ProfileViewModel @Inject constructor(
         return !isNickNameEmpty() && !isInvalidNickNameLength()
     }
 
+    fun handlePickedImage(context: Context, uri: Uri) {
+        val requestBody = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            inputStream.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
+        }
+        val fileName = getFileName(context, uri)
+        requestBody?.let {
+            updateProfileImage(requestBody, fileName)
+        }
+    }
+
+    private fun getFileName(context: Context, uri: Uri): String? {
+        return context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+            val nameIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+            cursor.moveToFirst()
+            cursor.getString(nameIndex)
+        }
+    }
+
     fun updateUserData() = viewModelScope.launch {
         if (passAllConditions()) {
             updateUserDataUseCase(
-                name = _profileUiState.value.nickName
+                nickName = _profileUiState.value.newNickName
             ).collect { result ->
                 result.onEmpty {
                     saveUserData()
-                    _profileUiState.update {
-                        it.copy(
+                    _profileUiState.update { state ->
+                        state.copy(
                             isProfileUpdateSuccess = true
                         )
                     }
@@ -93,10 +128,32 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun updateProfileImage(requestBody: RequestBody, fileName: String?) =
+        viewModelScope.launch {
+            updateProfileImageUseCase(
+                requestBody = requestBody,
+                fileName = fileName
+            ).collect { result ->
+                result.onEmpty {
+                    saveUserData()
+                    _snackbarMessage.value = "프로필 사진이 변경되었습니다."
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
+                }
+            }
+        }
+
     private suspend fun saveUserData() {
         getUserDataUseCase().collect { result ->
             result.onSuccess { userData ->
                 saveUserDataUseCase(userData)
+                _profileUiState.update { state ->
+                    state.copy(
+                        nickName = userData.nickName,
+                        profileImage = userData.profileImage
+                    )
+                }
             }.onFailure { errorMessage, code ->
                 Timber.e("$code $errorMessage")
             }

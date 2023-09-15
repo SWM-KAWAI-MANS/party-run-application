@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -179,8 +180,8 @@ private fun MyPageBody(
         ) {
             ProfileContent(
                 navigateToProfile = navigateToProfile,
-                userName = userData.name,
-                userProfile = userData.profile
+                userName = userData.nickName,
+                userProfile = userData.profileImage
             )
         }
 
@@ -264,9 +265,11 @@ private fun ProfileImage(
             .size(80.dp)
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(CircleShape)
+            .border(3.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
             .zIndex(1f)
     ) {
         RenderAsyncUrlImage(
+            modifier = Modifier.fillMaxSize(),
             imageUrl = userProfile,
             contentDescription = null
         )

@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import okhttp3.RequestBody
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
@@ -24,4 +25,6 @@ interface MemberRepository {
     suspend fun setUserId(userId: String)
 
     suspend fun updateUserData(userData: User): Flow<Result<Unit>>
+
+    suspend fun updateProfileImage(requestBody: RequestBody, fileName: String?): Flow<Result<Unit>>
 }

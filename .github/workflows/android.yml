@@ -41,10 +41,12 @@ jobs:
         BASE_URL: ${{ secrets.BASE_URL }}
         FIREBASE_GOOGLE_CLIENT_ID: ${{ secrets.FIREBASE_GOOGLE_CLIENT_ID }}
         MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        PARTY_RUN_S3_URL: ${{ secrets.S3_URL }}
       run: |
         echo BASE_URL=\"$BASE_URL\" >> ./local.properties
         echo FIREBASE_GOOGLE_CLIENT_ID=\"$FIREBASE_GOOGLE_CLIENT_ID\" >> ./local.properties
         echo MAPS_API_KEY=\"$MAPS_API_KEY\" >> ./local.properties
+        echo PARTY_RUN_S3_URL=\"PARTY_RUN_S3_URL\" >> ./local.properties
 
     - name: Create google-services.json
       env:

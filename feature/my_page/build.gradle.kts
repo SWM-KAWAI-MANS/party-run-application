@@ -11,6 +11,8 @@ android {
 
 dependencies {
     // Timber
-    implementation (libs.timber)
+    implementation(libs.timber)
 
+    //For PickVisualMedia contract
+    implementation(libs.androidx.activity.ktx)
 }

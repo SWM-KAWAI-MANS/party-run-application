@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.core.network.datasource
 
+import okhttp3.MultipartBody
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.request.UserDataRequest
 import online.partyrun.partyrunapplication.core.network.model.response.BattleMembersInfoResponse
@@ -22,5 +23,8 @@ class MemberDataSourceImpl @Inject constructor(
 
     override suspend fun updateUserData(userData: UserDataRequest): ApiResponse<Unit> =
         memberApi.updateUserData(userData)
+
+    override suspend fun updateProfileImage(image: MultipartBody.Part): ApiResponse<Unit> =
+        memberApi.updateProfileImage(image)
 
 }

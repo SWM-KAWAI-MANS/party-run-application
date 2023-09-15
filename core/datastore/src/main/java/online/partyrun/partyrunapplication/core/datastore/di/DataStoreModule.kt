@@ -25,6 +25,8 @@ import online.partyrun.partyrunapplication.core.datastore.BattlePreferencesSeria
 import online.partyrun.partyrunapplication.core.datastore.UserPreferences
 import online.partyrun.partyrunapplication.core.datastore.UserPreferencesSerializer
 import online.partyrun.partyrunapplication.core.datastore.datasource.AgreementDataSource
+import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSource
+import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSourceImpl
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
 import javax.inject.Named
 import javax.inject.Singleton
@@ -35,6 +37,7 @@ object DataStoreModule {
 
     private const val AGREEMENT_PREFERENCES = "agreement_pref"
     private const val TOKEN_PREFERENCES = "token_pref"
+    private const val SINGLE_PREFERENCES = "single_pref"
 
     @Provides
     @Singleton
@@ -80,6 +83,20 @@ object DataStoreModule {
 
     @Singleton
     @Provides
+    @Named("SinglePreferences")
+    fun provideSinglePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() },
+            ),
+            migrations = listOf(SharedPreferencesMigration(context, SINGLE_PREFERENCES)),
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+            produceFile = { context.preferencesDataStoreFile(SINGLE_PREFERENCES) },
+        )
+    }
+
+    @Singleton
+    @Provides
     @Named("TokenPreferences")
     fun provideTokenPreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
@@ -96,13 +113,17 @@ object DataStoreModule {
     @Provides
     fun provideTokenDataSource(
         @Named("TokenPreferences") tokenPreferencesDataStore: DataStore<Preferences>
-    ) : TokenDataSource = TokenDataSourceImpl(tokenPreferencesDataStore)
-
+    ): TokenDataSource = TokenDataSourceImpl(tokenPreferencesDataStore)
 
     @Singleton
     @Provides
     fun provideAgreementDataSource(
         @Named("AgreementPreferences") agreementPreferencesDataStore: DataStore<Preferences>
-    ) : AgreementDataSource = AgreementDataSourceImpl(agreementPreferencesDataStore)
+    ): AgreementDataSource = AgreementDataSourceImpl(agreementPreferencesDataStore)
 
+    @Singleton
+    @Provides
+    fun provideSinglePreferencesDataSource(
+        @Named("SinglePreferences") singlePreferencesDataStore: DataStore<Preferences>
+    ): SinglePreferencesDataSource = SinglePreferencesDataSourceImpl(singlePreferencesDataStore)
 }

@@ -22,14 +22,50 @@ data class SingleContentUiState(
     // 유저 이름
     val userName: String = "",
     // 이동 거리
-    val distanceInMeter: Int = 0,
+    val distanceInMeter: Double = 0.0,
     val distanceInKm: String = "0.00",
     // 경과 시간
     val elapsedSecondsTime: Int = 0,
     val elapsedFormattedTime: String = "00:00:00",
+    // 현재 페이스
+    val instantPace: String = "",
     // 대결에 참여 중인 자신과 로봇의 현재 상태 정보
     val userStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     val robotStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     // 대결 시작까지 남은 시간
     val timeRemaining: Int = -1,
 )
+
+fun SingleContentUiState.isElapsedBeyondSelectedTime(): Boolean {
+    return this.elapsedSecondsTime >= this.selectedTime
+}
+
+fun SingleContentUiState.getUpdatedMovementData(totalDistance: Double): Pair<SingleRunnerDisplayStatus, String> {
+    // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
+    val distanceInKm = totalDistance / 1000
+    val formattedDistance = String.format("%.2f", distanceInKm)
+
+    val updatedUser = this.userStatus.copy(
+        distance = totalDistance
+    )
+    return Pair(updatedUser, formattedDistance)
+}
+
+fun SingleContentUiState.updatedRobotStatus(): SingleContentUiState {
+    val robotStep = this.selectedDistance.toDouble() / this.selectedTime
+    val updatedDistance = robotStep * this.elapsedSecondsTime
+    val updatedRobot = this.robotStatus.copy(distance = updatedDistance)
+    return this.copy(robotStatus = updatedRobot)
+}
+
+fun SingleContentUiState.incrementElapsedSeconds(): Int {
+    return this.elapsedSecondsTime + 1
+}
+
+fun SingleContentUiState.formatTime(seconds: Int): String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val remainingSeconds = seconds % 60
+
+    return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+}

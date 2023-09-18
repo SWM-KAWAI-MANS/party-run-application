@@ -11,11 +11,10 @@ import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.Constants
 import online.partyrun.partyrunapplication.core.common.Constants.EXTRA_IS_USER_PAUSED
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
-import online.partyrun.partyrunapplication.core.model.running.GpsData
+import online.partyrun.partyrunapplication.core.model.running.GpsDataWithDistance
 import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import java.time.LocalDateTime
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class SingleRunningService : BaseRunningService() {
@@ -29,7 +28,7 @@ class SingleRunningService : BaseRunningService() {
     lateinit var singleRepository: SingleRepository
 
     private var lastLocation: Location? = null
-    private var accumulatedDistance: Int = 0
+    private var accumulatedDistance: Double = 0.0
     private var isFirstLocationUpdate = true
     private var isSecondLocationUpdate = true
     private lateinit var runningServiceState: RunningServiceState // 상태 변수를 통해 현재 서비스 상태 추적
@@ -190,30 +189,30 @@ class SingleRunningService : BaseRunningService() {
     }
 
     override fun addGpsDataToRecordData(location: Location) {
-        val gpsData = createGpsData(location)
-
-        // 이전 위치가 있으면 거리를 계산
-        lastLocation?.let {
-            accumulatedDistance += it.distanceTo(location).roundToInt()
-        }
+        val previousLocation = lastLocation ?: return
         lastLocation = location
+
+        accumulatedDistance += previousLocation.distanceTo(location).toDouble()
+        val gpsData = createGpsData(location, accumulatedDistance)
 
         // Repository에 GPS 데이터 추가
         storeGpsData(gpsData)
     }
 
-    private fun createGpsData(location: Location): GpsData {
-        return GpsData(
+
+    private fun createGpsData(location: Location, distance: Double): GpsDataWithDistance {
+        return GpsDataWithDistance(
             latitude = location.latitude,
             longitude = location.longitude,
             altitude = location.altitude,
-            time = LocalDateTime.now()
+            time = LocalDateTime.now(),
+            distance = distance
         )
     }
 
-    private fun storeGpsData(gpsData: GpsData) {
+    // Repository에 GPS 데이터 추가
+    private fun storeGpsData(gpsData: GpsDataWithDistance) {
         serviceScope.launch {
-            singleRepository.setDistance(accumulatedDistance)
             singleRepository.addGpsData(gpsData)
         }
     }
@@ -222,3 +221,4 @@ class SingleRunningService : BaseRunningService() {
         return belowThresholdCount >= PAUSE_THRESHOLD_COUNT && runningServiceState != RunningServiceState.PAUSED
     }
 }
+

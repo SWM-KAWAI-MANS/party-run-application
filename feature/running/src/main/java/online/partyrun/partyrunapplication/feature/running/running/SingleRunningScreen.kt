@@ -110,7 +110,7 @@ fun SingleRunningScreen(
                         title = stringResource(id = R.string.Kilometer)
                     )
                     RunningMetricsPanel(
-                        record = "대체",
+                        record = singleContentUiState.instantPace,
                         title = stringResource(id = R.string.pace)
                     )
                 }

@@ -3,6 +3,8 @@ package online.partyrun.partyrunapplication.core.network.di
 import android.content.Context
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +16,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
 import online.partyrun.partyrunapplication.core.common.network.TokenExpirationNotifier
 import online.partyrun.partyrunapplication.core.datastore.datasource.TokenDataSource
+import online.partyrun.partyrunapplication.core.model.util.LocalDateTimeAdapter
 import online.partyrun.partyrunapplication.core.network.AuthAuthenticator
 import online.partyrun.partyrunapplication.core.network.AuthInterceptor
 import online.partyrun.partyrunapplication.core.network.GoogleAuthClient
@@ -21,7 +24,9 @@ import online.partyrun.partyrunapplication.core.network.RealtimeBattleClient
 import online.partyrun.partyrunapplication.core.network.api_call_adapter.ApiResponseCallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -57,11 +62,20 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofitBuilder(): Retrofit.Builder =
+    fun provideRetrofitBuilder(@Named("LocalDateTimeGson") gson: Gson): Retrofit.Builder =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create()) // 빌더에 ApiResultCallAdapterFactory 적용
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
+
+    @Singleton
+    @Provides
+    @Named("LocalDateTimeGson")
+    fun provideLocalDateTimeGson(): Gson {
+        return GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+            .create()
+    }
 
     @RESTOkHttpClient
     @Singleton

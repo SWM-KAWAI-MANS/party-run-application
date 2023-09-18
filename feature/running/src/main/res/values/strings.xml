@@ -5,7 +5,7 @@
     <string name="configuring_tracks">트랙 구성 중...</string>
     <string name="single_comment_before_starts">5초 뒤 배틀이 시작 됩니다 !</string>
     <string name="configuring_robot">로봇 구성 중...</string>
-    <string name="progress_time">진행 시간</string>
+    <string name="progress_time">시간</string>
     <string name="Kilometer">KM</string>
     <string name="average_pace">평균 페이스</string>
     <string name="pace">페이스</string>

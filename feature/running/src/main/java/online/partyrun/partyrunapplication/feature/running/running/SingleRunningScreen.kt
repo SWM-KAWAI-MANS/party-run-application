@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.feature.running.running
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
-import online.partyrun.partyrunapplication.core.ui.BackgroundBlurImage
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RUNNER_GRAPHIC_Y_OFFSET
@@ -55,11 +58,6 @@ fun SingleRunningScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
-        BackgroundBlurImage(
-            modifier = Modifier.fillMaxSize(),
-            image = R.drawable.background_running_blur,
-            contentAlignment = Alignment.BottomCenter
-        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -83,8 +81,9 @@ fun SingleRunningScreen(
             Spacer(modifier = Modifier.size(15.dp))
             Column(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.9f)
                     .fillMaxWidth()
+                    .padding(horizontal = 25.dp)
             ) {
                 TrackWithUserAndRobot(
                     singleContentViewModel = singleContentViewModel,
@@ -95,9 +94,9 @@ fun SingleRunningScreen(
             }
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .padding(10.dp),
+                    .fillMaxWidth()
+                    .weight(0.5f)
+                    .padding(5.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -106,18 +105,45 @@ fun SingleRunningScreen(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     RunningMetricsPanel(
-                        record = singleContentUiState.distanceInKm,
                         title = stringResource(id = R.string.Kilometer)
-                    )
+                    ) {
+                        Text(
+                            text = singleContentUiState.distanceInKm,
+                            style = MaterialTheme.typography.displayMedium,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                     RunningMetricsPanel(
-                        record = singleContentUiState.instantPace,
                         title = stringResource(id = R.string.pace)
+                    ) {
+                        Text(
+                            text = singleContentUiState.instantPace,
+                            style = MaterialTheme.typography.displayMedium,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(topStart = 45.dp, topEnd = 45.dp))
+                    .shadow(elevation = 5.dp)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(5.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                RunningMetricsPanel(
+                    title = stringResource(id = R.string.progress_time)
+                ) {
+                    Text(
+                        text = singleContentUiState.elapsedFormattedTime,
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-                RunningMetricsPanel(
-                    record = singleContentUiState.elapsedFormattedTime,
-                    title = stringResource(id = R.string.progress_time)
-                )
                 Spacer(modifier = Modifier.size(5.dp))
                 RunControlPanel(
                     pausedState = singleContentUiState.runningServiceState,
@@ -173,23 +199,19 @@ private fun RunControlPanel(
 
 @Composable
 private fun RunningMetricsPanel(
-    record: String,
-    title: String
+    title: String,
+    record: @Composable () -> Unit
 ) {
     Column(
         modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = record,
-            style = MaterialTheme.typography.displayMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        record()
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

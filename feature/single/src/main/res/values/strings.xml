@@ -12,4 +12,7 @@
     <string name="target_distance_unit">KM</string>
     <string name="target_time_unit">분</string>
 
+    <string name="decrement_btn_desc">감소 버튼</string>
+    <string name="increment_btn_desc">증가 버튼</string>
+
 </resources>

@@ -11,13 +11,16 @@ fun RecordDataWithDistance.calculateInstantPace(): String {
     val (currentGpsData, lastGpsData) = getLastTwoGpsData() ?: return "0'00''"
 
     val distanceCoveredInKm = calculateDistanceInKm(currentGpsData, lastGpsData)
-    if (isDistanceTooSmall(distanceCoveredInKm)) return "0'00''"
-
     val timeElapsedInSeconds = calculateDurationInSeconds(currentGpsData, lastGpsData)
-    if (isTimeOrDistanceZero(timeElapsedInSeconds, distanceCoveredInKm)) return "0'00''"
+
+    if (isInvalidData(distanceCoveredInKm, timeElapsedInSeconds)) return "0'00''"
 
     return formatPace(timeElapsedInSeconds / distanceCoveredInKm)
 }
+
+private fun isInvalidData(distance: Double, time: Double) =
+    isDistanceTooSmall(distance) || isTimeOrDistanceZero(time, distance)
+
 
 private fun RecordDataWithDistance.getLastTwoGpsData(): Pair<GpsDataWithDistance, GpsDataWithDistance>? {
     val currentGpsData = records.lastOrNull() ?: return null

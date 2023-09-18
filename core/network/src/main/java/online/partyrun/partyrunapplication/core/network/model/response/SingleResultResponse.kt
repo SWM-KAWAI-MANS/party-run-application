@@ -25,7 +25,7 @@ fun SingleResultResponse.toDomainModel(): SingleResult {
     }
 
     val rawTargetDistance = records.lastOrNull()?.distance
-    val adjustedTargetDistance = (rawTargetDistance?.div(100)?.toInt() ?: 1) * 100
+    val adjustedTargetDistance = (rawTargetDistance?.div(10)?.toInt() ?: 1) * 10
 
     return SingleResult(
         singleRunnerStatus = SingleRunnerStatus(

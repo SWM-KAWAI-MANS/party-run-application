@@ -2,6 +2,8 @@ package online.partyrun.partyrunapplication.feature.single
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunCircularIconButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
@@ -181,6 +182,7 @@ private fun SingleContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.SpaceAround
             ) {
@@ -200,35 +202,48 @@ private fun SingleContent(
                         singleViewModel = singleViewModel
                     )
                 }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PartyRunGradientButton(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                onClick = {
-                    if (shouldExecuteStartAction(permissionState)) {
-                        navigateToSingleRunningWithDistanceAndTime(
+                PartyRunGradientButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 50.dp),
+                    onClick = {
+                        handleStartButtonClick(
+                            permissionState,
+                            navigateToSingleRunningWithDistanceAndTime,
                             targetDistance,
-                            targetTime
+                            targetTime,
+                            showPermissionDialog
                         )
-                    } else {
-                        showPermissionDialog.value = true
                     }
+                ) {
+                    Text(
+                        modifier = Modifier.padding(5.dp),
+                        text = stringResource(R.string.single_start),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
-            ) {
-                Text(
-                    text = stringResource(R.string.single_start)
-                )
             }
         }
+        Spacer(modifier = Modifier.size(50.dp))
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun handleStartButtonClick(
+    permissionState: MultiplePermissionsState,
+    navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
+    targetDistance: Int,
+    targetTime: Int,
+    showPermissionDialog: MutableState<Boolean>
+) {
+    if (shouldExecuteStartAction(permissionState)) {
+        navigateToSingleRunningWithDistanceAndTime(
+            targetDistance,
+            targetTime
+        )
+    } else {
+        showPermissionDialog.value = true
     }
 }
 
@@ -273,30 +288,30 @@ private fun TargetSettingRow(
 ) {
     Text(
         text = title,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.primary
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onPrimary
     )
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PartyRunCircularIconButton(
-            modifier = Modifier.size(45.dp),
-            onClick = onDecrement,
-        ) {
-            Icon(
-                painterResource(id = PartyRunIcons.Remove),
-                contentDescription = null
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable { onDecrement() }
+                .size(45.dp),
+            painter = painterResource(id = PartyRunIcons.RemoveCircleFilled),
+            tint = MaterialTheme.colorScheme.onPrimary,
+            contentDescription = null
+        )
         Row(
             modifier = Modifier
         ) {
             Text(
                 text = displayValue,
                 style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
@@ -305,18 +320,18 @@ private fun TargetSettingRow(
                     .padding(bottom = 10.dp),
                 text = unit,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
-        PartyRunCircularIconButton(
-            modifier = Modifier.size(45.dp),
-            onClick = onIncrement,
-        ) {
-            Icon(
-                painterResource(id = PartyRunIcons.Add),
-                contentDescription = null
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable { onIncrement() }
+                .size(45.dp),
+            painter = painterResource(id = PartyRunIcons.AddCircleFilled),
+            tint = MaterialTheme.colorScheme.onPrimary,
+            contentDescription = null
+        )
     }
 }
 

@@ -362,7 +362,7 @@ private fun ProfileImage(
                 .clip(CircleShape)
                 .background(color = MaterialTheme.colorScheme.onPrimary)
                 .size(24.dp),
-            painter = painterResource(id = PartyRunIcons.AddCircleFiled),
+            painter = painterResource(id = PartyRunIcons.AddCircleFilled),
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = null
         )

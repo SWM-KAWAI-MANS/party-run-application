@@ -210,22 +210,18 @@ class SingleContentViewModel @Inject constructor(
 
     private fun checkTargetDistanceReached(totalDistance: Double) {
         if (totalDistance >= _singleContentUiState.value.selectedDistance) {
-            sendRecordDataWithDistance {
-                finishRunningProcess()
-            }
+            finishRunningProcess()
+            sendRecordDataWithDistance()
         }
     }
 
-    private fun sendRecordDataWithDistance(
-        finishRunningProcess: () -> Unit
-    ) {
+    private fun sendRecordDataWithDistance() {
         viewModelScope.launch {
             val runningTime =
                 RunningTime.fromSeconds(_singleContentUiState.value.elapsedSecondsTime)
             sendRecordDataWithDistanceUseCase(runningTime).collect { result ->
                 result.onSuccess { data ->
                     saveSingleIdUseCase(data.id)
-                    finishRunningProcess()
                 }.onFailure { errorMessage, code ->
                     _snackbarMessage.value = "싱글 결과 전송 실패"
                     Timber.e("$code $errorMessage")

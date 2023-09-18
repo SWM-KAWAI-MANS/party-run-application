@@ -6,7 +6,7 @@ import online.partyrun.partyrunapplication.core.network.model.response.SingleIdR
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface SingleApiService {
+fun interface SingleApiService {
     @POST("/api/singles")
     suspend fun sendRecordData(
         @Body body: RecordDataWithDistanceRequest

@@ -15,3 +15,11 @@ data class RunningTime(
         }
     }
 }
+
+fun RunningTime.toElapsedTimeString(): String {
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+fun RunningTime.toElapsedSeconds(): Int {
+    return hours * 3600 + minutes * 60 + seconds
+}

@@ -7,35 +7,34 @@ import online.partyrun.partyrunapplication.core.model.util.DateTimeUtils.localDa
 import online.partyrun.partyrunapplication.core.network.model.util.formatDate
 import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceInKm
 import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceWithComma
-import online.partyrun.partyrunapplication.core.network.model.util.formatTime
 import java.time.LocalDateTime
 
 data class SingleResultResponse(
-    @SerializedName("runner")
-    val singleRunnerStatus: SingleRunnerStatusResponse?,
-    @SerializedName("startTime")
-    val startTime: String?,
-    @SerializedName("targetDistance")
-    val targetDistance: Int?
+    @SerializedName("runningTime")
+    val runningTime: RunningTimeResponse,
+    @SerializedName("records")
+    val records: List<SingleRunnerRecordResponse>
 )
 
 fun SingleResultResponse.toDomainModel(): SingleResult {
-    val parsedStartTime = this.startTime?.let {
+    val parsedStartTime = records.firstOrNull()?.time?.let {
         LocalDateTime.parse(
             it,
             localDateTimeFormatter
         )
     }
 
+    val rawTargetDistance = records.lastOrNull()?.distance
+    val adjustedTargetDistance = (rawTargetDistance?.div(100)?.toInt() ?: 1) * 100
+
     return SingleResult(
-        singleRunnerStatus = this.singleRunnerStatus?.toDomainModel(parsedStartTime)
-            ?: SingleRunnerStatus(),
-        startTime = parsedStartTime?.let { formatTime(it) } ?: "", // "xx:xx" 형식화
-        targetDistance = this.targetDistance ?: 0,
-        targetDistanceFormatted = this.targetDistance?.let { formatDistanceWithComma(it) }
-            ?: "", // 쉼표로 형식화
-        targetDistanceInKm = this.targetDistance?.let { formatDistanceInKm(it) }
-            ?: "",  // km 단위로 형식화
-        singleDate = parsedStartTime?.let { formatDate(it) } ?: "" // "x월 x일" 형식화
+        singleRunnerStatus = SingleRunnerStatus(
+            records = this.records.map { it.toDomainModel() } // 각 record를 도메인 모델로 변환
+        ),
+        runningTime = runningTime.toDomainModel(),
+        targetDistance = adjustedTargetDistance,
+        targetDistanceFormatted = formatDistanceWithComma(adjustedTargetDistance),
+        targetDistanceInKm = formatDistanceInKm(adjustedTargetDistance),
+        singleDate = parsedStartTime?.let { formatDate(it) } ?: "" // "x월 x일" format
     )
 }

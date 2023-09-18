@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
+import online.partyrun.partyrunapplication.core.common.Constants.S3_URL
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfo
 
 data class BattleMemberResponse(
@@ -15,5 +16,5 @@ data class BattleMemberResponse(
 fun BattleMemberResponse.toDomainModel() = RunnerInfo(
     id = this.id,
     name = this.name,
-    profile = this.profile
+    profile = S3_URL.plus("/" + this.profile)
 )

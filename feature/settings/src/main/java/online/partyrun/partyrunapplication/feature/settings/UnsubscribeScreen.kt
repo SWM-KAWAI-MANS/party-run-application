@@ -155,6 +155,7 @@ private fun ConfirmButton(
 ) {
     PartyRunGradientButton(
         onClick = {
+            settingsViewModel.saveAgreementState(isChecked = false)
             settingsViewModel.deleteAccount()
         },
         modifier = Modifier

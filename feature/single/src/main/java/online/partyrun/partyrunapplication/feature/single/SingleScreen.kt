@@ -303,7 +303,7 @@ private fun TargetSettingRow(
                 .size(45.dp),
             painter = painterResource(id = PartyRunIcons.RemoveCircleFilled),
             tint = MaterialTheme.colorScheme.onPrimary,
-            contentDescription = null
+            contentDescription = stringResource(id = R.string.decrement_btn_desc)
         )
         Row(
             modifier = Modifier
@@ -330,7 +330,7 @@ private fun TargetSettingRow(
                 .size(45.dp),
             painter = painterResource(id = PartyRunIcons.AddCircleFilled),
             tint = MaterialTheme.colorScheme.onPrimary,
-            contentDescription = null
+            contentDescription = stringResource(id = R.string.increment_btn_desc)
         )
     }
 }

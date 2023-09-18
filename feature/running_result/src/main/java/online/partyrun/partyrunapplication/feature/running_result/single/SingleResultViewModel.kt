@@ -6,13 +6,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.domain.running_result.GetStoredSingleResultUseCase
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
+import online.partyrun.partyrunapplication.core.domain.running_result.GetSingleResultUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SingleResultViewModel @Inject constructor(
-    private val getStoredSingleResultUseCase: GetStoredSingleResultUseCase
+    private val getsSingleResultUseCase: GetSingleResultUseCase
 ) : ViewModel() {
     private val _singleResultUiState =
         MutableStateFlow<SingleResultUiState>(SingleResultUiState.Loading)
@@ -24,14 +26,16 @@ class SingleResultViewModel @Inject constructor(
 
     fun getSingleResult() {
         viewModelScope.launch {
-            try {
-                _singleResultUiState.value = SingleResultUiState.Success(
-                    singleResult = getStoredSingleResultUseCase()
-                )
-            } catch (e: Exception) {
-                Timber.tag("getSingleResult 에러").e(e)
-                _singleResultUiState.value =
-                    SingleResultUiState.LoadFailed
+            getsSingleResultUseCase().collect { result ->
+                result.onSuccess { data ->
+                    _singleResultUiState.value = SingleResultUiState.Success(
+                        singleResult = data
+                    )
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    _singleResultUiState.value =
+                        SingleResultUiState.LoadFailed
+                }
             }
         }
     }

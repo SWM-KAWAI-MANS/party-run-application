@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.feature.running.running.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -46,6 +47,7 @@ private fun SelectRunnerImage(runner: SingleRunnerDisplayStatus) {
     when (val profile = runner.runnerProfile) {
         is ProfileImageSource.Url -> {
             RenderAsyncUrlImage(
+                modifier = Modifier.fillMaxSize(),
                 imageUrl = profile.url,
                 contentDescription = null
             )
@@ -53,6 +55,7 @@ private fun SelectRunnerImage(runner: SingleRunnerDisplayStatus) {
 
         is ProfileImageSource.ResourceId -> {
             Image(
+                modifier = Modifier.fillMaxSize(),
                 painter = painterResource(id = profile.resId),
                 contentDescription = stringResource(id = R.string.ic_robot_desc)
             )

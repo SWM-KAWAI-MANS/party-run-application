@@ -215,7 +215,7 @@ class SingleContentViewModel @Inject constructor(
         }
     }
 
-    private fun sendRecordDataWithDistance() {
+    fun sendRecordDataWithDistance() {
         viewModelScope.launch {
             val runningTime =
                 RunningTime.fromSeconds(_singleContentUiState.value.elapsedSecondsTime)

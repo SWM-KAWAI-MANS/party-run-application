@@ -285,6 +285,7 @@ fun handleRunningExit(
         restartActivity(activity)
     } else {
         singleContentViewModel.finishRunningProcess()
+        singleContentViewModel.sendRecordDataWithDistance()
     }
 }
 

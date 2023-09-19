@@ -2,6 +2,6 @@
     <string name="app_name">파티런</string>
 
     <string name="navigation_bar_launch_status">준비중</string>
-    <string name="update_download_success">다운로드 성공! 3초 뒤 앱이 재시작 됩니다."></string>
+    <string name="update_download_success">다운로드 성공! 3초 뒤 앱이 재시작 됩니다."</string>
     <string name="result_in_app_update_failed">RESULT_IN_APP_UPDATE_FAILED</string>
 </resources>

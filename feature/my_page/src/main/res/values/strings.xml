@@ -2,6 +2,16 @@
 <resources>
     <string name="my_page_title">마이페이지</string>
     <string name="profile_title">프로필 수정</string>
+    <string name="battle_title">대결 모드</string>
+    <string name="single_title">싱글 모드</string>
+    <string name="total_distance">총 달린거리</string>
+    <string name="total_distance_desc">총 달린거리 아이콘</string>
+    <string name="avg_pace">평균 페이스</string>
+    <string name="avg_pace_desc">평균 페이스 아이콘</string>
+    <string name="total_accumulated_time">총 누적시간</string>
+    <string name="total_accumulated_time_desc">총 누적시간 아이콘</string>
+
+    <string name="empty_list_item">달린 기록이 존재하지 않아요</string>
     <string name="sign_out_btn">로그아웃</string>
 
     <string name="arrow_back_desc">뒤로 가기 아이콘</string>

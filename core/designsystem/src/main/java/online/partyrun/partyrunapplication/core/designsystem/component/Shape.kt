@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.theme.Gray50
 import online.partyrun.partyrunapplication.core.designsystem.theme.Purple10
 import online.partyrun.partyrunapplication.core.designsystem.theme.Purple40
+import online.partyrun.partyrunapplication.core.designsystem.theme.SectionColor10
+import online.partyrun.partyrunapplication.core.designsystem.theme.SectionColor20
 import online.partyrun.partyrunapplication.core.designsystem.theme.White10
 
 @Composable
@@ -31,6 +33,26 @@ fun BottomHalfOvalGradientShape(
                     listOf(Purple10, Purple40)
                 ),
                 shape = RoundedCornerShape(topStartPercent = 35, topEndPercent = 35)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun PartyRunGradientRoundedRect(
+    modifier: Modifier,
+    cornerRadius: Dp,
+    content: @Composable () -> Unit = {}
+) {
+    Box(
+        modifier = modifier
+            .background(
+                brush = Brush.verticalGradient( // 그라디언트 적용
+                    listOf(SectionColor10, SectionColor20)
+                ),
+                shape = RoundedCornerShape(cornerRadius)
             ),
         contentAlignment = Alignment.Center
     ) {

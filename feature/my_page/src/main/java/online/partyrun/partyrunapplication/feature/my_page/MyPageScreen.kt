@@ -1,12 +1,16 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +30,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
@@ -184,7 +191,52 @@ private fun MyPageBody(
                 userProfile = userData.profileImage
             )
         }
-
+        Spacer(modifier = Modifier.height(10.dp))
+        PartyRunGradientRoundedRect(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            cornerRadius = 20.dp,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                StatusElement(
+                    value = "10.9",
+                    title = "총 달린거리"
+                ) {
+                    Image(
+                        painter = painterResource(id = PartyRunIcons.Step),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                        contentDescription = "총 달린 거리"
+                    )
+                }
+                StatusElement(
+                    value = "5.55''",
+                    title = "평균 페이스"
+                ) {
+                    Image(
+                        painter = painterResource(id = PartyRunIcons.Pace),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                        contentDescription = "평균 페이스"
+                    )
+                }
+                StatusElement(
+                    value = "00:00",
+                    title = "총 누적시간"
+                ) {
+                    Image(
+                        painter = painterResource(id = PartyRunIcons.Schedule),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                        contentDescription = "총 누적시간"
+                    )
+                }
+            }
+        }
 
         SignOutButton(
             onClick = {
@@ -272,6 +324,31 @@ private fun ProfileImage(
             modifier = Modifier.fillMaxSize(),
             imageUrl = userProfile,
             contentDescription = null
+        )
+    }
+}
+
+@Composable
+private fun StatusElement(
+    value: String,
+    title: String,
+    statusElementImage: @Composable () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        statusElementImage()
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }

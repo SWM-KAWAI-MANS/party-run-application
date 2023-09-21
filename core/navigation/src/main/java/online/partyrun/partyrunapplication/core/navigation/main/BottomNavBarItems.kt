@@ -1,11 +1,11 @@
 package online.partyrun.partyrunapplication.core.navigation.main
 
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.BattleIcon
-import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.ChallengeIcon
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.MyPageIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.PartyIcon
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedBattleIcon
-import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedChallengeIcon
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedMyPageIcon
+import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedPartyIcon
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SelectedSingleIcon
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons.SingleIcon
 import online.partyrun.partyrunapplication.core.navigation.R
@@ -27,10 +27,10 @@ object BottomNavBarItems {
             isLaunched = true
         ),
         BottomBarItem(
-            title = R.string.challenge_title,
-            image = ChallengeIcon,
-            selectedImage = SelectedChallengeIcon,
-            route = MainNavRoutes.Challenge.route,
+            title = R.string.party_title,
+            image = PartyIcon,
+            selectedImage = SelectedPartyIcon,
+            route = MainNavRoutes.Party.route,
             isLaunched = false
         ),
         BottomBarItem(

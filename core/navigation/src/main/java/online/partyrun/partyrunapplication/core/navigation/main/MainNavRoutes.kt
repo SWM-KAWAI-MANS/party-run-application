@@ -8,6 +8,7 @@ sealed class MainNavRoutes(val route: String) {
     object Battle : MainNavRoutes("battle")
     object Single : MainNavRoutes("single")
     object Challenge : MainNavRoutes("challenge")
+    object Party : MainNavRoutes("party")
     object MyPage : MainNavRoutes("myPage")
     object Profile : MainNavRoutes("profile")
     object BattleRunning : MainNavRoutes("battle_running")

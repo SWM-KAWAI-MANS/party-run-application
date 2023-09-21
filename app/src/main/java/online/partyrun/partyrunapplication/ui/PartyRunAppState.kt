@@ -40,6 +40,7 @@ class PartyRunAppState(
         get() = setOf(
             MainNavRoutes.Battle.route,
             MainNavRoutes.Challenge.route,
+            MainNavRoutes.Party.route,
             MainNavRoutes.Single.route,
             MainNavRoutes.MyPage.route
         )

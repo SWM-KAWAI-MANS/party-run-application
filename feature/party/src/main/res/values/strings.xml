@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="party_head_line_1">친구와 함께</string>
+    <string name="party_head_line_2">목표를 달성해 보세요</string>
+    <string name="join_party">방 참여하기</string>
+    <string name="create_party">방 만들기</string>
+</resources>

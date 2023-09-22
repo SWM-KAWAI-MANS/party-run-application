@@ -71,8 +71,12 @@ fun SetUpMainNavGraph(
         challengeRoute()
 
         partyRoute(
-            navigateToPartyCreation = {
-                navController.navigate(PartyNavRoutes.PartyCreation.route)
+            navigateToPartyCreation = { code ->
+                navController.navigate("${PartyNavRoutes.PartyCreation.route}?code=$code") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
             },
             navigateToParty = {
                 navController.navigate(MainNavRoutes.Party.route) {
@@ -82,8 +86,6 @@ fun SetUpMainNavGraph(
                 }
             }
         )
-
-
 
         myPageRoute(
             onSignOut = onSignOut,

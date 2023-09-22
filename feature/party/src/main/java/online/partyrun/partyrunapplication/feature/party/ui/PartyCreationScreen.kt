@@ -109,7 +109,7 @@ fun PartyCreationBody(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PartyRouteInfoBox()
+        PartyRoomInfoBox()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,12 +138,12 @@ fun PartyCreationBody(
                 .padding(10.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.room_manager),
+                text = stringResource(id = R.string.manager),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            RoomManagerBox()
+            ManagerBox()
         }
         Column(
             modifier = Modifier
@@ -179,7 +179,7 @@ fun PartyCreationBody(
 }
 
 @Composable
-private fun PartyRouteInfoBox() {
+private fun PartyRoomInfoBox() {
     val context = LocalContext.current
 
     PartyRunGradientButton(
@@ -260,7 +260,7 @@ private fun StartButton(
 
 
 @Composable
-private fun RoomManagerBox() {
+private fun ManagerBox() {
     SurfaceRoundedRect(
         color = MaterialTheme.colorScheme.surface
     ) {
@@ -295,7 +295,7 @@ private fun RoomManagerBox() {
                 )
             }
             Image(
-                painter = painterResource(id = R.drawable.room_manager),
+                painter = painterResource(id = R.drawable.manager),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )

@@ -46,7 +46,7 @@ import online.partyrun.partyrunapplication.feature.party.ui.PartyJoinDialog
 @Composable
 fun PartyScreen(
     modifier: Modifier = Modifier,
-    navigateToPartyCreation: (String) -> Unit,
+    navigateToPartyRoom: (String) -> Unit,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
     val partyUiState by partyViewModel.partyUiState.collectAsState()
@@ -55,7 +55,7 @@ fun PartyScreen(
         modifier = modifier,
         partyViewModel = partyViewModel,
         partyUiState = partyUiState,
-        navigateToPartyCreation = navigateToPartyCreation
+        navigateToPartyRoom = navigateToPartyRoom
     )
 }
 
@@ -64,7 +64,7 @@ fun Content(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
     partyUiState: PartyUiState,
-    navigateToPartyCreation: (String) -> Unit
+    navigateToPartyRoom: (String) -> Unit
 ) {
     val showJoinDialog = remember { mutableStateOf(false) }
 
@@ -74,13 +74,13 @@ fun Content(
                 showJoinDialog.value = false
             },
             partyViewModel = partyViewModel,
-            navigateToPartyCreation = navigateToPartyCreation
+            navigateToPartyRoom = navigateToPartyRoom
         )
     }
 
     LaunchedEffect(partyUiState.partyCode) {
         if (partyUiState.partyCode.isNotEmpty()) {
-            navigateToPartyCreation(partyUiState.partyCode)
+            navigateToPartyRoom(partyUiState.partyCode)
         }
     }
 

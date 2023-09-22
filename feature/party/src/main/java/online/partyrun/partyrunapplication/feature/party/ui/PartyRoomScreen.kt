@@ -21,7 +21,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,25 +44,24 @@ import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRo
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
-import online.partyrun.partyrunapplication.feature.party.component.PartyCreationTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
 
 @Composable
-fun PartyCreationScreen(
+fun PartyRoomScreen(
     partyCode: String?,
     modifier: Modifier = Modifier,
     navigateToParty: () -> Unit = {},
-    partyCreationViewModel: PartyCreationViewModel = hiltViewModel()
+    partyRoomViewModel: PartyRoomViewModel = hiltViewModel()
 ) {
-    val partyCreationUiState by partyCreationViewModel.partyCreationUiState.collectAsState()
+    val partyRoomUiState by partyRoomViewModel.partyRoomUiState.collectAsState()
     val openPartyExitDialog = remember { mutableStateOf(false) }
 
     Content(
         partyCode = partyCode,
         modifier = modifier,
-        partyCreationUiState = partyCreationUiState,
+        partyRoomUiState = partyRoomUiState,
         navigateToParty = navigateToParty,
-        partyCreationViewModel = partyCreationViewModel,
+        partyRoomViewModel = partyRoomViewModel,
         openPartyExitDialog = openPartyExitDialog
     )
 }
@@ -73,50 +71,39 @@ fun PartyCreationScreen(
 fun Content(
     partyCode: String?,
     modifier: Modifier = Modifier,
-    partyCreationUiState: PartyCreationUiState,
+    partyRoomUiState: PartyRoomUiState,
     navigateToParty: () -> Unit,
-    partyCreationViewModel: PartyCreationViewModel,
+    partyRoomViewModel: PartyRoomViewModel,
     openPartyExitDialog: MutableState<Boolean>
 ) {
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
         openPartyExitDialog = openPartyExitDialog
     ) {
-        partyCreationViewModel.quitPartyRoom()
+        partyRoomViewModel.quitPartyRoom()
         navigateToParty()
     }
 
     LaunchedEffect(partyCode) {
         if (partyCode != null) {
-            partyCreationViewModel.beginManagerProcess(partyCode)
+            partyRoomViewModel.beginManagerProcess(partyCode)
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            PartyCreationTopAppBar(
-                modifier = modifier,
-                openPartyExitDialog = openPartyExitDialog
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            PartyCreationBody(
-                partyCreationUiState = partyCreationUiState,
-                openPartyExitDialog = openPartyExitDialog
-            )
-        }
+    Box(
+        modifier
+            .fillMaxSize()
+    ) {
+        PartyRoomBody(
+            partyRoomUiState = partyRoomUiState,
+            openPartyExitDialog = openPartyExitDialog
+        )
     }
 }
 
 @Composable
-fun PartyCreationBody(
-    partyCreationUiState: PartyCreationUiState,
+fun PartyRoomBody(
+    partyRoomUiState: PartyRoomUiState,
     openPartyExitDialog: MutableState<Boolean>
 ) {
     Column(
@@ -127,7 +114,7 @@ fun PartyCreationBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PartyRoomInfoBox(
-            partyCode = partyCreationUiState.partyEvent.entryCode
+            partyCode = partyRoomUiState.partyEvent.entryCode
         )
         Column(
             modifier = Modifier
@@ -145,7 +132,7 @@ fun PartyCreationBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = partyCreationUiState.partyEvent.distance.toString(),
+                    text = partyRoomUiState.partyEvent.distance.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -163,7 +150,7 @@ fun PartyCreationBody(
             )
             Spacer(modifier = Modifier.height(10.dp))
             ManagerBox(
-                partyCreationUiState.partyEvent.managerId
+                partyRoomUiState.partyEvent.managerId
             )
         }
         Column(
@@ -179,7 +166,7 @@ fun PartyCreationBody(
             )
             Spacer(modifier = Modifier.height(10.dp))
             ParticipantsBox(
-                partyCreationUiState.partyEvent.participants
+                partyRoomUiState.partyEvent.participants
             )
         }
         Row(

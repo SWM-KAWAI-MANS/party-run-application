@@ -71,8 +71,8 @@ fun SetUpMainNavGraph(
         challengeRoute()
 
         partyRoute(
-            navigateToPartyCreation = { code ->
-                navController.navigate("${PartyNavRoutes.PartyCreation.route}?code=$code") {
+            navigateToPartyRoom = { code ->
+                navController.navigate("${PartyNavRoutes.PartyRoom.route}?code=$code") {
                     popUpTo(MainNavRoutes.Party.route) {
                         inclusive = false
                     }

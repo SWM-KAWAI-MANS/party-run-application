@@ -38,7 +38,7 @@ fun PartyJoinDialog(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
     onDismissRequest: () -> Unit,
-    navigateToPartyCreation: (String) -> Unit
+    navigateToPartyRoom: (String) -> Unit
 ) {
     val partyCodeInput by partyViewModel.partyCodeInput.collectAsStateWithLifecycle()
 
@@ -103,7 +103,7 @@ fun PartyJoinDialog(
             Spacer(modifier = Modifier.height(20.dp))
 
             PartyRunGradientButton(
-                onClick = { navigateToPartyCreation(partyCodeInput) },
+                onClick = { navigateToPartyRoom(partyCodeInput) },
                 modifier = modifier.fillMaxWidth()
             ) {
                 Text(

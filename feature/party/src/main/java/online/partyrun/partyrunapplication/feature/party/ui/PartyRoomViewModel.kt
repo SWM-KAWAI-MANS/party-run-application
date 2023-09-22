@@ -21,7 +21,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class PartyCreationViewModel @Inject constructor(
+class PartyRoomViewModel @Inject constructor(
     private val createPartyEventSourceListenerUseCase: CreatePartyEventSourceListenerUseCase,
     private val connectPartyEventSourceUseCase: ConnectPartyEventSourceUseCase,
     private val createPartyEventSourceUseCase: CreatePartyEventSourceUseCase,
@@ -29,8 +29,8 @@ class PartyCreationViewModel @Inject constructor(
     private val startPartyBattleUseCase: StartPartyBattleUseCase
 ) : ViewModel() {
 
-    private val _partyCreationUiState = MutableStateFlow(PartyCreationUiState())
-    val partyCreationUiState: StateFlow<PartyCreationUiState> = _partyCreationUiState.asStateFlow()
+    private val _partyRoomUiState = MutableStateFlow(PartyRoomUiState())
+    val partyRoomUiState: StateFlow<PartyRoomUiState> = _partyRoomUiState.asStateFlow()
 
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
@@ -85,7 +85,7 @@ class PartyCreationViewModel @Inject constructor(
             PartyEvent::class.java
         )
         Timber.tag("Event").d("Event Received: $eventData")
-        _partyCreationUiState.update { state ->
+        _partyRoomUiState.update { state ->
             state.copy(
                 partyEvent = eventData
             )
@@ -98,7 +98,7 @@ class PartyCreationViewModel @Inject constructor(
 
     private fun clearPartyProcess() {
         waitingPartySSEstate = CompletableDeferred()
-        _partyCreationUiState.value = PartyCreationUiState()
+        _partyRoomUiState.value = PartyRoomUiState()
     }
 
 }

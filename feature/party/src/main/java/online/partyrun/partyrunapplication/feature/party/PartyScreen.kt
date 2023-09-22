@@ -40,19 +40,22 @@ import online.partyrun.partyrunapplication.core.ui.HeadLine
 @Composable
 fun PartyScreen(
     modifier: Modifier = Modifier,
+    navigateToPartyCreation: () -> Unit,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
 
     Content(
         modifier = modifier,
-        partyViewModel = partyViewModel
+        partyViewModel = partyViewModel,
+        navigateToPartyCreation = navigateToPartyCreation
     )
 }
 
 @Composable
 fun Content(
     modifier: Modifier = Modifier,
-    partyViewModel: PartyViewModel
+    partyViewModel: PartyViewModel,
+    navigateToPartyCreation: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -80,7 +83,7 @@ fun Content(
                 ) {
                     Icon(
                         painter = painterResource(id = PartyRunIcons.PartyJoinIcon),
-                        contentDescription = null
+                        contentDescription = stringResource(id = R.string.ic_join_desc)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
@@ -119,7 +122,7 @@ fun Content(
                             containerColor = MaterialTheme.colorScheme.onPrimary,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
-                        onClick = { }
+                        onClick = { navigateToPartyCreation() }
                     ) {
                         Row(
                             modifier = Modifier.padding(5.dp),
@@ -128,7 +131,7 @@ fun Content(
                         ) {
                             Icon(
                                 painter = painterResource(id = PartyRunIcons.PartyCreationIcon),
-                                contentDescription = null
+                                contentDescription = stringResource(id = R.string.ic_creation_desc)
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
@@ -215,6 +218,6 @@ private fun TrackImagePager(
 private fun TrackImage(currentKmState: KmState) {
     Image(
         painter = painterResource(id = currentKmState.imageRes),
-        contentDescription = null
+        contentDescription = stringResource(id = R.string.track_image_desc)
     )
 }

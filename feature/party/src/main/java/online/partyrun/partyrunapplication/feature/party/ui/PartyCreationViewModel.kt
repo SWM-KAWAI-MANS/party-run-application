@@ -50,7 +50,8 @@ class PartyCreationViewModel @Inject constructor(
                 connectPartyEventSource(partyCode)
             } catch (e: ManagerProcessException) {
                 Timber.tag("PartyViewModel").e(e, "beginManagerProcess 종료")
-                clearManagerProcess()
+                disconnectPartyEventSource()
+                clearPartyProcess()
             }
         }
 
@@ -61,15 +62,12 @@ class PartyCreationViewModel @Inject constructor(
             onEvent = ::handlePartyEvent,
             onClosed = {
                 waitingPartySSEstate.complete(Unit)
+                clearPartyProcess()
             },
             onFailure = {
-                try {
-                    waitingPartySSEstate.complete(Unit)
-                    disconnectPartyEventSource()
-                    clearManagerProcess()
-                } catch (e: ManagerProcessException) {
-                    Timber.e("SSE Waiting 취소")
-                }
+                // disconnect가 이루어지므로 clear만 수행
+                waitingPartySSEstate.complete(Unit)
+                clearPartyProcess()
             }
         )
         connectPartyEventSourceUseCase(
@@ -94,24 +92,13 @@ class PartyCreationViewModel @Inject constructor(
         }
     }
 
-    fun disconnectPartyEventSource() {
-        viewModelScope.launch {
-            try {
-                disconnectPartyEventSourceUseCase()
-                cancelManagerProcess()
-            } catch (e: ManagerProcessException) {
-                Timber.e("${e.message}")
-            }
-        }
+    private fun disconnectPartyEventSource() {
+        disconnectPartyEventSourceUseCase()
     }
 
-    private fun clearManagerProcess() {
+    private fun clearPartyProcess() {
         waitingPartySSEstate = CompletableDeferred()
         _partyCreationUiState.value = PartyCreationUiState()
-    }
-
-    private fun cancelManagerProcess(): Nothing {
-        throw ManagerProcessException("failed manager process")
     }
 
 }

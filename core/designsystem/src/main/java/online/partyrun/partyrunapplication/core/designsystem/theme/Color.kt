@@ -86,3 +86,6 @@ internal val Teal30 = Color(0xFF214D56)
 internal val Teal40 = Color(0xFF3A656F)
 internal val Teal80 = Color(0xFFA2CED9)
 internal val Teal90 = Color(0xFFBEEAF6)
+
+val PartyDialogInfoTextColor = Color(0xFF808A93)
+val PartyDialogTextFieldColor = Color(0xFF50575E)

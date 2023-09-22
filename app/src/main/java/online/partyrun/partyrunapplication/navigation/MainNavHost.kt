@@ -24,6 +24,7 @@ import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRo
 import online.partyrun.partyrunapplication.core.navigation.main.BottomNavBarItems
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
+import online.partyrun.partyrunapplication.core.navigation.party.PartyNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.party.partyRoute
 import online.partyrun.partyrunapplication.core.navigation.running.singleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
@@ -69,8 +70,21 @@ fun SetUpMainNavGraph(
 
         challengeRoute()
 
-        partyRoute()
-        
+        partyRoute(
+            navigateToPartyCreation = {
+                navController.navigate(PartyNavRoutes.PartyCreation.route)
+            },
+            navigateToParty = {
+                navController.navigate(MainNavRoutes.Party.route) {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+
+
+
         myPageRoute(
             onSignOut = onSignOut,
             navigateToSettings = {

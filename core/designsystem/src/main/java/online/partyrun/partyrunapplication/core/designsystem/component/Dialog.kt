@@ -49,7 +49,6 @@ fun PartyRunMatchDialog(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PartyRunResultDialog(
     onDismissRequest: () -> Unit,
@@ -58,10 +57,9 @@ fun PartyRunResultDialog(
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties =
-            DialogProperties( // 다이얼로그 width 제한 해제
-                usePlatformDefaultWidth = false
-            )
+        properties = DialogProperties( // 다이얼로그 width 제한 해제
+            usePlatformDefaultWidth = false
+        )
     ) {
         DialogContent(
             modifier = modifier,
@@ -104,6 +102,31 @@ fun PartyRunCancelDialog(
 }
 
 @Composable
+fun PartyRunDefaultDialog(
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp,
+    strokeWidth: Dp,
+    strokeColor: Color = Color.Transparent,
+    content: @Composable () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        DialogContent(
+            modifier = modifier,
+            cornerRadius = cornerRadius,
+            strokeWidth = strokeWidth,
+            strokeColor = strokeColor,
+            imageContent = {},
+            isResultDialog = false
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
 fun DialogContent(
     modifier: Modifier = Modifier,
     cornerRadius: Dp,
@@ -113,32 +136,34 @@ fun DialogContent(
     imageContent: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
+    Column(
+        modifier = Modifier
+    ) {
+        Spacer(modifier = Modifier.height(30.dp))
+        Surface(
+            modifier = modifier,
+            shape = RoundedCornerShape(cornerRadius),
+            color = if (isResultDialog) Color.Transparent else Color.White,
+            border = BorderStroke(strokeWidth, strokeColor)
+        ) {
+            content()
+        }
+    }
+
+    if (isResultDialog) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 70.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
-            Surface(
-                modifier = modifier,
-                shape = RoundedCornerShape(cornerRadius),
-                color = if (isResultDialog) Color.Transparent else Color.White,
-                border = BorderStroke(strokeWidth, strokeColor)
-            ) {
-                content()
-            }
+            imageContent()
         }
-
-        if (isResultDialog) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(top = 70.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                imageContent()
-            }
-        } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                imageContent()
-            }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            imageContent()
         }
+    }
 }

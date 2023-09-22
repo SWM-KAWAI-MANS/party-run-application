@@ -46,7 +46,8 @@ import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
 
 data class User(
     val name: String,
-    val imageUrl: String
+    val imageUrl: String = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
+
 )
 
 @Composable
@@ -305,18 +306,9 @@ private fun RoomManagerBox() {
 @Composable
 fun ParticipantsBox() {
     val users = listOf(
-        User(
-            "테스트 유저1",
-            "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
-        ),
-        User(
-            "테스트 유저2",
-            "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
-        ),
-        User(
-            "테스트 유저3",
-            "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
-        )
+        User("테스트 유저1"),
+        User("테스트 유저2"),
+        User("테스트 유저3")
     )
 
     SurfaceRoundedRect(

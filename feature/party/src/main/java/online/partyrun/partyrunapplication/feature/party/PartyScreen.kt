@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,19 +39,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.feature.party.ui.PartyJoinDialog
 
 @Composable
 fun PartyScreen(
     modifier: Modifier = Modifier,
-    navigateToPartyCreation: () -> Unit,
+    navigateToPartyCreation: (String) -> Unit,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
+    val partyUiState by partyViewModel.partyUiState.collectAsState()
 
     Content(
         modifier = modifier,
         partyViewModel = partyViewModel,
+        partyUiState = partyUiState,
         navigateToPartyCreation = navigateToPartyCreation
     )
 }
@@ -58,7 +63,8 @@ fun PartyScreen(
 fun Content(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
-    navigateToPartyCreation: () -> Unit
+    partyUiState: PartyUiState,
+    navigateToPartyCreation: (String) -> Unit
 ) {
     val showJoinDialog = remember { mutableStateOf(false) }
 
@@ -69,6 +75,12 @@ fun Content(
             },
             partyViewModel = partyViewModel
         )
+    }
+
+    LaunchedEffect(partyUiState.partyCode) {
+        if (partyUiState.partyCode.isNotEmpty()) {
+            navigateToPartyCreation(partyUiState.partyCode)
+        }
     }
 
     Column(
@@ -138,7 +150,9 @@ fun Content(
                             containerColor = MaterialTheme.colorScheme.onPrimary,
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
-                        onClick = { navigateToPartyCreation() }
+                        onClick = {
+                            managerAction(partyViewModel, partyViewModel.kmState.value)
+                        }
                     ) {
                         Row(
                             modifier = Modifier.padding(5.dp),
@@ -235,5 +249,13 @@ private fun TrackImage(currentKmState: KmState) {
     Image(
         painter = painterResource(id = currentKmState.imageRes),
         contentDescription = stringResource(id = R.string.track_image_desc)
+    )
+}
+
+private fun managerAction(partyViewModel: PartyViewModel, currentKmState: KmState) {
+    partyViewModel.createParty(
+        RunningDistance(
+            distance = currentKmState.toDistance()
+        )
     )
 }

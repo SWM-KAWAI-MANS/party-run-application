@@ -25,7 +25,7 @@ import online.partyrun.partyrunapplication.core.designsystem.theme.PartyDialogTe
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun PartyRoomNumberTextField(
+fun PartyCodeTextField(
     text: String,
     onTextChanged: (String) -> Unit,
     focusManager: FocusManager,
@@ -36,7 +36,7 @@ fun PartyRoomNumberTextField(
     BasicTextField(
         value = text,
         onValueChange = { newText ->
-            if (isValidNumberInput(newText, maxTextLength)) {
+            if (isValidCodeInput(newText, maxTextLength)) {
                 onTextChanged(newText)
             }
         },
@@ -54,10 +54,10 @@ fun PartyRoomNumberTextField(
         decorationBox = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 text.forEachIndexed { _, char ->
-                    PartyNumberCharContainer(char)
+                    PartyCodeCharContainer(char)
                 }
                 repeat(maxTextLength - text.length) {
-                    PartyNumberCharContainer(' ')
+                    PartyCodeCharContainer(' ')
                 }
             }
         },
@@ -65,7 +65,7 @@ fun PartyRoomNumberTextField(
 }
 
 @Composable
-private fun PartyNumberCharContainer(
+private fun PartyCodeCharContainer(
     text: Char,
     modifier: Modifier = Modifier
 ) {
@@ -83,6 +83,6 @@ private fun PartyNumberCharContainer(
     }
 }
 
-private fun isValidNumberInput(input: String, maxLength: Int): Boolean {
+private fun isValidCodeInput(input: String, maxLength: Int): Boolean {
     return input.all { it.isDigit() } && input.length <= maxLength
 }

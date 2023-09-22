@@ -198,7 +198,7 @@ private fun PartyRoomInfoBox() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.party_number),
+                    text = stringResource(id = R.string.party_code),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

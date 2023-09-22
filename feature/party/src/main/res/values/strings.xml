@@ -7,7 +7,7 @@
     <string name="start_btn">시작하기</string>
     <string name="quit_btn">나가기</string>
     <string name="ic_arrow_back_desc">뒤로 가기</string>
-    <string name="party_number">방 번호</string>
+    <string name="party_code">방 번호</string>
     <string name="manager">방장</string>
     <string name="participants">참여자</string>
     <string name="distance">거리</string>

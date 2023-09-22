@@ -1,11 +1,13 @@
 package online.partyrun.partyrunapplication.feature.party
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import timber.log.Timber
+import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import javax.inject.Inject
 
 @HiltViewModel
@@ -14,8 +16,8 @@ class PartyViewModel @Inject constructor(
 ) : ViewModel() {
     private val _kmState = MutableStateFlow(KmState.KM_1)
 
-    private val _partyRoomNumber = MutableStateFlow("")
-    val partyRoomNumber = _partyRoomNumber.asStateFlow()
+    private val _partyCode = MutableStateFlow("")
+    val partyCode = _partyCode.asStateFlow()
 
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
@@ -28,12 +30,11 @@ class PartyViewModel @Inject constructor(
         _kmState.value = state
     }
 
-    fun setPartyRoomNumber(number: String) {
-        _partyRoomNumber.value = number
+    fun setPartyCodeInput(number: String) {
+        _partyCode.value = number
     }
 
-    fun clearPartyRoomNumber() {
-        _partyRoomNumber.value = ""
+    fun clearPartyCodeInput() {
+        _partyCode.value = ""
     }
-
 }

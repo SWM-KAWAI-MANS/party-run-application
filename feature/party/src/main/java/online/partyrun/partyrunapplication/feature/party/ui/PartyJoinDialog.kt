@@ -30,7 +30,7 @@ import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.designsystem.theme.PartyDialogInfoTextColor
 import online.partyrun.partyrunapplication.feature.party.PartyViewModel
 import online.partyrun.partyrunapplication.feature.party.R
-import online.partyrun.partyrunapplication.feature.party.component.PartyRoomNumberTextField
+import online.partyrun.partyrunapplication.feature.party.component.PartyCodeTextField
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -39,7 +39,7 @@ fun PartyJoinDialog(
     partyViewModel: PartyViewModel,
     onDismissRequest: () -> Unit
 ) {
-    val textFieldValue by partyViewModel.partyRoomNumber.collectAsStateWithLifecycle()
+    val textFieldValue by partyViewModel.partyCode.collectAsStateWithLifecycle()
 
     PartyRunDefaultDialog(
         onDismissRequest = { },
@@ -67,7 +67,7 @@ fun PartyJoinDialog(
             ) {
                 IconButton(
                     onClick = {
-                        partyViewModel.clearPartyRoomNumber()
+                        partyViewModel.clearPartyCodeInput()
                         onDismissRequest()
                     }
                 ) {
@@ -90,12 +90,12 @@ fun PartyJoinDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                PartyRoomNumberTextField(
+                PartyCodeTextField(
                     keyboardController = keyboardController,
                     focusManager = focusManager,
                     text = textFieldValue,
-                    onTextChanged = { newNumber ->
-                        partyViewModel.setPartyRoomNumber(newNumber)
+                    onTextChanged = { newCode ->
+                        partyViewModel.setPartyCodeInput(newCode)
                     }
                 )
             }

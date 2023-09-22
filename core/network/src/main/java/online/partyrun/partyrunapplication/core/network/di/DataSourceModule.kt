@@ -14,6 +14,8 @@ import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSour
 import online.partyrun.partyrunapplication.core.network.datasource.MatchDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.MemberDataSourceImpl
+import online.partyrun.partyrunapplication.core.network.datasource.PartyDataSource
+import online.partyrun.partyrunapplication.core.network.datasource.PartyDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSource
 import online.partyrun.partyrunapplication.core.network.datasource.SignInDataSourceImpl
 import online.partyrun.partyrunapplication.core.network.datasource.SingleDataSource
@@ -23,6 +25,7 @@ import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.ResultApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
+import online.partyrun.partyrunapplication.core.network.service.PartyApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.SingleApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
@@ -41,7 +44,13 @@ object DataSourceModule {
         matchDecisionApiService: MatchDecisionApiService,
         matchApiService: MatchApiService
     ): MatchDataSource {
-        return MatchDataSourceImpl(okHttpClient, request, waitingMatchApiService, matchDecisionApiService, matchApiService)
+        return MatchDataSourceImpl(
+            okHttpClient,
+            request,
+            waitingMatchApiService,
+            matchDecisionApiService,
+            matchApiService
+        )
     }
 
     @Singleton
@@ -73,5 +82,17 @@ object DataSourceModule {
     fun provideSingleDataSource(
         singleApiService: SingleApiService
     ): SingleDataSource = SingleDataSourceImpl(singleApiService)
+
+    @Singleton
+    @Provides
+    fun providePartyDataSource(
+        @SSEOkHttpClient okHttpClient: OkHttpClient,
+        @SSERequestBuilder request: Request.Builder,
+        partyApiService: PartyApiService
+    ): PartyDataSource = PartyDataSourceImpl(
+        okHttpClient,
+        request,
+        partyApiService
+    )
 
 }

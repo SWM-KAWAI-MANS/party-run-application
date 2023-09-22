@@ -20,6 +20,8 @@ import online.partyrun.partyrunapplication.core.data.repository.TokenRepository
 import online.partyrun.partyrunapplication.core.data.repository.TokenRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepository
 import online.partyrun.partyrunapplication.core.data.repository.MemberRepositoryImpl
+import online.partyrun.partyrunapplication.core.data.repository.PartyRepository
+import online.partyrun.partyrunapplication.core.data.repository.PartyRepositoryImpl
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepository
 import online.partyrun.partyrunapplication.core.data.repository.SingleRepositoryImpl
 import javax.inject.Singleton
@@ -72,6 +74,12 @@ internal interface DataModule {
     fun bindSingleRepository(
         singleRepository: SingleRepositoryImpl
     ): SingleRepository
+
+    @Singleton
+    @Binds
+    fun bindPartyRepository(
+        partyRepository: PartyRepositoryImpl
+    ): PartyRepository
 
     @Singleton
     @Binds

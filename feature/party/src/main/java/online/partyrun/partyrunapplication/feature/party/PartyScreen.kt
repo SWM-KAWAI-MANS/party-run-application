@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.ui.HeadLine
+import online.partyrun.partyrunapplication.feature.party.ui.PartyJoinDialog
 
 @Composable
 fun PartyScreen(
@@ -57,6 +60,17 @@ fun Content(
     partyViewModel: PartyViewModel,
     navigateToPartyCreation: () -> Unit
 ) {
+    val showJoinDialog = remember { mutableStateOf(false) }
+
+    if (showJoinDialog.value) {
+        PartyJoinDialog(
+            onDismissRequest = {
+                showJoinDialog.value = false
+            },
+            partyViewModel = partyViewModel
+        )
+    }
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,7 +86,9 @@ fun Content(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PartyRunGradientButton(
-                onClick = { /*TODO*/ }
+                onClick = {
+                    showJoinDialog.value = true
+                }
             ) {
                 Row(
                     modifier = Modifier

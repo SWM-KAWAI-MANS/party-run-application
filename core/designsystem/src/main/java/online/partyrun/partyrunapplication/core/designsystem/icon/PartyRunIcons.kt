@@ -60,6 +60,7 @@ object PartyRunIcons {
     val edit = R.drawable.ic_round_edit_24
     val PartyJoinIcon = R.drawable.ic_join_rounded_24
     val PartyCreationIcon = R.drawable.ic_creation_rounded_24
+    val CopyIcon = R.drawable.ic_content_copy_24
 }
 
 @Preview(showBackground = true)

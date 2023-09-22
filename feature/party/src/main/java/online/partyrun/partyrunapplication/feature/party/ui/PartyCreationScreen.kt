@@ -24,7 +24,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
@@ -44,22 +48,22 @@ import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavi
 import online.partyrun.partyrunapplication.feature.party.component.PartyCreationTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
 
-data class User(
-    val name: String,
-    val imageUrl: String = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
-
-)
-
 @Composable
 fun PartyCreationScreen(
+    partyCode: String?,
     modifier: Modifier = Modifier,
-    navigateToParty: () -> Unit = {}
+    navigateToParty: () -> Unit = {},
+    partyCreationViewModel: PartyCreationViewModel = hiltViewModel()
 ) {
+    val partyCreationUiState by partyCreationViewModel.partyCreationUiState.collectAsState()
     val openPartyExitDialog = remember { mutableStateOf(false) }
 
     Content(
+        partyCode = partyCode,
         modifier = modifier,
+        partyCreationUiState = partyCreationUiState,
         navigateToParty = navigateToParty,
+        partyCreationViewModel = partyCreationViewModel,
         openPartyExitDialog = openPartyExitDialog
     )
 }
@@ -67,15 +71,26 @@ fun PartyCreationScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(
+    partyCode: String?,
     modifier: Modifier = Modifier,
+    partyCreationUiState: PartyCreationUiState,
     navigateToParty: () -> Unit,
+    partyCreationViewModel: PartyCreationViewModel,
     openPartyExitDialog: MutableState<Boolean>
 ) {
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
-        openPartyExitDialog = openPartyExitDialog,
-        navigateToParty = navigateToParty
-    )
+        openPartyExitDialog = openPartyExitDialog
+    ) {
+        partyCreationViewModel.quitPartyRoom()
+        navigateToParty()
+    }
+
+    LaunchedEffect(partyCode) {
+        if (partyCode != null) {
+            partyCreationViewModel.beginManagerProcess(partyCode)
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -92,6 +107,7 @@ fun Content(
                 .padding(paddingValues)
         ) {
             PartyCreationBody(
+                partyCreationUiState = partyCreationUiState,
                 openPartyExitDialog = openPartyExitDialog
             )
         }
@@ -100,6 +116,7 @@ fun Content(
 
 @Composable
 fun PartyCreationBody(
+    partyCreationUiState: PartyCreationUiState,
     openPartyExitDialog: MutableState<Boolean>
 ) {
     Column(
@@ -109,7 +126,9 @@ fun PartyCreationBody(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PartyRoomInfoBox()
+        PartyRoomInfoBox(
+            partyCode = partyCreationUiState.partyEvent.entryCode
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +145,7 @@ fun PartyCreationBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = "1km",
+                    text = partyCreationUiState.partyEvent.distance.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -143,7 +162,9 @@ fun PartyCreationBody(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ManagerBox()
+            ManagerBox(
+                partyCreationUiState.partyEvent.managerId
+            )
         }
         Column(
             modifier = Modifier
@@ -157,7 +178,9 @@ fun PartyCreationBody(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ParticipantsBox()
+            ParticipantsBox(
+                partyCreationUiState.partyEvent.participants
+            )
         }
         Row(
             modifier = Modifier
@@ -179,12 +202,14 @@ fun PartyCreationBody(
 }
 
 @Composable
-private fun PartyRoomInfoBox() {
+private fun PartyRoomInfoBox(
+    partyCode: String
+) {
     val context = LocalContext.current
 
     PartyRunGradientButton(
         onClick = {
-            copyToClipboard(context, "332041")
+            copyToClipboard(context, partyCode)
         }
     ) {
         Column(
@@ -210,7 +235,7 @@ private fun PartyRoomInfoBox() {
                 )
             }
             Text(
-                text = "332041",
+                text = partyCode,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -260,7 +285,9 @@ private fun StartButton(
 
 
 @Composable
-private fun ManagerBox() {
+private fun ManagerBox(
+    managerId: String
+) {
     SurfaceRoundedRect(
         color = MaterialTheme.colorScheme.surface
     ) {
@@ -289,7 +316,7 @@ private fun ManagerBox() {
                 }
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "테스트 유저",
+                    text = managerId,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -304,13 +331,9 @@ private fun ManagerBox() {
 }
 
 @Composable
-fun ParticipantsBox() {
-    val users = listOf(
-        User("테스트 유저1"),
-        User("테스트 유저2"),
-        User("테스트 유저3")
-    )
-
+fun ParticipantsBox(
+    participants: List<String>
+) {
     SurfaceRoundedRect(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surface
@@ -320,15 +343,15 @@ fun ParticipantsBox() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            items(users) { user ->
-                UserRow(user = user)
+            items(participants) { runner ->
+                RunnerRow(runner = runner)
             }
         }
     }
 }
 
 @Composable
-fun UserRow(user: User) {
+fun RunnerRow(runner: String) {
     Row(
         modifier = Modifier.padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -341,13 +364,13 @@ fun UserRow(user: User) {
                 .clip(CircleShape)
         ) {
             RenderAsyncUrlImage(
-                imageUrl = user.imageUrl,
+                imageUrl = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png",
                 contentDescription = null
             )
         }
         Text(
             modifier = Modifier.padding(start = 15.dp),
-            text = user.name,
+            text = runner,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

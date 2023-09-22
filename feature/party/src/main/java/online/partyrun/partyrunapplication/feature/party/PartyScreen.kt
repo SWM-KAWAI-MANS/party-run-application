@@ -73,7 +73,8 @@ fun Content(
             onDismissRequest = {
                 showJoinDialog.value = false
             },
-            partyViewModel = partyViewModel
+            partyViewModel = partyViewModel,
+            navigateToPartyCreation = navigateToPartyCreation
         )
     }
 

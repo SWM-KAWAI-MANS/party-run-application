@@ -37,9 +37,10 @@ import online.partyrun.partyrunapplication.feature.party.component.PartyCodeText
 fun PartyJoinDialog(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    navigateToPartyCreation: (String) -> Unit
 ) {
-    val textFieldValue by partyViewModel.partyCode.collectAsStateWithLifecycle()
+    val partyCodeInput by partyViewModel.partyCodeInput.collectAsStateWithLifecycle()
 
     PartyRunDefaultDialog(
         onDismissRequest = { },
@@ -93,7 +94,7 @@ fun PartyJoinDialog(
                 PartyCodeTextField(
                     keyboardController = keyboardController,
                     focusManager = focusManager,
-                    text = textFieldValue,
+                    text = partyCodeInput,
                     onTextChanged = { newCode ->
                         partyViewModel.setPartyCodeInput(newCode)
                     }
@@ -102,7 +103,7 @@ fun PartyJoinDialog(
             Spacer(modifier = Modifier.height(20.dp))
 
             PartyRunGradientButton(
-                onClick = { },
+                onClick = { navigateToPartyCreation(partyCodeInput) },
                 modifier = modifier.fillMaxWidth()
             ) {
                 Text(

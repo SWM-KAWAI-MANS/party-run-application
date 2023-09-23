@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
@@ -120,13 +121,33 @@ private fun Content(
                 )
 
             is PartyRoomUiState.LoadFailed ->
-                navigateToParty()
+                RoomLoadFailedBody {
+                    navigateToParty()
+                }
         }
     }
 }
 
 @Composable
 fun RoomLoadingBody() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun RoomLoadFailedBody(
+    navigateToParty: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        delay(500L) // 순간적인 스크린 전환을 막기 위함
+        navigateToParty()
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

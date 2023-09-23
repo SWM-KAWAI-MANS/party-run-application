@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.feature.party.room
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -314,6 +315,7 @@ private fun PartyRoomInfoBox(
     PartyRunGradientButton(
         onClick = {
             copyToClipboard(context, partyCode)
+            Toast.makeText(context, R.string.party_code_copy_desc, Toast.LENGTH_SHORT).show()
         }
     ) {
         Column(

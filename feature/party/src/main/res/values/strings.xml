@@ -13,6 +13,7 @@
     <string name="participants">참여자</string>
     <string name="distance">거리</string>
     <string name="ic_menu_desc">메뉴 아이콘</string>
+    <string name="party_code_copy_desc">방 번호 복사 완료</string>
 
     <string name="track_image_desc">트랙 이미지</string>
     <string name="ic_join_desc">파티 참여 아이콘</string>

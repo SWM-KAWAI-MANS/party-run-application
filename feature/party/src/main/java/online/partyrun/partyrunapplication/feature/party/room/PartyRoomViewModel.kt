@@ -102,12 +102,12 @@ class PartyRoomViewModel @Inject constructor(
                 waitingEventProcess(allRunnerIds, eventData)
             }
 
-            PartyEventStatus.COMPLETED -> { // 파티 시작 시 처리
+            PartyEventStatus.COMPLETED -> { // 파티 시작시 처리
                 completedEventProcess(eventData)
             }
 
-            else -> {
-                Timber.d("CANCELLED EVENT")
+            PartyEventStatus.CANCELLED -> { // 파티 해체시 처리
+                canceledEventProcess(eventData)
             }
         }
     }
@@ -116,9 +116,14 @@ class PartyRoomViewModel @Inject constructor(
         viewModelScope.launch {
             saveRunnersInfoUseCase(runnerInfoData)
         }
+        canceledEventProcess(eventData)
+    }
+
+    private fun canceledEventProcess(eventData: PartyEvent) {
         updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
         _partyRoomUiState.value =
             _partyRoomUiState.value.updateState(updatedPartyRoomState)
+        _snackbarMessage.value = "파티 세션이 종료됐어요."
     }
 
     private fun waitingEventProcess(

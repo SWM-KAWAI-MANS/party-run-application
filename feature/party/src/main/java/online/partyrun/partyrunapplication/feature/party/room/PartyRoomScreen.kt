@@ -52,6 +52,7 @@ import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
 import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
+import timber.log.Timber
 
 @Composable
 fun PartyRoomScreen(

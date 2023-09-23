@@ -8,8 +8,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onEmpty
 import online.partyrun.partyrunapplication.core.common.result.onFailure
@@ -22,7 +20,6 @@ import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSou
 import online.partyrun.partyrunapplication.core.domain.party.DisconnectPartyEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.party.QuitPartyUseCase
 import online.partyrun.partyrunapplication.core.domain.party.StartPartyBattleUseCase
-import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
 import online.partyrun.partyrunapplication.core.model.party.PartyEvent
@@ -60,12 +57,12 @@ class PartyRoomViewModel @Inject constructor(
         _snackbarMessage.value = ""
     }
 
-    fun beginManagerProcess(partyCode: String) =
+    fun beginPartyProcess(partyCode: String) =
         viewModelScope.launch {
             try {
                 connectPartyEventSource(partyCode)
             } catch (e: ManagerProcessException) {
-                Timber.tag("PartyViewModel").e(e, "beginManagerProcess 종료")
+                Timber.tag("PartyViewModel").e(e, "beginPartyProcess 종료")
                 disconnectPartyEventSource()
                 clearPartyProcess()
             }
@@ -102,38 +99,48 @@ class PartyRoomViewModel @Inject constructor(
 
         when (eventData.status) {
             PartyEventStatus.WAITING -> { // 파티룸에서의 처리
-                viewModelScope.launch {
-                    getRunnersInfoUseCase(allRunnerIds).collect { result ->
-                        result.onSuccess { runnerInfoList ->
-                            runnerInfoData = runnerInfoList
-                            updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
-
-                            // 현재 상태가 Loading인 경우에만 Success로 상태 변경
-                            if (_partyRoomUiState.value is PartyRoomUiState.Loading) {
-                                _partyRoomUiState.value =
-                                    PartyRoomUiState.Success(partyRoomState = updatedPartyRoomState)
-                            } else {
-                                _partyRoomUiState.value =
-                                    _partyRoomUiState.value.updateState(updatedPartyRoomState)
-                            }
-                        }
-                    }
-                }
+                waitingEventProcess(allRunnerIds, eventData)
             }
 
             PartyEventStatus.COMPLETED -> { // 파티 시작 시 처리
-                viewModelScope.launch {
-                    saveRunnersInfoUseCase(runnerInfoData)
-                }
-                updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
-                _partyRoomUiState.value =
-                    _partyRoomUiState.value.updateState(updatedPartyRoomState)
+                completedEventProcess(eventData)
             }
 
             else -> {}
         }
     }
 
+    private fun completedEventProcess(eventData: PartyEvent) {
+        viewModelScope.launch {
+            saveRunnersInfoUseCase(runnerInfoData)
+        }
+        updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
+        _partyRoomUiState.value =
+            _partyRoomUiState.value.updateState(updatedPartyRoomState)
+    }
+
+    private fun waitingEventProcess(
+        allRunnerIds: RunnerIds,
+        eventData: PartyEvent
+    ) {
+        viewModelScope.launch {
+            getRunnersInfoUseCase(allRunnerIds).collect { result ->
+                result.onSuccess { runnerInfoList ->
+                    runnerInfoData = runnerInfoList
+                    updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
+
+                    // 현재 상태가 Loading인 경우에만 Success로 상태 변경
+                    if (_partyRoomUiState.value is PartyRoomUiState.Loading) {
+                        _partyRoomUiState.value =
+                            PartyRoomUiState.Success(partyRoomState = updatedPartyRoomState)
+                    } else {
+                        _partyRoomUiState.value =
+                            _partyRoomUiState.value.updateState(updatedPartyRoomState)
+                    }
+                }
+            }
+        }
+    }
 
     private fun updatePartyRoomState(
         runnerInfoList: RunnerInfoData,
@@ -171,16 +178,20 @@ class PartyRoomViewModel @Inject constructor(
             quitPartyUseCase(partyCode).collect { result ->
                 result.onEmpty {
                     Timber.tag("파티 배틀").d("나가기 성공")
-                    val currentState = _partyRoomUiState.value
-                    if (currentState is PartyRoomUiState.Success) {
-                        val updatedState = currentState.partyRoomState.copy(status = PartyEventStatus.CANCELLED)
-                        _partyRoomUiState.value = currentState.copy(partyRoomState = updatedState)
-                    }
+                    quitProcess()
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                     _snackbarMessage.value = "파티 나가기 실패 \n잠시 후 다시 시도 해주세요."
                 }
             }
+        }
+    }
+
+    private fun quitProcess() {
+        val currentState = _partyRoomUiState.value
+        if (currentState is PartyRoomUiState.Success) {
+            val updatedState = currentState.partyRoomState.copy(status = PartyEventStatus.CANCELLED)
+            _partyRoomUiState.value = currentState.copy(partyRoomState = updatedState)
         }
     }
 

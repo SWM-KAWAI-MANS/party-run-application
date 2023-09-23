@@ -28,6 +28,9 @@ class PartyDataSourceImpl @Inject constructor(
     override suspend fun startPartyBattle(code: String): ApiResponse<Unit> =
         partyApiService.startPartyBattle(code)
 
+    override suspend fun quitParty(code: String): ApiResponse<Unit> =
+        partyApiService.quitParty(code)
+
     override fun createPartyEventSourceListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit,

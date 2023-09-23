@@ -28,6 +28,10 @@ class PartyRepositoryImpl @Inject constructor(
         return apiRequestFlow { partyDataSource.startPartyBattle(code) }
     }
 
+    override suspend fun quitParty(code: String): Flow<Result<Unit>> {
+        return apiRequestFlow { partyDataSource.quitParty(code) }
+    }
+
     override fun createPartyEventSourceListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit,

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onEmpty
 import online.partyrun.partyrunapplication.core.common.result.onFailure
@@ -19,6 +20,7 @@ import online.partyrun.partyrunapplication.core.domain.party.ConnectPartyEventSo
 import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSourceListenerUseCase
 import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.party.DisconnectPartyEventSourceUseCase
+import online.partyrun.partyrunapplication.core.domain.party.QuitPartyUseCase
 import online.partyrun.partyrunapplication.core.domain.party.StartPartyBattleUseCase
 import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
@@ -37,7 +39,8 @@ class PartyRoomViewModel @Inject constructor(
     private val disconnectPartyEventSourceUseCase: DisconnectPartyEventSourceUseCase,
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
     private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
-    private val startPartyBattleUseCase: StartPartyBattleUseCase
+    private val startPartyBattleUseCase: StartPartyBattleUseCase,
+    private val quitPartyUseCase: QuitPartyUseCase
 ) : ViewModel() {
 
     private val _partyRoomUiState = MutableStateFlow<PartyRoomUiState>(PartyRoomUiState.Loading)
@@ -55,10 +58,6 @@ class PartyRoomViewModel @Inject constructor(
 
     fun clearSnackbarMessage() {
         _snackbarMessage.value = ""
-    }
-
-    fun quitPartyRoom() {
-        disconnectPartyEventSource()
     }
 
     fun beginManagerProcess(partyCode: String) =
@@ -162,6 +161,24 @@ class PartyRoomViewModel @Inject constructor(
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                     disconnectPartyEventSourceUseCase()
+                }
+            }
+        }
+    }
+
+    fun quitPartyRoom(partyCode: String) {
+        viewModelScope.launch {
+            quitPartyUseCase(partyCode).collect { result ->
+                result.onEmpty {
+                    Timber.tag("파티 배틀").d("나가기 성공")
+                    val currentState = _partyRoomUiState.value
+                    if (currentState is PartyRoomUiState.Success) {
+                        val updatedState = currentState.partyRoomState.copy(status = PartyEventStatus.CANCELLED)
+                        _partyRoomUiState.value = currentState.copy(partyRoomState = updatedState)
+                    }
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    _snackbarMessage.value = "파티 나가기 실패 \n잠시 후 다시 시도 해주세요."
                 }
             }
         }

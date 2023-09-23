@@ -10,6 +10,7 @@ interface PartyDataSource {
     /* REST */
     suspend fun createParty(runningDistanceRequest: RunningDistanceRequest): ApiResponse<PartyCodeResponse>
     suspend fun startPartyBattle(code: String): ApiResponse<Unit>
+    suspend fun quitParty(code: String): ApiResponse<Unit>
 
     /* SSE */
     fun createPartyEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener

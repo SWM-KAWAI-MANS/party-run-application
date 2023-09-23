@@ -173,13 +173,16 @@ fun RoomSuccessBody(
         navigateToBattleRunningWithDistance(partyRoomState.distance)
     }
 
+    if (partyRoomState.status == PartyEventStatus.CANCELLED) {
+        navigateToParty()
+    }
+
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
         openPartyExitDialog = openPartyExitDialog,
         hasManagerPrivileges = hasManagerPrivileges
     ) {
-        partyRoomViewModel.quitPartyRoom()
-        navigateToParty()
+        partyRoomViewModel.quitPartyRoom(partyCode)
     }
 
     Scaffold(

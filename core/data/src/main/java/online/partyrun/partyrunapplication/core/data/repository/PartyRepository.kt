@@ -11,6 +11,7 @@ interface PartyRepository {
     /* REST */
     suspend fun createParty(runningDistance: RunningDistance): Flow<Result<PartyCode>>
     suspend fun startPartyBattle(code: String): Flow<Result<Unit>>
+    suspend fun quitParty(code: String): Flow<Result<Unit>>
 
     /* SSE */
     fun createPartyEventSourceListener(

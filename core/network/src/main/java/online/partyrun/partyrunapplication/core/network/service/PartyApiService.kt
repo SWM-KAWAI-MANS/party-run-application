@@ -18,4 +18,9 @@ interface PartyApiService {
         @Path("code") code: String
     ): ApiResponse<Unit>
 
+    @POST("/api/parties/{code}/quit")
+    suspend fun quitParty(
+        @Path("code") code: String
+    ): ApiResponse<Unit>
+
 }

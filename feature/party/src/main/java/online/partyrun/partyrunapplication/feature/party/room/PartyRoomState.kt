@@ -12,3 +12,7 @@ data class PartyRoomState(
     val participants: List<RunnerInfo> = emptyList()
 )
 
+fun PartyRoomState.distanceToKmString(): String {
+    return "${this.distance / 1000}km"
+}
+

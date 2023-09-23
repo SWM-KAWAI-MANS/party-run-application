@@ -246,7 +246,7 @@ private fun PartyRoomBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = partyRoomState.distance.toString(),
+                    text = partyRoomState.distanceToKmString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )

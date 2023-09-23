@@ -1,5 +1,6 @@
-package online.partyrun.partyrunapplication.feature.party.ui
+package online.partyrun.partyrunapplication.feature.party.room
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +26,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,55 +40,159 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.match.RunnerInfo
+import online.partyrun.partyrunapplication.core.model.party.PartyEventStatus
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
-import online.partyrun.partyrunapplication.feature.party.component.PartyCreationTopAppBar
+import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
-
-data class User(
-    val name: String,
-    val imageUrl: String = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png"
-
-)
+import timber.log.Timber
 
 @Composable
-fun PartyCreationScreen(
+fun PartyRoomScreen(
+    partyCode: String,
+    hasManagerPrivileges: Boolean,
     modifier: Modifier = Modifier,
-    navigateToParty: () -> Unit = {}
+    navigateToParty: () -> Unit = {},
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
+    partyRoomViewModel: PartyRoomViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
+) {
+    val partyRoomUiState by partyRoomViewModel.partyRoomUiState.collectAsState()
+    val partyRoomSnackbarMessage by partyRoomViewModel.snackbarMessage.collectAsState()
+
+    Content(
+        partyCode = partyCode,
+        hasManagerPrivileges = hasManagerPrivileges,
+        modifier = modifier,
+        partyRoomUiState = partyRoomUiState,
+        navigateToParty = navigateToParty,
+        navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
+        partyRoomViewModel = partyRoomViewModel,
+        onShowSnackbar = onShowSnackbar,
+        partyRoomSnackbarMessage = partyRoomSnackbarMessage
+    )
+}
+
+@Composable
+private fun Content(
+    partyCode: String,
+    hasManagerPrivileges: Boolean,
+    modifier: Modifier = Modifier,
+    partyRoomUiState: PartyRoomUiState,
+    navigateToParty: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
+    partyRoomViewModel: PartyRoomViewModel,
+    onShowSnackbar: (String) -> Unit,
+    partyRoomSnackbarMessage: String
 ) {
     val openPartyExitDialog = remember { mutableStateOf(false) }
 
-    Content(
-        modifier = modifier,
-        navigateToParty = navigateToParty,
-        openPartyExitDialog = openPartyExitDialog
-    )
+    LaunchedEffect(partyRoomSnackbarMessage) {
+        if (partyRoomSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(partyRoomSnackbarMessage)
+            partyRoomViewModel.clearSnackbarMessage()
+        }
+    }
+
+    LaunchedEffect(partyCode) {
+        partyRoomViewModel.beginPartyProcess(partyCode)
+    }
+
+    Box(modifier = modifier) {
+        when (partyRoomUiState) {
+            is PartyRoomUiState.Loading -> RoomLoadingBody()
+            is PartyRoomUiState.Success ->
+                RoomSuccessBody(
+                    modifier = modifier,
+                    partyCode = partyCode,
+                    hasManagerPrivileges = hasManagerPrivileges,
+                    partyRoomState = partyRoomUiState.partyRoomState,
+                    navigateToParty = navigateToParty,
+                    navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
+                    partyRoomViewModel = partyRoomViewModel,
+                    openPartyExitDialog = openPartyExitDialog
+                )
+
+            is PartyRoomUiState.LoadFailed ->
+                RoomLoadFailedBody {
+                    navigateToParty()
+                }
+        }
+    }
+}
+
+@Composable
+fun RoomLoadingBody() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun RoomLoadFailedBody(
+    navigateToParty: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        delay(500L) // 순간적인 스크린 전환을 막기 위함
+        navigateToParty()
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(
+fun RoomSuccessBody(
     modifier: Modifier = Modifier,
+    partyCode: String,
+    hasManagerPrivileges: Boolean,
+    partyRoomState: PartyRoomState,
     navigateToParty: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
+    partyRoomViewModel: PartyRoomViewModel,
     openPartyExitDialog: MutableState<Boolean>
 ) {
+    if (partyRoomState.status == PartyEventStatus.COMPLETED) {
+        navigateToBattleRunningWithDistance(partyRoomState.distance)
+    }
+
+    if (partyRoomState.status == PartyEventStatus.CANCELLED) {
+        navigateToParty()
+    }
+
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
         openPartyExitDialog = openPartyExitDialog,
-        navigateToParty = navigateToParty
-    )
+        hasManagerPrivileges = hasManagerPrivileges
+    ) {
+        partyRoomViewModel.quitPartyRoom(partyCode)
+    }
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            PartyCreationTopAppBar(
-                modifier = modifier,
-                openPartyExitDialog = openPartyExitDialog
-            )
+            PartyRoomTopAppBar(
+                modifier = modifier
+            ) {
+                partyRoomViewModel.preparingMenuMessage()
+            }
         }
     ) { paddingValues ->
         Box(
@@ -91,25 +200,37 @@ fun Content(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            PartyCreationBody(
-                openPartyExitDialog = openPartyExitDialog
+            PartyRoomBody(
+                modifier = modifier,
+                hasManagerPrivileges = hasManagerPrivileges,
+                partyRoomState = partyRoomState,
+                openPartyExitDialog = openPartyExitDialog,
+                startPartyBattle = {
+                    partyRoomViewModel.startPartyBattle(partyCode = partyCode)
+                }
             )
         }
     }
 }
 
 @Composable
-fun PartyCreationBody(
-    openPartyExitDialog: MutableState<Boolean>
+private fun PartyRoomBody(
+    modifier: Modifier,
+    hasManagerPrivileges: Boolean,
+    partyRoomState: PartyRoomState,
+    openPartyExitDialog: MutableState<Boolean>,
+    startPartyBattle: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PartyRoomInfoBox()
+        PartyRoomInfoBox(
+            partyCode = partyRoomState.entryCode
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,7 +247,7 @@ fun PartyCreationBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = "1km",
+                    text = partyRoomState.distanceToKmString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -143,7 +264,9 @@ fun PartyCreationBody(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ManagerBox()
+            partyRoomState.manager?.let { runnerInfo ->
+                ManagerBox(runnerInfo)
+            }
         }
         Column(
             modifier = Modifier
@@ -157,7 +280,9 @@ fun PartyCreationBody(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ParticipantsBox()
+            ParticipantsBox(
+                partyRoomState.participants
+            )
         }
         Row(
             modifier = Modifier
@@ -170,21 +295,28 @@ fun PartyCreationBody(
                 modifier = Modifier.weight(1f),
                 openPartyExitDialog = openPartyExitDialog
             )
-            Spacer(modifier = Modifier.width(10.dp))
-            StartButton(
-                modifier = Modifier.weight(1f)
-            )
+            if (hasManagerPrivileges) { // 방장이면 Start 버튼 추가
+                Spacer(modifier = Modifier.width(10.dp))
+                StartButton(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    startPartyBattle()
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun PartyRoomInfoBox() {
+private fun PartyRoomInfoBox(
+    partyCode: String
+) {
     val context = LocalContext.current
 
     PartyRunGradientButton(
         onClick = {
-            copyToClipboard(context, "332041")
+            copyToClipboard(context, partyCode)
+            Toast.makeText(context, R.string.party_code_copy_desc, Toast.LENGTH_SHORT).show()
         }
     ) {
         Column(
@@ -210,7 +342,7 @@ private fun PartyRoomInfoBox() {
                 )
             }
             Text(
-                text = "332041",
+                text = partyCode,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -243,10 +375,11 @@ private fun QuitButton(
 
 @Composable
 private fun StartButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    startPartyBattle: () -> Unit
 ) {
     PartyRunGradientButton(
-        onClick = { },
+        onClick = { startPartyBattle() },
         modifier = modifier
             .shadow(5.dp, shape = CircleShape)
     ) {
@@ -260,7 +393,9 @@ private fun StartButton(
 
 
 @Composable
-private fun ManagerBox() {
+private fun ManagerBox(
+    manager: RunnerInfo
+) {
     SurfaceRoundedRect(
         color = MaterialTheme.colorScheme.surface
     ) {
@@ -283,13 +418,13 @@ private fun ManagerBox() {
                         .clip(CircleShape)
                 ) {
                     RenderAsyncUrlImage(
-                        imageUrl = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png",
+                        imageUrl = manager.profile,
                         contentDescription = null
                     )
                 }
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = "테스트 유저",
+                    text = manager.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -304,13 +439,9 @@ private fun ManagerBox() {
 }
 
 @Composable
-fun ParticipantsBox() {
-    val users = listOf(
-        User("테스트 유저1"),
-        User("테스트 유저2"),
-        User("테스트 유저3")
-    )
-
+fun ParticipantsBox(
+    participants: List<RunnerInfo>
+) {
     SurfaceRoundedRect(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.surface
@@ -320,15 +451,15 @@ fun ParticipantsBox() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            items(users) { user ->
-                UserRow(user = user)
+            items(participants) { runner ->
+                RunnerRow(runner = runner)
             }
         }
     }
 }
 
 @Composable
-fun UserRow(user: User) {
+fun RunnerRow(runner: RunnerInfo) {
     Row(
         modifier = Modifier.padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -341,13 +472,13 @@ fun UserRow(user: User) {
                 .clip(CircleShape)
         ) {
             RenderAsyncUrlImage(
-                imageUrl = user.imageUrl,
+                imageUrl = runner.profile,
                 contentDescription = null
             )
         }
         Text(
             modifier = Modifier.padding(start = 15.dp),
-            text = user.name,
+            text = runner.name,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

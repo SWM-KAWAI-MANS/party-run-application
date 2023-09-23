@@ -11,7 +11,8 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 @Composable
 fun PartyBackNavigationHandler(
     openPartyExitDialog: MutableState<Boolean>,
-    navigateToParty: () -> Unit
+    hasManagerPrivileges: Boolean,
+    quitRoom: () -> Unit
 ) {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -33,7 +34,8 @@ fun PartyBackNavigationHandler(
 
     PartyExitConfirmationDialog(
         openPartyExitDialog = openPartyExitDialog,
+        hasManagerPrivileges = hasManagerPrivileges
     ) {
-        navigateToParty()
+        quitRoom()
     }
 }

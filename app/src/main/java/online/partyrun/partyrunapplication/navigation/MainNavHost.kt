@@ -71,8 +71,12 @@ fun SetUpMainNavGraph(
         challengeRoute()
 
         partyRoute(
-            navigateToPartyCreation = {
-                navController.navigate(PartyNavRoutes.PartyCreation.route)
+            navigateToPartyRoom = { code, hasManagerPrivileges ->
+                navController.navigate("${PartyNavRoutes.PartyRoom.route}?code=$code&hasManagerPrivileges=$hasManagerPrivileges") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
             },
             navigateToParty = {
                 navController.navigate(MainNavRoutes.Party.route) {
@@ -80,10 +84,16 @@ fun SetUpMainNavGraph(
                         inclusive = true
                     }
                 }
-            }
+            },
+            navigateToBattleRunningWithDistance = { distance ->
+                navController.navigate("${MainNavRoutes.BattleRunning.route}?distance=$distance") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            onShowSnackbar = onShowSnackbar
         )
-
-
 
         myPageRoute(
             onSignOut = onSignOut,

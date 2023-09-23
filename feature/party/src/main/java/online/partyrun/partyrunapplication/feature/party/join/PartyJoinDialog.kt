@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.party.ui
+package online.partyrun.partyrunapplication.feature.party.join
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,9 +37,10 @@ import online.partyrun.partyrunapplication.feature.party.component.PartyCodeText
 fun PartyJoinDialog(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    navigateToPartyRoom: (String, Boolean) -> Unit
 ) {
-    val textFieldValue by partyViewModel.partyCode.collectAsStateWithLifecycle()
+    val partyCodeInput by partyViewModel.partyCodeInput.collectAsStateWithLifecycle()
 
     PartyRunDefaultDialog(
         onDismissRequest = { },
@@ -93,7 +94,7 @@ fun PartyJoinDialog(
                 PartyCodeTextField(
                     keyboardController = keyboardController,
                     focusManager = focusManager,
-                    text = textFieldValue,
+                    text = partyCodeInput,
                     onTextChanged = { newCode ->
                         partyViewModel.setPartyCodeInput(newCode)
                     }
@@ -102,7 +103,9 @@ fun PartyJoinDialog(
             Spacer(modifier = Modifier.height(20.dp))
 
             PartyRunGradientButton(
-                onClick = { },
+                onClick = {
+                    navigateToPartyRoom(partyCodeInput, false) // 참여자 -> 매니저 권한 미부여 == false
+                },
                 modifier = modifier.fillMaxWidth()
             ) {
                 Text(

@@ -5,7 +5,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -13,30 +12,29 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunT
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.feature.party.R
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PartyCreationTopAppBar(
+fun PartyRoomTopAppBar(
     modifier: Modifier,
-    openPartyExitDialog: MutableState<Boolean>
+    onClick: () -> Unit
 ) {
     PartyRunTopAppBar(
         modifier = modifier,
-        navigateToContent = {
+        actionsContent = {
             IconButton(
                 onClick = {
-                    openPartyExitDialog.value = true
+                    onClick()
                 }
             ) {
                 Icon(
-                    painterResource(id = PartyRunIcons.ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.ic_arrow_back_desc)
+                    painterResource(id = PartyRunIcons.Menu),
+                    contentDescription = stringResource(id = R.string.ic_menu_desc)
                 )
             }
         },
         titleContent = {
             Text(
-                text = stringResource(id = R.string.create_party)
+                text = stringResource(id = R.string.party_room)
             )
         }
     )

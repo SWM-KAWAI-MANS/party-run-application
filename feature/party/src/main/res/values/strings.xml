@@ -4,6 +4,7 @@
     <string name="party_head_line_2">목표를 달성해 보세요</string>
     <string name="join_party">방 참여하기</string>
     <string name="create_party">방 만들기</string>
+    <string name="party_room">파티룸</string>
     <string name="start_btn">시작하기</string>
     <string name="quit_btn">나가기</string>
     <string name="ic_arrow_back_desc">뒤로 가기</string>
@@ -11,13 +12,16 @@
     <string name="manager">방장</string>
     <string name="participants">참여자</string>
     <string name="distance">거리</string>
+    <string name="ic_menu_desc">메뉴 아이콘</string>
+    <string name="party_code_copy_desc">방 번호 복사 완료</string>
 
     <string name="track_image_desc">트랙 이미지</string>
     <string name="ic_join_desc">파티 참여 아이콘</string>
     <string name="ic_creation_desc">파티 생성 아이콘</string>
 
     <string name="quit_party_dialog_title_1">파티를 떠나나요?</string>
-    <string name="quit_party_dialog_title_2">자신이 방장인 경우, 파티가 해체됩니다.</string>
+    <string name="quit_party_dialog_manager">방장이 파티를 나가면 파티 전체가 해체돼요.\n그래도 떠나나요?</string>
+    <string name="quit_party_dialog_participant">파티원들이 아쉬워할거예요.\n그래도 떠나나요?</string>
     <string name="quit_party_dialog_confirm">예</string>
     <string name="quit_party_dialog_cancel">아니오</string>
     

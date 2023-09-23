@@ -104,6 +104,7 @@ fun PartyJoinDialog(
 
             PartyRunGradientButton(
                 onClick = {
+                    onDismissRequest()
                     navigateToPartyRoom(partyCodeInput, false) // 참여자 -> 매니저 권한 미부여 == false
                 },
                 modifier = modifier.fillMaxWidth()

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
@@ -52,7 +52,6 @@ import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
 import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
-import timber.log.Timber
 
 @Composable
 fun PartyRoomScreen(
@@ -102,6 +101,7 @@ private fun Content(
     }
 
     LaunchedEffect(partyCode) {
+        delay(500L) // 순간적인 스크린 전환을 막기 위함
         partyRoomViewModel.beginPartyProcess(partyCode)
     }
 
@@ -135,7 +135,7 @@ fun RoomLoadingBody() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
+        LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.party_progress)
     }
 }
 
@@ -144,7 +144,7 @@ fun RoomLoadFailedBody(
     navigateToParty: () -> Unit
 ) {
     LaunchedEffect(Unit) {
-        delay(500L) // 순간적인 스크린 전환을 막기 위함
+        delay(1500L) // 순간적인 스크린 전환을 막기 위함
         navigateToParty()
     }
 
@@ -153,7 +153,7 @@ fun RoomLoadFailedBody(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
+        LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.party_progress)
     }
 }
 

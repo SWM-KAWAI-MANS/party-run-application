@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -66,12 +67,54 @@ fun PartyRoomScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(
+private fun Content(
     partyCode: String?,
     modifier: Modifier = Modifier,
     partyRoomUiState: PartyRoomUiState,
+    navigateToParty: () -> Unit,
+    partyRoomViewModel: PartyRoomViewModel,
+    openPartyExitDialog: MutableState<Boolean>
+) {
+    LaunchedEffect(partyCode) {
+        if (partyCode != null) {
+            partyRoomViewModel.beginManagerProcess(partyCode)
+        }
+    }
+
+    Box(modifier = modifier) {
+        when (partyRoomUiState) {
+            is PartyRoomUiState.Loading -> RoomLoadingBody()
+            is PartyRoomUiState.Success ->
+                PartyRoomBody(
+                    modifier = modifier,
+                    partyRoomState = partyRoomUiState.partyRoomState,
+                    navigateToParty = navigateToParty,
+                    partyRoomViewModel = partyRoomViewModel,
+                    openPartyExitDialog = openPartyExitDialog
+                )
+
+            is PartyRoomUiState.LoadFailed ->
+                navigateToParty()
+        }
+    }
+}
+
+@Composable
+fun RoomLoadingBody() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun PartyRoomBody(
+    modifier: Modifier = Modifier,
+    partyRoomState: PartyRoomState,
     navigateToParty: () -> Unit,
     partyRoomViewModel: PartyRoomViewModel,
     openPartyExitDialog: MutableState<Boolean>
@@ -84,37 +127,15 @@ fun Content(
         navigateToParty()
     }
 
-    LaunchedEffect(partyCode) {
-        if (partyCode != null) {
-            partyRoomViewModel.beginManagerProcess(partyCode)
-        }
-    }
-
-    Box(
-        modifier
-            .fillMaxSize()
-    ) {
-        PartyRoomBody(
-            partyRoomUiState = partyRoomUiState,
-            openPartyExitDialog = openPartyExitDialog
-        )
-    }
-}
-
-@Composable
-fun PartyRoomBody(
-    partyRoomUiState: PartyRoomUiState,
-    openPartyExitDialog: MutableState<Boolean>
-) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PartyRoomInfoBox(
-            partyCode = partyRoomUiState.partyEvent.entryCode
+            partyCode = partyRoomState.partyEvent.entryCode
         )
         Column(
             modifier = Modifier
@@ -132,7 +153,7 @@ fun PartyRoomBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = partyRoomUiState.partyEvent.distance.toString(),
+                    text = partyRoomState.partyEvent.distance.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -150,7 +171,7 @@ fun PartyRoomBody(
             )
             Spacer(modifier = Modifier.height(10.dp))
             ManagerBox(
-                partyRoomUiState.partyEvent.managerId
+                partyRoomState.partyEvent.managerId
             )
         }
         Column(
@@ -166,7 +187,7 @@ fun PartyRoomBody(
             )
             Spacer(modifier = Modifier.height(10.dp))
             ParticipantsBox(
-                partyRoomUiState.partyEvent.participants
+                partyRoomState.partyEvent.participants
             )
         }
         Row(

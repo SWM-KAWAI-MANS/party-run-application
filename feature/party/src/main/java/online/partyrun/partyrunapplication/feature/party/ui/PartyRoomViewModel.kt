@@ -29,7 +29,7 @@ class PartyRoomViewModel @Inject constructor(
     private val startPartyBattleUseCase: StartPartyBattleUseCase
 ) : ViewModel() {
 
-    private val _partyRoomUiState = MutableStateFlow(PartyRoomUiState())
+    private val _partyRoomUiState = MutableStateFlow<PartyRoomUiState>(PartyRoomUiState.Loading)
     val partyRoomUiState: StateFlow<PartyRoomUiState> = _partyRoomUiState.asStateFlow()
 
     private val _snackbarMessage = MutableStateFlow("")
@@ -67,7 +67,7 @@ class PartyRoomViewModel @Inject constructor(
             onFailure = {
                 // disconnect가 이루어지므로 clear만 수행
                 waitingPartySSEstate.complete(Unit)
-                clearPartyProcess()
+                failedProcess()
             }
         )
         connectPartyEventSourceUseCase(
@@ -85,10 +85,14 @@ class PartyRoomViewModel @Inject constructor(
             PartyEvent::class.java
         )
         Timber.tag("Event").d("Event Received: $eventData")
-        _partyRoomUiState.update { state ->
-            state.copy(
-                partyEvent = eventData
+
+        // 현재 상태가 Loading인 경우에만 Success로 상태 변경
+        if (_partyRoomUiState.value is PartyRoomUiState.Loading) {
+            _partyRoomUiState.value = PartyRoomUiState.Success(
+                partyRoomState = PartyRoomState(partyEvent = eventData)
             )
+        } else {
+            _partyRoomUiState.value = _partyRoomUiState.value.updateState(eventData)
         }
     }
 
@@ -98,7 +102,12 @@ class PartyRoomViewModel @Inject constructor(
 
     private fun clearPartyProcess() {
         waitingPartySSEstate = CompletableDeferred()
-        _partyRoomUiState.value = PartyRoomUiState()
+        _partyRoomUiState.value = PartyRoomUiState.Loading
+    }
+
+    private fun failedProcess() {
+        _snackbarMessage.value = "파티가 종료 됐습니다."
+        _partyRoomUiState.value = PartyRoomUiState.LoadFailed
     }
 
 }

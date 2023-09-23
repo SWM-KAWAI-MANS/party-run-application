@@ -8,7 +8,10 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.common.result.onEmpty
+import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.match.GetRunnersInfoUseCase
 import online.partyrun.partyrunapplication.core.domain.match.SaveRunnersInfoUseCase
@@ -17,9 +20,11 @@ import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSou
 import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.party.DisconnectPartyEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.party.StartPartyBattleUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfoData
 import online.partyrun.partyrunapplication.core.model.party.PartyEvent
+import online.partyrun.partyrunapplication.core.model.party.PartyEventStatus
 import online.partyrun.partyrunapplication.feature.party.exception.ManagerProcessException
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,6 +36,7 @@ class PartyRoomViewModel @Inject constructor(
     private val createPartyEventSourceUseCase: CreatePartyEventSourceUseCase,
     private val disconnectPartyEventSourceUseCase: DisconnectPartyEventSourceUseCase,
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
+    private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
     private val startPartyBattleUseCase: StartPartyBattleUseCase
 ) : ViewModel() {
 
@@ -44,6 +50,8 @@ class PartyRoomViewModel @Inject constructor(
         CompletableDeferred<Unit>() // SSE 스트림의 상태를 나타내는 CompletableDeferred.
 
     private val gson = Gson()
+    var runnerInfoData = RunnerInfoData(emptyList())
+    var updatedPartyRoomState = PartyRoomState()
 
     fun clearSnackbarMessage() {
         _snackbarMessage.value = ""
@@ -70,8 +78,8 @@ class PartyRoomViewModel @Inject constructor(
         val listener = createPartyEventSourceListenerUseCase(
             onEvent = ::handlePartyEvent,
             onClosed = {
+                Timber.tag("PartyRoomViewModel").e("정상적인 sse closed")
                 waitingPartySSEstate.complete(Unit)
-                clearPartyProcess()
             },
             onFailure = {
                 // disconnect가 이루어지므로 clear만 수행
@@ -89,30 +97,44 @@ class PartyRoomViewModel @Inject constructor(
     }
 
     private fun handlePartyEvent(data: String) {
-        val eventData = gson.fromJson(
-            data,
-            PartyEvent::class.java
-        )
+        val eventData = gson.fromJson(data, PartyEvent::class.java)
         Timber.tag("Event").d("Event Received: $eventData")
         val allRunnerIds = RunnerIds(eventData.participants)
 
-        viewModelScope.launch {
-            getRunnersInfoUseCase(allRunnerIds).collect { result ->
-                result.onSuccess { runnerInfoList ->
-                    val updatedPartyRoomState = updatePartyRoomState(runnerInfoList, eventData)
+        when (eventData.status) {
+            PartyEventStatus.WAITING -> { // 파티룸에서의 처리
+                viewModelScope.launch {
+                    getRunnersInfoUseCase(allRunnerIds).collect { result ->
+                        result.onSuccess { runnerInfoList ->
+                            runnerInfoData = runnerInfoList
+                            updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
 
-                    // 현재 상태가 Loading인 경우에만 Success로 상태 변경
-                    if (_partyRoomUiState.value is PartyRoomUiState.Loading) {
-                        _partyRoomUiState.value =
-                            PartyRoomUiState.Success(partyRoomState = updatedPartyRoomState)
-                    } else {
-                        _partyRoomUiState.value =
-                            _partyRoomUiState.value.updateState(updatedPartyRoomState)
+                            // 현재 상태가 Loading인 경우에만 Success로 상태 변경
+                            if (_partyRoomUiState.value is PartyRoomUiState.Loading) {
+                                _partyRoomUiState.value =
+                                    PartyRoomUiState.Success(partyRoomState = updatedPartyRoomState)
+                            } else {
+                                _partyRoomUiState.value =
+                                    _partyRoomUiState.value.updateState(updatedPartyRoomState)
+                            }
+                        }
                     }
                 }
             }
+
+            PartyEventStatus.COMPLETED -> { // 파티 시작 시 처리
+                viewModelScope.launch {
+                    saveRunnersInfoUseCase(runnerInfoData)
+                }
+                updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
+                _partyRoomUiState.value =
+                    _partyRoomUiState.value.updateState(updatedPartyRoomState)
+            }
+
+            else -> {}
         }
     }
+
 
     private fun updatePartyRoomState(
         runnerInfoList: RunnerInfoData,
@@ -132,6 +154,19 @@ class PartyRoomViewModel @Inject constructor(
         )
     }
 
+    fun startPartyBattle(partyCode: String) {
+        viewModelScope.launch {
+            startPartyBattleUseCase(partyCode).collect { result ->
+                result.onEmpty {
+                    Timber.tag("파티 배틀").d("startPartyBattle 성공")
+                }.onFailure { errorMessage, code ->
+                    Timber.e("$code $errorMessage")
+                    disconnectPartyEventSourceUseCase()
+                }
+            }
+        }
+    }
+
     private fun disconnectPartyEventSource() {
         disconnectPartyEventSourceUseCase()
     }
@@ -148,6 +183,11 @@ class PartyRoomViewModel @Inject constructor(
 
     fun preparingMenuMessage() {
         _snackbarMessage.value = "메뉴 기능 준비 중이에요."
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        clearPartyProcess()
     }
 
 }

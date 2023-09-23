@@ -13,7 +13,7 @@ interface PartyApiService {
         @Body body: RunningDistanceRequest
     ): ApiResponse<PartyCodeResponse>
 
-    @POST("/api//parties/{code}/start")
+    @POST("/api/parties/{code}/start")
     suspend fun startPartyBattle(
         @Path("code") code: String
     ): ApiResponse<Unit>

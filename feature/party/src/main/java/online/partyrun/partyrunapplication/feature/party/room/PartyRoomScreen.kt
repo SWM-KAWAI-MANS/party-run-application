@@ -45,10 +45,13 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.match.RunnerInfo
+import online.partyrun.partyrunapplication.core.model.party.PartyEventStatus
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
 import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
+import online.partyrun.partyrunapplication.feature.party.toDistance
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
+import timber.log.Timber
 
 @Composable
 fun PartyRoomScreen(
@@ -56,11 +59,11 @@ fun PartyRoomScreen(
     hasManagerPrivileges: Boolean,
     modifier: Modifier = Modifier,
     navigateToParty: () -> Unit = {},
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     partyRoomViewModel: PartyRoomViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
     val partyRoomUiState by partyRoomViewModel.partyRoomUiState.collectAsState()
-    val openPartyExitDialog = remember { mutableStateOf(false) }
     val partyRoomSnackbarMessage by partyRoomViewModel.snackbarMessage.collectAsState()
 
     Content(
@@ -69,8 +72,8 @@ fun PartyRoomScreen(
         modifier = modifier,
         partyRoomUiState = partyRoomUiState,
         navigateToParty = navigateToParty,
+        navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
         partyRoomViewModel = partyRoomViewModel,
-        openPartyExitDialog = openPartyExitDialog,
         onShowSnackbar = onShowSnackbar,
         partyRoomSnackbarMessage = partyRoomSnackbarMessage
     )
@@ -83,11 +86,13 @@ private fun Content(
     modifier: Modifier = Modifier,
     partyRoomUiState: PartyRoomUiState,
     navigateToParty: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     partyRoomViewModel: PartyRoomViewModel,
-    openPartyExitDialog: MutableState<Boolean>,
     onShowSnackbar: (String) -> Unit,
     partyRoomSnackbarMessage: String
 ) {
+    val openPartyExitDialog = remember { mutableStateOf(false) }
+
     LaunchedEffect(partyRoomSnackbarMessage) {
         if (partyRoomSnackbarMessage.isNotEmpty()) {
             onShowSnackbar(partyRoomSnackbarMessage)
@@ -105,9 +110,11 @@ private fun Content(
             is PartyRoomUiState.Success ->
                 RoomSuccessBody(
                     modifier = modifier,
+                    partyCode = partyCode,
                     hasManagerPrivileges = hasManagerPrivileges,
                     partyRoomState = partyRoomUiState.partyRoomState,
                     navigateToParty = navigateToParty,
+                    navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
                     partyRoomViewModel = partyRoomViewModel,
                     openPartyExitDialog = openPartyExitDialog
                 )
@@ -133,12 +140,18 @@ fun RoomLoadingBody() {
 @Composable
 fun RoomSuccessBody(
     modifier: Modifier = Modifier,
+    partyCode: String,
     hasManagerPrivileges: Boolean,
     partyRoomState: PartyRoomState,
     navigateToParty: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     partyRoomViewModel: PartyRoomViewModel,
     openPartyExitDialog: MutableState<Boolean>
 ) {
+    if (partyRoomState.status == PartyEventStatus.COMPLETED) {
+        navigateToBattleRunningWithDistance(partyRoomState.distance)
+    }
+
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
         openPartyExitDialog = openPartyExitDialog,
@@ -167,7 +180,10 @@ fun RoomSuccessBody(
                 modifier = modifier,
                 hasManagerPrivileges = hasManagerPrivileges,
                 partyRoomState = partyRoomState,
-                openPartyExitDialog = openPartyExitDialog
+                openPartyExitDialog = openPartyExitDialog,
+                startPartyBattle = {
+                    partyRoomViewModel.startPartyBattle(partyCode = partyCode)
+                }
             )
         }
     }
@@ -178,7 +194,8 @@ private fun PartyRoomBody(
     modifier: Modifier,
     hasManagerPrivileges: Boolean,
     partyRoomState: PartyRoomState,
-    openPartyExitDialog: MutableState<Boolean>
+    openPartyExitDialog: MutableState<Boolean>,
+    startPartyBattle: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -258,7 +275,9 @@ private fun PartyRoomBody(
                 Spacer(modifier = Modifier.width(10.dp))
                 StartButton(
                     modifier = Modifier.weight(1f)
-                )
+                ) {
+                    startPartyBattle()
+                }
             }
         }
     }
@@ -331,10 +350,11 @@ private fun QuitButton(
 
 @Composable
 private fun StartButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    startPartyBattle: () -> Unit
 ) {
     PartyRunGradientButton(
-        onClick = { },
+        onClick = { startPartyBattle() },
         modifier = modifier
             .shadow(5.dp, shape = CircleShape)
     ) {

@@ -11,6 +11,7 @@ import online.partyrun.partyrunapplication.feature.party.room.PartyRoomScreen
 fun NavGraphBuilder.partyRoute(
     navigateToPartyRoom: (String, Boolean) -> Unit,
     navigateToParty: () -> Unit,
+    navigateToBattleRunningWithDistance: (Int) -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     composable(route = MainNavRoutes.Party.route) {
@@ -40,6 +41,7 @@ fun NavGraphBuilder.partyRoute(
             partyCode = partyCode ?: "",
             hasManagerPrivileges = hasManagerPrivileges ?: false,
             navigateToParty = navigateToParty,
+            navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,
             onShowSnackbar = onShowSnackbar
         )
     }

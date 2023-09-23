@@ -85,6 +85,13 @@ fun SetUpMainNavGraph(
                     }
                 }
             },
+            navigateToBattleRunningWithDistance = { distance ->
+                navController.navigate("${MainNavRoutes.BattleRunning.route}?distance=$distance") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
+            },
             onShowSnackbar = onShowSnackbar
         )
 

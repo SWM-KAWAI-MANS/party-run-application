@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.party.ui
+package online.partyrun.partyrunapplication.feature.party.room
 
 import online.partyrun.partyrunapplication.core.model.party.PartyEvent
 

@@ -41,7 +41,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRo
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.HeadLine
-import online.partyrun.partyrunapplication.feature.party.ui.PartyJoinDialog
+import online.partyrun.partyrunapplication.feature.party.join.PartyJoinDialog
 
 @Composable
 fun PartyScreen(

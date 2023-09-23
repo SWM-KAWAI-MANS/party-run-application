@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.party.ui
+package online.partyrun.partyrunapplication.feature.party.join
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

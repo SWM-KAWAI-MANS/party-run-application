@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.feature.party.PartyScreen
-import online.partyrun.partyrunapplication.feature.party.ui.PartyRoomScreen
+import online.partyrun.partyrunapplication.feature.party.room.PartyRoomScreen
 
 fun NavGraphBuilder.partyRoute(
     navigateToPartyRoom: (String) -> Unit,

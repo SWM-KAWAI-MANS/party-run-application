@@ -36,7 +36,7 @@ class PartyDataSourceImpl @Inject constructor(
         onClosed: () -> Unit,
         onFailure: () -> Unit
     ): EventSourceListener {
-        return createEventListener(onEvent, onClosed, onFailure)
+        return createPartyEventListener(onEvent, onClosed, onFailure)
     }
 
     override fun createEventSource(url: String, listener: EventSourceListener): EventSource {
@@ -54,18 +54,18 @@ class PartyDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun createEventListener(
+    private fun createPartyEventListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit,
         onFailure: () -> Unit
     ): EventSourceListener {
         return object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
-                Timber.tag("Event").d("Connection Success")
+                Timber.tag("Event").d("Party SSE Connection Success")
             }
 
             override fun onClosed(eventSource: EventSource) {
-                Timber.tag("Event").d("Connection closed")
+                Timber.tag("Event").d("Party SSE Connection closed")
                 onClosed()
             }
 
@@ -75,7 +75,7 @@ class PartyDataSourceImpl @Inject constructor(
                 type: String?,
                 data: String,
             ) {
-                Timber.tag("Event").d("onEvent")
+                Timber.tag("Event").d("Party SSE onEvent")
                 onEvent(data)
             }
 
@@ -84,12 +84,10 @@ class PartyDataSourceImpl @Inject constructor(
                 t: Throwable?,
                 response: Response?
             ) {
-                Timber.tag("Event").d("On Failure -: $t")
-                Timber.tag("Event").d("On Failure -: $response")
+                Timber.tag("Event").d("On Failure -: $t, $response")
                 onFailure()
             }
         }
     }
-
 
 }

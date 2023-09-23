@@ -106,7 +106,9 @@ class PartyRoomViewModel @Inject constructor(
                 completedEventProcess(eventData)
             }
 
-            else -> {}
+            else -> {
+                Timber.d("CANCELLED EVENT")
+            }
         }
     }
 

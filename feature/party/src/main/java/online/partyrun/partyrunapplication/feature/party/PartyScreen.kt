@@ -47,15 +47,19 @@ import online.partyrun.partyrunapplication.feature.party.ui.PartyJoinDialog
 fun PartyScreen(
     modifier: Modifier = Modifier,
     navigateToPartyRoom: (String) -> Unit,
-    partyViewModel: PartyViewModel = hiltViewModel()
+    partyViewModel: PartyViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
     val partyUiState by partyViewModel.partyUiState.collectAsState()
+    val partySnackbarMessage by partyViewModel.snackbarMessage.collectAsState()
 
     Content(
         modifier = modifier,
         partyViewModel = partyViewModel,
         partyUiState = partyUiState,
-        navigateToPartyRoom = navigateToPartyRoom
+        navigateToPartyRoom = navigateToPartyRoom,
+        onShowSnackbar = onShowSnackbar,
+        partySnackbarMessage = partySnackbarMessage
     )
 }
 
@@ -64,7 +68,9 @@ fun Content(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
     partyUiState: PartyUiState,
-    navigateToPartyRoom: (String) -> Unit
+    navigateToPartyRoom: (String) -> Unit,
+    onShowSnackbar: (String) -> Unit,
+    partySnackbarMessage: String
 ) {
     val showJoinDialog = remember { mutableStateOf(false) }
 
@@ -81,6 +87,13 @@ fun Content(
     LaunchedEffect(partyUiState.partyCode) {
         if (partyUiState.partyCode.isNotEmpty()) {
             navigateToPartyRoom(partyUiState.partyCode)
+        }
+    }
+
+    LaunchedEffect(partySnackbarMessage) {
+        if (partySnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(partySnackbarMessage)
+            partyViewModel.clearSnackbarMessage()
         }
     }
 

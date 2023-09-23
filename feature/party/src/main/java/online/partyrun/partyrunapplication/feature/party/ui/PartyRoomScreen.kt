@@ -52,10 +52,12 @@ fun PartyRoomScreen(
     partyCode: String?,
     modifier: Modifier = Modifier,
     navigateToParty: () -> Unit = {},
-    partyRoomViewModel: PartyRoomViewModel = hiltViewModel()
+    partyRoomViewModel: PartyRoomViewModel = hiltViewModel(),
+    onShowSnackbar: (String) -> Unit
 ) {
     val partyRoomUiState by partyRoomViewModel.partyRoomUiState.collectAsState()
     val openPartyExitDialog = remember { mutableStateOf(false) }
+    val partyRoomSnackbarMessage by partyRoomViewModel.snackbarMessage.collectAsState()
 
     Content(
         partyCode = partyCode,
@@ -63,7 +65,9 @@ fun PartyRoomScreen(
         partyRoomUiState = partyRoomUiState,
         navigateToParty = navigateToParty,
         partyRoomViewModel = partyRoomViewModel,
-        openPartyExitDialog = openPartyExitDialog
+        openPartyExitDialog = openPartyExitDialog,
+        onShowSnackbar = onShowSnackbar,
+        partyRoomSnackbarMessage = partyRoomSnackbarMessage
     )
 }
 
@@ -74,8 +78,17 @@ private fun Content(
     partyRoomUiState: PartyRoomUiState,
     navigateToParty: () -> Unit,
     partyRoomViewModel: PartyRoomViewModel,
-    openPartyExitDialog: MutableState<Boolean>
+    openPartyExitDialog: MutableState<Boolean>,
+    onShowSnackbar: (String) -> Unit,
+    partyRoomSnackbarMessage: String
 ) {
+    LaunchedEffect(partyRoomSnackbarMessage) {
+        if (partyRoomSnackbarMessage.isNotEmpty()) {
+            onShowSnackbar(partyRoomSnackbarMessage)
+            partyRoomViewModel.clearSnackbarMessage()
+        }
+    }
+
     LaunchedEffect(partyCode) {
         if (partyCode != null) {
             partyRoomViewModel.beginManagerProcess(partyCode)

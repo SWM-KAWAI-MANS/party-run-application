@@ -10,11 +10,13 @@ import online.partyrun.partyrunapplication.feature.party.ui.PartyRoomScreen
 
 fun NavGraphBuilder.partyRoute(
     navigateToPartyRoom: (String) -> Unit,
-    navigateToParty: () -> Unit
+    navigateToParty: () -> Unit,
+    onShowSnackbar: (String) -> Unit
 ) {
     composable(route = MainNavRoutes.Party.route) {
         PartyScreen(
-            navigateToPartyRoom = navigateToPartyRoom
+            navigateToPartyRoom = navigateToPartyRoom,
+            onShowSnackbar = onShowSnackbar
         )
     }
 
@@ -28,7 +30,8 @@ fun NavGraphBuilder.partyRoute(
     ) { backStackEntry ->
         PartyRoomScreen(
             partyCode = backStackEntry.arguments?.getString("code"),
-            navigateToParty = navigateToParty
+            navigateToParty = navigateToParty,
+            onShowSnackbar = onShowSnackbar
         )
     }
 }

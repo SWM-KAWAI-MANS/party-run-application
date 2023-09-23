@@ -84,7 +84,8 @@ fun SetUpMainNavGraph(
                         inclusive = true
                     }
                 }
-            }
+            },
+            onShowSnackbar = onShowSnackbar
         )
 
         myPageRoute(

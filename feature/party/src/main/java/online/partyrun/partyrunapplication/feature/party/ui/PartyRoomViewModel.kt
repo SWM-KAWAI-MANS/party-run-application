@@ -40,6 +40,10 @@ class PartyRoomViewModel @Inject constructor(
 
     private val gson = Gson()
 
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = ""
+    }
+
     fun quitPartyRoom() {
         disconnectPartyEventSource()
     }
@@ -106,7 +110,7 @@ class PartyRoomViewModel @Inject constructor(
     }
 
     private fun failedProcess() {
-        _snackbarMessage.value = "파티가 종료 됐습니다."
+        _snackbarMessage.value = "파티 연결이 끊어졌습니다."
         _partyRoomUiState.value = PartyRoomUiState.LoadFailed
     }
 

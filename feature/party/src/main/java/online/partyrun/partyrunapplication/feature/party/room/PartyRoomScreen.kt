@@ -50,9 +50,7 @@ import online.partyrun.partyrunapplication.core.model.party.PartyEventStatus
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
 import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
-import online.partyrun.partyrunapplication.feature.party.toDistance
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
-import timber.log.Timber
 
 @Composable
 fun PartyRoomScreen(
@@ -102,7 +100,7 @@ private fun Content(
     }
 
     LaunchedEffect(partyCode) {
-        partyRoomViewModel.beginManagerProcess(partyCode)
+        partyRoomViewModel.beginPartyProcess(partyCode)
     }
 
     Box(modifier = modifier) {

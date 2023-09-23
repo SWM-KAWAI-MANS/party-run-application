@@ -7,7 +7,6 @@ enum class KmState(val imageRes: Int) {
     KM_10(R.drawable.party_track_10km);
 }
 
-
 fun KmState.toDistance(): Int = when (this) {
     KmState.KM_1 -> 1000
     KmState.KM_3 -> 3000

@@ -2,9 +2,7 @@ package online.partyrun.partyrunapplication.feature.party
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,15 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
-import online.partyrun.partyrunapplication.core.domain.party.ConnectPartyEventSourceUseCase
-import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSourceListenerUseCase
-import online.partyrun.partyrunapplication.core.domain.party.CreatePartyEventSourceUseCase
-import online.partyrun.partyrunapplication.core.domain.party.DisconnectPartyEventSourceUseCase
 import online.partyrun.partyrunapplication.core.domain.party.SendCreatePartyUseCase
-import online.partyrun.partyrunapplication.core.domain.party.StartPartyBattleUseCase
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
-import online.partyrun.partyrunapplication.core.model.party.PartyEvent
-import online.partyrun.partyrunapplication.feature.party.exception.ManagerProcessException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -75,4 +66,3 @@ class PartyViewModel @Inject constructor(
     }
 
 }
-

@@ -40,8 +40,21 @@ class PartyViewModel @Inject constructor(
         _kmState.value = state
     }
 
-    fun setPartyCodeInput(number: String) {
-        _partyCodeInput.value = number
+    fun setPartyCodeInput(partyCode: String) {
+        _partyCodeInput.value = partyCode
+    }
+
+    fun validatePartyCode(): Boolean {
+        val isValid = _partyCodeInput.value.let {
+            it.length == 6 && it.all { char -> char.isDigit() }
+        }
+
+        return isValid
+    }
+
+    fun showInvalidCodeError() {
+        _snackbarMessage.value = "방 번호를 다시 확인해주세요."
+        clearPartyCodeInput()
     }
 
     fun clearPartyCodeInput() {

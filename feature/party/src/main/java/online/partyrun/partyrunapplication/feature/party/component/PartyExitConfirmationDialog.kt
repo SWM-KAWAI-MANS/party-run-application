@@ -47,7 +47,7 @@ fun PartyExitConfirmationDialog(
                             stringResource(id = R.string.quit_party_dialog_manager)
                         else
                             stringResource(id = R.string.quit_party_dialog_participant),
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }

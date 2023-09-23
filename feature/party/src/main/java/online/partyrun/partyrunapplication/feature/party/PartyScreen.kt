@@ -58,8 +58,8 @@ fun PartyScreen(
         partyViewModel = partyViewModel,
         partyUiState = partyUiState,
         navigateToPartyRoom = navigateToPartyRoom,
-        onShowSnackbar = onShowSnackbar,
-        partySnackbarMessage = partySnackbarMessage
+        partySnackbarMessage = partySnackbarMessage,
+        onShowSnackbar = onShowSnackbar
     )
 }
 
@@ -69,8 +69,8 @@ fun Content(
     partyViewModel: PartyViewModel,
     partyUiState: PartyUiState,
     navigateToPartyRoom: (String, Boolean) -> Unit,
-    onShowSnackbar: (String) -> Unit,
-    partySnackbarMessage: String
+    partySnackbarMessage: String,
+    onShowSnackbar: (String) -> Unit
 ) {
     val showJoinDialog = remember { mutableStateOf(false) }
 

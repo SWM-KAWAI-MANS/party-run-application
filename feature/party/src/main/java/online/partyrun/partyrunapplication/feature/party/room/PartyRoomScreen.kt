@@ -44,6 +44,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.match.RunnerInfo
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
 import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
@@ -181,7 +182,7 @@ private fun PartyRoomBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PartyRoomInfoBox(
-            partyCode = partyRoomState.partyEvent.entryCode
+            partyCode = partyRoomState.entryCode
         )
         Column(
             modifier = Modifier
@@ -199,7 +200,7 @@ private fun PartyRoomBody(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp),
-                    text = partyRoomState.partyEvent.distance.toString(),
+                    text = partyRoomState.distance.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -216,9 +217,9 @@ private fun PartyRoomBody(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
             Spacer(modifier = Modifier.height(10.dp))
-            ManagerBox(
-                partyRoomState.partyEvent.managerId
-            )
+            partyRoomState.manager?.let { runnerInfo ->
+                ManagerBox(runnerInfo)
+            }
         }
         Column(
             modifier = Modifier
@@ -233,7 +234,7 @@ private fun PartyRoomBody(
             )
             Spacer(modifier = Modifier.height(10.dp))
             ParticipantsBox(
-                partyRoomState.partyEvent.participants
+                partyRoomState.participants
             )
         }
         Row(
@@ -340,7 +341,7 @@ private fun StartButton(
 
 @Composable
 private fun ManagerBox(
-    managerId: String
+    manager: RunnerInfo
 ) {
     SurfaceRoundedRect(
         color = MaterialTheme.colorScheme.surface
@@ -364,13 +365,13 @@ private fun ManagerBox(
                         .clip(CircleShape)
                 ) {
                     RenderAsyncUrlImage(
-                        imageUrl = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png",
+                        imageUrl = manager.profile,
                         contentDescription = null
                     )
                 }
                 Text(
                     modifier = Modifier.padding(start = 15.dp),
-                    text = managerId,
+                    text = manager.name,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -386,7 +387,7 @@ private fun ManagerBox(
 
 @Composable
 fun ParticipantsBox(
-    participants: List<String>
+    participants: List<RunnerInfo>
 ) {
     SurfaceRoundedRect(
         modifier = Modifier.fillMaxSize(),
@@ -405,7 +406,7 @@ fun ParticipantsBox(
 }
 
 @Composable
-fun RunnerRow(runner: String) {
+fun RunnerRow(runner: RunnerInfo) {
     Row(
         modifier = Modifier.padding(10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -418,13 +419,13 @@ fun RunnerRow(runner: String) {
                 .clip(CircleShape)
         ) {
             RenderAsyncUrlImage(
-                imageUrl = "https://partyrun.s3.ap-northeast-2.amazonaws.com/profile-image/partyrun-default.png",
+                imageUrl = runner.profile,
                 contentDescription = null
             )
         }
         Text(
             modifier = Modifier.padding(start = 15.dp),
-            text = runner,
+            text = runner.name,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.party.room
 
-import online.partyrun.partyrunapplication.core.model.party.PartyEvent
-
 sealed class PartyRoomUiState {
     object Loading : PartyRoomUiState()
 
@@ -13,14 +11,12 @@ sealed class PartyRoomUiState {
 }
 
 fun PartyRoomUiState.updateState(
-    newEvent: PartyEvent? = null,
+    partyRoomState: PartyRoomState
 ): PartyRoomUiState {
     return when (this) {
-        is PartyRoomUiState.Success -> this.copy(
-            partyRoomState = this.partyRoomState.copy(
-                partyEvent = newEvent ?: this.partyRoomState.partyEvent
-            )
-        )
+        is PartyRoomUiState.Success -> {
+            this.copy(partyRoomState = partyRoomState)
+        }
 
         else -> this
     }

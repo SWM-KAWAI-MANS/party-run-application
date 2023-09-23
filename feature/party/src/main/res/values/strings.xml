@@ -4,6 +4,7 @@
     <string name="party_head_line_2">목표를 달성해 보세요</string>
     <string name="join_party">방 참여하기</string>
     <string name="create_party">방 만들기</string>
+    <string name="party_room">파티룸</string>
     <string name="start_btn">시작하기</string>
     <string name="quit_btn">나가기</string>
     <string name="ic_arrow_back_desc">뒤로 가기</string>
@@ -11,6 +12,7 @@
     <string name="manager">방장</string>
     <string name="participants">참여자</string>
     <string name="distance">거리</string>
+    <string name="ic_menu_desc">메뉴 아이콘</string>
 
     <string name="track_image_desc">트랙 이미지</string>
     <string name="ic_join_desc">파티 참여 아이콘</string>

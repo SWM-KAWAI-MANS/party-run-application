@@ -110,8 +110,12 @@ class PartyRoomViewModel @Inject constructor(
     }
 
     private fun failedProcess() {
-        _snackbarMessage.value = "파티 연결이 끊어졌습니다."
+        _snackbarMessage.value = "파티 세션이 종료됐어요."
         _partyRoomUiState.value = PartyRoomUiState.LoadFailed
+    }
+
+    fun preparingMenuMessage() {
+        _snackbarMessage.value = "메뉴 기능 준비 중이에요."
     }
 
 }

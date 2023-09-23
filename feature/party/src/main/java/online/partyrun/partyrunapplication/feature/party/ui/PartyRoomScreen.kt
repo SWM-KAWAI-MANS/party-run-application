@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +46,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRo
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.feature.party.R
 import online.partyrun.partyrunapplication.feature.party.component.PartyBackNavigationHandler
+import online.partyrun.partyrunapplication.feature.party.component.PartyRoomTopAppBar
 import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
 
 @Composable
@@ -99,7 +101,7 @@ private fun Content(
         when (partyRoomUiState) {
             is PartyRoomUiState.Loading -> RoomLoadingBody()
             is PartyRoomUiState.Success ->
-                PartyRoomBody(
+                RoomSuccessBody(
                     modifier = modifier,
                     partyRoomState = partyRoomUiState.partyRoomState,
                     navigateToParty = navigateToParty,
@@ -124,8 +126,9 @@ fun RoomLoadingBody() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PartyRoomBody(
+fun RoomSuccessBody(
     modifier: Modifier = Modifier,
     partyRoomState: PartyRoomState,
     navigateToParty: () -> Unit,
@@ -140,6 +143,36 @@ fun PartyRoomBody(
         navigateToParty()
     }
 
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            PartyRoomTopAppBar(
+                modifier = modifier
+            ) {
+                partyRoomViewModel.preparingMenuMessage()
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            PartyRoomBody(
+                modifier = modifier,
+                partyRoomState = partyRoomState,
+                openPartyExitDialog = openPartyExitDialog
+            )
+        }
+    }
+}
+
+@Composable
+private fun PartyRoomBody(
+    modifier: Modifier,
+    partyRoomState: PartyRoomState,
+    openPartyExitDialog: MutableState<Boolean>
+) {
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -23,6 +23,7 @@ import online.partyrun.partyrunapplication.feature.party.R
 @Composable
 fun PartyExitConfirmationDialog(
     openPartyExitDialog: MutableState<Boolean>,
+    hasManagerPrivileges: Boolean,
     confirmExit: () -> Unit
 ) {
     if (openPartyExitDialog.value) {
@@ -41,8 +42,12 @@ fun PartyExitConfirmationDialog(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = stringResource(id = R.string.quit_party_dialog_title_2),
-                        style = MaterialTheme.typography.titleSmall,
+                        text =
+                        if (hasManagerPrivileges)
+                            stringResource(id = R.string.quit_party_dialog_manager)
+                        else
+                            stringResource(id = R.string.quit_party_dialog_participant),
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }

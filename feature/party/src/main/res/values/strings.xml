@@ -19,7 +19,8 @@
     <string name="ic_creation_desc">파티 생성 아이콘</string>
 
     <string name="quit_party_dialog_title_1">파티를 떠나나요?</string>
-    <string name="quit_party_dialog_title_2">자신이 방장인 경우, 파티가 해체됩니다.</string>
+    <string name="quit_party_dialog_manager">방장이 파티를 나가면 파티 전체가 해체돼요.\n그래도 떠나나요?</string>
+    <string name="quit_party_dialog_participant">파티원들이 아쉬워할거예요.\n그래도 떠나나요?</string>
     <string name="quit_party_dialog_confirm">예</string>
     <string name="quit_party_dialog_cancel">아니오</string>
     

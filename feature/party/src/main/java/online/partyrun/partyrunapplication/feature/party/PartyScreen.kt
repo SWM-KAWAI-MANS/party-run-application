@@ -46,7 +46,7 @@ import online.partyrun.partyrunapplication.feature.party.join.PartyJoinDialog
 @Composable
 fun PartyScreen(
     modifier: Modifier = Modifier,
-    navigateToPartyRoom: (String) -> Unit,
+    navigateToPartyRoom: (String, Boolean) -> Unit,
     partyViewModel: PartyViewModel = hiltViewModel(),
     onShowSnackbar: (String) -> Unit
 ) {
@@ -68,7 +68,7 @@ fun Content(
     modifier: Modifier = Modifier,
     partyViewModel: PartyViewModel,
     partyUiState: PartyUiState,
-    navigateToPartyRoom: (String) -> Unit,
+    navigateToPartyRoom: (String, Boolean) -> Unit,
     onShowSnackbar: (String) -> Unit,
     partySnackbarMessage: String
 ) {
@@ -86,7 +86,7 @@ fun Content(
 
     LaunchedEffect(partyUiState.partyCode) {
         if (partyUiState.partyCode.isNotEmpty()) {
-            navigateToPartyRoom(partyUiState.partyCode)
+            navigateToPartyRoom(partyUiState.partyCode, true) // 매니저 권한 부여 == true
         }
     }
 

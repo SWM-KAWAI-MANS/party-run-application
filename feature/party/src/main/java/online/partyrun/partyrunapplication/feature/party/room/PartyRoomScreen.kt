@@ -52,7 +52,8 @@ import online.partyrun.partyrunapplication.feature.party.util.copyToClipboard
 
 @Composable
 fun PartyRoomScreen(
-    partyCode: String?,
+    partyCode: String,
+    hasManagerPrivileges: Boolean,
     modifier: Modifier = Modifier,
     navigateToParty: () -> Unit = {},
     partyRoomViewModel: PartyRoomViewModel = hiltViewModel(),
@@ -64,6 +65,7 @@ fun PartyRoomScreen(
 
     Content(
         partyCode = partyCode,
+        hasManagerPrivileges = hasManagerPrivileges,
         modifier = modifier,
         partyRoomUiState = partyRoomUiState,
         navigateToParty = navigateToParty,
@@ -76,7 +78,8 @@ fun PartyRoomScreen(
 
 @Composable
 private fun Content(
-    partyCode: String?,
+    partyCode: String,
+    hasManagerPrivileges: Boolean,
     modifier: Modifier = Modifier,
     partyRoomUiState: PartyRoomUiState,
     navigateToParty: () -> Unit,
@@ -93,9 +96,7 @@ private fun Content(
     }
 
     LaunchedEffect(partyCode) {
-        if (partyCode != null) {
-            partyRoomViewModel.beginManagerProcess(partyCode)
-        }
+        partyRoomViewModel.beginManagerProcess(partyCode)
     }
 
     Box(modifier = modifier) {
@@ -104,6 +105,7 @@ private fun Content(
             is PartyRoomUiState.Success ->
                 RoomSuccessBody(
                     modifier = modifier,
+                    hasManagerPrivileges = hasManagerPrivileges,
                     partyRoomState = partyRoomUiState.partyRoomState,
                     navigateToParty = navigateToParty,
                     partyRoomViewModel = partyRoomViewModel,
@@ -131,6 +133,7 @@ fun RoomLoadingBody() {
 @Composable
 fun RoomSuccessBody(
     modifier: Modifier = Modifier,
+    hasManagerPrivileges: Boolean,
     partyRoomState: PartyRoomState,
     navigateToParty: () -> Unit,
     partyRoomViewModel: PartyRoomViewModel,
@@ -138,7 +141,8 @@ fun RoomSuccessBody(
 ) {
     // 대결 중 BackPressed 수행 시 처리할 핸들러
     PartyBackNavigationHandler(
-        openPartyExitDialog = openPartyExitDialog
+        openPartyExitDialog = openPartyExitDialog,
+        hasManagerPrivileges = hasManagerPrivileges
     ) {
         partyRoomViewModel.quitPartyRoom()
         navigateToParty()
@@ -161,6 +165,7 @@ fun RoomSuccessBody(
         ) {
             PartyRoomBody(
                 modifier = modifier,
+                hasManagerPrivileges = hasManagerPrivileges,
                 partyRoomState = partyRoomState,
                 openPartyExitDialog = openPartyExitDialog
             )
@@ -171,6 +176,7 @@ fun RoomSuccessBody(
 @Composable
 private fun PartyRoomBody(
     modifier: Modifier,
+    hasManagerPrivileges: Boolean,
     partyRoomState: PartyRoomState,
     openPartyExitDialog: MutableState<Boolean>
 ) {
@@ -248,10 +254,12 @@ private fun PartyRoomBody(
                 modifier = Modifier.weight(1f),
                 openPartyExitDialog = openPartyExitDialog
             )
-            Spacer(modifier = Modifier.width(10.dp))
-            StartButton(
-                modifier = Modifier.weight(1f)
-            )
+            if (hasManagerPrivileges) { // 방장이면 Start 버튼 추가
+                Spacer(modifier = Modifier.width(10.dp))
+                StartButton(
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

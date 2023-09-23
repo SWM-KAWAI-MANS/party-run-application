@@ -9,7 +9,7 @@ import online.partyrun.partyrunapplication.feature.party.PartyScreen
 import online.partyrun.partyrunapplication.feature.party.room.PartyRoomScreen
 
 fun NavGraphBuilder.partyRoute(
-    navigateToPartyRoom: (String) -> Unit,
+    navigateToPartyRoom: (String, Boolean) -> Unit,
     navigateToParty: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
@@ -22,14 +22,23 @@ fun NavGraphBuilder.partyRoute(
 
     // PartyNavRoute
     composable(
-        route = "${PartyNavRoutes.PartyRoom.route}?code={code}",
-        arguments = listOf(navArgument("code") {
-            type = NavType.StringType
-            defaultValue = ""
-        })
+        route = "${PartyNavRoutes.PartyRoom.route}?code={code}&hasManagerPrivileges={hasManagerPrivileges}",
+        arguments = listOf(
+            navArgument("code") {
+                type = NavType.StringType
+                defaultValue = ""
+            },
+            navArgument("hasManagerPrivileges") {
+                type = NavType.BoolType
+                defaultValue = false
+            }
+        )
     ) { backStackEntry ->
+        val partyCode = backStackEntry.arguments?.getString("code")
+        val hasManagerPrivileges = backStackEntry.arguments?.getBoolean("hasManagerPrivileges")
         PartyRoomScreen(
-            partyCode = backStackEntry.arguments?.getString("code"),
+            partyCode = partyCode ?: "",
+            hasManagerPrivileges = hasManagerPrivileges ?: false,
             navigateToParty = navigateToParty,
             onShowSnackbar = onShowSnackbar
         )

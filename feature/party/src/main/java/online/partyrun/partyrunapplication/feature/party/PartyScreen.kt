@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.party
 
-import android.Manifest
-import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,14 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.feature.party.join.PartyJoinDialog
-import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
+import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
+import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
 
 private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
@@ -83,13 +81,7 @@ fun Content(
     partySnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
-    val showPermissionDialog = remember { mutableStateOf(false) }
-
-    val permissionsList = listOfNotNull(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
-    )
-    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+    val (showPermissionDialog, permissionState) = settingPermissionVariables()
     val showJoinDialog = remember { mutableStateOf(false) }
 
     HandlePermissionActions(
@@ -299,6 +291,19 @@ private fun TrackImage(currentKmState: KmState) {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
+private fun handleJoinParty(
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>,
+    showJoinDialog: MutableState<Boolean>
+) {
+    if (shouldExecuteStartAction(permissionState)) {
+        showJoinDialog.value = true
+    } else {
+        showPermissionDialog.value = true
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
 private fun handleCreateParty(
     permissionState: MultiplePermissionsState,
     showPermissionDialog: MutableState<Boolean>,
@@ -311,19 +316,6 @@ private fun handleCreateParty(
                 distance = currentKmState.toDistance()
             )
         )
-    } else {
-        showPermissionDialog.value = true
-    }
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-private fun handleJoinParty(
-    permissionState: MultiplePermissionsState,
-    showPermissionDialog: MutableState<Boolean>,
-    showJoinDialog: MutableState<Boolean>
-) {
-    if (shouldExecuteStartAction(permissionState)) {
-        showJoinDialog.value = true
     } else {
         showPermissionDialog.value = true
     }
@@ -343,19 +335,4 @@ fun isDebounced(currentTime: Long): Boolean {
         return true
     }
     return false
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun HandlePermissionActions(
-    permissionState: MultiplePermissionsState,
-    showPermissionDialog: MutableState<Boolean>
-) {
-    if (showPermissionDialog.value) {
-        CheckMultiplePermissions(
-            permissionState = permissionState,
-            onPermissionResult = { if (it) showPermissionDialog.value = false },
-            showPermissionDialog = showPermissionDialog
-        )
-    }
 }

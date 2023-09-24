@@ -31,7 +31,7 @@ object BottomNavBarItems {
             image = PartyIcon,
             selectedImage = SelectedPartyIcon,
             route = MainNavRoutes.Party.route,
-            isLaunched = false
+            isLaunched = true
         ),
         BottomBarItem(
             title = R.string.my_page_title,

@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.battle
 
-import android.Manifest
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +17,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.BottomHalfOvalGradientShape
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunMatchButton
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
@@ -40,7 +35,8 @@ import online.partyrun.partyrunapplication.core.ui.KmInfoCard
 import online.partyrun.partyrunapplication.feature.match.MatchDialog
 import online.partyrun.partyrunapplication.feature.match.MatchUiState
 import online.partyrun.partyrunapplication.feature.match.MatchViewModel
-import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
+import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
+import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
 
 private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
@@ -135,13 +131,7 @@ fun BattleMainBody(
     matchViewModel: MatchViewModel,
     matchUiState: MatchUiState
 ) {
-    val showPermissionDialog = remember { mutableStateOf(false) }
-
-    val permissionsList = listOfNotNull(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
-    )
-    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+    val (showPermissionDialog, permissionState) = settingPermissionVariables()
 
     HandlePermissionActions(
         permissionState = permissionState,
@@ -284,22 +274,6 @@ private fun matchingAction(matchViewModel: MatchViewModel, currentKmState: KmSta
             distance = currentKmState.toDistance()
         )
     )
-}
-
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun HandlePermissionActions(
-    permissionState: MultiplePermissionsState,
-    showPermissionDialog: MutableState<Boolean>
-) {
-    if (showPermissionDialog.value) {
-        CheckMultiplePermissions(
-            permissionState = permissionState,
-            onPermissionResult = { if (it) showPermissionDialog.value = false },
-            showPermissionDialog = showPermissionDialog
-        )
-    }
 }
 
 fun isDebounced(currentTime: Long): Boolean {

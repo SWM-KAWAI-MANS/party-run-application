@@ -66,18 +66,7 @@ fun PartyJoinDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                IconButton(
-                    onClick = {
-                        partyViewModel.clearPartyCodeInput()
-                        onDismissRequest()
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = PartyRunIcons.Close),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                JoinDialogCloseButton(partyViewModel, onDismissRequest)
             }
             Text(
                 text = stringResource(id = R.string.party_dialog_info),
@@ -101,23 +90,62 @@ fun PartyJoinDialog(
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
-
-            PartyRunGradientButton(
-                onClick = {
-                    onDismissRequest()
-                    navigateToPartyRoom(partyCodeInput, false) // 참여자 -> 매니저 권한 미부여 == false
-                },
-                modifier = modifier.fillMaxWidth()
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 7.dp),
-                    text = stringResource(id = R.string.party_dialog_join),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+            JoinButton(
+                modifier = modifier,
+                onDismissRequest = onDismissRequest,
+                partyCodeInput = partyCodeInput,
+                partyViewModel = partyViewModel,
+                navigateToPartyRoom = navigateToPartyRoom
+            )
             Spacer(modifier = Modifier.height(20.dp))
 
         }
+    }
+}
+
+@Composable
+private fun JoinButton(
+    modifier: Modifier,
+    onDismissRequest: () -> Unit,
+    partyCodeInput: String,
+    partyViewModel: PartyViewModel,
+    navigateToPartyRoom: (String, Boolean) -> Unit
+) {
+    PartyRunGradientButton(
+        onClick = {
+            onDismissRequest()
+            if (partyViewModel.validatePartyCode()) {
+                navigateToPartyRoom(partyCodeInput, false) // 참여자 -> 매니저 권한 미부여 == false
+            } else {
+                partyViewModel.showInvalidCodeError()
+            }
+        },
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 7.dp),
+            text = stringResource(id = R.string.party_dialog_join),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
+}
+
+@Composable
+private fun JoinDialogCloseButton(
+    partyViewModel: PartyViewModel,
+    onDismissRequest: () -> Unit
+) {
+    IconButton(
+        onClick = {
+            partyViewModel.clearPartyCodeInput()
+            onDismissRequest()
+        }
+    ) {
+        Icon(
+            painter = painterResource(id = PartyRunIcons.Close),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }

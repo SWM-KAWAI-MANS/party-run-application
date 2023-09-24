@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,12 +37,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.match.RunningDistance
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.feature.party.join.PartyJoinDialog
+import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
+import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
+
+private var lastClickTime = 0L
+private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
 
 @Composable
 fun PartyScreen(
@@ -63,6 +71,7 @@ fun PartyScreen(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Content(
     modifier: Modifier = Modifier,
@@ -72,7 +81,13 @@ fun Content(
     partySnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
 ) {
+    val (showPermissionDialog, permissionState) = settingPermissionVariables()
     val showJoinDialog = remember { mutableStateOf(false) }
+
+    HandlePermissionActions(
+        permissionState = permissionState,
+        showPermissionDialog = showPermissionDialog
+    )
 
     if (showJoinDialog.value) {
         PartyJoinDialog(
@@ -113,7 +128,11 @@ fun Content(
         ) {
             PartyRunGradientButton(
                 onClick = {
-                    showJoinDialog.value = true
+                    handleJoinParty(
+                        showJoinDialog = showJoinDialog,
+                        permissionState = permissionState,
+                        showPermissionDialog = showPermissionDialog
+                    )
                 }
             ) {
                 Row(
@@ -165,7 +184,12 @@ fun Content(
                             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
                         onClick = {
-                            managerAction(partyViewModel, partyViewModel.kmState.value)
+                            handleCreateParty(
+                                permissionState = permissionState,
+                                showPermissionDialog = showPermissionDialog,
+                                partyViewModel = partyViewModel,
+                                currentKmState = partyViewModel.kmState.value
+                            )
                         }
                     ) {
                         Row(
@@ -266,10 +290,49 @@ private fun TrackImage(currentKmState: KmState) {
     )
 }
 
-private fun managerAction(partyViewModel: PartyViewModel, currentKmState: KmState) {
-    partyViewModel.createParty(
-        RunningDistance(
-            distance = currentKmState.toDistance()
+@OptIn(ExperimentalPermissionsApi::class)
+private fun handleJoinParty(
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>,
+    showJoinDialog: MutableState<Boolean>
+) {
+    if (shouldExecuteStartAction(permissionState)) {
+        showJoinDialog.value = true
+    } else {
+        showPermissionDialog.value = true
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun handleCreateParty(
+    permissionState: MultiplePermissionsState,
+    showPermissionDialog: MutableState<Boolean>,
+    partyViewModel: PartyViewModel,
+    currentKmState: KmState
+) {
+    if (shouldExecuteStartAction(permissionState)) {
+        partyViewModel.createParty(
+            RunningDistance(
+                distance = currentKmState.toDistance()
+            )
         )
-    )
+    } else {
+        showPermissionDialog.value = true
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun shouldExecuteStartAction(
+    permissionState: MultiplePermissionsState,
+): Boolean {
+    return permissionState.allPermissionsGranted &&
+            isDebounced(System.currentTimeMillis())
+}
+
+fun isDebounced(currentTime: Long): Boolean {
+    if (currentTime - lastClickTime > DEBOUNCE_DURATION) {
+        lastClickTime = currentTime
+        return true
+    }
+    return false
 }

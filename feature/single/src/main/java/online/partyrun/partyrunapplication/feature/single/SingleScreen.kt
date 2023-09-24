@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.single
 
-import android.Manifest
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +31,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.ui.HeadLine
-import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
+import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
+import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
 
 private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
@@ -121,13 +117,7 @@ fun SingleMainBody(
     targetTime: Int,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
-    val showPermissionDialog = remember { mutableStateOf(false) }
-
-    val permissionsList = listOfNotNull(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
-    )
-    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+    val (showPermissionDialog, permissionState) = settingPermissionVariables()
 
     HandlePermissionActions(
         permissionState = permissionState,
@@ -353,19 +343,4 @@ fun isDebounced(currentTime: Long): Boolean {
         return true
     }
     return false
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun HandlePermissionActions(
-    permissionState: MultiplePermissionsState,
-    showPermissionDialog: MutableState<Boolean>
-) {
-    if (showPermissionDialog.value) {
-        CheckMultiplePermissions(
-            permissionState = permissionState,
-            onPermissionResult = { if (it) showPermissionDialog.value = false },
-            showPermissionDialog = showPermissionDialog
-        )
-    }
 }

@@ -95,7 +95,7 @@ class PartyRoomViewModel @Inject constructor(
     private fun handlePartyEvent(data: String) {
         val eventData = gson.fromJson(data, PartyEvent::class.java)
         Timber.tag("Event").d("Event Received: $eventData")
-        val allRunnerIds = RunnerIds(eventData.participants)
+        val allRunnerIds = RunnerIds(eventData.participantIds)
 
         when (eventData.status) {
             PartyEventStatus.WAITING -> { // 파티룸에서의 처리
@@ -155,7 +155,7 @@ class PartyRoomViewModel @Inject constructor(
     ): PartyRoomState {
         // 여기서 runnerInfoList는 RunnerInfo의 List라고 가정합니다.
         val managerInfo = runnerInfoList.runners.find { it.id == eventData.managerId }
-        val participantsInfo = runnerInfoList.runners.filter { it.id in eventData.participants }
+        val participantsInfo = runnerInfoList.runners.filter { it.id in eventData.participantIds }
 
         return PartyRoomState(
             entryCode = eventData.entryCode,

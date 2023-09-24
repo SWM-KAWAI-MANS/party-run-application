@@ -11,6 +11,6 @@ data class PartyEvent(
     val distance: Int = 0,
     val managerId: String = "",
     val status: PartyEventStatus = PartyEventStatus.WAITING,
-    val participants: List<String> = emptyList(),
+    val participantIds: List<String> = emptyList(),
     val battleId: String? = null
 )

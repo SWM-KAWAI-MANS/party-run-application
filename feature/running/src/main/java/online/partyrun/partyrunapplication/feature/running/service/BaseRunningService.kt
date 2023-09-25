@@ -32,7 +32,7 @@ abstract class BaseRunningService : Service() {
 
     companion object {
         const val LOCATION_UPDATE_INTERVAL_SECONDS = 1L
-        const val THRESHOLD = -1
+        const val THRESHOLD = 0.08
     }
 
     @Inject

@@ -199,7 +199,6 @@ class SingleRunningService : BaseRunningService() {
         storeGpsData(gpsData)
     }
 
-
     private fun createGpsData(location: Location, distance: Double): GpsDataWithDistance {
         return GpsDataWithDistance(
             latitude = location.latitude,

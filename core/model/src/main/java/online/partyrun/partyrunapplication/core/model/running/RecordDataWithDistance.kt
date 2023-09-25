@@ -7,20 +7,17 @@ data class RecordDataWithDistance(
     val records: List<GpsDataWithDistance>
 )
 
-fun RecordDataWithDistance.calculateInstantPace(): String {
-    val (currentGpsData, lastGpsData) = getLastTwoGpsData() ?: return "0'00''"
+fun RecordDataWithDistance.calculateInstantPace(): String? {
+    val (currentGpsData, lastGpsData) = getLastTwoGpsData() ?: return null
 
     val distanceCoveredInKm = calculateDistanceInKm(currentGpsData, lastGpsData)
     val timeElapsedInSeconds = calculateDurationInSeconds(currentGpsData, lastGpsData)
 
-    if (isInvalidData(distanceCoveredInKm, timeElapsedInSeconds)) return "0'00''"
+    if (isTimeOrDistanceZero(distanceCoveredInKm, timeElapsedInSeconds)) return "0'00''"
+    if (isDistanceTooSmall(distanceCoveredInKm)) return null
 
     return formatPace(timeElapsedInSeconds / distanceCoveredInKm)
 }
-
-private fun isInvalidData(distance: Double, time: Double) =
-    isDistanceTooSmall(distance) || isTimeOrDistanceZero(time, distance)
-
 
 private fun RecordDataWithDistance.getLastTwoGpsData(): Pair<GpsDataWithDistance, GpsDataWithDistance>? {
     val currentGpsData = records.lastOrNull() ?: return null
@@ -36,10 +33,10 @@ private fun calculateDistanceInKm(
 }
 
 private fun isDistanceTooSmall(distance: Double): Boolean {
-    return distance < 0.0003 // 0.3m
+    return distance < 0.0008 // 0.8m
 }
 
-private fun isTimeOrDistanceZero(time: Double, distance: Double): Boolean {
+private fun isTimeOrDistanceZero(distance: Double, time: Double): Boolean {
     return time == 0.0 || distance == 0.0
 }
 

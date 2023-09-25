@@ -187,7 +187,7 @@ private fun SingleTitleAndDateDisplay(singleResult: SingleResultUiModel) {
         Text(text = singleResult.singleDate)
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "${stringResource(id = R.string.single_title)} ${singleResult.targetDistanceInKm}",
+            text = "${stringResource(id = R.string.single_title)} ${singleResult.targetDistanceFormatted}",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

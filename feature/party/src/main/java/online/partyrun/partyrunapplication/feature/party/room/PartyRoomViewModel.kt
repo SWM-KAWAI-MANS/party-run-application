@@ -116,7 +116,9 @@ class PartyRoomViewModel @Inject constructor(
         viewModelScope.launch {
             saveRunnersInfoUseCase(runnerInfoData)
         }
-        canceledEventProcess(eventData)
+        updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
+        _partyRoomUiState.value =
+            _partyRoomUiState.value.updateState(updatedPartyRoomState)
     }
 
     private fun canceledEventProcess(eventData: PartyEvent) {

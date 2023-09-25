@@ -170,6 +170,11 @@ class PartyRoomViewModel @Inject constructor(
     }
 
     fun startPartyBattle(partyCode: String) {
+        if (!isEligibleToStartBattle()) {
+            _snackbarMessage.value = "파티 인원이 2명 이상 필요해요."
+            return
+        }
+
         viewModelScope.launch {
             startPartyBattleUseCase(partyCode).collect { result ->
                 result.onEmpty {
@@ -180,6 +185,14 @@ class PartyRoomViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun isEligibleToStartBattle(): Boolean {
+        val currentState = _partyRoomUiState.value
+        if (currentState is PartyRoomUiState.Success && currentState.partyRoomState.participants.size < 2) {
+            return false
+        }
+        return true
     }
 
     fun quitPartyRoom(partyCode: String) {

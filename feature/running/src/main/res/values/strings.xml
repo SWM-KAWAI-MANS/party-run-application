@@ -24,7 +24,8 @@
     <string name="finish_comment">대결이 종료됐습니다.</string>
 
     <string name="exit_dialog_title">대결을 종료하시겠습니까?</string>
-    <string name="exit_dialog_subtitle">종료 시 현재 대결을 이어 달릴 수 없습니다.</string>
+    <string name="exit_dialog_battle_subtitle">종료 시 현재 대결을 이어 달릴 수 없습니다.</string>
+    <string name="exit_dialog_single_subtitle">달리기 결과를 분석하려면\n최소 30미터 이상 달려야 해요.</string>
     <string name="exit_dialog_confirm">예</string>
     <string name="exit_dialog_cancel">아니오</string>
 

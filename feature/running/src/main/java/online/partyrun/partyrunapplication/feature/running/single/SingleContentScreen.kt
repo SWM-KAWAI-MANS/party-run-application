@@ -9,6 +9,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
@@ -264,6 +267,13 @@ fun RunningBackNavigationHandler(
 
     RunningExitConfirmationDialog(
         openRunningExitDialog = openRunningExitDialog,
+        exitMessage = {
+            Text(
+                text = stringResource(id = R.string.exit_dialog_single_subtitle),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     ) {
         handleRunningExit(
             activity = activity,
@@ -284,8 +294,8 @@ fun handleRunningExit(
         singleContentViewModel.stopSingleRunningService()
         restartActivity(activity)
     } else {
-        singleContentViewModel.finishRunningProcess()
         singleContentViewModel.sendRecordDataWithDistance()
+        singleContentViewModel.finishRunningProcess()
     }
 }
 

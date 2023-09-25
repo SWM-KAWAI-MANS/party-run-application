@@ -22,6 +22,7 @@ import online.partyrun.partyrunapplication.feature.running.R
 @Composable
 fun RunningExitConfirmationDialog(
     openRunningExitDialog: MutableState<Boolean>,
+    exitMessage: @Composable () -> Unit,
     confirmExit: () -> Unit
 ) {
     if (openRunningExitDialog.value) {
@@ -38,11 +39,7 @@ fun RunningExitConfirmationDialog(
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
-                    Text(
-                        text = stringResource(id = R.string.exit_dialog_subtitle),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    exitMessage()
                 }
             },
             confirmButton = {

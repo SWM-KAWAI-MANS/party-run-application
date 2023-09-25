@@ -195,13 +195,15 @@ class SingleContentViewModel @Inject constructor(
                 checkTargetDistanceReached(currentDistance)
                 val (updatedUser, formattedDistance) =
                     _singleContentUiState.value.getUpdatedMovementData(currentDistance)
+                val instantPace =
+                    record.calculateInstantPace() ?: _singleContentUiState.value.instantPace
 
                 _singleContentUiState.update { state ->
                     state.copy(
                         userStatus = updatedUser,
                         distanceInMeter = currentDistance,
                         distanceInKm = formattedDistance,
-                        instantPace = record.calculateInstantPace()
+                        instantPace = instantPace
                     )
                 }
             }

@@ -36,7 +36,7 @@ import online.partyrun.partyrunapplication.feature.running.running.component.Run
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RESULT_SCREEN_TRANSITION_DELAY
 
-const val MINIMUM_FINISH_DISTANCE = 100
+const val MINIMUM_FINISH_DISTANCE = 50
 
 @Composable
 fun SingleContentScreen(

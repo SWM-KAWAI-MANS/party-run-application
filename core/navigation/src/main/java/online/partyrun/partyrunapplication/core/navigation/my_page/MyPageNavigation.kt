@@ -9,7 +9,6 @@ import online.partyrun.partyrunapplication.feature.my_page.profile.ProfileScreen
 fun NavGraphBuilder.myPageRoute(
     onSignOut: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateBack: () -> Unit,
     navigateToMyPage: () -> Unit,
     navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit
@@ -18,7 +17,6 @@ fun NavGraphBuilder.myPageRoute(
         MyPageScreen(
             onSignOut = onSignOut,
             navigateToSettings = navigateToSettings,
-            navigateBack = navigateBack,
             navigateToProfile = navigateToProfile,
             onShowSnackbar = onShowSnackbar
         )

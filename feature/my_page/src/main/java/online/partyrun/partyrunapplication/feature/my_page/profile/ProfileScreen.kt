@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTextInput
 import online.partyrun.partyrunapplication.core.designsystem.component.TextInputType
@@ -182,6 +183,12 @@ private fun ProfileBody(
     keyboardController: SoftwareKeyboardController,
     focusManager: FocusManager
 ) {
+    val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
+
+    if (updateProgressState) {
+        ProgressIndicator()
+    }
+
     LaunchedEffect(Unit) {
         profileViewModel.initProfileContent(
             name = userData.nickName,
@@ -237,6 +244,18 @@ private fun ProfileBody(
                 profileViewModel = profileViewModel
             )
         }
+    }
+}
+
+@Composable
+private fun ProgressIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(1f),
+        contentAlignment = Alignment.Center
+    ) {
+        LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.mypage_progress)
     }
 }
 

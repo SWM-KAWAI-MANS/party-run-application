@@ -119,11 +119,9 @@ fun SetUpMainNavGraph(
         battleRunningRoute(
             navigateToBattleOnWebSocketError = {
                 navController.navigate(MainNavRoutes.Battle.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = true
                     }
-                    launchSingleTop = true // 자기 자신이 또 스택 푸시가 되지 않도록 방지
-                    restoreState = true
                 }
             },
             navigateToBattleResult = {

@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,16 +18,19 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.common.Constants.ACTION_START_RUNNING
 import online.partyrun.partyrunapplication.core.common.Constants.ACTION_STOP_RUNNING
 import online.partyrun.partyrunapplication.core.common.Constants.BATTLE_ID_KEY
+import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.ui.CountdownDialog
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
@@ -131,8 +136,36 @@ fun Content(
                     openRunningExitDialog = openRunningExitDialog
                 )
 
-            BattleScreenState.Finish -> FinishScreen()
+            is BattleScreenState.Finish -> FinishScreen()
+            is BattleScreenState.LoadFailed ->
+                LoadFailedScreen {
+                    navigateToBattleOnWebSocketError()
+                }
         }
+    }
+}
+
+@Composable
+fun LoadFailedScreen(
+    navigateToBattleOnWebSocketError: () -> Unit
+) {
+    // 3초 딜레이 후 navigateToBattleOnWebSocketError 호출
+    LaunchedEffect(Unit) {
+        delay(3000L)
+        navigateToBattleOnWebSocketError()
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(id = R.string.battle_loadfailed_comment),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.battle_progress)
     }
 }
 

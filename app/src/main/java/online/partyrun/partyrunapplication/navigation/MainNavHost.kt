@@ -100,9 +100,6 @@ fun SetUpMainNavGraph(
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
             },
-            navigateBack = {
-                navController.popBackStack()
-            },
             navigateToMyPage = {
                 navController.navigate(MainNavRoutes.MyPage.route) {
                     popUpTo(MainNavRoutes.MyPage.route) {

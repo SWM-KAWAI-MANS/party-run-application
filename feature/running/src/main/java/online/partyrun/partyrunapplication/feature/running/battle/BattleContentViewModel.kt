@@ -63,8 +63,8 @@ class BattleContentViewModel @Inject constructor(
     private lateinit var runnersState: StateFlow<BattleEvent>
 
     init {
-        getBattleId()
         getUserId()
+        getBattleId()
     }
 
     fun clearSnackbarMessage() {
@@ -92,6 +92,11 @@ class BattleContentViewModel @Inject constructor(
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "배틀 정보를 가져올 수 없습니다."
                 Timber.e("$code $errorMessage")
+                _battleContentUiState.update { state ->
+                    state.copy(
+                        screenState = BattleScreenState.LoadFailed
+                    )
+                }
             }
         }
     }
@@ -141,7 +146,7 @@ class BattleContentViewModel @Inject constructor(
                     }
 
                     else -> {
-                        Timber.e("다른 Type의 BattleEvent 수신", it)
+                        Timber.e("다른 Type의 BattleEvent 수신 $it")
                     }
                 }
             }

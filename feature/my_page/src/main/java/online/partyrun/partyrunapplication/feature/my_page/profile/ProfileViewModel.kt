@@ -35,6 +35,9 @@ class ProfileViewModel @Inject constructor(
     private val _profileUiState = MutableStateFlow(ProfileUiState())
     val profileUiState = _profileUiState.asStateFlow()
 
+    private val _updateProgressState = MutableStateFlow(false)
+    val updateProgressState = _updateProgressState.asStateFlow()
+
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
 
@@ -91,6 +94,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun handlePickedImage(context: Context, uri: Uri) {
+        _updateProgressState.value = true
         val requestBody = context.contentResolver.openInputStream(uri)?.use { inputStream ->
             inputStream.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
         }
@@ -109,21 +113,26 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun updateUserData() = viewModelScope.launch {
-        if (passAllConditions()) {
-            updateUserDataUseCase(
-                nickName = _profileUiState.value.newNickName
-            ).collect { result ->
-                result.onEmpty {
-                    saveUserData()
-                    _profileUiState.update { state ->
-                        state.copy(
-                            isProfileUpdateSuccess = true
-                        )
-                    }
-                }.onFailure { errorMessage, code ->
-                    Timber.e("$code $errorMessage")
-                    _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
+        if (!passAllConditions()) return@launch
+
+        _updateProgressState.value = true
+
+        updateUserDataUseCase(
+            nickName = _profileUiState.value.newNickName
+        ).collect { result ->
+            result.onEmpty {
+                saveUserData()
+                _profileUiState.update { state ->
+                    state.copy(
+                        isProfileUpdateSuccess = true
+                    )
                 }
+                _updateProgressState.value = false
+                _snackbarMessage.value = "프로필 정보를 변경하였습니다."
+            }.onFailure { errorMessage, code ->
+                Timber.e("$code $errorMessage")
+                _updateProgressState.value = false
+                _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
             }
         }
     }
@@ -136,9 +145,11 @@ class ProfileViewModel @Inject constructor(
             ).collect { result ->
                 result.onEmpty {
                     saveUserData()
+                    _updateProgressState.value = false
                     _snackbarMessage.value = "프로필 사진이 변경되었습니다."
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
+                    _updateProgressState.value = false
                     _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
                 }
             }

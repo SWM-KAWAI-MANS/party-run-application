@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="checked_icon">선택된 아이콘</string>
+    <string name="unchecked_icon">선택되지 않은 아이콘</string>
+    <string name="arrow_back_desc">뒤로 가기</string>
+    <string name="arrow_forward_desc">앞으로 가기</string>
+
+    <string name="google_signin_btn">구글 로그인</string>
+
+    <string name="settings">설정</string>
+</resources>

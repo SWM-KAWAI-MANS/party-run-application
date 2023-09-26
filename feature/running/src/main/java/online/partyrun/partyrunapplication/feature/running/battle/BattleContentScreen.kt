@@ -96,9 +96,9 @@ fun Content(
     )
 
     LaunchedEffect(battleId) {
-        battleId.let { id ->
+        battleId?.let { id ->
             battleContentViewModel.startBattleStream(
-                battleId = id ?: "",
+                battleId = id,
                 navigateToBattleOnWebSocketError = navigateToBattleOnWebSocketError
             )
         }

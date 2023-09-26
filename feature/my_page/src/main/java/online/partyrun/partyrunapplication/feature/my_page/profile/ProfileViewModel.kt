@@ -113,25 +113,26 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun updateUserData() = viewModelScope.launch {
+        if (!passAllConditions()) return@launch
+
         _updateProgressState.value = true
-        if (passAllConditions()) {
-            updateUserDataUseCase(
-                nickName = _profileUiState.value.newNickName
-            ).collect { result ->
-                result.onEmpty {
-                    saveUserData()
-                    _profileUiState.update { state ->
-                        state.copy(
-                            isProfileUpdateSuccess = true
-                        )
-                    }
-                    _updateProgressState.value = false
-                    _snackbarMessage.value = "프로필 정보를 변경하였습니다."
-                }.onFailure { errorMessage, code ->
-                    Timber.e("$code $errorMessage")
-                    _updateProgressState.value = false
-                    _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
+
+        updateUserDataUseCase(
+            nickName = _profileUiState.value.newNickName
+        ).collect { result ->
+            result.onEmpty {
+                saveUserData()
+                _profileUiState.update { state ->
+                    state.copy(
+                        isProfileUpdateSuccess = true
+                    )
                 }
+                _updateProgressState.value = false
+                _snackbarMessage.value = "프로필 정보를 변경하였습니다."
+            }.onFailure { errorMessage, code ->
+                Timber.e("$code $errorMessage")
+                _updateProgressState.value = false
+                _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -107,6 +109,7 @@ fun Content(
     onShowSnackbar: (String) -> Unit,
     profileSnackbarMessage: String
 ) {
+    val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -119,6 +122,10 @@ fun Content(
 
     if (profileUiState.isProfileUpdateSuccess) {
         navigateToMyPage()
+    }
+
+    if (updateProgressState) {
+        ProgressIndicator()
     }
 
     Scaffold(
@@ -183,12 +190,6 @@ private fun ProfileBody(
     keyboardController: SoftwareKeyboardController,
     focusManager: FocusManager
 ) {
-    val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
-
-    if (updateProgressState) {
-        ProgressIndicator()
-    }
-
     LaunchedEffect(Unit) {
         profileViewModel.initProfileContent(
             name = userData.nickName,
@@ -252,7 +253,10 @@ private fun ProgressIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .zIndex(1f),
+            .zIndex(1f)
+            .pointerInput(Unit) {
+                detectTapGestures { } // progress 중에는 터치 블락
+            },
         contentAlignment = Alignment.Center
     ) {
         LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.mypage_progress)

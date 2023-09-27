@@ -254,6 +254,7 @@ private fun ProgressIndicator() {
         modifier = Modifier
             .fillMaxSize()
             .zIndex(1f)
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
             .pointerInput(Unit) {
                 detectTapGestures { } // progress 중에는 터치 블락
             },

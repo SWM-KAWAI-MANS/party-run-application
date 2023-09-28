@@ -101,22 +101,34 @@ class ProfileViewModel @Inject constructor(
         return !isNickNameEmpty() && !isInvalidNickNameLength()
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     fun handlePickedImage(context: Context, uri: Uri) {
         _updateProgressState.value = true
 
-        val bitmap = getBitmapFromUriUsingImageDecoder(context, uri, 500, 500)
-        val compressedBitmap = compressBitmap(bitmap)
-        val byteArray = bitmapToByteArray(compressedBitmap)
+        val requestBody =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val bitmap = getBitmapFromUriUsingImageDecoder(context, uri, 500, 500)
+                val compressedBitmap = compressBitmap(bitmap)
+                val byteArray = bitmapToByteArray(compressedBitmap)
+                byteArray.toRequestBody("image/*".toMediaTypeOrNull())
+            } else {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    inputStream.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
+                }
+            }
 
-        val requestBody = byteArray.toRequestBody("image/*".toMediaTypeOrNull())
         val fileName = getFileName(context, uri)
-
-        updateProfileImage(requestBody, fileName)
+        requestBody?.let {
+            updateProfileImage(requestBody, fileName)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun getBitmapFromUriUsingImageDecoder(context: Context, uri: Uri, width: Int, height: Int): Bitmap {
+    fun getBitmapFromUriUsingImageDecoder(
+        context: Context,
+        uri: Uri,
+        width: Int,
+        height: Int
+    ): Bitmap {
         val source = ImageDecoder.createSource(context.contentResolver, uri)
         return ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
             decoder.setTargetSize(width, height)

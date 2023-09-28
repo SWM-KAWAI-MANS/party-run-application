@@ -105,7 +105,7 @@ class ProfileViewModel @Inject constructor(
     fun handlePickedImage(context: Context, uri: Uri) {
         _updateProgressState.value = true
 
-        val bitmap = getBitmapFromUriUsingImageDecoder(context, uri)
+        val bitmap = getBitmapFromUriUsingImageDecoder(context, uri, 500, 500)
         val compressedBitmap = compressBitmap(bitmap)
         val byteArray = bitmapToByteArray(compressedBitmap)
 
@@ -116,9 +116,11 @@ class ProfileViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
-    fun getBitmapFromUriUsingImageDecoder(context: Context, uri: Uri): Bitmap {
+    fun getBitmapFromUriUsingImageDecoder(context: Context, uri: Uri, width: Int, height: Int): Bitmap {
         val source = ImageDecoder.createSource(context.contentResolver, uri)
-        return ImageDecoder.decodeBitmap(source)
+        return ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+            decoder.setTargetSize(width, height)
+        }
     }
 
 

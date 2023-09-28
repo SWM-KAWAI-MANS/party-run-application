@@ -155,7 +155,7 @@ class SingleContentViewModel @Inject constructor(
         _singleContentUiState.update { state ->
             state.copy(
                 elapsedSecondsTime = state.incrementElapsedSeconds(),
-                elapsedFormattedTime = state.formatTime(state.elapsedSecondsTime)
+                elapsedFormattedTime = state.formatTime()
             )
         }
     }

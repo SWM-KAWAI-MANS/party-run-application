@@ -1,8 +1,13 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +27,7 @@ import online.partyrun.partyrunapplication.core.domain.member.SaveUserDataUseCas
 import online.partyrun.partyrunapplication.core.domain.member.UpdateProfileImageUseCase
 import online.partyrun.partyrunapplication.core.domain.member.UpdateUserDataUseCase
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +37,9 @@ class ProfileViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val saveUserDataUseCase: SaveUserDataUseCase
 ) : ViewModel() {
+    companion object {
+        const val COMPRESS_BITMAP_QUALITY = 80
+    }
 
     private val _profileUiState = MutableStateFlow(ProfileUiState())
     val profileUiState = _profileUiState.asStateFlow()
@@ -78,7 +87,6 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
-    // 조건을 만족하면 true, 아니면 false 반환
     private fun getResultOfNickNameCondition(condition: Boolean, errorState: String): Boolean {
         _profileUiState.update {
             it.copy(
@@ -93,16 +101,40 @@ class ProfileViewModel @Inject constructor(
         return !isNickNameEmpty() && !isInvalidNickNameLength()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     fun handlePickedImage(context: Context, uri: Uri) {
         _updateProgressState.value = true
-        val requestBody = context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            inputStream.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
-        }
+
+        val bitmap = getBitmapFromUriUsingImageDecoder(context, uri)
+        val compressedBitmap = compressBitmap(bitmap)
+        val byteArray = bitmapToByteArray(compressedBitmap)
+
+        val requestBody = byteArray.toRequestBody("image/*".toMediaTypeOrNull())
         val fileName = getFileName(context, uri)
-        requestBody?.let {
-            updateProfileImage(requestBody, fileName)
-        }
+
+        updateProfileImage(requestBody, fileName)
     }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    fun getBitmapFromUriUsingImageDecoder(context: Context, uri: Uri): Bitmap {
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
+        return ImageDecoder.decodeBitmap(source)
+    }
+
+
+    private fun compressBitmap(bitmap: Bitmap): Bitmap {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, COMPRESS_BITMAP_QUALITY, stream)
+        val byteArray = stream.toByteArray()
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+    private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return stream.toByteArray()
+    }
+
 
     private fun getFileName(context: Context, uri: Uri): String? {
         return context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->

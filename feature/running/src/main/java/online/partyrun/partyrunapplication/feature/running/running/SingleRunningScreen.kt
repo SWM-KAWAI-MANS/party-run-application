@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
@@ -314,13 +315,21 @@ fun FixedWidthTimeText(hour: String, minute: String, second: String) {
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "$hour:$minute:",
+            modifier = Modifier.width(100.dp),
+            text = hour,
+            textAlign = TextAlign.End,
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
         Text(
-            modifier = Modifier.width(75.dp),
+            text = ":$minute:",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            modifier = Modifier.width(100.dp),
             text = second,
+            textAlign = TextAlign.Start,
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )

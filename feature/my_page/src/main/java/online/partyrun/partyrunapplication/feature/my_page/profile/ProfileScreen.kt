@@ -1,8 +1,10 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,6 +66,7 @@ import online.partyrun.partyrunapplication.feature.my_page.MyPageUiState
 import online.partyrun.partyrunapplication.feature.my_page.MyPageViewModel
 import online.partyrun.partyrunapplication.feature.my_page.R
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun ProfileScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),

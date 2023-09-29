@@ -34,6 +34,7 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.single.SingleTargetDetails
 import online.partyrun.partyrunapplication.core.ui.HeadLine
 import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
 import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
@@ -50,15 +51,13 @@ fun SingleScreen(
 ) {
     val singleUiState by singleViewModel.singleUiState.collectAsStateWithLifecycle()
     val singleSnackbarMessage by singleViewModel.snackbarMessage.collectAsStateWithLifecycle()
-    val targetDistance by singleViewModel.targetDistance.collectAsStateWithLifecycle()
-    val targetTime by singleViewModel.targetTime.collectAsStateWithLifecycle()
+    val singleTargetDetails by singleViewModel.singleTargetDetails.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
         singleUiState = singleUiState,
         singleViewModel = singleViewModel,
-        targetDistance = targetDistance,
-        targetTime = targetTime,
+        singleTargetDetails = singleTargetDetails,
         navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime,
         singleSnackbarMessage = singleSnackbarMessage,
         onShowSnackbar = onShowSnackbar
@@ -70,8 +69,7 @@ fun Content(
     modifier: Modifier = Modifier,
     singleUiState: SingleUiState,
     singleViewModel: SingleViewModel,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
     singleSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
@@ -88,8 +86,7 @@ fun Content(
             is SingleUiState.Loading -> LoadingBody()
             is SingleUiState.Success -> SingleMainBody(
                 singleViewModel = singleViewModel,
-                targetDistance = targetDistance,
-                targetTime = targetTime,
+                singleTargetDetails = singleTargetDetails,
                 navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
             )
 
@@ -113,8 +110,7 @@ private fun LoadingBody() {
 @Composable
 fun SingleMainBody(
     singleViewModel: SingleViewModel,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
     val (showPermissionDialog, permissionState) = settingPermissionVariables()
@@ -128,8 +124,7 @@ fun SingleMainBody(
         singleViewModel = singleViewModel,
         permissionState = permissionState,
         showPermissionDialog = showPermissionDialog,
-        targetDistance = targetDistance,
-        targetTime = targetTime,
+        singleTargetDetails = singleTargetDetails,
         navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
     )
 }
@@ -140,8 +135,7 @@ private fun SingleContent(
     singleViewModel: SingleViewModel,
     permissionState: MultiplePermissionsState,
     showPermissionDialog: MutableState<Boolean>,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
     Column(
@@ -200,8 +194,7 @@ private fun SingleContent(
                         handleStartButtonClick(
                             permissionState,
                             navigateToSingleRunningWithDistanceAndTime,
-                            targetDistance,
-                            targetTime,
+                            singleTargetDetails,
                             showPermissionDialog
                         )
                     }
@@ -223,14 +216,13 @@ private fun SingleContent(
 private fun handleStartButtonClick(
     permissionState: MultiplePermissionsState,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     showPermissionDialog: MutableState<Boolean>
 ) {
     if (shouldExecuteStartAction(permissionState)) {
         navigateToSingleRunningWithDistanceAndTime(
-            targetDistance,
-            targetTime
+            singleTargetDetails.distance,
+            singleTargetDetails.time
         )
     } else {
         showPermissionDialog.value = true

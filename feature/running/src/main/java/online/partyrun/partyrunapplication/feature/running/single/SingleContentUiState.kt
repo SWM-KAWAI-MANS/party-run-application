@@ -62,10 +62,22 @@ fun SingleContentUiState.incrementElapsedSeconds(): Int {
     return this.elapsedSecondsTime + 1
 }
 
-fun SingleContentUiState.formatTime(seconds: Int): String {
-    val hours = seconds / 3600
-    val minutes = (seconds % 3600) / 60
-    val remainingSeconds = seconds % 60
+fun SingleContentUiState.formatTime(): String {
+    val hours = this.elapsedSecondsTime / 3600
+    val minutes = (this.elapsedSecondsTime % 3600) / 60
+    val remainingSeconds = this.elapsedSecondsTime % 60
 
     return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+}
+
+fun SingleContentUiState.getTimeComponents(): Triple<String, String, String> {
+    val hours = this.elapsedSecondsTime / 3600
+    val minutes = (this.elapsedSecondsTime % 3600) / 60
+    val remainingSeconds = this.elapsedSecondsTime % 60
+
+    return Triple(
+        String.format("%02d", hours),
+        String.format("%02d", minutes),
+        String.format("%02d", remainingSeconds)
+    )
 }

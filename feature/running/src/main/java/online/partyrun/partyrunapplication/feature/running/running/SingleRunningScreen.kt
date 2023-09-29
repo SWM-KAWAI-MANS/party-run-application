@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
@@ -47,6 +49,7 @@ import online.partyrun.partyrunapplication.feature.running.running.component.tra
 import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
+import online.partyrun.partyrunapplication.feature.running.single.getTimeComponents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,11 +141,8 @@ fun SingleRunningScreen(
                 RunningMetricsPanel(
                     title = stringResource(id = R.string.progress_time)
                 ) {
-                    Text(
-                        text = singleContentUiState.elapsedFormattedTime,
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    val (hours, minutes, seconds) = singleContentUiState.getTimeComponents()
+                    FixedWidthTimeText(hours, minutes, seconds)
                 }
                 Spacer(modifier = Modifier.size(5.dp))
                 RunControlPanel(
@@ -203,7 +203,6 @@ private fun RunningMetricsPanel(
     record: @Composable () -> Unit
 ) {
     Column(
-        modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -306,4 +305,33 @@ fun PartyRunImageButton(
             onClick()
         }
     )
+}
+
+@Composable
+fun FixedWidthTimeText(hour: String, minute: String, second: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier.width(100.dp),
+            text = hour,
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            text = ":$minute:",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            modifier = Modifier.width(100.dp),
+            text = second,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }

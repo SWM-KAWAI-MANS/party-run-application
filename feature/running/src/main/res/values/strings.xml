@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="connect_websocket_title">웹소켓 연결</string>
-    <string name="battle_comment_before_starts">잠시 뒤 배틀이 시작 됩니다 !</string>
+    <string name="battle_comment_before_starts">잠시 뒤 대결이 시작됩니다!</string>
     <string name="configuring_tracks">트랙 구성 중...</string>
-    <string name="single_comment_before_starts">5초 뒤 배틀이 시작 됩니다 !</string>
+    <string name="single_comment_before_starts">잠시 뒤 대결이 시작됩니다!</string>
     <string name="configuring_robot">로봇 구성 중...</string>
     <string name="progress_time">시간</string>
     <string name="Kilometer">KM</string>

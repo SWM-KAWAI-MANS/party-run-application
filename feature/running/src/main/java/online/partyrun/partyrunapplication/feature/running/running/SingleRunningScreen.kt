@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
-import online.partyrun.partyrunapplication.feature.running.running.component.RunControlPanel
+import online.partyrun.partyrunapplication.feature.running.running.component.ControlPanelColumn
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RUNNER_GRAPHIC_Y_OFFSET
 import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
@@ -47,7 +47,6 @@ import online.partyrun.partyrunapplication.feature.running.running.component.Tra
 import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
-import online.partyrun.partyrunapplication.feature.running.single.getTimeComponents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,24 +135,10 @@ fun SingleRunningScreen(
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RunningMetricsPanel(
-                    title = stringResource(id = R.string.progress_time)
-                ) {
-                    val (hours, minutes, seconds) = singleContentUiState.getTimeComponents()
-                    FixedWidthTimeText(hours, minutes, seconds)
-                }
-                Spacer(modifier = Modifier.size(5.dp))
-                RunControlPanel(
-                    pausedState = singleContentUiState.runningServiceState,
-                    pauseAction = {
-                        singleContentViewModel.pauseSingleRunningService(isUserPaused = true)
-                    },
-                    resumeAction = {
-                        singleContentViewModel.resumeSingleRunningService()
-                    },
-                    stopAction = {
-                        openRunningExitDialog.value = true
-                    }
+                ControlPanelColumn(
+                    singleContentUiState = singleContentUiState,
+                    singleContentViewModel = singleContentViewModel,
+                    openRunningExitDialog = openRunningExitDialog
                 )
             }
         }

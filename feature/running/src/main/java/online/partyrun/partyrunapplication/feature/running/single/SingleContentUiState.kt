@@ -1,5 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
+import online.partyrun.partyrunapplication.core.model.running.RecordDataWithDistance
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 
 enum class RunningServiceState {
@@ -80,4 +81,9 @@ fun SingleContentUiState.getTimeComponents(): Triple<String, String, String> {
         String.format("%02d", minutes),
         String.format("%02d", remainingSeconds)
     )
+}
+
+fun SingleContentUiState.getDistanceInMeterString(): String {
+    val integerPartOfDistance = distanceInMeter.toInt()
+    return "$integerPartOfDistance" + "m"
 }

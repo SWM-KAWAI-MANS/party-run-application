@@ -4,6 +4,8 @@ import online.partyrun.partyrunapplication.core.model.running.RecordDataWithDist
 import online.partyrun.partyrunapplication.core.model.running.toUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
+import timber.log.Timber
+import kotlin.math.floor
 
 enum class RunningServiceState {
     STARTED, PAUSED, RESUMED, STOPPED
@@ -48,7 +50,8 @@ fun SingleContentUiState.isElapsedBeyondSelectedTime(): Boolean {
 fun SingleContentUiState.getUpdatedMovementData(totalDistance: Double): Pair<SingleRunnerDisplayStatus, String> {
     // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
     val distanceInKm = totalDistance / 1000
-    val formattedDistance = String.format("%.2f", distanceInKm)
+    val floorValue = floor(distanceInKm * 100) / 100  // 소수점 두 자리까지 내림
+    val formattedDistance = String.format("%.2f", floorValue)
 
     val updatedUser = this.userStatus.copy(
         distance = totalDistance

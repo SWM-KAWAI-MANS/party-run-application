@@ -1,6 +1,8 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
 import online.partyrun.partyrunapplication.core.model.running.RecordDataWithDistance
+import online.partyrun.partyrunapplication.core.model.running.toUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 
 enum class RunningServiceState {
@@ -35,6 +37,8 @@ data class SingleContentUiState(
     val robotStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     // 대결 시작까지 남은 시간
     val timeRemaining: Int = -1,
+    // 현재까지의 달린 데이터
+    val records: RecordDataWithDistance? = null
 )
 
 fun SingleContentUiState.isElapsedBeyondSelectedTime(): Boolean {
@@ -86,4 +90,8 @@ fun SingleContentUiState.getTimeComponents(): Triple<String, String, String> {
 fun SingleContentUiState.getDistanceInMeterString(): String {
     val integerPartOfDistance = distanceInMeter.toInt()
     return "$integerPartOfDistance" + "m"
+}
+
+fun SingleContentUiState.getRunnerRecordUiModels(): List<RunnerRecordUiModel> {
+    return this.records?.records?.map { it.toUiModel() } ?: listOf()
 }

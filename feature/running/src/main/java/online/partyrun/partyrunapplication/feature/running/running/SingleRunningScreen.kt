@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunImageButton
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
@@ -288,21 +289,6 @@ private fun RenderRunner(
         },
         runnerMarker = {
             SingleRunnerMarker(runner)
-        }
-    )
-}
-
-@Composable
-fun PartyRunImageButton(
-    modifier: Modifier = Modifier,
-    image: Int,
-    onClick: () -> Unit
-) {
-    Image(
-        painter = painterResource(id = image),
-        contentDescription = stringResource(id = R.string.image_btn_desc),
-        modifier = modifier.clickable {
-            onClick()
         }
     )
 }

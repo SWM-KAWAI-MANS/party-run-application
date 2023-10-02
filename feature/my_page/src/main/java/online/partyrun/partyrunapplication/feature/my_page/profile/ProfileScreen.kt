@@ -6,7 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -47,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -250,16 +249,7 @@ private fun ProfileBody(
 
 @Composable
 private fun ProgressIndicator() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(1f)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-            .pointerInput(Unit) {
-                detectTapGestures { } // progress 중에는 터치 블락
-            },
-        contentAlignment = Alignment.Center
-    ) {
+    Dialog(onDismissRequest = { }) {
         LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.mypage_progress)
     }
 }

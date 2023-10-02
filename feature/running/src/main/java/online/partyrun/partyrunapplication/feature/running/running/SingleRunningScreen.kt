@@ -1,8 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.running
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -31,23 +29,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
-import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunImageButton
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
+import online.partyrun.partyrunapplication.feature.running.running.component.RunControlPanel
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RUNNER_GRAPHIC_Y_OFFSET
 import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningMetricsPanel
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningTrack
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
-import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.single.getTimeComponents
@@ -160,59 +157,6 @@ fun SingleRunningScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun RunControlPanel(
-    pausedState: RunningServiceState,
-    pauseAction: () -> Unit,
-    resumeAction: () -> Unit,
-    stopAction: () -> Unit,
-) {
-    if (pausedState != RunningServiceState.PAUSED) {
-        PartyRunImageButton(
-            modifier = Modifier.size(80.dp),
-            image = R.drawable.pause,
-        ) {
-            pauseAction()
-        }
-    } else {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            PartyRunImageButton(
-                modifier = Modifier.size(80.dp),
-                image = R.drawable.restart,
-            ) {
-                resumeAction()
-            }
-            PartyRunImageButton(
-                modifier = Modifier.size(80.dp),
-                image = R.drawable.stop,
-            ) {
-                stopAction()
-            }
-        }
-    }
-}
-
-@Composable
-private fun RunningMetricsPanel(
-    title: String,
-    record: @Composable () -> Unit
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        record()
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }
 

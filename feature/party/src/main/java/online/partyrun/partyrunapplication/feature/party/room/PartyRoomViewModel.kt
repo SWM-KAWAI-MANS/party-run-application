@@ -235,6 +235,10 @@ class PartyRoomViewModel @Inject constructor(
         _snackbarMessage.value = "메뉴 기능 준비 중이에요."
     }
 
+    fun copyToClipboardMessage() {
+        _snackbarMessage.value = "번호가 복사되었어요.\n친구에게 붙여넣기 해주세요."
+    }
+
     override fun onCleared() {
         super.onCleared()
         clearPartyProcess()

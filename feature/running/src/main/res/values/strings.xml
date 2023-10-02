@@ -33,7 +33,7 @@
     <string name="running_service_title">파티런</string>
     <string name="running_service_content">현재 러닝 진행 중입니다.</string>
 
-
+    <string name="running_paused_logo">로고 이미지</string>
     <string name="permission_confirm">권한 설정</string>
     <string name="permission_cancel">취소</string>
 

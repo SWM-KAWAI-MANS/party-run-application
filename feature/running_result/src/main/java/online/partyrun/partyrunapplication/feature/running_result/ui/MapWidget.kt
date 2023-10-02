@@ -43,7 +43,6 @@ import online.partyrun.partyrunapplication.feature.running_result.R
 
 @Composable
 fun MapWidget(
-    targetDistance: Int?,
     targetDistanceFormatted: String,
     records: List<RunnerRecordUiModel>?,
 ) {
@@ -52,7 +51,7 @@ fun MapWidget(
 
     val cameraPositionState: CameraPositionState = rememberCameraPositionState()
     LaunchedEffect(centerLatLng) {
-        val zoomValue = getZoomValueForDistance(targetDistance)
+        val zoomValue = getZoomValueForDistance(records?.lastOrNull()?.distance)
         cameraPositionState.position = CameraPosition.fromLatLngZoom(centerLatLng, zoomValue)
     }
 
@@ -134,11 +133,11 @@ private fun getMarkerIcon(resId: Int): BitmapDescriptor {
     return BitmapDescriptorFactory.fromBitmap(imageBitmap.asAndroidBitmap())
 }
 
-private fun getZoomValueForDistance(targetDistance: Int?): Float {
+private fun getZoomValueForDistance(currentDistance: Double?): Float {
     val distances = arrayOf(0, 1000, 3000, 5000, 10000, 15000, 20000)
-    val zoomValues = arrayOf(16f, 14.6f, 13.4f, 12.7f, 12f, 11f, 9f)
+    val zoomValues = arrayOf(17.5f, 14.6f, 13.4f, 12.7f, 12f, 11f, 9f)
 
-    val actualDistance = targetDistance ?: 0
+    val actualDistance = currentDistance ?: 0.0
 
     for (i in 0 until distances.size - 1) {
         if (actualDistance >= distances[i] && actualDistance < distances[i + 1]) {

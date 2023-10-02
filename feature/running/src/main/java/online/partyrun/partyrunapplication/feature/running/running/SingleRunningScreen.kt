@@ -82,7 +82,7 @@ fun SingleRunningScreen(
             Spacer(modifier = Modifier.size(15.dp))
             Column(
                 modifier = Modifier
-                    .weight(0.9f)
+                    .weight(1f)
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp)
             ) {

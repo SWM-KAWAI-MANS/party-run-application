@@ -171,6 +171,14 @@ abstract class BaseRunningService : Service() {
         stopLocationUpdates()
     }
 
+    override fun onTaskRemoved(rootIntent: Intent) {
+        super.onTaskRemoved(rootIntent)
+        sensorManager.unregisterListener(sensorEventListener) // 센서 해제
+        stopLocationUpdates()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }

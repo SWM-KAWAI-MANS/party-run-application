@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.feature.party.room
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -207,6 +206,9 @@ fun RoomSuccessBody(
                 openPartyExitDialog = openPartyExitDialog,
                 startPartyBattle = {
                     partyRoomViewModel.startPartyBattle(partyCode = partyCode)
+                },
+                copyToClipboardMessage = {
+                    partyRoomViewModel.copyToClipboardMessage()
                 }
             )
         }
@@ -219,7 +221,8 @@ private fun PartyRoomBody(
     hasManagerPrivileges: Boolean,
     partyRoomState: PartyRoomState,
     openPartyExitDialog: MutableState<Boolean>,
-    startPartyBattle: () -> Unit
+    startPartyBattle: () -> Unit,
+    copyToClipboardMessage: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -229,7 +232,8 @@ private fun PartyRoomBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PartyRoomInfoBox(
-            partyCode = partyRoomState.entryCode
+            partyCode = partyRoomState.entryCode,
+            copyToClipboardMessage = copyToClipboardMessage
         )
         Column(
             modifier = Modifier
@@ -309,14 +313,15 @@ private fun PartyRoomBody(
 
 @Composable
 private fun PartyRoomInfoBox(
-    partyCode: String
+    partyCode: String,
+    copyToClipboardMessage: () -> Unit
 ) {
     val context = LocalContext.current
 
     PartyRunGradientButton(
         onClick = {
             copyToClipboard(context, partyCode)
-            Toast.makeText(context, R.string.party_code_copy_desc, Toast.LENGTH_SHORT).show()
+            copyToClipboardMessage()
         }
     ) {
         Column(

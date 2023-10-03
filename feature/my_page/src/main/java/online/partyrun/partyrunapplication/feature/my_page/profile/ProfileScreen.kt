@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -107,6 +108,7 @@ fun Content(
     onShowSnackbar: (String) -> Unit,
     profileSnackbarMessage: String
 ) {
+    val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
@@ -119,6 +121,10 @@ fun Content(
 
     if (profileUiState.isProfileUpdateSuccess) {
         navigateToMyPage()
+    }
+
+    if (updateProgressState) {
+        ProgressIndicator()
     }
 
     Scaffold(
@@ -183,12 +189,6 @@ private fun ProfileBody(
     keyboardController: SoftwareKeyboardController,
     focusManager: FocusManager
 ) {
-    val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
-
-    if (updateProgressState) {
-        ProgressIndicator()
-    }
-
     LaunchedEffect(Unit) {
         profileViewModel.initProfileContent(
             name = userData.nickName,
@@ -249,12 +249,7 @@ private fun ProfileBody(
 
 @Composable
 private fun ProgressIndicator() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(1f),
-        contentAlignment = Alignment.Center
-    ) {
+    Dialog(onDismissRequest = { }) {
         LottieImage(modifier = Modifier.size(60.dp), rawAnimation = R.raw.mypage_progress)
     }
 }

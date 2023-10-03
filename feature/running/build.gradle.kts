@@ -23,4 +23,5 @@ dependencies {
     implementation(libs.google.accompanist.permission)
 
     implementation(project(":core:network"))
+    implementation(project(":feature:running_result"))
 }

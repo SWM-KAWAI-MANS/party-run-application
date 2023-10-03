@@ -2,7 +2,9 @@ package online.partyrun.partyrunapplication.core.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.theme.DarkNavy30
@@ -152,7 +155,9 @@ fun PartyRunMatchButton(
 ) {
     PartyRunTextButton(
         onClick = onClick,
-        modifier = modifier.width(187.dp).height(60.dp),
+        modifier = modifier
+            .width(187.dp)
+            .height(60.dp),
         enabled = enabled,
         contentColor = Purple90,
         containerColor = DarkNavy30,
@@ -184,6 +189,7 @@ fun PartyRunAnimatedButton(
         }
     }
 }
+
 @Composable
 fun PartyRunGradientButton(
     onClick: () -> Unit,
@@ -234,4 +240,19 @@ private fun PartyRunButtonContent(
     ) {
         text()
     }
+}
+
+@Composable
+fun PartyRunImageButton(
+    modifier: Modifier = Modifier,
+    image: Int,
+    onClick: () -> Unit
+) {
+    Image(
+        painter = painterResource(id = image),
+        contentDescription = null,
+        modifier = modifier.clickable {
+            onClick()
+        }
+    )
 }

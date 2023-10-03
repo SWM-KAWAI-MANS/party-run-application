@@ -98,7 +98,7 @@ class SingleContentViewModel @Inject constructor(
         _singleContentUiState.update { state ->
             state.copy(
                 runningServiceState = RunningServiceState.PAUSED,
-                isUserPaused = isUserPaused // 사용자가 일시정지를 직접 누른 것인지 판단
+                isUserPaused = isUserPaused, // 사용자가 일시정지를 직접 누른 것인지 판단
             )
         }
     }
@@ -113,7 +113,8 @@ class SingleContentViewModel @Inject constructor(
         _singleContentUiState.update { state ->
             state.copy(
                 runningServiceState = RunningServiceState.RESUMED,
-                isUserPaused = false // 재시작일 때는 사용자가 직접 누른 것이든, 디바이스 움직임 재시작이든지 상관없이 false로 고정
+                isUserPaused = false, // 재시작일 때는 사용자가 직접 누른 것이든, 디바이스 움직임 재시작이든지 상관없이 false로 고정
+                screenState = SingleScreenState.Running
             )
         }
     }
@@ -139,6 +140,14 @@ class SingleContentViewModel @Inject constructor(
             )
         }
         startOneSecondCounter()
+    }
+
+    fun changeScreenToUserPaused() {
+        _singleContentUiState.update { state ->
+            state.copy(
+                screenState = SingleScreenState.UserPaused
+            )
+        }
     }
 
     private fun startOneSecondCounter() {
@@ -203,7 +212,8 @@ class SingleContentViewModel @Inject constructor(
                         userStatus = updatedUser,
                         distanceInMeter = currentDistance,
                         distanceInKm = formattedDistance,
-                        instantPace = instantPace
+                        instantPace = instantPace,
+                        records = record
                     )
                 }
             }

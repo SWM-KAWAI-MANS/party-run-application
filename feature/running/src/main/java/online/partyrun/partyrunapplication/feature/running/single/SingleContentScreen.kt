@@ -32,6 +32,7 @@ import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.finish.FinishScreen
 import online.partyrun.partyrunapplication.feature.running.ready.SingleReadyScreen
 import online.partyrun.partyrunapplication.feature.running.running.SingleRunningScreen
+import online.partyrun.partyrunapplication.feature.running.running.SingleUserPausedScreen
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningExitConfirmationDialog
 import online.partyrun.partyrunapplication.feature.running.service.SingleRunningService
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RESULT_SCREEN_TRANSITION_DELAY
@@ -129,6 +130,12 @@ fun Content(
                     openRunningExitDialog = openRunningExitDialog
                 )
 
+            is SingleScreenState.UserPaused ->
+                SingleUserPausedScreen(
+                    singleContentUiState = singleContentUiState,
+                    openRunningExitDialog = openRunningExitDialog
+                )
+
             SingleScreenState.Finish -> FinishScreen()
         }
     }
@@ -183,6 +190,7 @@ private fun ControlRunningService(
         }
         val intent = createServiceIntent(context, action)
         if (isUserPaused) {
+            singleContentViewModel.changeScreenToUserPaused()
             intent.putExtra(EXTRA_IS_USER_PAUSED, true)
         }
 

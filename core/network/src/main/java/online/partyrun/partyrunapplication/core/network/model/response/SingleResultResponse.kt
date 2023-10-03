@@ -24,17 +24,16 @@ fun SingleResultResponse.toDomainModel(): SingleResult {
         )
     }
 
-    val rawTargetDistance = records.lastOrNull()?.distance
-    val adjustedTargetDistance = (rawTargetDistance?.div(10)?.toInt() ?: 1) * 10
+    val targetDistance = records.lastOrNull()?.distance?.toInt() ?: 0
 
     return SingleResult(
         singleRunnerStatus = SingleRunnerStatus(
             records = this.records.map { it.toDomainModel() } // 각 record를 도메인 모델로 변환
         ),
         runningTime = runningTime.toDomainModel(),
-        targetDistance = adjustedTargetDistance,
-        targetDistanceFormatted = formatDistanceWithComma(adjustedTargetDistance),
-        targetDistanceInKm = formatDistanceInKm(adjustedTargetDistance),
+        targetDistance = targetDistance,
+        targetDistanceFormatted = formatDistanceWithComma(targetDistance),
+        targetDistanceInKm = formatDistanceInKm(targetDistance),
         singleDate = parsedStartTime?.let { formatDate(it) } ?: "" // "x월 x일" format
     )
 }

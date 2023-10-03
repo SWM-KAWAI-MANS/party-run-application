@@ -1,6 +1,11 @@
 package online.partyrun.partyrunapplication.feature.running.single
 
+import online.partyrun.partyrunapplication.core.model.running.RecordDataWithDistance
+import online.partyrun.partyrunapplication.core.model.running.toUiModel
+import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
+import timber.log.Timber
+import kotlin.math.floor
 
 enum class RunningServiceState {
     STARTED, PAUSED, RESUMED, STOPPED
@@ -34,6 +39,8 @@ data class SingleContentUiState(
     val robotStatus: SingleRunnerDisplayStatus = SingleRunnerDisplayStatus(),
     // 대결 시작까지 남은 시간
     val timeRemaining: Int = -1,
+    // 현재까지의 달린 데이터
+    val records: RecordDataWithDistance? = null
 )
 
 fun SingleContentUiState.isElapsedBeyondSelectedTime(): Boolean {
@@ -43,7 +50,8 @@ fun SingleContentUiState.isElapsedBeyondSelectedTime(): Boolean {
 fun SingleContentUiState.getUpdatedMovementData(totalDistance: Double): Pair<SingleRunnerDisplayStatus, String> {
     // 거리를 km 단위로 변환하고 소수점 두 자리까지 표현
     val distanceInKm = totalDistance / 1000
-    val formattedDistance = String.format("%.2f", distanceInKm)
+    val floorValue = floor(distanceInKm * 100) / 100  // 소수점 두 자리까지 내림
+    val formattedDistance = String.format("%.2f", floorValue)
 
     val updatedUser = this.userStatus.copy(
         distance = totalDistance
@@ -80,4 +88,13 @@ fun SingleContentUiState.getTimeComponents(): Triple<String, String, String> {
         String.format("%02d", minutes),
         String.format("%02d", remainingSeconds)
     )
+}
+
+fun SingleContentUiState.getDistanceInMeterString(): String {
+    val integerPartOfDistance = distanceInMeter.toInt()
+    return "$integerPartOfDistance" + "m"
+}
+
+fun SingleContentUiState.getRunnerRecordUiModels(): List<RunnerRecordUiModel> {
+    return this.records?.records?.map { it.toUiModel() } ?: listOf()
 }

@@ -128,6 +128,7 @@ class SingleRunningService : BaseRunningService() {
             if (handleUserPause(it)) return@let
             if (handleAutomaticPause(it)) return@let
             if (!isValidSpeed(it)) return@let
+            if (!isLocationAccuracyAcceptable(it)) return@let
             addGpsDataToRecordData(it)
         }
     }
@@ -173,6 +174,10 @@ class SingleRunningService : BaseRunningService() {
             return false
         }
         return true
+    }
+
+    private fun isLocationAccuracyAcceptable(location: Location): Boolean {
+        return location.speedAccuracyMetersPerSecond <= 0.07 && location.accuracy <= 17
     }
 
     private fun calculateDistanceTo(currentLocation: Location): Float {

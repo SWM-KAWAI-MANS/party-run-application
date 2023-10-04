@@ -45,5 +45,9 @@
     <string name="location_permission_description">정확한 GPS 신호를 통한 러닝 추적을 위해 위치 정보 액세스를 허용해주세요.</string>
     <string name="location_permission_additional_instruction">[설정] -> [권한] -> [위치]에서 권한을 설정해주세요.</string>
 
+    <string name="tts_running_start">러닝을 시작합니다!</string>
+    <string name="tts_running_pause">러닝을 중지합니다!</string>
+    <string name="tts_running_resume">러닝을 재개합니다!</string>
+
 
 </resources>

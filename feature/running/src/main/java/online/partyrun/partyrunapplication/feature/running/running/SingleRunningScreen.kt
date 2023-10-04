@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.core.common.util.speakTTS
+import online.partyrun.partyrunapplication.core.common.util.vibrateSingle
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
 import online.partyrun.partyrunapplication.feature.running.running.component.ControlPanelColumn
@@ -45,6 +47,7 @@ import online.partyrun.partyrunapplication.feature.running.running.component.Run
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
 import online.partyrun.partyrunapplication.feature.running.running.component.trackRatio
+import online.partyrun.partyrunapplication.feature.running.single.RunningServiceState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentUiState
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
 
@@ -55,6 +58,15 @@ fun SingleRunningScreen(
     openRunningExitDialog: MutableState<Boolean>,
     singleContentViewModel: SingleContentViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    if (singleContentUiState.runningServiceState == RunningServiceState.STARTED) {
+        LaunchedEffect(Unit) {
+            vibrateSingle(context)
+            speakTTS(context, context.getString(R.string.tts_running_start))
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -136,6 +148,7 @@ fun SingleRunningScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ControlPanelColumn(
+                    context = context,
                     singleContentUiState = singleContentUiState,
                     singleContentViewModel = singleContentViewModel,
                     openRunningExitDialog = openRunningExitDialog

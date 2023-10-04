@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,8 @@ fun SingleUserPausedScreen(
     singleContentViewModel: SingleContentViewModel = hiltViewModel(),
     openRunningExitDialog: MutableState<Boolean>,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -77,7 +80,12 @@ fun SingleUserPausedScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ControlPanelColumn(singleContentUiState, singleContentViewModel, openRunningExitDialog)
+            ControlPanelColumn(
+                context,
+                singleContentUiState,
+                singleContentViewModel,
+                openRunningExitDialog
+            )
         }
     }
 }

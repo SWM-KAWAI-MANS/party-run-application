@@ -39,10 +39,12 @@ class TTSManager(context: Context, onInitSuccess: (TTSManager) -> Unit) {
 
     private fun shutdownAfterSpeaking(utteranceId: String) {
         textToSpeech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-            override fun onStart(utteranceId: String?) {}
+            override fun onStart(utteranceId: String?) {
+                // speaking
+            }
 
-            @Deprecated("Deprecated in Java")
             override fun onError(utteranceId: String?) {
+                // speaking error
             }
 
             override fun onDone(expectedUtteranceId: String?) {

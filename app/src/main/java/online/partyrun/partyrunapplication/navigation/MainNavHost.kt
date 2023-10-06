@@ -96,7 +96,6 @@ fun SetUpMainNavGraph(
         )
 
         myPageRoute(
-            onSignOut = onSignOut,
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
             },

@@ -15,6 +15,7 @@ fun NavGraphBuilder.settingsRoute(
     // MainNavRoute
     composable(route = MainNavRoutes.Settings.route) {
         SettingsScreen(
+            onSignOut = onSignOut,
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe,
             onShowSnackbar = onShowSnackbar

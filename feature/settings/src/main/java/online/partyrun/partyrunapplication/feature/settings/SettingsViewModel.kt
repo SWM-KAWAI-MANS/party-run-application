@@ -37,13 +37,22 @@ class SettingsViewModel @Inject constructor(
                 googleSignOutUseCase()
                 _settingsUiState.update { state ->
                     state.copy(
-                        isAccountDeletionSuccess = true,
+                        isAccountDeletionSuccess = true
                     )
                 }
             }.onFailure { errorMessage, code ->
                 Timber.e("$code $errorMessage")
             }
         }
+    }
+
+    fun signOut() {
+        signOutFromGoogle()
+        saveAgreementState(isChecked = false)
+    }
+
+    private fun signOutFromGoogle() = viewModelScope.launch {
+        googleSignOutUseCase()
     }
 
     fun saveAgreementState(isChecked: Boolean) = viewModelScope.launch {

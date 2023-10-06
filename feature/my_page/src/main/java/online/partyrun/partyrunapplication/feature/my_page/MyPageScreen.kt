@@ -24,7 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -68,7 +67,6 @@ val mockList = emptyList<RunningData>()
 @Composable
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
-    onSignOut: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
@@ -79,7 +77,6 @@ fun MyPageScreen(
     Content(
         myPageViewModel = myPageViewModel,
         myPageUiState = myPageUiState,
-        onSignOut = onSignOut,
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
         onShowSnackbar = onShowSnackbar,
@@ -93,7 +90,6 @@ fun Content(
     modifier: Modifier = Modifier,
     myPageViewModel: MyPageViewModel,
     myPageUiState: MyPageUiState,
-    onSignOut: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit,
@@ -123,8 +119,6 @@ fun Content(
             when (myPageUiState) {
                 is MyPageUiState.Loading -> LoadingBody()
                 is MyPageUiState.Success -> MyPageBody(
-                    viewModel = myPageViewModel,
-                    onSignOut = onSignOut,
                     userData = myPageUiState.user,
                     navigateToProfile = navigateToProfile
                 )
@@ -172,10 +166,8 @@ private fun LoadingBody() {
 
 @Composable
 private fun MyPageBody(
-    viewModel: MyPageViewModel,
-    onSignOut: () -> Unit,
     userData: User,
-    navigateToProfile: () -> Unit,
+    navigateToProfile: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -290,14 +282,7 @@ private fun MyPageBody(
             }
         }
 
-        SignOutButton(
-            onClick = {
-                viewModel.signOutFromGoogle()
-                viewModel.saveAgreementState(isChecked = false)
-                onSignOut()
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
 
@@ -402,28 +387,6 @@ private fun StatusElement(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimary,
         )
-    }
-}
-
-@Composable
-fun SignOutButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .padding(top = 30.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = { onClick() }
-        ) {
-            Text(
-                text = stringResource(id = R.string.sign_out_btn),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
     }
 }
 

@@ -21,4 +21,6 @@
     <string name="unsubscribe_reason_4">사용하기 불편해요.</string>
     <string name="unsubscribe_reason_5">잠시 탈퇴할게요.</string>
 
+    <string name="sign_out_title">로그아웃</string>
+
 </resources>

@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import online.partyrun.partyrunapplication.core.ui.SettingsTopAppBar
 
 @Composable
 fun SettingsScreen(
+    onSignOut: () -> Unit = {},
     settingsViewModel: SettingsViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
     navigateToUnsubscribe: () -> Unit = {},
@@ -35,6 +39,7 @@ fun SettingsScreen(
     val settingsSnackbarMessage by settingsViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
+        onSignOut = onSignOut,
         navigateBack = navigateBack,
         navigateToUnsubscribe = navigateToUnsubscribe,
         settingsViewModel = settingsViewModel,
@@ -45,10 +50,11 @@ fun SettingsScreen(
 
 @Composable
 fun Content(
+    onSignOut: () -> Unit,
     settingsViewModel: SettingsViewModel,
     navigateBack: () -> Unit,
     navigateToUnsubscribe: () -> Unit,
-    onShowSnackbar: (String) ->  Unit,
+    onShowSnackbar: (String) -> Unit,
     settingsSnackbarMessage: String
 ) {
     LaunchedEffect(settingsSnackbarMessage) {
@@ -63,6 +69,8 @@ fun Content(
             .fillMaxSize()
     ) {
         MainBody(
+            onSignOut = onSignOut,
+            settingsViewModel = settingsViewModel,
             navigateBack = navigateBack,
             navigateToUnsubscribe = navigateToUnsubscribe
         )
@@ -72,6 +80,8 @@ fun Content(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainBody(
+    onSignOut: () -> Unit,
+    settingsViewModel: SettingsViewModel,
     navigateBack: () -> Unit,
     navigateToUnsubscribe: () -> Unit
 ) {
@@ -86,25 +96,56 @@ private fun MainBody(
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(id = R.string.unsubscribe),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                IconButton(onClick = { navigateToUnsubscribe() }) {
-                    Icon(
-                        painterResource(id = PartyRunIcons.ArrowForwardIos),
-                        contentDescription = stringResource(id = R.string.arrow_forward_desc)
-                    )
+            SettingsItem(
+                title = stringResource(id = R.string.sign_out_title),
+                action = {
+                    settingsViewModel.signOut()
+                    onSignOut()
                 }
-            }
+            )
+            SettingsItem(
+                title = stringResource(id = R.string.unsubscribe),
+                action = navigateToUnsubscribe
+            )
+            ItemDivider()
         }
     }
+}
+
+@Composable
+fun SettingsItem(
+    title: String,
+    action: () -> Unit
+) {
+    ItemDivider()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        IconButton(onClick = { action() }) {
+            Icon(
+                painterResource(id = PartyRunIcons.ArrowForwardIos),
+                contentDescription = stringResource(id = R.string.arrow_forward_desc)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ItemDivider() {
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
+            .alpha(0.2f)
+            .height(1.dp),
+    )
 }

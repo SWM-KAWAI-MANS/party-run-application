@@ -7,16 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import online.partyrun.partyrunapplication.core.domain.agreement.SaveAgreementStateUseCase
-import online.partyrun.partyrunapplication.core.domain.auth.GoogleSignOutUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val googleSignOutUseCase: GoogleSignOutUseCase,
-    private val saveAgreementStateUseCase: SaveAgreementStateUseCase,
     private val getMyPageDataUseCase: GetMyPageDataUseCase
 ) : ViewModel() {
 
@@ -44,13 +40,5 @@ class MyPageViewModel @Inject constructor(
     fun clearSnackbarMessage() {
         _snackbarMessage.value = ""
     }
-
-    fun signOutFromGoogle() = viewModelScope.launch {
-        googleSignOutUseCase()
-    }
-
-    fun saveAgreementState(isChecked: Boolean) = viewModelScope.launch {
-        saveAgreementStateUseCase(isChecked)
-    }
-
 }
+

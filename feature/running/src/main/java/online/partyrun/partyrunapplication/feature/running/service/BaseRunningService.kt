@@ -32,7 +32,7 @@ abstract class BaseRunningService : Service() {
 
     companion object {
         const val LOCATION_UPDATE_INTERVAL_SECONDS = 1L
-        const val THRESHOLD = -1
+        const val THRESHOLD = 0.08
     }
 
     @Inject
@@ -169,6 +169,14 @@ abstract class BaseRunningService : Service() {
         super.onDestroy()
         sensorManager.unregisterListener(sensorEventListener) // 센서 해제
         stopLocationUpdates()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent) {
+        super.onTaskRemoved(rootIntent)
+        sensorManager.unregisterListener(sensorEventListener) // 센서 해제
+        stopLocationUpdates()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     override fun onBind(intent: Intent?): IBinder? {

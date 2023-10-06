@@ -31,7 +31,7 @@ android {
         minSdk = Configurations.MIN_SDK_VERSION
         targetSdk = Configurations.TARGET_SDK_VERSION
         versionCode = Configurations.VERSION_CODE
-        versionName  = Configurations.VERSION_NAME
+        versionName = Configurations.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -58,14 +58,25 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             signingConfig = signingConfigs.getByName("config")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigField("String", "BASE_URL", "\"${localProperties["RELEASE_BASE_URL"] as String?}\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"${localProperties["RELEASE_BASE_URL"] as String?}\""
+            )
         }
 
         getByName("debug") {
             applicationIdSuffix = ".debug"
             isDebuggable = true
-            buildConfigField("String", "BASE_URL", "\"${localProperties["DEBUG_BASE_URL"] as String?}\"")
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"${localProperties["DEBUG_BASE_URL"] as String?}\""
+            )
         }
     }
 
@@ -106,6 +117,7 @@ dependencies {
     implementation(project(":feature:challenge"))
     implementation(project(":feature:match"))
     implementation(project(":feature:my_page"))
+    implementation(project(":feature:party"))
     implementation(project(":feature:running"))
     implementation(project(":feature:running_result"))
     implementation(project(":feature:settings"))
@@ -115,68 +127,68 @@ dependencies {
 
     // androidx
     implementation(libs.androidx.appcompat)
-    implementation (libs.androidx.core.ktx)
-    implementation (platform(libs.kotlin.bom))
-    implementation (libs.androidx.lifecycle.runtime.ktx)
-    implementation (libs.androidx.core.splashscreen)
+    implementation(libs.androidx.core.ktx)
+    implementation(platform(libs.kotlin.bom))
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.core.splashscreen)
 
     // compose
-    implementation (libs.androidx.activity.compose)
-    implementation (libs.androidx.lifecycle.runtimeCompose)
-    implementation (libs.androidx.compose.ui.tooling.preview)
-    implementation (platform(libs.androidx.compose.bom))
-    implementation (libs.androidx.compose.ui.core)
-    implementation (libs.androidx.compose.ui.graphics)
-    implementation (libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtimeCompose)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui.core)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.material3)
     // Compose Navigation
-    implementation (libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
 
     // test
-    testImplementation (libs.junit)
-    androidTestImplementation (libs.androidx.test.ext)
-    androidTestImplementation (libs.androidx.test.espresso.core)
-    androidTestImplementation (platform(libs.androidx.compose.bom))
-    androidTestImplementation (libs.androidx.compose.ui.test)
-    debugImplementation (libs.androidx.compose.ui.tooling)
-    debugImplementation (libs.androidx.compose.ui.testManifest)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.testManifest)
 
     // Google
-    implementation (libs.google.auth)
+    implementation(libs.google.auth)
 
     // Timber
-    implementation (libs.timber)
+    implementation(libs.timber)
 
     // firebase / firestore
     // Import the Firebase BoM
-    implementation (platform(libs.firebase.bom))
+    implementation(platform(libs.firebase.bom))
     // Add the dependency for the Firebase SDK for Google Analytics
-    implementation (libs.firebase.analytics)
-    implementation (libs.firebase.auth)
-    implementation (libs.firebase.storage)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
 
     // Coroutines
-    implementation (libs.kotlinx.coroutines.core)
-    implementation (libs.kotlinx.coroutines.android)
-    implementation (libs.kotlinx.coroutines.playservices)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.playservices)
 
     // Coroutine Lifecycle Scopes
-    implementation (libs.androidx.lifecycle.viwemodel.ktx)
-    implementation (libs.androidx.lifecycle.runtime.ktx)
-    implementation (libs.androidx.lifecycle.viwemodel.savedstate)
+    implementation(libs.androidx.lifecycle.viwemodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viwemodel.savedstate)
 
     // Coil
-    implementation (libs.coil.kt)
-    implementation (libs.coil.kt.compose)
-    implementation (libs.coil.kt.gif)
+    implementation(libs.coil.kt)
+    implementation(libs.coil.kt.compose)
+    implementation(libs.coil.kt.gif)
 
     // hilt ext
-    kapt (libs.hilt.ext.compiler)
+    kapt(libs.hilt.ext.compiler)
 
     // Lottie
-    implementation (libs.lottie.compose)
+    implementation(libs.lottie.compose)
 
     // In-App-Update
     implementation(libs.google.`in`.app.update)
     implementation(libs.google.`in`.app.update.ktx)
 }
-tasks.register("prepareKotlinBuildScriptModel"){}
+tasks.register("prepareKotlinBuildScriptModel") {}

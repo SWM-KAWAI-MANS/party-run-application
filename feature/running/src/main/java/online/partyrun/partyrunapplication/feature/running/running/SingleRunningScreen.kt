@@ -1,8 +1,6 @@
 package online.partyrun.partyrunapplication.feature.running.running
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -13,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -30,16 +29,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import online.partyrun.partyrunapplication.core.common.util.speakTTS
+import online.partyrun.partyrunapplication.core.common.util.vibrateSingle
 import online.partyrun.partyrunapplication.core.model.single.SingleRunnerDisplayStatus
 import online.partyrun.partyrunapplication.feature.running.R
+import online.partyrun.partyrunapplication.feature.running.running.component.ControlPanelColumn
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.ARRIVAL_FLAG_DELAY
 import online.partyrun.partyrunapplication.feature.running.util.RunningConstants.RUNNER_GRAPHIC_Y_OFFSET
 import online.partyrun.partyrunapplication.feature.running.running.component.RunnerGraphic
+import online.partyrun.partyrunapplication.feature.running.running.component.RunningMetricsPanel
 import online.partyrun.partyrunapplication.feature.running.running.component.RunningTrack
 import online.partyrun.partyrunapplication.feature.running.running.component.SingleRunnerMarker
 import online.partyrun.partyrunapplication.feature.running.running.component.TrackDistanceDistanceBox
@@ -55,6 +58,15 @@ fun SingleRunningScreen(
     openRunningExitDialog: MutableState<Boolean>,
     singleContentViewModel: SingleContentViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    if (singleContentUiState.runningServiceState == RunningServiceState.STARTED) {
+        LaunchedEffect(Unit) {
+            vibrateSingle(context)
+            speakTTS(context, context.getString(R.string.tts_running_start))
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -81,7 +93,7 @@ fun SingleRunningScreen(
             Spacer(modifier = Modifier.size(15.dp))
             Column(
                 modifier = Modifier
-                    .weight(0.9f)
+                    .weight(1f)
                     .fillMaxWidth()
                     .padding(horizontal = 25.dp)
             ) {
@@ -135,84 +147,14 @@ fun SingleRunningScreen(
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RunningMetricsPanel(
-                    title = stringResource(id = R.string.progress_time)
-                ) {
-                    Text(
-                        text = singleContentUiState.elapsedFormattedTime,
-                        style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-                Spacer(modifier = Modifier.size(5.dp))
-                RunControlPanel(
-                    pausedState = singleContentUiState.runningServiceState,
-                    pauseAction = {
-                        singleContentViewModel.pauseSingleRunningService(isUserPaused = true)
-                    },
-                    resumeAction = {
-                        singleContentViewModel.resumeSingleRunningService()
-                    },
-                    stopAction = {
-                        openRunningExitDialog.value = true
-                    }
+                ControlPanelColumn(
+                    context = context,
+                    singleContentUiState = singleContentUiState,
+                    singleContentViewModel = singleContentViewModel,
+                    openRunningExitDialog = openRunningExitDialog
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun RunControlPanel(
-    pausedState: RunningServiceState,
-    pauseAction: () -> Unit,
-    resumeAction: () -> Unit,
-    stopAction: () -> Unit,
-) {
-    if (pausedState != RunningServiceState.PAUSED) {
-        PartyRunImageButton(
-            modifier = Modifier.size(80.dp),
-            image = R.drawable.pause,
-        ) {
-            pauseAction()
-        }
-    } else {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            PartyRunImageButton(
-                modifier = Modifier.size(80.dp),
-                image = R.drawable.restart,
-            ) {
-                resumeAction()
-            }
-            PartyRunImageButton(
-                modifier = Modifier.size(80.dp),
-                image = R.drawable.stop,
-            ) {
-                stopAction()
-            }
-        }
-    }
-}
-
-@Composable
-private fun RunningMetricsPanel(
-    title: String,
-    record: @Composable () -> Unit
-) {
-    Column(
-        modifier = Modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        record()
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }
 
@@ -294,16 +236,30 @@ private fun RenderRunner(
 }
 
 @Composable
-fun PartyRunImageButton(
-    modifier: Modifier = Modifier,
-    image: Int,
-    onClick: () -> Unit
-) {
-    Image(
-        painter = painterResource(id = image),
-        contentDescription = stringResource(id = R.string.image_btn_desc),
-        modifier = modifier.clickable {
-            onClick()
-        }
-    )
+fun FixedWidthTimeText(hour: String, minute: String, second: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            modifier = Modifier.width(100.dp),
+            text = hour,
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            text = ":$minute:",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Text(
+            modifier = Modifier.width(100.dp),
+            text = second,
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }

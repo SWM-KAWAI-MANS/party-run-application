@@ -24,6 +24,8 @@ import online.partyrun.partyrunapplication.core.navigation.challenge.challengeRo
 import online.partyrun.partyrunapplication.core.navigation.main.BottomNavBarItems
 import online.partyrun.partyrunapplication.core.navigation.main.MainNavRoutes
 import online.partyrun.partyrunapplication.core.navigation.my_page.myPageRoute
+import online.partyrun.partyrunapplication.core.navigation.party.PartyNavRoutes
+import online.partyrun.partyrunapplication.core.navigation.party.partyRoute
 import online.partyrun.partyrunapplication.core.navigation.running.singleRunningRoute
 import online.partyrun.partyrunapplication.core.navigation.running_result.runningResultRoute
 import online.partyrun.partyrunapplication.core.navigation.settings.SettingsNavRoutes
@@ -68,13 +70,35 @@ fun SetUpMainNavGraph(
 
         challengeRoute()
 
+        partyRoute(
+            navigateToPartyRoom = { code, hasManagerPrivileges ->
+                navController.navigate("${PartyNavRoutes.PartyRoom.route}?code=$code&hasManagerPrivileges=$hasManagerPrivileges") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            navigateToParty = {
+                navController.navigate(MainNavRoutes.Party.route) {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = true
+                    }
+                }
+            },
+            navigateToBattleRunningWithDistance = { distance ->
+                navController.navigate("${MainNavRoutes.BattleRunning.route}?distance=$distance") {
+                    popUpTo(MainNavRoutes.Party.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            onShowSnackbar = onShowSnackbar
+        )
+
         myPageRoute(
             onSignOut = onSignOut,
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
-            },
-            navigateBack = {
-                navController.popBackStack()
             },
             navigateToMyPage = {
                 navController.navigate(MainNavRoutes.MyPage.route) {
@@ -92,11 +116,9 @@ fun SetUpMainNavGraph(
         battleRunningRoute(
             navigateToBattleOnWebSocketError = {
                 navController.navigate(MainNavRoutes.Battle.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+                    popUpTo(MainNavRoutes.Battle.route) {
+                        inclusive = true
                     }
-                    launchSingleTop = true // 자기 자신이 또 스택 푸시가 되지 않도록 방지
-                    restoreState = true
                 }
             },
             navigateToBattleResult = {

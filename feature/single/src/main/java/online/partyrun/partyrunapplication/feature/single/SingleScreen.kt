@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.single
 
-import android.Manifest
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +31,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientButton
 import online.partyrun.partyrunapplication.core.designsystem.component.SurfaceRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.single.SingleTargetDetails
 import online.partyrun.partyrunapplication.core.ui.HeadLine
-import online.partyrun.partyrunapplication.feature.running.permission.CheckMultiplePermissions
+import online.partyrun.partyrunapplication.feature.running.permission.HandlePermissionActions
+import online.partyrun.partyrunapplication.feature.running.permission.settingPermissionVariables
 
 private var lastClickTime = 0L
 private const val DEBOUNCE_DURATION = 100  // 0.1 seconds
@@ -54,15 +51,13 @@ fun SingleScreen(
 ) {
     val singleUiState by singleViewModel.singleUiState.collectAsStateWithLifecycle()
     val singleSnackbarMessage by singleViewModel.snackbarMessage.collectAsStateWithLifecycle()
-    val targetDistance by singleViewModel.targetDistance.collectAsStateWithLifecycle()
-    val targetTime by singleViewModel.targetTime.collectAsStateWithLifecycle()
+    val singleTargetDetails by singleViewModel.singleTargetDetails.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
         singleUiState = singleUiState,
         singleViewModel = singleViewModel,
-        targetDistance = targetDistance,
-        targetTime = targetTime,
+        singleTargetDetails = singleTargetDetails,
         navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime,
         singleSnackbarMessage = singleSnackbarMessage,
         onShowSnackbar = onShowSnackbar
@@ -74,8 +69,7 @@ fun Content(
     modifier: Modifier = Modifier,
     singleUiState: SingleUiState,
     singleViewModel: SingleViewModel,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
     singleSnackbarMessage: String,
     onShowSnackbar: (String) -> Unit
@@ -92,8 +86,7 @@ fun Content(
             is SingleUiState.Loading -> LoadingBody()
             is SingleUiState.Success -> SingleMainBody(
                 singleViewModel = singleViewModel,
-                targetDistance = targetDistance,
-                targetTime = targetTime,
+                singleTargetDetails = singleTargetDetails,
                 navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
             )
 
@@ -117,17 +110,10 @@ private fun LoadingBody() {
 @Composable
 fun SingleMainBody(
     singleViewModel: SingleViewModel,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
-    val showPermissionDialog = remember { mutableStateOf(false) }
-
-    val permissionsList = listOfNotNull(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
-    )
-    val permissionState = rememberMultiplePermissionsState(permissions = permissionsList)
+    val (showPermissionDialog, permissionState) = settingPermissionVariables()
 
     HandlePermissionActions(
         permissionState = permissionState,
@@ -138,8 +124,7 @@ fun SingleMainBody(
         singleViewModel = singleViewModel,
         permissionState = permissionState,
         showPermissionDialog = showPermissionDialog,
-        targetDistance = targetDistance,
-        targetTime = targetTime,
+        singleTargetDetails = singleTargetDetails,
         navigateToSingleRunningWithDistanceAndTime = navigateToSingleRunningWithDistanceAndTime
     )
 }
@@ -150,8 +135,7 @@ private fun SingleContent(
     singleViewModel: SingleViewModel,
     permissionState: MultiplePermissionsState,
     showPermissionDialog: MutableState<Boolean>,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit
 ) {
     Column(
@@ -210,8 +194,7 @@ private fun SingleContent(
                         handleStartButtonClick(
                             permissionState,
                             navigateToSingleRunningWithDistanceAndTime,
-                            targetDistance,
-                            targetTime,
+                            singleTargetDetails,
                             showPermissionDialog
                         )
                     }
@@ -233,14 +216,13 @@ private fun SingleContent(
 private fun handleStartButtonClick(
     permissionState: MultiplePermissionsState,
     navigateToSingleRunningWithDistanceAndTime: (Int, Int) -> Unit,
-    targetDistance: Int,
-    targetTime: Int,
+    singleTargetDetails: SingleTargetDetails,
     showPermissionDialog: MutableState<Boolean>
 ) {
     if (shouldExecuteStartAction(permissionState)) {
         navigateToSingleRunningWithDistanceAndTime(
-            targetDistance,
-            targetTime
+            singleTargetDetails.distance,
+            singleTargetDetails.time
         )
     } else {
         showPermissionDialog.value = true
@@ -353,19 +335,4 @@ fun isDebounced(currentTime: Long): Boolean {
         return true
     }
     return false
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun HandlePermissionActions(
-    permissionState: MultiplePermissionsState,
-    showPermissionDialog: MutableState<Boolean>
-) {
-    if (showPermissionDialog.value) {
-        CheckMultiplePermissions(
-            permissionState = permissionState,
-            onPermissionResult = { if (it) showPermissionDialog.value = false },
-            showPermissionDialog = showPermissionDialog
-        )
-    }
 }

@@ -95,7 +95,6 @@ private fun SingleResultBody(
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
                 MapWidget(
-                    targetDistance = singleResult.targetDistance,
                     targetDistanceFormatted = singleResult.targetDistanceFormatted,
                     records = singleResult.singleRunnerStatus.records
                 )
@@ -187,7 +186,7 @@ private fun SingleTitleAndDateDisplay(singleResult: SingleResultUiModel) {
         Text(text = singleResult.singleDate)
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = "${stringResource(id = R.string.single_title)} ${singleResult.targetDistanceInKm}",
+            text = "${stringResource(id = R.string.single_title)} ${singleResult.targetDistanceFormatted}",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimary
         )

@@ -70,7 +70,6 @@ fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     navigateToSettings: () -> Unit = {},
-    navigateBack: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
@@ -82,7 +81,6 @@ fun MyPageScreen(
         myPageUiState = myPageUiState,
         onSignOut = onSignOut,
         navigateToSettings = navigateToSettings,
-        navigateBack = navigateBack,
         navigateToProfile = navigateToProfile,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
@@ -97,7 +95,6 @@ fun Content(
     myPageUiState: MyPageUiState,
     onSignOut: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateBack: () -> Unit,
     navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
@@ -114,7 +111,6 @@ fun Content(
         topBar = {
             MyPageTopAppBar(
                 modifier = modifier,
-                navigateBack = navigateBack,
                 navigateToSettings = navigateToSettings
             )
         }
@@ -143,19 +139,10 @@ fun Content(
 @Composable
 private fun MyPageTopAppBar(
     modifier: Modifier,
-    navigateBack: () -> Unit,
     navigateToSettings: () -> Unit
 ) {
     PartyRunTopAppBar(
         modifier = modifier,
-        navigateToContent = {
-            IconButton(onClick = { navigateBack() }) {
-                Icon(
-                    painterResource(id = PartyRunIcons.ArrowBackIos),
-                    contentDescription = stringResource(id = R.string.arrow_back_desc)
-                )
-            }
-        },
         titleContent = {
             Text(
                 text = stringResource(id = R.string.my_page_title)

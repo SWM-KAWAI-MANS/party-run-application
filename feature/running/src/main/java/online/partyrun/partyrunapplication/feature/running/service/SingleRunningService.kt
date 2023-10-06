@@ -22,6 +22,8 @@ class SingleRunningService : BaseRunningService() {
         private const val MIN_DURATION_SECOND: Double = 0.0
         private const val PAUSE_THRESHOLD_COUNT = 3
         private const val MAXIMUM_RUNNER_SPEED_OF_METERS_PER_SECOND = 12.42
+        private const val MAXIMUM_SPEED_ACCURACY = 0.07 // meters/second
+        private const val MAXIMUM_LOCATION_ACCURACY = 17 // meters
     }
 
     @Inject
@@ -128,6 +130,7 @@ class SingleRunningService : BaseRunningService() {
             if (handleUserPause(it)) return@let
             if (handleAutomaticPause(it)) return@let
             if (!isValidSpeed(it)) return@let
+            if (!isLocationAccuracyAcceptable(it)) return@let
             addGpsDataToRecordData(it)
         }
     }
@@ -175,6 +178,10 @@ class SingleRunningService : BaseRunningService() {
         return true
     }
 
+    private fun isLocationAccuracyAcceptable(location: Location): Boolean {
+        return location.speedAccuracyMetersPerSecond <= MAXIMUM_SPEED_ACCURACY && location.accuracy <= MAXIMUM_LOCATION_ACCURACY
+    }
+
     private fun calculateDistanceTo(currentLocation: Location): Float {
         // 두 위치 사이의 거리 계산
         return lastLocation?.distanceTo(currentLocation) ?: 0f
@@ -198,7 +205,6 @@ class SingleRunningService : BaseRunningService() {
         // Repository에 GPS 데이터 추가
         storeGpsData(gpsData)
     }
-
 
     private fun createGpsData(location: Location, distance: Double): GpsDataWithDistance {
         return GpsDataWithDistance(

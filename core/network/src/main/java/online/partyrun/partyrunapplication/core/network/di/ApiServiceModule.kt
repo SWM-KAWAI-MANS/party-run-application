@@ -10,6 +10,7 @@ import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApi
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.BattleApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
+import online.partyrun.partyrunapplication.core.network.service.PartyApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.SingleApiService
 import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
@@ -82,5 +83,12 @@ object ApiServiceModule {
             .client(okHttpClient)
             .build()
             .create(MatchApiService::class.java)
+
+    @Provides
+    fun providePartyApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): PartyApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(PartyApiService::class.java)
 
 }

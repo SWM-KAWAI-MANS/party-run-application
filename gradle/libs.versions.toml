@@ -28,6 +28,7 @@ gson = "2.10.1"
 mock = "4.10.0"
 protobuf = "3.24.0"
 protobufPlugin = "0.9.4"
+composeFoundation = "1.4.1"
 coil = "2.2.2"
 kotlinBom = "1.8.0"
 firebaseBom = "32.2.2"
@@ -65,8 +66,8 @@ kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin
 androidx-lifecycle-viwemodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viwemodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycle" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation"}
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref =  "composeFoundation"}
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidxActivity" }

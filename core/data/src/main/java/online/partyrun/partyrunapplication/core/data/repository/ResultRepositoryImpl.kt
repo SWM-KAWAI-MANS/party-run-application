@@ -10,6 +10,7 @@ import online.partyrun.partyrunapplication.core.network.model.response.toDomainM
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSource
+import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
 import javax.inject.Inject
 
@@ -30,6 +31,12 @@ class ResultRepositoryImpl @Inject constructor(
         val singleId = singlePreferencesDataSource.getSingleId().first() ?: ""
         return apiRequestFlow {
             resultDataSource.getSingleResults(singleId)
+        }.mapResultModel { it.toDomainModel() }
+    }
+
+    override suspend fun getComprehensiveRunRecord(): Flow<Result<ComprehensiveRunRecord>> {
+        return apiRequestFlow {
+            resultDataSource.getComprehensiveRunRecord()
         }.mapResultModel { it.toDomainModel() }
     }
 

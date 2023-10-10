@@ -19,5 +19,5 @@ data class ComprehensiveRunRecordResponse(
 fun ComprehensiveRunRecordResponse.toDomainModel() = ComprehensiveRunRecord(
     averagePace = formatPace(this.averagePace ?: 0.0),
     totalDistance = formatDistanceInKm(this.totalDistance?.toInt() ?: 0),
-    totalRunningTime = this.totalRunningTime?.toElapsedTimeString() ?: "00:00:00"
+    totalRunningTime = this.totalRunningTime?.toElapsedTimeString() ?: "00:00"
 )

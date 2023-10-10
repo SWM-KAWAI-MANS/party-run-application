@@ -64,7 +64,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
-import online.partyrun.partyrunapplication.feature.my_page.MyPageUiState
+import online.partyrun.partyrunapplication.feature.my_page.MyPageProfileState
 import online.partyrun.partyrunapplication.feature.my_page.MyPageViewModel
 import online.partyrun.partyrunapplication.feature.my_page.R
 
@@ -76,7 +76,7 @@ fun ProfileScreen(
     onShowSnackbar: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
+    val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
     val profileSnackbarMessage by profileViewModel.snackbarMessage.collectAsStateWithLifecycle()
     val photoPickerLauncher =
@@ -86,7 +86,7 @@ fun ProfileScreen(
 
     Content(
         profileViewModel = profileViewModel,
-        myPageUiState = myPageUiState,
+        myPageProfileState = myPageProfileState,
         profileUiState = profileUiState,
         photoPicker = {
             photoPickerLauncher.launch(
@@ -106,7 +106,7 @@ fun ProfileScreen(
 fun Content(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel,
-    myPageUiState: MyPageUiState,
+    myPageProfileState: MyPageProfileState,
     profileUiState: ProfileUiState,
     photoPicker: () -> Unit,
     navigateToMyPage: () -> Unit,
@@ -150,10 +150,10 @@ fun Content(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (myPageUiState is MyPageUiState.Success && keyboardController != null) {
+            if (myPageProfileState is MyPageProfileState.Success && keyboardController != null) {
                 ProfileBody(
                     profileViewModel = profileViewModel,
-                    userData = myPageUiState.user,
+                    userData = myPageProfileState.user,
                     photoPicker = photoPicker,
                     profileUiState = profileUiState,
                     keyboardController = keyboardController,

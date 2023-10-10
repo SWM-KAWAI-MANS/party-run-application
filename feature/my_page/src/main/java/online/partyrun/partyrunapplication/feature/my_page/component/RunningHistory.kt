@@ -114,3 +114,90 @@ fun EmptyRunningHistory() {
         )
     }
 }
+
+@Composable
+fun ShimmerRunningHistory(
+    isSingleData: Boolean
+) {
+    val title =
+        if (isSingleData) stringResource(id = R.string.single_title) else stringResource(id = R.string.battle_title)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            items(5) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(start = 25.dp, end = 5.dp, top = 20.dp, bottom = 15.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.SpaceAround,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(50.dp)
+                                    .height(16.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(18.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(20.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                        }
+                        Spacer(modifier = Modifier.width(30.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .shimmerEffect(isDarkTheme = true)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .offset(x = 10.dp, y = (-15).dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .shimmerEffect(isDarkTheme = true)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

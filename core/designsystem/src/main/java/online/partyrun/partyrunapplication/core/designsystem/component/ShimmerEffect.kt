@@ -15,12 +15,31 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import online.partyrun.partyrunapplication.core.designsystem.theme.Gray10
+import online.partyrun.partyrunapplication.core.designsystem.theme.Gray20
 import online.partyrun.partyrunapplication.core.designsystem.theme.Purple50
 import online.partyrun.partyrunapplication.core.designsystem.theme.Purple60
 
 private const val shimmerAnimationDuration = 1000
 
-fun Modifier.shimmerEffect(): Modifier = composed {
+fun Modifier.shimmerEffect(
+    isDarkTheme: Boolean
+): Modifier = composed {
+    val brushColorList =
+        if (isDarkTheme) {
+            listOf(
+                Gray20,
+                Gray10,
+                Gray20
+            )
+        } else {
+            listOf(
+                Purple60,
+                Purple50,
+                Purple60
+            )
+        }
+
     var size by remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -35,11 +54,7 @@ fun Modifier.shimmerEffect(): Modifier = composed {
 
     background(
         brush = Brush.linearGradient(
-            colors = listOf(
-                Purple60,
-                Purple50,
-                Purple60,
-            ),
+            colors = brushColorList,
             start = Offset(startOffsetX, 0f),
             end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
         )

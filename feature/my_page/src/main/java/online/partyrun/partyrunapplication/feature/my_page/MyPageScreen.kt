@@ -187,7 +187,7 @@ private fun MyPageBody(
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-        ComprehensiveRunRecord(
+        ComprehensiveRunRecordRect(
             myPageComprehensiveRunRecordState = myPageComprehensiveRunRecordState
         )
 
@@ -266,23 +266,23 @@ private fun SingleRunningHistoryBody(
 }
 
 @Composable
-private fun ComprehensiveRunRecord(
+private fun ComprehensiveRunRecordRect(
     myPageComprehensiveRunRecordState: MyPageComprehensiveRunRecordState
 ) {
     when (myPageComprehensiveRunRecordState) {
-        is MyPageComprehensiveRunRecordState.Loading -> ComprehensiveRunRecordShimmerEffect()
-        is MyPageComprehensiveRunRecordState.Success -> ComprehensiveRunRecordBody(
+        is MyPageComprehensiveRunRecordState.Loading -> ShimmerComprehensiveRunRecordRect()
+        is MyPageComprehensiveRunRecordState.Success -> ComprehensiveRunRecordRectBody(
             averagePace = myPageComprehensiveRunRecordState.comprehensiveRunRecord.averagePace,
             totalDistance = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalDistance,
             totalRunningTime = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalRunningTime
         )
 
-        MyPageComprehensiveRunRecordState.LoadFailed -> ComprehensiveRunRecordShimmerEffect()
+        MyPageComprehensiveRunRecordState.LoadFailed -> ShimmerComprehensiveRunRecordRect()
     }
 }
 
 @Composable
-private fun ComprehensiveRunRecordShimmerEffect() {
+private fun ShimmerComprehensiveRunRecordRect() {
     PartyRunGradientRoundedRect(
         modifier = Modifier
             .fillMaxWidth()
@@ -304,7 +304,7 @@ private fun ComprehensiveRunRecordShimmerEffect() {
 }
 
 @Composable
-private fun ComprehensiveRunRecordBody(
+private fun ComprehensiveRunRecordRectBody(
     averagePace: String,
     totalDistance: String,
     totalRunningTime: String

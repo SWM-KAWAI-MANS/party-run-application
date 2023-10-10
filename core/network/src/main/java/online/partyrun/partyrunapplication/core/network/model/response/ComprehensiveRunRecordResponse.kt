@@ -3,6 +3,9 @@ package online.partyrun.partyrunapplication.core.network.model.response
 import com.google.gson.annotations.SerializedName
 import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
 import online.partyrun.partyrunapplication.core.model.my_page.TotalRunningTime
+import online.partyrun.partyrunapplication.core.model.my_page.toElapsedTimeString
+import online.partyrun.partyrunapplication.core.model.util.formatPace
+import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceInKm
 
 data class ComprehensiveRunRecordResponse(
     @SerializedName("averagePace")
@@ -14,7 +17,7 @@ data class ComprehensiveRunRecordResponse(
 )
 
 fun ComprehensiveRunRecordResponse.toDomainModel() = ComprehensiveRunRecord(
-    averagePace = this.averagePace ?: 0.0,
-    totalDistance = this.totalDistance ?: 0.0,
-    totalRunningTime = this.totalRunningTime ?: TotalRunningTime(0, 0, 0)
+    averagePace = formatPace(this.averagePace ?: 0.0),
+    totalDistance = formatDistanceInKm(this.totalDistance?.toInt() ?: 0),
+    totalRunningTime = this.totalRunningTime?.toElapsedTimeString() ?: "00:00:00"
 )

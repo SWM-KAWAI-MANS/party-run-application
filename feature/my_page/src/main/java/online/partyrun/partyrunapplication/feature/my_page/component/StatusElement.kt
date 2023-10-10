@@ -54,24 +54,24 @@ fun ShimmerStatusElement() {
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .shimmerEffect(),
+                .shimmerEffect(isDarkTheme = false)
         )
         Spacer(
             modifier = Modifier
                 .height(5.dp)
-                .shimmerEffect()
+                .shimmerEffect(isDarkTheme = false)
         )
         Box(
             modifier = Modifier
                 .width(50.dp)
                 .height(24.dp)
-                .shimmerEffect(),
+                .shimmerEffect(isDarkTheme = false)
         )
         Box(
             modifier = Modifier
                 .width(80.dp)
                 .height(20.dp)
-                .shimmerEffect(),
+                .shimmerEffect(isDarkTheme = false)
         )
     }
 }

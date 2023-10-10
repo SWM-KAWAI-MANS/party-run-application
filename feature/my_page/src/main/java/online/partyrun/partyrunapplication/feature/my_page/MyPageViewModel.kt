@@ -59,7 +59,6 @@ class MyPageViewModel @Inject constructor(
 
         getComprehensiveRunRecordUseCase().collect { result ->
             result.onSuccess {
-                delay(1000L)
                 _myPageComprehensiveRunRecordState.value =
                     MyPageComprehensiveRunRecordState.Success(
                         comprehensiveRunRecord = it

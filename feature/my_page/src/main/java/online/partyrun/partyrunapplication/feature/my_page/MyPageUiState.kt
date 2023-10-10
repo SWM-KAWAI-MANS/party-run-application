@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
 import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
+import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 
 sealed class MyPageProfileState {
@@ -29,4 +30,14 @@ sealed class MyPageComprehensiveRunRecordState {
     ) : MyPageComprehensiveRunRecordState()
 
     object LoadFailed : MyPageComprehensiveRunRecordState()
+}
+
+sealed class RunningHistoryState {
+    object Loading : RunningHistoryState()
+
+    data class Success(
+        val singleRunningHistory: SingleRunningHistory = SingleRunningHistory(emptyList())
+    ) : RunningHistoryState()
+
+    object LoadFailed : RunningHistoryState()
 }

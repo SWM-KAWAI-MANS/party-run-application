@@ -7,17 +7,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import online.partyrun.partyrunapplication.core.common.result.onFailure
+import online.partyrun.partyrunapplication.core.common.result.onSuccess
+import online.partyrun.partyrunapplication.core.domain.my_page.GetComprehensiveRunRecordUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val getMyPageDataUseCase: GetMyPageDataUseCase
+    private val getMyPageDataUseCase: GetMyPageDataUseCase,
+    private val getComprehensiveRunRecordUseCase: GetComprehensiveRunRecordUseCase
 ) : ViewModel() {
 
-    private val _myPageUiState = MutableStateFlow<MyPageUiState>(MyPageUiState.Loading)
-    val myPageUiState = _myPageUiState.asStateFlow()
+    private val _myPageProfileState =
+        MutableStateFlow<MyPageProfileState>(MyPageProfileState.Loading)
+    val myPageProfileState = _myPageProfileState.asStateFlow()
+
+    private val _myPageComprehensiveRunRecordState =
+        MutableStateFlow<MyPageComprehensiveRunRecordState>(MyPageComprehensiveRunRecordState.Loading)
+    val myPageComprehensiveRunRecordState = _myPageComprehensiveRunRecordState.asStateFlow()
+
 
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
@@ -30,9 +40,28 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = getMyPageDataUseCase()
-                _myPageUiState.value = MyPageUiState.Success(user = user)
+                _myPageProfileState.value = MyPageProfileState.Success(user = user)
             } catch (e: Exception) {
                 Timber.e(e)
+            }
+        }
+    }
+
+    fun getComprehensiveRunRecord() = viewModelScope.launch {
+        _myPageComprehensiveRunRecordState.value =
+            MyPageComprehensiveRunRecordState.Loading
+
+        getComprehensiveRunRecordUseCase().collect { result ->
+            result.onSuccess {
+                _myPageComprehensiveRunRecordState.value =
+                    MyPageComprehensiveRunRecordState.Success(
+                        comprehensiveRunRecord = it
+                    )
+            }.onFailure { errorMessage, code ->
+                Timber.e(errorMessage, code)
+                _snackbarMessage.value = "종합기록을 불러오는데 실패했습니다."
+                _myPageComprehensiveRunRecordState.value =
+                    MyPageComprehensiveRunRecordState.LoadFailed
             }
         }
     }
@@ -41,4 +70,3 @@ class MyPageViewModel @Inject constructor(
         _snackbarMessage.value = ""
     }
 }
-

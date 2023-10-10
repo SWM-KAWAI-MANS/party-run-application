@@ -44,6 +44,7 @@ import online.partyrun.partyrunapplication.core.ui.ProfileSection
 import online.partyrun.partyrunapplication.feature.my_page.component.EmptyRunningHistory
 import online.partyrun.partyrunapplication.feature.my_page.component.ProfileContent
 import online.partyrun.partyrunapplication.feature.my_page.component.RunningHistory
+import online.partyrun.partyrunapplication.feature.my_page.component.ShimmerStatusElement
 import online.partyrun.partyrunapplication.feature.my_page.component.StatusElement
 
 data class RunningData(
@@ -62,12 +63,12 @@ fun MyPageScreen(
     navigateToProfile: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
-    val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
+    val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
     val myPageSnackbarMessage by myPageViewModel.snackbarMessage.collectAsStateWithLifecycle()
 
     Content(
         myPageViewModel = myPageViewModel,
-        myPageUiState = myPageUiState,
+        myPageProfileState = myPageProfileState,
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
         onShowSnackbar = onShowSnackbar,
@@ -80,7 +81,7 @@ fun MyPageScreen(
 fun Content(
     modifier: Modifier = Modifier,
     myPageViewModel: MyPageViewModel,
-    myPageUiState: MyPageUiState,
+    myPageProfileState: MyPageProfileState,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
     onShowSnackbar: (String) -> Unit,
@@ -107,14 +108,15 @@ fun Content(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (myPageUiState) {
-                is MyPageUiState.Loading -> LoadingBody()
-                is MyPageUiState.Success -> MyPageBody(
-                    userData = myPageUiState.user,
+            when (myPageProfileState) {
+                is MyPageProfileState.Loading -> LoadingBody()
+                is MyPageProfileState.Success -> MyPageBody(
+                    userData = myPageProfileState.user,
+                    myPageViewModel = myPageViewModel,
                     navigateToProfile = navigateToProfile
                 )
 
-                is MyPageUiState.LoadFailed -> LoadingBody()
+                is MyPageProfileState.LoadFailed -> LoadingBody()
             }
         }
     }
@@ -158,8 +160,15 @@ private fun LoadingBody() {
 @Composable
 private fun MyPageBody(
     userData: User,
+    myPageViewModel: MyPageViewModel,
     navigateToProfile: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        myPageViewModel.getComprehensiveRunRecord()
+    }
+
+    val myPageComprehensiveRunRecordState by myPageViewModel.myPageComprehensiveRunRecordState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -180,51 +189,11 @@ private fun MyPageBody(
             )
         }
         Spacer(modifier = Modifier.height(30.dp))
-        PartyRunGradientRoundedRect(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            cornerRadius = 20.dp,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                StatusElement(
-                    value = "10.9",
-                    title = stringResource(id = R.string.total_distance)
-                ) {
-                    Image(
-                        painter = painterResource(id = PartyRunIcons.Step),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
-                        contentDescription = stringResource(id = R.string.total_distance_desc)
-                    )
-                }
-                StatusElement(
-                    value = "5.55''",
-                    title = stringResource(id = R.string.avg_pace)
-                ) {
-                    Image(
-                        painter = painterResource(id = PartyRunIcons.Pace),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
-                        contentDescription = stringResource(id = R.string.avg_pace_desc)
-                    )
-                }
-                StatusElement(
-                    value = "00:00",
-                    title = stringResource(id = R.string.total_accumulated_time)
-                ) {
-                    Image(
-                        painter = painterResource(id = PartyRunIcons.Schedule),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
-                        contentDescription = stringResource(id = R.string.total_accumulated_time_desc)
-                    )
-                }
-            }
-        }
+
+        ComprehensiveRunRecord(
+            myPageComprehensiveRunRecordState = myPageComprehensiveRunRecordState
+        )
+
         Spacer(modifier = Modifier.height(30.dp))
         Column(
             modifier = Modifier
@@ -277,3 +246,93 @@ private fun MyPageBody(
     }
 }
 
+@Composable
+private fun ComprehensiveRunRecord(
+    myPageComprehensiveRunRecordState: MyPageComprehensiveRunRecordState
+) {
+    when (myPageComprehensiveRunRecordState) {
+        is MyPageComprehensiveRunRecordState.Loading -> ComprehensiveRunRecordShimmerEffect()
+        is MyPageComprehensiveRunRecordState.Success -> ComprehensiveRunRecordBody(
+            averagePace = myPageComprehensiveRunRecordState.comprehensiveRunRecord.averagePace,
+            totalDistance = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalDistance,
+            totalRunningTime = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalRunningTime
+        )
+
+        MyPageComprehensiveRunRecordState.LoadFailed -> ComprehensiveRunRecordShimmerEffect()
+    }
+}
+
+@Composable
+private fun ComprehensiveRunRecordShimmerEffect() {
+    PartyRunGradientRoundedRect(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        cornerRadius = 20.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            ShimmerStatusElement()
+            ShimmerStatusElement()
+            ShimmerStatusElement()
+        }
+    }
+}
+
+@Composable
+private fun ComprehensiveRunRecordBody(
+    averagePace: String,
+    totalDistance: String,
+    totalRunningTime: String
+) {
+    PartyRunGradientRoundedRect(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
+        cornerRadius = 20.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            StatusElement(
+                value = totalDistance,
+                title = stringResource(id = R.string.total_distance)
+            ) {
+                Image(
+                    painter = painterResource(id = PartyRunIcons.Step),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                    contentDescription = stringResource(id = R.string.total_distance_desc)
+                )
+            }
+            StatusElement(
+                value = averagePace,
+                title = stringResource(id = R.string.avg_pace)
+            ) {
+                Image(
+                    painter = painterResource(id = PartyRunIcons.Pace),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                    contentDescription = stringResource(id = R.string.avg_pace_desc)
+                )
+            }
+            StatusElement(
+                value = totalRunningTime,
+                title = stringResource(id = R.string.total_accumulated_time)
+            ) {
+                Image(
+                    painter = painterResource(id = PartyRunIcons.Schedule),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                    contentDescription = stringResource(id = R.string.total_accumulated_time_desc)
+                )
+            }
+        }
+    }
+}

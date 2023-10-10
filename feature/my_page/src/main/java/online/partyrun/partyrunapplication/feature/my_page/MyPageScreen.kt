@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -39,22 +41,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
 import online.partyrun.partyrunapplication.feature.my_page.component.EmptyRunningHistory
 import online.partyrun.partyrunapplication.feature.my_page.component.ProfileContent
-import online.partyrun.partyrunapplication.feature.my_page.component.RunningHistory
+import online.partyrun.partyrunapplication.feature.my_page.component.RunningDataCard
+import online.partyrun.partyrunapplication.feature.my_page.component.ShimmerRunningHistory
 import online.partyrun.partyrunapplication.feature.my_page.component.ShimmerStatusElement
 import online.partyrun.partyrunapplication.feature.my_page.component.StatusElement
-
-data class RunningData(
-    val date: String,  // "월-일" 형태
-    val distance: String,  // m 단위
-    val avgPace: String,  // "분:초" 형태
-    val runningTime: String  // "시간:분:초" 형태
-)
-
-val mockList = emptyList<RunningData>()
 
 @Composable
 fun MyPageScreen(
@@ -165,9 +160,11 @@ private fun MyPageBody(
 ) {
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
+        myPageViewModel.getSingleRunningHistory()
     }
 
     val myPageComprehensiveRunRecordState by myPageViewModel.myPageComprehensiveRunRecordState.collectAsStateWithLifecycle()
+    val runningHistoryState by myPageViewModel.runningHistoryState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -195,28 +192,9 @@ private fun MyPageBody(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.single_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-
-            if (mockList.isEmpty()) {
-                EmptyRunningHistory()
-            } else {
-                RunningHistory(
-                    data = mockList,
-                    isSingleData = true,
-                    onClick = {}
-                )
-            }
-        }
+        SingleRunningHistoryRow(
+            runningHistoryState = runningHistoryState
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
         Column(
@@ -231,18 +209,59 @@ private fun MyPageBody(
             )
             Spacer(modifier = Modifier.height(30.dp))
 
-            if (mockList.isEmpty()) {
-                EmptyRunningHistory()
-            } else {
-                RunningHistory(
-                    data = mockList,
-                    isSingleData = true,
-                    onClick = {}
-                )
-            }
+            EmptyRunningHistory()
+
         }
 
         Spacer(modifier = Modifier.height(80.dp))
+    }
+}
+
+@Composable
+private fun SingleRunningHistoryRow(
+    runningHistoryState: RunningHistoryState
+) {
+    when (runningHistoryState) {
+        is RunningHistoryState.Loading -> ShimmerRunningHistory(isSingleData = true)
+        is RunningHistoryState.Success -> SingleRunningHistoryBody(
+            singleRunningHistory = runningHistoryState.singleRunningHistory
+        )
+
+        RunningHistoryState.LoadFailed -> ShimmerRunningHistory(isSingleData = true)
+    }
+}
+
+@Composable
+private fun SingleRunningHistoryBody(
+    singleRunningHistory: SingleRunningHistory
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.single_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
+        if (singleRunningHistory.history.isEmpty()) {
+            EmptyRunningHistory()
+        } else {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(singleRunningHistory.history) { data ->
+                    RunningDataCard(
+                        runningHistoryDetail = data,
+                        isSingleData = true,
+                        onClick = { }
+                    )
+                }
+            }
+        }
     }
 }
 

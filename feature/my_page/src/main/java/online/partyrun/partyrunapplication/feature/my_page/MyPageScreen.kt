@@ -1,27 +1,17 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,16 +34,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
-import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsyncUrlImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
+import online.partyrun.partyrunapplication.feature.my_page.component.EmptyRunningHistory
+import online.partyrun.partyrunapplication.feature.my_page.component.ProfileContent
+import online.partyrun.partyrunapplication.feature.my_page.component.RunningHistory
+import online.partyrun.partyrunapplication.feature.my_page.component.StatusElement
 
 data class RunningData(
     val date: String,  // "월-일" 형태
@@ -248,7 +239,7 @@ private fun MyPageBody(
             Spacer(modifier = Modifier.height(30.dp))
 
             if (mockList.isEmpty()) {
-                EmptyRunningData()
+                EmptyRunningHistory()
             } else {
                 RunningHistory(
                     data = mockList,
@@ -272,7 +263,7 @@ private fun MyPageBody(
             Spacer(modifier = Modifier.height(30.dp))
 
             if (mockList.isEmpty()) {
-                EmptyRunningData()
+                EmptyRunningHistory()
             } else {
                 RunningHistory(
                     data = mockList,
@@ -286,207 +277,3 @@ private fun MyPageBody(
     }
 }
 
-@Composable
-private fun ProfileContent(
-    navigateToProfile: () -> Unit,
-    userName: String,
-    userProfile: String,
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ProfileHeader(
-            navigateToProfile = navigateToProfile,
-            userName = userName
-        )
-        ProfileImage(
-            userProfile = userProfile
-        )
-    }
-}
-
-@Composable
-private fun ProfileHeader(
-    navigateToProfile: () -> Unit,
-    userName: String
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 10.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = userName,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .zIndex(1f) // 이미지와 동일한 Z-축 위치에 배치
-        )
-
-        IconButton(
-            onClick = {
-                navigateToProfile()
-            },
-            modifier = Modifier
-                .size(45.dp)
-                .padding(end = 10.dp)
-                .align(Alignment.CenterEnd)
-        ) {
-            Icon(
-                painter = painterResource(id = PartyRunIcons.edit),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = stringResource(id = R.string.edit_desc)
-            )
-        }
-    }
-}
-
-@Composable
-private fun ProfileImage(
-    userProfile: String
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(80.dp)
-            .aspectRatio(1f, matchHeightConstraintsFirst = true)
-            .clip(CircleShape)
-            .border(3.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
-            .zIndex(1f)
-    ) {
-        RenderAsyncUrlImage(
-            modifier = Modifier.fillMaxSize(),
-            imageUrl = userProfile,
-            contentDescription = null
-        )
-    }
-}
-
-@Composable
-private fun StatusElement(
-    value: String,
-    title: String,
-    statusElementImage: @Composable () -> Unit
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        statusElementImage()
-        Spacer(modifier = Modifier.height(5.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-    }
-}
-
-@Composable
-private fun RunningHistory(
-    data: List<RunningData>,
-    onClick: () -> Unit,
-    isSingleData: Boolean
-) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        items(data) { data ->
-            RunningDataCard(
-                data = data,
-                isSingleData = isSingleData,
-                onClick = onClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun RunningDataCard(
-    data: RunningData,
-    isSingleData: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(start = 25.dp, end = 5.dp, top = 20.dp, bottom = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                verticalArrangement = Arrangement.SpaceAround,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = data.date,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = data.runningTime,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Text(
-                    text = data.distance,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-            Spacer(modifier = Modifier.width(32.dp))
-            Icon(
-                modifier = Modifier.size(18.dp),
-                painter = painterResource(id = PartyRunIcons.ArrowForwardIos),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null
-            )
-        }
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .offset(x = 10.dp, y = (-15).dp)
-        ) {
-            val icon =
-                if (isSingleData) PartyRunIcons.SingleResultIcon else PartyRunIcons.BattleResultIcon
-
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = null
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyRunningData() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LottieImage(
-            modifier = Modifier.size(120.dp),
-            rawAnimation = R.raw.empty_list
-        )
-        Text(
-            text = stringResource(id = R.string.empty_list_item),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-    }
-}

@@ -8,13 +8,13 @@ data class ComprehensiveRunRecordResponse(
     @SerializedName("averagePace")
     val averagePace: Double?,
     @SerializedName("totalDistance")
-    val totalDistance: Int?,
+    val totalDistance: Double?,
     @SerializedName("totalRunningTime")
     val totalRunningTime: TotalRunningTime?
 )
 
 fun ComprehensiveRunRecordResponse.toDomainModel() = ComprehensiveRunRecord(
     averagePace = this.averagePace ?: 0.0,
-    totalDistance = this.totalDistance ?: 0,
+    totalDistance = this.totalDistance ?: 0.0,
     totalRunningTime = this.totalRunningTime ?: TotalRunningTime(0, 0, 0)
 )

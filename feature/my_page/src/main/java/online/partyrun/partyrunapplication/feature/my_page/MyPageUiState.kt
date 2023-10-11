@@ -4,6 +4,10 @@ import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRe
 import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 
+enum class ModeType {
+    SINGLE, BATTLE
+}
+
 sealed class MyPageProfileState {
     object Loading : MyPageProfileState()
 

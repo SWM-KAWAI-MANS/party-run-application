@@ -39,25 +39,31 @@ import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
 @Composable
 fun SingleResultScreen(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
     singleResultViewModel: SingleResultViewModel = hiltViewModel(),
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     val singleResultUiState by singleResultViewModel.singleResultUiState.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
+        isFromMyPage = isFromMyPage,
         singleResultUiState = singleResultUiState,
         singleResultViewModel = singleResultViewModel,
-        navigateToTopLevel = navigateToTopLevel
+        navigateToTopLevel = navigateToTopLevel,
+        navigateToBack = navigateToBack
     )
 }
 
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean,
     singleResultUiState: SingleResultUiState,
     singleResultViewModel: SingleResultViewModel,
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     Box(modifier = modifier) {
         when (singleResultUiState) {
@@ -65,7 +71,9 @@ private fun Content(
             is SingleResultUiState.Success ->
                 SingleResultBody(
                     singleResult = singleResultUiState.singleResult,
-                    navigateToTopLevel = navigateToTopLevel
+                    isFromMyPage = isFromMyPage,
+                    navigateToTopLevel = navigateToTopLevel,
+                    navigateToBack = navigateToBack
                 )
 
             is SingleResultUiState.LoadFailed ->
@@ -79,7 +87,9 @@ private fun Content(
 @Composable
 private fun SingleResultBody(
     singleResult: SingleResultUiModel,
-    navigateToTopLevel: () -> Unit
+    isFromMyPage: Boolean,
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -171,7 +181,11 @@ private fun SingleResultBody(
             color = MaterialTheme.colorScheme.background,
             shadowElevation = 5.dp
         ) {
-            FixedBottomNavigationSheet(navigateToTopLevel)
+            FixedBottomNavigationSheet(
+                isFromMyPage = isFromMyPage,
+                navigateToTopLevel = navigateToTopLevel,
+                navigateToBack = navigateToBack
+            )
         }
     }
 }

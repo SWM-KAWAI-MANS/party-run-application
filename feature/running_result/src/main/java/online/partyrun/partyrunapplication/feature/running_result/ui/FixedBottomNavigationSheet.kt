@@ -15,7 +15,11 @@ import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunG
 import online.partyrun.partyrunapplication.feature.running_result.R
 
 @Composable
-fun FixedBottomNavigationSheet(navigateToTopLevel: () -> Unit) {
+fun FixedBottomNavigationSheet(
+    isFromMyPage: Boolean = false,
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .heightIn(50.dp)
@@ -24,7 +28,9 @@ fun FixedBottomNavigationSheet(navigateToTopLevel: () -> Unit) {
         horizontalArrangement = Arrangement.Center,
     ) {
         PartyRunGradientButton(
-            onClick = { navigateToTopLevel() }
+            onClick = {
+                if (isFromMyPage) navigateToBack() else navigateToTopLevel()
+            }
         ) {
             Text(
                 text = stringResource(id = R.string.navigate_to_top_level),

@@ -200,7 +200,9 @@ private fun BattleResultBody(
             color = MaterialTheme.colorScheme.background,
             shadowElevation = 5.dp
         ) {
-            FixedBottomNavigationSheet(navigateToTopLevel)
+            FixedBottomNavigationSheet(
+                navigateToTopLevel = navigateToTopLevel
+            )
         }
     }
 }

@@ -109,8 +109,8 @@ fun SetUpMainNavGraph(
             navigateToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
             },
-            navigateToSingleResult = {
-                navController.navigate(MainNavRoutes.SingleResult.route) {
+            navigateToSingleResult = { isFromMyPage ->
+                navController.navigate("${MainNavRoutes.SingleResult.route}?isFromMyPage=$isFromMyPage") {
                     popUpTo(MainNavRoutes.MyPage.route) {
                         inclusive = false
                     }
@@ -155,6 +155,9 @@ fun SetUpMainNavGraph(
                         inclusive = true
                     }
                 }
+            },
+            navigateToBack = {
+                navController.popBackStack()
             }
         )
 

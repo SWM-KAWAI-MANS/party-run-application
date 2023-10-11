@@ -32,6 +32,6 @@ fun SingleHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
         id = this.id ?: "",
         date = parsedDate?.let { formatDate(it) } ?: "",
         runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
-        DistanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
+        distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
     )
 }

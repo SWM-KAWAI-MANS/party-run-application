@@ -67,7 +67,7 @@ fun RunningDataCard(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
-                    text = runningHistoryDetail.DistanceFormatted,
+                    text = runningHistoryDetail.distanceFormatted,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -39,28 +41,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
 import online.partyrun.partyrunapplication.feature.my_page.component.EmptyRunningHistory
 import online.partyrun.partyrunapplication.feature.my_page.component.ProfileContent
-import online.partyrun.partyrunapplication.feature.my_page.component.RunningHistory
+import online.partyrun.partyrunapplication.feature.my_page.component.RunningDataCard
+import online.partyrun.partyrunapplication.feature.my_page.component.ShimmerRunningHistory
 import online.partyrun.partyrunapplication.feature.my_page.component.ShimmerStatusElement
 import online.partyrun.partyrunapplication.feature.my_page.component.StatusElement
-
-data class RunningData(
-    val date: String,  // "월-일" 형태
-    val distance: String,  // m 단위
-    val avgPace: String,  // "분:초" 형태
-    val runningTime: String  // "시간:분:초" 형태
-)
-
-val mockList = emptyList<RunningData>()
 
 @Composable
 fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
+    navigateToSingleResult: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
@@ -71,6 +67,7 @@ fun MyPageScreen(
         myPageProfileState = myPageProfileState,
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
+        navigateToSingleResult = navigateToSingleResult,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
     )
@@ -84,6 +81,7 @@ fun Content(
     myPageProfileState: MyPageProfileState,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
+    navigateToSingleResult: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -113,7 +111,8 @@ fun Content(
                 is MyPageProfileState.Success -> MyPageBody(
                     userData = myPageProfileState.user,
                     myPageViewModel = myPageViewModel,
-                    navigateToProfile = navigateToProfile
+                    navigateToProfile = navigateToProfile,
+                    navigateToSingleResult = navigateToSingleResult
                 )
 
                 is MyPageProfileState.LoadFailed -> LoadingBody()
@@ -161,13 +160,27 @@ private fun LoadingBody() {
 private fun MyPageBody(
     userData: User,
     myPageViewModel: MyPageViewModel,
-    navigateToProfile: () -> Unit
+    navigateToProfile: () -> Unit,
+    navigateToSingleResult: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
+        myPageViewModel.getSingleRunningHistory()
+    }
+
+    LaunchedEffect(Unit) {// 러닝 기록 상세 보기 클릭
+        myPageViewModel.saveIdCompleteEvent.collect { modeType ->
+            when (modeType) {
+                ModeType.SINGLE -> navigateToSingleResult()
+                else -> {
+                    // Battle 
+                }
+            }
+        }
     }
 
     val myPageComprehensiveRunRecordState by myPageViewModel.myPageComprehensiveRunRecordState.collectAsStateWithLifecycle()
+    val runningHistoryState by myPageViewModel.runningHistoryState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -190,33 +203,15 @@ private fun MyPageBody(
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-        ComprehensiveRunRecord(
+        ComprehensiveRunRecordRect(
             myPageComprehensiveRunRecordState = myPageComprehensiveRunRecordState
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.single_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-
-            if (mockList.isEmpty()) {
-                EmptyRunningHistory()
-            } else {
-                RunningHistory(
-                    data = mockList,
-                    isSingleData = true,
-                    onClick = {}
-                )
-            }
-        }
+        SingleRunningHistoryRow(
+            runningHistoryState = runningHistoryState,
+            myPageViewModel = myPageViewModel
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
         Column(
@@ -231,15 +226,8 @@ private fun MyPageBody(
             )
             Spacer(modifier = Modifier.height(30.dp))
 
-            if (mockList.isEmpty()) {
-                EmptyRunningHistory()
-            } else {
-                RunningHistory(
-                    data = mockList,
-                    isSingleData = true,
-                    onClick = {}
-                )
-            }
+            EmptyRunningHistory()
+
         }
 
         Spacer(modifier = Modifier.height(80.dp))
@@ -247,23 +235,75 @@ private fun MyPageBody(
 }
 
 @Composable
-private fun ComprehensiveRunRecord(
+private fun SingleRunningHistoryRow(
+    runningHistoryState: RunningHistoryState,
+    myPageViewModel: MyPageViewModel
+) {
+    when (runningHistoryState) {
+        is RunningHistoryState.Loading -> ShimmerRunningHistory(isSingleData = true)
+        is RunningHistoryState.Success -> SingleRunningHistoryBody(
+            singleRunningHistory = runningHistoryState.singleRunningHistory,
+            myPageViewModel = myPageViewModel
+        )
+
+        RunningHistoryState.LoadFailed -> ShimmerRunningHistory(isSingleData = true)
+    }
+}
+
+@Composable
+private fun SingleRunningHistoryBody(
+    singleRunningHistory: SingleRunningHistory,
+    myPageViewModel: MyPageViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.single_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
+        if (singleRunningHistory.history.isEmpty()) {
+            EmptyRunningHistory()
+        } else {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(singleRunningHistory.history) { data ->
+                    RunningDataCard(
+                        runningHistoryDetail = data,
+                        isSingleData = true
+                    ) {
+                        myPageViewModel.saveSingleId(data.id)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ComprehensiveRunRecordRect(
     myPageComprehensiveRunRecordState: MyPageComprehensiveRunRecordState
 ) {
     when (myPageComprehensiveRunRecordState) {
-        is MyPageComprehensiveRunRecordState.Loading -> ComprehensiveRunRecordShimmerEffect()
-        is MyPageComprehensiveRunRecordState.Success -> ComprehensiveRunRecordBody(
+        is MyPageComprehensiveRunRecordState.Loading -> ShimmerComprehensiveRunRecordRect()
+        is MyPageComprehensiveRunRecordState.Success -> ComprehensiveRunRecordRectBody(
             averagePace = myPageComprehensiveRunRecordState.comprehensiveRunRecord.averagePace,
             totalDistance = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalDistance,
             totalRunningTime = myPageComprehensiveRunRecordState.comprehensiveRunRecord.totalRunningTime
         )
 
-        MyPageComprehensiveRunRecordState.LoadFailed -> ComprehensiveRunRecordShimmerEffect()
+        MyPageComprehensiveRunRecordState.LoadFailed -> ShimmerComprehensiveRunRecordRect()
     }
 }
 
 @Composable
-private fun ComprehensiveRunRecordShimmerEffect() {
+private fun ShimmerComprehensiveRunRecordRect() {
     PartyRunGradientRoundedRect(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,7 +325,7 @@ private fun ComprehensiveRunRecordShimmerEffect() {
 }
 
 @Composable
-private fun ComprehensiveRunRecordBody(
+private fun ComprehensiveRunRecordRectBody(
     averagePace: String,
     totalDistance: String,
     totalRunningTime: String

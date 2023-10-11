@@ -10,12 +10,14 @@ fun NavGraphBuilder.myPageRoute(
     navigateToSettings: () -> Unit,
     navigateToMyPage: () -> Unit,
     navigateToProfile: () -> Unit,
+    navigateToSingleResult: () -> Unit,
     onShowSnackbar: (String) -> Unit
 ) {
     composable(route = MainNavRoutes.MyPage.route) {
         MyPageScreen(
             navigateToSettings = navigateToSettings,
             navigateToProfile = navigateToProfile,
+            navigateToSingleResult = navigateToSingleResult,
             onShowSnackbar = onShowSnackbar
         )
     }

@@ -3,6 +3,7 @@ package online.partyrun.partyrunapplication.core.network.datasource
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 import online.partyrun.partyrunapplication.core.network.model.response.BattleResultResponse
 import online.partyrun.partyrunapplication.core.network.model.response.ComprehensiveRunRecordResponse
+import online.partyrun.partyrunapplication.core.network.model.response.SingleHistoryResponse
 import online.partyrun.partyrunapplication.core.network.model.response.SingleResultResponse
 import online.partyrun.partyrunapplication.core.network.service.ResultApiService
 import javax.inject.Inject
@@ -18,5 +19,8 @@ class ResultDataSourceImpl @Inject constructor(
 
     override suspend fun getComprehensiveRunRecord(): ApiResponse<ComprehensiveRunRecordResponse> =
         resultApi.getComprehensiveRunRecord()
+
+    override suspend fun getSingleHistory(): ApiResponse<SingleHistoryResponse> =
+        resultApi.getSingleHistory()
 
 }

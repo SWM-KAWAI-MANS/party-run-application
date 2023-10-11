@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,32 +28,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
+import online.partyrun.partyrunapplication.core.designsystem.component.shimmerEffect
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.my_page.RunningHistoryDetail
 import online.partyrun.partyrunapplication.feature.my_page.R
-import online.partyrun.partyrunapplication.feature.my_page.RunningData
 
 @Composable
-fun RunningHistory(
-    data: List<RunningData>,
-    onClick: () -> Unit,
-    isSingleData: Boolean
-) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        items(data) { data ->
-            RunningDataCard(
-                data = data,
-                isSingleData = isSingleData,
-                onClick = onClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun RunningDataCard(
-    data: RunningData,
+fun RunningDataCard(
+    runningHistoryDetail: RunningHistoryDetail,
     isSingleData: Boolean,
     onClick: () -> Unit
 ) {
@@ -74,17 +57,17 @@ private fun RunningDataCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = data.date,
+                    text = runningHistoryDetail.date,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = data.runningTime,
+                    text = runningHistoryDetail.runningTime,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
-                    text = data.distance,
+                    text = runningHistoryDetail.distanceFormatted,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -129,5 +112,92 @@ fun EmptyRunningHistory() {
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onPrimary,
         )
+    }
+}
+
+@Composable
+fun ShimmerRunningHistory(
+    isSingleData: Boolean
+) {
+    val title =
+        if (isSingleData) stringResource(id = R.string.single_title) else stringResource(id = R.string.battle_title)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            items(5) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(start = 25.dp, end = 5.dp, top = 20.dp, bottom = 15.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.SpaceAround,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(50.dp)
+                                    .height(16.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(70.dp)
+                                    .height(18.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(20.dp)
+                                    .shimmerEffect(isDarkTheme = true)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                        }
+                        Spacer(modifier = Modifier.width(30.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .shimmerEffect(isDarkTheme = true)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .offset(x = 10.dp, y = (-15).dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .shimmerEffect(isDarkTheme = true)
+                        )
+                    }
+                }
+            }
+        }
     }
 }

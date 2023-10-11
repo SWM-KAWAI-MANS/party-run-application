@@ -109,6 +109,13 @@ fun SetUpMainNavGraph(
             navigateToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
             },
+            navigateToSingleResult = {
+                navController.navigate(MainNavRoutes.SingleResult.route) {
+                    popUpTo(MainNavRoutes.MyPage.route) {
+                        inclusive = false
+                    }
+                }
+            },
             onShowSnackbar = onShowSnackbar
         )
 

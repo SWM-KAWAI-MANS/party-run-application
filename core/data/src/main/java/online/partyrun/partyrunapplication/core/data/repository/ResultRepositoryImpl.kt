@@ -11,6 +11,7 @@ import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
+import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
 import javax.inject.Inject
 
@@ -37,6 +38,12 @@ class ResultRepositoryImpl @Inject constructor(
     override suspend fun getComprehensiveRunRecord(): Flow<Result<ComprehensiveRunRecord>> {
         return apiRequestFlow {
             resultDataSource.getComprehensiveRunRecord()
+        }.mapResultModel { it.toDomainModel() }
+    }
+
+    override suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>> {
+        return apiRequestFlow {
+            resultDataSource.getSingleHistory()
         }.mapResultModel { it.toDomainModel() }
     }
 

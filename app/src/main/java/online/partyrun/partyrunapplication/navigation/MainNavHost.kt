@@ -116,6 +116,13 @@ fun SetUpMainNavGraph(
                     }
                 }
             },
+            navigateToBattleResult = { isFromMyPage ->
+                navController.navigate("${MainNavRoutes.BattleResult.route}?isFromMyPage=$isFromMyPage") {
+                    popUpTo(MainNavRoutes.MyPage.route) {
+                        inclusive = false
+                    }
+                }
+            },
             onShowSnackbar = onShowSnackbar
         )
 

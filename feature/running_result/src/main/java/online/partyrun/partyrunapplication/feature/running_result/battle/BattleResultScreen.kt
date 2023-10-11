@@ -53,33 +53,41 @@ import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
 @Composable
 fun BattleResultScreen(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
     battleResultViewModel: BattleResultViewModel = hiltViewModel(),
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     val battleResultUiState by battleResultViewModel.battleResultUiState.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
+        isFromMyPage = isFromMyPage,
         battleResultUiState = battleResultUiState,
         battleResultViewModel = battleResultViewModel,
-        navigateToTopLevel = navigateToTopLevel
+        navigateToTopLevel = navigateToTopLevel,
+        navigateToBack = navigateToBack
     )
 }
 
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean,
     battleResultUiState: BattleResultUiState,
     battleResultViewModel: BattleResultViewModel,
     navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     Box(modifier = modifier) {
         when (battleResultUiState) {
             is BattleResultUiState.Loading -> ResultLoadingBody()
             is BattleResultUiState.Success ->
                 BattleResultBody(
+                    isFromMyPage = isFromMyPage,
                     battleResult = battleResultUiState.battleResult,
-                    navigateToTopLevel = navigateToTopLevel
+                    navigateToTopLevel = navigateToTopLevel,
+                    navigateToBack = navigateToBack
                 )
 
             is BattleResultUiState.LoadFailed ->
@@ -93,7 +101,9 @@ private fun Content(
 @Composable
 private fun BattleResultBody(
     battleResult: BattleResultUiModel,
-    navigateToTopLevel: () -> Unit
+    isFromMyPage: Boolean,
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     // userID에 해당하는 러너 찾기
     val userStatus = battleResult.battleRunnerStatus.find { it.id == battleResult.userId }
@@ -201,7 +211,9 @@ private fun BattleResultBody(
             shadowElevation = 5.dp
         ) {
             FixedBottomNavigationSheet(
-                navigateToTopLevel = navigateToTopLevel
+                isFromMyPage = isFromMyPage,
+                navigateToTopLevel = navigateToTopLevel,
+                navigateToBack = navigateToBack
             )
         }
     }

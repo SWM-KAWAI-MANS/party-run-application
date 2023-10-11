@@ -56,7 +56,7 @@ fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
-    navigateToSingleResult: () -> Unit = {},
+    navigateToSingleResult: (Boolean) -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
@@ -81,7 +81,7 @@ fun Content(
     myPageProfileState: MyPageProfileState,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
-    navigateToSingleResult: () -> Unit,
+    navigateToSingleResult: (Boolean) -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -161,7 +161,7 @@ private fun MyPageBody(
     userData: User,
     myPageViewModel: MyPageViewModel,
     navigateToProfile: () -> Unit,
-    navigateToSingleResult: () -> Unit
+    navigateToSingleResult: (Boolean) -> Unit
 ) {
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
@@ -171,9 +171,9 @@ private fun MyPageBody(
     LaunchedEffect(Unit) {// 러닝 기록 상세 보기 클릭
         myPageViewModel.saveIdCompleteEvent.collect { modeType ->
             when (modeType) {
-                ModeType.SINGLE -> navigateToSingleResult()
+                ModeType.SINGLE -> navigateToSingleResult(true) // MyPage로부터 Result로의 이동은 true
                 else -> {
-                    // Battle 
+                    // Battle
                 }
             }
         }

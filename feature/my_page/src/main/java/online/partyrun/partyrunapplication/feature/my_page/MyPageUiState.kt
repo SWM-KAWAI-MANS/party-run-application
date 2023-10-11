@@ -1,7 +1,7 @@
 package online.partyrun.partyrunapplication.feature.my_page
 
+import online.partyrun.partyrunapplication.core.model.my_page.CombinedRunningHistory
 import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
-import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 
 enum class ModeType {
@@ -40,7 +40,7 @@ sealed class RunningHistoryState {
     object Loading : RunningHistoryState()
 
     data class Success(
-        val singleRunningHistory: SingleRunningHistory = SingleRunningHistory(emptyList())
+        val combinedRunningHistory: CombinedRunningHistory = CombinedRunningHistory()
     ) : RunningHistoryState()
 
     object LoadFailed : RunningHistoryState()

@@ -12,7 +12,8 @@ import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.my_page.GetComprehensiveRunRecordUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
-import online.partyrun.partyrunapplication.core.domain.my_page.GetSingleHistoryUseCase
+import online.partyrun.partyrunapplication.core.domain.my_page.GetRunningHistoryUseCase
+import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import timber.log.Timber
 import javax.inject.Inject
@@ -21,8 +22,9 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val getMyPageDataUseCase: GetMyPageDataUseCase,
     private val getComprehensiveRunRecordUseCase: GetComprehensiveRunRecordUseCase,
-    private val getSingleHistoryUseCase: GetSingleHistoryUseCase,
-    private val saveSingleIdUseCase: SaveSingleIdUseCase
+    private val getRunningHistoryUseCase: GetRunningHistoryUseCase,
+    private val saveSingleIdUseCase: SaveSingleIdUseCase,
+    private val saveBattleIdUseCase: SaveBattleIdUseCase
 ) : ViewModel() {
     private val _myPageProfileState =
         MutableStateFlow<MyPageProfileState>(MyPageProfileState.Loading)
@@ -68,25 +70,22 @@ class MyPageViewModel @Inject constructor(
                     )
             }.onFailure { errorMessage, code ->
                 Timber.e(errorMessage, code)
-                _snackbarMessage.value = "종합기록을 불러오는데 실패했습니다."
+                _snackbarMessage.value = "종합기록을 불러오는데\n실패했습니다."
                 _myPageComprehensiveRunRecordState.value =
                     MyPageComprehensiveRunRecordState.LoadFailed
             }
         }
     }
 
-
-    fun getSingleRunningHistory() = viewModelScope.launch {
-        _runningHistoryState.value = RunningHistoryState.Loading
-
-        getSingleHistoryUseCase().collect { result ->
+    fun getRunningHistory() = viewModelScope.launch {
+        getRunningHistoryUseCase().collect { result ->
             result.onSuccess {
                 _runningHistoryState.value = RunningHistoryState.Success(
-                    singleRunningHistory = it
+                    combinedRunningHistory = it
                 )
             }.onFailure { errorMessage, code ->
                 Timber.e(errorMessage, code)
-                _snackbarMessage.value = "싱글 기록을 불러오는데\n실패했습니다."
+                _snackbarMessage.value = "이전 기록을 불러오는데\n실패했습니다."
                 _runningHistoryState.value =
                     RunningHistoryState.LoadFailed
             }
@@ -96,6 +95,11 @@ class MyPageViewModel @Inject constructor(
     fun saveSingleId(singleId: String) = viewModelScope.launch {
         saveSingleIdUseCase(singleId)
         saveIdCompleteEvent.emit(ModeType.SINGLE)
+    }
+
+    fun saveBattleId(battleId: String) = viewModelScope.launch {
+        saveBattleIdUseCase(battleId)
+        saveIdCompleteEvent.emit(ModeType.BATTLE)
     }
 
     fun clearSnackbarMessage() {

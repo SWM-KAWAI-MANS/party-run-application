@@ -10,6 +10,7 @@ import online.partyrun.partyrunapplication.core.network.model.response.toDomainM
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.common.result.mapResultModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.SinglePreferencesDataSource
+import online.partyrun.partyrunapplication.core.model.my_page.BattleRunningHistory
 import online.partyrun.partyrunapplication.core.model.my_page.ComprehensiveRunRecord
 import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
@@ -44,6 +45,12 @@ class ResultRepositoryImpl @Inject constructor(
     override suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>> {
         return apiRequestFlow {
             resultDataSource.getSingleHistory()
+        }.mapResultModel { it.toDomainModel() }
+    }
+
+    override suspend fun getBattleHistory(): Flow<Result<BattleRunningHistory>> {
+        return apiRequestFlow {
+            resultDataSource.getBattleHistory()
         }.mapResultModel { it.toDomainModel() }
     }
 

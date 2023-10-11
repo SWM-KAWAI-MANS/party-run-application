@@ -4,5 +4,5 @@ data class RunningHistoryDetail(
     val id: String,
     val date: String,
     val runningTime: String,
-    val DistanceFormatted: String
+    val distanceFormatted: String
 )

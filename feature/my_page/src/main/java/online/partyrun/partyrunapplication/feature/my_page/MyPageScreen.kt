@@ -172,7 +172,9 @@ private fun MyPageBody(
         myPageViewModel.saveIdCompleteEvent.collect { modeType ->
             when (modeType) {
                 ModeType.SINGLE -> navigateToSingleResult()
-                else -> {}
+                else -> {
+                    // Battle 
+                }
             }
         }
     }

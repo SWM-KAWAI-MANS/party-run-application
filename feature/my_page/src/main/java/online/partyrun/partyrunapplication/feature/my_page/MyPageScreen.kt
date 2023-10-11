@@ -56,6 +56,7 @@ fun MyPageScreen(
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
+    navigateToSingleResult: () -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
@@ -66,6 +67,7 @@ fun MyPageScreen(
         myPageProfileState = myPageProfileState,
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
+        navigateToSingleResult = navigateToSingleResult,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
     )
@@ -79,6 +81,7 @@ fun Content(
     myPageProfileState: MyPageProfileState,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
+    navigateToSingleResult: () -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -108,7 +111,8 @@ fun Content(
                 is MyPageProfileState.Success -> MyPageBody(
                     userData = myPageProfileState.user,
                     myPageViewModel = myPageViewModel,
-                    navigateToProfile = navigateToProfile
+                    navigateToProfile = navigateToProfile,
+                    navigateToSingleResult = navigateToSingleResult
                 )
 
                 is MyPageProfileState.LoadFailed -> LoadingBody()
@@ -156,11 +160,21 @@ private fun LoadingBody() {
 private fun MyPageBody(
     userData: User,
     myPageViewModel: MyPageViewModel,
-    navigateToProfile: () -> Unit
+    navigateToProfile: () -> Unit,
+    navigateToSingleResult: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
         myPageViewModel.getSingleRunningHistory()
+    }
+
+    LaunchedEffect(Unit) {// 러닝 기록 상세 보기 클릭
+        myPageViewModel.saveIdCompleteEvent.collect { modeType ->
+            when (modeType) {
+                ModeType.SINGLE -> navigateToSingleResult()
+                else -> {}
+            }
+        }
     }
 
     val myPageComprehensiveRunRecordState by myPageViewModel.myPageComprehensiveRunRecordState.collectAsStateWithLifecycle()
@@ -193,7 +207,8 @@ private fun MyPageBody(
 
         Spacer(modifier = Modifier.height(30.dp))
         SingleRunningHistoryRow(
-            runningHistoryState = runningHistoryState
+            runningHistoryState = runningHistoryState,
+            myPageViewModel = myPageViewModel
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -219,12 +234,14 @@ private fun MyPageBody(
 
 @Composable
 private fun SingleRunningHistoryRow(
-    runningHistoryState: RunningHistoryState
+    runningHistoryState: RunningHistoryState,
+    myPageViewModel: MyPageViewModel
 ) {
     when (runningHistoryState) {
         is RunningHistoryState.Loading -> ShimmerRunningHistory(isSingleData = true)
         is RunningHistoryState.Success -> SingleRunningHistoryBody(
-            singleRunningHistory = runningHistoryState.singleRunningHistory
+            singleRunningHistory = runningHistoryState.singleRunningHistory,
+            myPageViewModel = myPageViewModel
         )
 
         RunningHistoryState.LoadFailed -> ShimmerRunningHistory(isSingleData = true)
@@ -233,7 +250,8 @@ private fun SingleRunningHistoryRow(
 
 @Composable
 private fun SingleRunningHistoryBody(
-    singleRunningHistory: SingleRunningHistory
+    singleRunningHistory: SingleRunningHistory,
+    myPageViewModel: MyPageViewModel
 ) {
     Column(
         modifier = Modifier
@@ -256,9 +274,10 @@ private fun SingleRunningHistoryBody(
                 items(singleRunningHistory.history) { data ->
                     RunningDataCard(
                         runningHistoryDetail = data,
-                        isSingleData = true,
-                        onClick = { }
-                    )
+                        isSingleData = true
+                    ) {
+                        myPageViewModel.saveSingleId(data.id)
+                    }
                 }
             }
         }

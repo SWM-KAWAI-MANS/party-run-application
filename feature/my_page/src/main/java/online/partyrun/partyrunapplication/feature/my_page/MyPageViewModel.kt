@@ -3,7 +3,7 @@ package online.partyrun.partyrunapplication.feature.my_page
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +13,7 @@ import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.my_page.GetComprehensiveRunRecordUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetSingleHistoryUseCase
+import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,9 +21,9 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val getMyPageDataUseCase: GetMyPageDataUseCase,
     private val getComprehensiveRunRecordUseCase: GetComprehensiveRunRecordUseCase,
-    private val getSingleHistoryUseCase: GetSingleHistoryUseCase
+    private val getSingleHistoryUseCase: GetSingleHistoryUseCase,
+    private val saveSingleIdUseCase: SaveSingleIdUseCase
 ) : ViewModel() {
-
     private val _myPageProfileState =
         MutableStateFlow<MyPageProfileState>(MyPageProfileState.Loading)
     val myPageProfileState = _myPageProfileState.asStateFlow()
@@ -34,6 +35,8 @@ class MyPageViewModel @Inject constructor(
     private val _runningHistoryState =
         MutableStateFlow<RunningHistoryState>(RunningHistoryState.Loading)
     val runningHistoryState = _runningHistoryState.asStateFlow()
+
+    val saveIdCompleteEvent = MutableSharedFlow<ModeType>(replay = 0)
 
     private val _snackbarMessage = MutableStateFlow("")
     val snackbarMessage: StateFlow<String> = _snackbarMessage
@@ -88,6 +91,11 @@ class MyPageViewModel @Inject constructor(
                     RunningHistoryState.LoadFailed
             }
         }
+    }
+
+    fun saveSingleId(singleId: String) = viewModelScope.launch {
+        saveSingleIdUseCase(singleId)
+        saveIdCompleteEvent.emit(ModeType.SINGLE)
     }
 
     fun clearSnackbarMessage() {

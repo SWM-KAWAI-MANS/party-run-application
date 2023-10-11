@@ -78,6 +78,8 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun getRunningHistory() = viewModelScope.launch {
+        _runningHistoryState.value = RunningHistoryState.Loading
+
         getRunningHistoryUseCase().collect { result ->
             result.onSuccess {
                 _runningHistoryState.value = RunningHistoryState.Success(

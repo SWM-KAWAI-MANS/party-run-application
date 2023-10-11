@@ -9,7 +9,7 @@ import online.partyrun.partyrunapplication.core.network.model.util.formatDate
 import online.partyrun.partyrunapplication.core.network.model.util.formatDistanceWithComma
 import java.time.LocalDateTime
 
-data class SingleHistoryDetailResponse(
+data class RunningHistoryDetailResponse(
     @SerializedName("id")
     val id: String?,
     @SerializedName("startTime")
@@ -20,7 +20,7 @@ data class SingleHistoryDetailResponse(
     val distance: Double?
 )
 
-fun SingleHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
+fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
     val parsedDate = startTime?.let {
         LocalDateTime.parse(
             it,

@@ -5,7 +5,7 @@ import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHisto
 
 data class SingleHistoryResponse(
     @SerializedName("history")
-    val history: List<SingleHistoryDetailResponse>?
+    val history: List<RunningHistoryDetailResponse>?
 )
 
 fun SingleHistoryResponse.toDomainModel(): SingleRunningHistory {

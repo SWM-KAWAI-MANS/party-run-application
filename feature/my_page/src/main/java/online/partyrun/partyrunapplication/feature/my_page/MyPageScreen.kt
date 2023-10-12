@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunGradientRoundedRect
 import online.partyrun.partyrunapplication.core.designsystem.component.PartyRunTopAppBar
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
+import online.partyrun.partyrunapplication.core.model.my_page.BattleRunningHistory
 import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
@@ -57,6 +58,7 @@ fun MyPageScreen(
     navigateToSettings: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
     navigateToSingleResult: (Boolean) -> Unit = {},
+    navigateToBattleResult: (Boolean) -> Unit = {},
     onShowSnackbar: (String) -> Unit
 ) {
     val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
@@ -68,6 +70,7 @@ fun MyPageScreen(
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
         navigateToSingleResult = navigateToSingleResult,
+        navigateToBattleResult = navigateToBattleResult,
         onShowSnackbar = onShowSnackbar,
         myPageSnackbarMessage = myPageSnackbarMessage
     )
@@ -82,6 +85,7 @@ fun Content(
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToSingleResult: (Boolean) -> Unit,
+    navigateToBattleResult: (Boolean) -> Unit,
     onShowSnackbar: (String) -> Unit,
     myPageSnackbarMessage: String
 ) {
@@ -112,7 +116,8 @@ fun Content(
                     userData = myPageProfileState.user,
                     myPageViewModel = myPageViewModel,
                     navigateToProfile = navigateToProfile,
-                    navigateToSingleResult = navigateToSingleResult
+                    navigateToSingleResult = navigateToSingleResult,
+                    navigateToBattleResult = navigateToBattleResult
                 )
 
                 is MyPageProfileState.LoadFailed -> LoadingBody()
@@ -161,20 +166,19 @@ private fun MyPageBody(
     userData: User,
     myPageViewModel: MyPageViewModel,
     navigateToProfile: () -> Unit,
-    navigateToSingleResult: (Boolean) -> Unit
+    navigateToSingleResult: (Boolean) -> Unit,
+    navigateToBattleResult: (Boolean) -> Unit
 ) {
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
-        myPageViewModel.getSingleRunningHistory()
+        myPageViewModel.getRunningHistory()
     }
 
     LaunchedEffect(Unit) {// 러닝 기록 상세 보기 클릭
         myPageViewModel.saveIdCompleteEvent.collect { modeType ->
             when (modeType) {
                 ModeType.SINGLE -> navigateToSingleResult(true) // MyPage로부터 Result로의 이동은 true
-                else -> {
-                    // Battle
-                }
+                ModeType.BATTLE -> navigateToBattleResult(true)
             }
         }
     }
@@ -214,21 +218,10 @@ private fun MyPageBody(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.battle_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-
-            EmptyRunningHistory()
-
-        }
+        BattleRunningHistoryRow(
+            runningHistoryState = runningHistoryState,
+            myPageViewModel = myPageViewModel
+        )
 
         Spacer(modifier = Modifier.height(80.dp))
     }
@@ -242,11 +235,27 @@ private fun SingleRunningHistoryRow(
     when (runningHistoryState) {
         is RunningHistoryState.Loading -> ShimmerRunningHistory(isSingleData = true)
         is RunningHistoryState.Success -> SingleRunningHistoryBody(
-            singleRunningHistory = runningHistoryState.singleRunningHistory,
+            singleRunningHistory = runningHistoryState.combinedRunningHistory.singleRunningHistory,
             myPageViewModel = myPageViewModel
         )
 
-        RunningHistoryState.LoadFailed -> ShimmerRunningHistory(isSingleData = true)
+        RunningHistoryState.LoadFailed -> EmptyRunningHistory()
+    }
+}
+
+@Composable
+private fun BattleRunningHistoryRow(
+    runningHistoryState: RunningHistoryState,
+    myPageViewModel: MyPageViewModel
+) {
+    when (runningHistoryState) {
+        is RunningHistoryState.Loading -> ShimmerRunningHistory(isSingleData = false)
+        is RunningHistoryState.Success -> BattleRunningHistoryBody(
+            battleRunningHistory = runningHistoryState.combinedRunningHistory.battleRunningHistory,
+            myPageViewModel = myPageViewModel
+        )
+
+        RunningHistoryState.LoadFailed -> EmptyRunningHistory()
     }
 }
 
@@ -279,6 +288,42 @@ private fun SingleRunningHistoryBody(
                         isSingleData = true
                     ) {
                         myPageViewModel.saveSingleId(data.id)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun BattleRunningHistoryBody(
+    battleRunningHistory: BattleRunningHistory,
+    myPageViewModel: MyPageViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.battle_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+        Spacer(modifier = Modifier.height(30.dp))
+
+        if (battleRunningHistory.history.isEmpty()) {
+            EmptyRunningHistory()
+        } else {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(battleRunningHistory.history) { data ->
+                    RunningDataCard(
+                        runningHistoryDetail = data,
+                        isSingleData = false
+                    ) {
+                        myPageViewModel.saveBattleId(data.id)
                     }
                 }
             }

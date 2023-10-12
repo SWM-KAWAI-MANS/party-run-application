@@ -1,14 +1,14 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
-import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHistory
+import online.partyrun.partyrunapplication.core.model.my_page.BattleRunningHistory
 
-data class SingleHistoryResponse(
+data class BattleHistoryResponse(
     @SerializedName("history")
     val history: List<RunningHistoryDetailResponse>?
 )
 
-fun SingleHistoryResponse.toDomainModel(): SingleRunningHistory {
+fun BattleHistoryResponse.toDomainModel(): BattleRunningHistory {
     val transformedHistory = history?.map { it.toDomainModel() }?.reversed() ?: emptyList()
-    return SingleRunningHistory(history = transformedHistory)
+    return BattleRunningHistory(history = transformedHistory)
 }

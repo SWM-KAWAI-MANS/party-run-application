@@ -1,6 +1,7 @@
 package online.partyrun.partyrunapplication.core.network.service
 
 import online.partyrun.partyrunapplication.core.common.network.ApiResponse
+import online.partyrun.partyrunapplication.core.network.model.response.BattleHistoryResponse
 import online.partyrun.partyrunapplication.core.network.model.response.BattleResultResponse
 import online.partyrun.partyrunapplication.core.network.model.response.ComprehensiveRunRecordResponse
 import online.partyrun.partyrunapplication.core.network.model.response.SingleHistoryResponse
@@ -25,5 +26,8 @@ interface ResultApiService {
 
     @GET("/api/mypage/singles")
     suspend fun getSingleHistory(): ApiResponse<SingleHistoryResponse>
+
+    @GET("/api/mypage/battles")
+    suspend fun getBattleHistory(): ApiResponse<BattleHistoryResponse>
 
 }

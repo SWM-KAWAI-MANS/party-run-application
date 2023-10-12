@@ -12,11 +12,23 @@ fun NavGraphBuilder.runningResultRoute(
     navigateToTopLevel: () -> Unit,
     navigateToBack: () -> Unit
 ) {
-    composable(route = MainNavRoutes.BattleResult.route) {
+    composable(
+        route = "${MainNavRoutes.BattleResult.route}?isFromMyPage={isFromMyPage}",
+        arguments = listOf(
+            navArgument("isFromMyPage") {
+                type = NavType.BoolType
+                defaultValue = false
+            }
+        )
+    ) { backStackEntry ->
+        val isFromMyPage = backStackEntry.arguments?.getBoolean("isFromMyPage") ?: false
         BattleResultScreen(
+            isFromMyPage = isFromMyPage,
             navigateToTopLevel = navigateToTopLevel,
+            navigateToBack = navigateToBack
         )
     }
+
     composable(
         route = "${MainNavRoutes.SingleResult.route}?isFromMyPage={isFromMyPage}",
         arguments = listOf(

@@ -29,12 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.model.running_result.ui.SingleResultUiModel
 import online.partyrun.partyrunapplication.feature.running_result.R
-import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
-import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
-import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadFailedBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadingBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
+import online.partyrun.partyrunapplication.feature.running_result.component.ChartScreen
+import online.partyrun.partyrunapplication.feature.running_result.component.FixedBottomNavigationSheet
+import online.partyrun.partyrunapplication.feature.running_result.component.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadFailedBody
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadingBody
+import online.partyrun.partyrunapplication.feature.running_result.component.SummaryInfo
 
 @Composable
 fun SingleResultScreen(

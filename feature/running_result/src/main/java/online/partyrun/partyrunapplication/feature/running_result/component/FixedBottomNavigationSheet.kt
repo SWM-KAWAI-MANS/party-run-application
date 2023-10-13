@@ -1,4 +1,4 @@
-package online.partyrun.partyrunapplication.feature.running_result.ui
+package online.partyrun.partyrunapplication.feature.running_result.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

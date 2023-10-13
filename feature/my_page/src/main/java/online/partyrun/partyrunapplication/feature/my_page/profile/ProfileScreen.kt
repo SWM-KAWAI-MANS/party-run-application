@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,10 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -42,7 +38,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -116,10 +111,6 @@ fun Content(
     val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-
-    ProfileBackNavigationHandler(
-        navigateToMyPage = navigateToMyPage
-    )
 
     LaunchedEffect(profileSnackbarMessage) {
         if (profileSnackbarMessage.isNotEmpty()) {
@@ -413,29 +404,6 @@ private fun NickNameSupportingText(profileUiState: ProfileUiState) {
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error
             )
-        }
-    }
-}
-
-@Composable
-fun ProfileBackNavigationHandler(
-    navigateToMyPage: () -> Unit
-) {
-    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val onBackPressedCallback = remember {
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigateToMyPage()
-            }
-        }
-    }
-
-    // lifecycleOwner와 backDispatcher가 변경될 때마다 실행
-    DisposableEffect(lifecycleOwner, onBackPressedDispatcher) {
-        onBackPressedDispatcher?.addCallback(lifecycleOwner, onBackPressedCallback)
-        onDispose {
-            onBackPressedCallback.remove()
         }
     }
 }

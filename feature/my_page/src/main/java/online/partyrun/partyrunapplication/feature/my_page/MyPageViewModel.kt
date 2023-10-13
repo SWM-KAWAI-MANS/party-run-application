@@ -45,9 +45,11 @@ class MyPageViewModel @Inject constructor(
 
     init {
         getMyPageUserData()
+        getComprehensiveRunRecord()
+        getRunningHistory()
     }
 
-    private fun getMyPageUserData() {
+    fun getMyPageUserData() {
         viewModelScope.launch {
             try {
                 val user = getMyPageDataUseCase()

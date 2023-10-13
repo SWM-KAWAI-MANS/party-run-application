@@ -172,6 +172,7 @@ private fun MyPageBody(
     LaunchedEffect(Unit) {
         myPageViewModel.getComprehensiveRunRecord()
         myPageViewModel.getRunningHistory()
+        myPageViewModel.getMyPageUserData()
     }
 
     LaunchedEffect(Unit) {// 러닝 기록 상세 보기 클릭

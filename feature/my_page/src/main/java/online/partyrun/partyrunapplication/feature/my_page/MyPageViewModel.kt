@@ -13,6 +13,8 @@ import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.my_page.GetComprehensiveRunRecordUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetMyPageDataUseCase
 import online.partyrun.partyrunapplication.core.domain.my_page.GetRunningHistoryUseCase
+import online.partyrun.partyrunapplication.core.domain.my_page.UpdateBattleRunningHistoryUseCase
+import online.partyrun.partyrunapplication.core.domain.my_page.UpdateSingleRunningHistoryUseCase
 import online.partyrun.partyrunapplication.core.domain.running.battle.SaveBattleIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running.single.SaveSingleIdUseCase
 import timber.log.Timber
@@ -23,6 +25,8 @@ class MyPageViewModel @Inject constructor(
     private val getMyPageDataUseCase: GetMyPageDataUseCase,
     private val getComprehensiveRunRecordUseCase: GetComprehensiveRunRecordUseCase,
     private val getRunningHistoryUseCase: GetRunningHistoryUseCase,
+    private val updateSingleRunningHistoryUseCase: UpdateSingleRunningHistoryUseCase,
+    private val updateBattleRunningHistoryUseCase: UpdateBattleRunningHistoryUseCase,
     private val saveSingleIdUseCase: SaveSingleIdUseCase,
     private val saveBattleIdUseCase: SaveBattleIdUseCase
 ) : ViewModel() {
@@ -46,6 +50,8 @@ class MyPageViewModel @Inject constructor(
     init {
         getMyPageUserData()
         getComprehensiveRunRecord()
+        updateSingleHistory()
+        updateBattleHistory()
         getRunningHistory()
     }
 
@@ -75,6 +81,28 @@ class MyPageViewModel @Inject constructor(
                 _snackbarMessage.value = "종합기록을 불러오는데\n실패했습니다."
                 _myPageComprehensiveRunRecordState.value =
                     MyPageComprehensiveRunRecordState.LoadFailed
+            }
+        }
+    }
+
+    private fun updateSingleHistory() = viewModelScope.launch {
+        updateSingleRunningHistoryUseCase().collect { result ->
+            result.onSuccess {
+                Timber.d("updateSingleHistory() 성공")
+            }.onFailure { errorMessage, code ->
+                Timber.e(errorMessage, code)
+                _snackbarMessage.value = "싱글 기록 업데이트에\n실패했습니다."
+            }
+        }
+    }
+
+    private fun updateBattleHistory() = viewModelScope.launch {
+        updateBattleRunningHistoryUseCase().collect { result ->
+            result.onSuccess {
+                Timber.d("updateBattleHistory() 성공")
+            }.onFailure { errorMessage, code ->
+                Timber.e(errorMessage, code)
+                _snackbarMessage.value = "대결 기록 업데이트에\n실패했습니다."
             }
         }
     }

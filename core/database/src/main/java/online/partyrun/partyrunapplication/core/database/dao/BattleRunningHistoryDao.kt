@@ -16,4 +16,7 @@ interface BattleRunningHistoryDao {
     @Query("SELECT * FROM battle_running_history_resource")
     fun getAllBattleRunningHistories(): Flow<List<BattleRunningHistoryEntity>>
 
+    @Query("DELETE FROM battle_running_history_resource")
+    suspend fun deleteAllBattleRunningHistories()
+
 }

@@ -16,4 +16,7 @@ interface SingleRunningHistoryDao {
     @Query("SELECT * FROM single_running_history_resource")
     fun getAllSingleRunningHistories(): Flow<List<SingleRunningHistoryEntity>>
 
+    @Query("DELETE FROM single_running_history_resource")
+    suspend fun deleteAllSingleRunningHistories()
+
 }

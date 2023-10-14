@@ -1,6 +1,8 @@
 package online.partyrun.partyrunapplication.core.network.model.response
 
 import com.google.gson.annotations.SerializedName
+import online.partyrun.partyrunapplication.core.database.model.BattleRunningHistoryEntity
+import online.partyrun.partyrunapplication.core.database.model.SingleRunningHistoryEntity
 import online.partyrun.partyrunapplication.core.model.my_page.RunningHistoryDetail
 import online.partyrun.partyrunapplication.core.model.running.RunningTime
 import online.partyrun.partyrunapplication.core.model.running.toElapsedTimeString
@@ -29,6 +31,38 @@ fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
     }
 
     return RunningHistoryDetail(
+        id = this.id ?: "",
+        date = parsedDate?.let { formatDate(it) } ?: "",
+        runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
+        distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
+    )
+}
+
+fun RunningHistoryDetailResponse.toSingleRunningHistoryEntity(): SingleRunningHistoryEntity {
+    val parsedDate = startTime?.let {
+        LocalDateTime.parse(
+            it,
+            DateTimeUtils.localDateTimeFormatter
+        )
+    }
+
+    return SingleRunningHistoryEntity(
+        id = this.id ?: "",
+        date = parsedDate?.let { formatDate(it) } ?: "",
+        runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
+        distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
+    )
+}
+
+fun RunningHistoryDetailResponse.toBattleRunningHistoryEntity(): BattleRunningHistoryEntity {
+    val parsedDate = startTime?.let {
+        LocalDateTime.parse(
+            it,
+            DateTimeUtils.localDateTimeFormatter
+        )
+    }
+
+    return BattleRunningHistoryEntity(
         id = this.id ?: "",
         date = parsedDate?.let { formatDate(it) } ?: "",
         runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",

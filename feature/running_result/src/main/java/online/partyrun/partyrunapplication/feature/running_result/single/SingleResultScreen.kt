@@ -114,6 +114,7 @@ private fun SingleResultBody(
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
                 MapWidget(
+                    isFromMyPage = isFromMyPage,
                     targetDistanceFormatted = singleResult.targetDistanceFormatted,
                     records = singleResult.singleRunnerStatus.records
                 )

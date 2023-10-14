@@ -134,6 +134,7 @@ private fun BattleResultBody(
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
                 MapWidget(
+                    isFromMyPage = isFromMyPage,
                     targetDistanceFormatted = battleResult.targetDistanceFormatted,
                     records = selectedRunner?.records
                 )

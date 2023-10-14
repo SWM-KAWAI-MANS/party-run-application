@@ -154,8 +154,7 @@ private fun ConfirmButton(
 ) {
     PartyRunGradientButton(
         onClick = {
-            settingsViewModel.saveAgreementState(isChecked = false)
-            settingsViewModel.deleteAccount()
+            settingsViewModel.deleteAccountProcess()
         },
         modifier = Modifier
             .shadow(5.dp, shape = CircleShape)

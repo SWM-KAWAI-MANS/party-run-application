@@ -22,50 +22,46 @@ data class RunningHistoryDetailResponse(
     val distance: Double?
 )
 
-fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
-    val parsedDate = startTime?.let {
+fun RunningHistoryDetailResponse.getFormattedRunningTime(): String {
+    return this.runningTime?.toElapsedTimeString() ?: "00:00:00"
+}
+
+fun RunningHistoryDetailResponse.getParsedDate(): LocalDateTime? {
+    return startTime?.let {
         LocalDateTime.parse(
             it,
             DateTimeUtils.localDateTimeFormatter
         )
     }
+}
 
+fun RunningHistoryDetailResponse.getFormattedDate(): String {
+    return getParsedDate()?.let { formatDate(it) } ?: ""
+}
+
+fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
     return RunningHistoryDetail(
         id = this.id ?: "",
-        date = parsedDate?.let { formatDate(it) } ?: "",
-        runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
+        date = getFormattedDate(),
+        runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
     )
 }
 
 fun RunningHistoryDetailResponse.toSingleRunningHistoryEntity(): SingleRunningHistoryEntity {
-    val parsedDate = startTime?.let {
-        LocalDateTime.parse(
-            it,
-            DateTimeUtils.localDateTimeFormatter
-        )
-    }
-
     return SingleRunningHistoryEntity(
         id = this.id ?: "",
-        date = parsedDate?.let { formatDate(it) } ?: "",
-        runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
+        date = getFormattedDate(),
+        runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
     )
 }
 
 fun RunningHistoryDetailResponse.toBattleRunningHistoryEntity(): BattleRunningHistoryEntity {
-    val parsedDate = startTime?.let {
-        LocalDateTime.parse(
-            it,
-            DateTimeUtils.localDateTimeFormatter
-        )
-    }
-
     return BattleRunningHistoryEntity(
         id = this.id ?: "",
-        date = parsedDate?.let { formatDate(it) } ?: "",
-        runningTime = this.runningTime?.toElapsedTimeString() ?: "00:00:00",
+        date = getFormattedDate(),
+        runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
     )
 }

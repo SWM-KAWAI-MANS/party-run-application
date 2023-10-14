@@ -31,6 +31,9 @@ class ResultRepositoryImpl @Inject constructor(
     private val battlePreferencesDataSource: BattlePreferencesDataSource,
     private val singlePreferencesDataSource: SinglePreferencesDataSource
 ) : ResultRepository {
+    companion object {
+        const val UNKNOWN_ERROR = "Unknown Error"
+    }
 
     override suspend fun getBattleResults(): Flow<Result<BattleResult>> {
         return apiRequestFlow {
@@ -59,7 +62,7 @@ class ResultRepositoryImpl @Inject constructor(
             singleRunningHistoryDao.insertAllSingleRunningHistory(result.toEntity())
             emit(Result.Success(Unit))
         }.onException { e ->
-            emit(Result.Failure(e.message ?: "UnKnown Error", -1))
+            emit(Result.Failure(e.message ?: UNKNOWN_ERROR, -1))
         }
     }
 
@@ -70,7 +73,7 @@ class ResultRepositoryImpl @Inject constructor(
             battleRunningHistoryDao.insertAllBattleRunningHistory(result.toEntity())
             emit(Result.Success(Unit))
         }.onException { e ->
-            emit(Result.Failure(e.message ?: "UnKnown Error", -1))
+            emit(Result.Failure(e.message ?: UNKNOWN_ERROR, -1))
         }
     }
 
@@ -80,7 +83,7 @@ class ResultRepositoryImpl @Inject constructor(
                 try {
                     Result.Success(SingleRunningHistory(entityList.map { it.toDomainModel() }))
                 } catch (e: Exception) {
-                    Result.Failure(e.message ?: "Unknown Error", -1)
+                    Result.Failure(e.message ?: UNKNOWN_ERROR, -1)
                 }
             }
     }
@@ -91,7 +94,7 @@ class ResultRepositoryImpl @Inject constructor(
                 try {
                     Result.Success(BattleRunningHistory(entityList.map { it.toDomainModel() }))
                 } catch (e: Exception) {
-                    Result.Failure(e.message ?: "Unknown Error", -1)
+                    Result.Failure(e.message ?: UNKNOWN_ERROR, -1)
                 }
             }
     }
@@ -103,7 +106,7 @@ class ResultRepositoryImpl @Inject constructor(
             battleRunningHistoryDao.deleteAllBattleRunningHistories()
             emit(Result.Success(Unit))
         } catch (e: Exception) {
-            emit(Result.Failure(e.message ?: "Unknown Error", -1))
+            emit(Result.Failure(e.message ?: UNKNOWN_ERROR, -1))
         }
     }
 

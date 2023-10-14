@@ -75,15 +75,25 @@ class ResultRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>> {
-        return apiRequestFlow {
-            resultDataSource.getSingleHistory()
-        }.mapResultModel { it.toDomainModel() }
+        return singleRunningHistoryDao.getAllSingleRunningHistories()
+            .map { entityList ->
+                try {
+                    Result.Success(SingleRunningHistory(entityList.map { it.toDomainModel() }))
+                } catch (e: Exception) {
+                    Result.Failure(e.message ?: "Unknown Error", -1)
+                }
+            }
     }
 
     override suspend fun getBattleHistory(): Flow<Result<BattleRunningHistory>> {
-        return apiRequestFlow {
-            resultDataSource.getBattleHistory()
-        }.mapResultModel { it.toDomainModel() }
+        return battleRunningHistoryDao.getAllBattleRunningHistories()
+            .map { entityList ->
+                try {
+                    Result.Success(BattleRunningHistory(entityList.map { it.toDomainModel() }))
+                } catch (e: Exception) {
+                    Result.Failure(e.message ?: "Unknown Error", -1)
+                }
+            }
     }
 
 }

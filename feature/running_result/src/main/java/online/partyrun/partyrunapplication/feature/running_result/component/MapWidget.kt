@@ -43,6 +43,7 @@ import online.partyrun.partyrunapplication.feature.running_result.R
 
 @Composable
 fun MapWidget(
+    isFromMyPage: Boolean = false,
     targetDistanceFormatted: String,
     records: List<RunnerRecordUiModel>?,
 ) {
@@ -61,7 +62,7 @@ fun MapWidget(
             .fillMaxWidth(),
         properties = MapProperties(
             isBuildingEnabled = true,
-            isMyLocationEnabled = true
+            isMyLocationEnabled = !isFromMyPage // 마이페이지로부터 조회하는 경우에는 현재 위치 보여줄 필요 없음
         ),
         uiSettings = MapUiSettings(
             zoomControlsEnabled = false,

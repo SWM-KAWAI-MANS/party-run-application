@@ -42,6 +42,10 @@ gradlePlugin {
             id = "nohjunh.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("androidRoom") {
+            id = "nohjunh.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
         register("androidFeature") {
             id = "nohjunh.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"

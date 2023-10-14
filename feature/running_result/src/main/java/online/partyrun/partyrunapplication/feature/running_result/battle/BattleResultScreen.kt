@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,13 +80,13 @@ private fun Content(
     navigateToTopLevel: () -> Unit,
     navigateToBack: () -> Unit
 ) {
-    
     Box(modifier = modifier) {
         when (battleResultUiState) {
             is BattleResultUiState.Loading -> ResultLoadingBody()
             is BattleResultUiState.Success ->
                 BattleResultBody(
                     isFromMyPage = isFromMyPage,
+                    battleResultViewModel = battleResultViewModel,
                     battleResult = battleResultUiState.battleResult,
                     navigateToTopLevel = navigateToTopLevel,
                     navigateToBack = navigateToBack
@@ -103,9 +104,16 @@ private fun Content(
 private fun BattleResultBody(
     battleResult: BattleResultUiModel,
     isFromMyPage: Boolean,
+    battleResultViewModel: BattleResultViewModel,
     navigateToTopLevel: () -> Unit,
     navigateToBack: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        if (!isFromMyPage) { // 러닝이 끝난 후의 기록 조회 상황에서만 기록 최신화
+            battleResultViewModel.updateBattleHistory()
+        }
+    }
+
     // userID에 해당하는 러너 찾기
     val userStatus = battleResult.battleRunnerStatus.find { it.id == battleResult.userId }
 

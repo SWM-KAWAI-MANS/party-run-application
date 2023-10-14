@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +73,7 @@ private fun Content(
                 SingleResultBody(
                     singleResult = singleResultUiState.singleResult,
                     isFromMyPage = isFromMyPage,
+                    singleResultViewModel = singleResultViewModel,
                     navigateToTopLevel = navigateToTopLevel,
                     navigateToBack = navigateToBack
                 )
@@ -88,9 +90,16 @@ private fun Content(
 private fun SingleResultBody(
     singleResult: SingleResultUiModel,
     isFromMyPage: Boolean,
+    singleResultViewModel: SingleResultViewModel,
     navigateToTopLevel: () -> Unit,
     navigateToBack: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        if (!isFromMyPage) { // 러닝이 끝난 후의 기록 조회 상황에서만 기록 최신화
+            singleResultViewModel.updateSingleHistory()
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

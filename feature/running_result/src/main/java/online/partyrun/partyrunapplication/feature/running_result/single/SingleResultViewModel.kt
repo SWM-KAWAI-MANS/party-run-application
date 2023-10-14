@@ -8,13 +8,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
+import online.partyrun.partyrunapplication.core.domain.my_page.UpdateSingleRunningHistoryUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetSingleResultUseCase
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SingleResultViewModel @Inject constructor(
-    private val getsSingleResultUseCase: GetSingleResultUseCase
+    private val getsSingleResultUseCase: GetSingleResultUseCase,
+    private val updateSingleRunningHistoryUseCase: UpdateSingleRunningHistoryUseCase
 ) : ViewModel() {
     private val _singleResultUiState =
         MutableStateFlow<SingleResultUiState>(SingleResultUiState.Loading)
@@ -22,6 +24,16 @@ class SingleResultViewModel @Inject constructor(
 
     init {
         getSingleResult()
+    }
+
+    fun updateSingleHistory() = viewModelScope.launch {
+        updateSingleRunningHistoryUseCase().collect { result ->
+            result.onSuccess {
+                Timber.d("updateSingleHistory() 성공")
+            }.onFailure { errorMessage, code ->
+                Timber.e(errorMessage, code)
+            }
+        }
     }
 
     fun getSingleResult() {
@@ -41,4 +53,3 @@ class SingleResultViewModel @Inject constructor(
     }
 
 }
-

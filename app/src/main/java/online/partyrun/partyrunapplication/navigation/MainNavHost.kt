@@ -137,7 +137,7 @@ fun SetUpMainNavGraph(
             navigateToBattleResult = {
                 navController.navigate(MainNavRoutes.BattleResult.route) {
                     popUpTo(MainNavRoutes.Battle.route) {
-                        inclusive = false
+                        inclusive = true
                     }
                 }
             },
@@ -148,7 +148,7 @@ fun SetUpMainNavGraph(
             navigateToSingleResult = {
                 navController.navigate(MainNavRoutes.SingleResult.route) {
                     popUpTo(MainNavRoutes.Single.route) {
-                        inclusive = false
+                        inclusive = true
                     }
                 }
             },
@@ -158,7 +158,7 @@ fun SetUpMainNavGraph(
         runningResultRoute(
             navigateToTopLevel = {
                 navController.navigate(MainNavRoutes.Battle.route) {
-                    popUpTo(MainNavRoutes.Battle.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
                         inclusive = true
                     }
                 }

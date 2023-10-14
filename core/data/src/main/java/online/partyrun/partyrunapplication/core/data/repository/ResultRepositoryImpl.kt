@@ -96,4 +96,15 @@ class ResultRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun deleteAllHistories(): Flow<Result<Unit>> = flow {
+        emit(Result.Loading)
+        try {
+            singleRunningHistoryDao.deleteAllSingleRunningHistories()
+            battleRunningHistoryDao.deleteAllBattleRunningHistories()
+            emit(Result.Success(Unit))
+        } catch (e: Exception) {
+            emit(Result.Failure(e.message ?: "Unknown Error", -1))
+        }
+    }
+
 }

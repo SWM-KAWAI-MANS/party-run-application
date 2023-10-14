@@ -16,5 +16,6 @@ interface ResultRepository {
     suspend fun updateBattleHistory(): Flow<Result<Unit>>
     suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>>
     suspend fun getBattleHistory(): Flow<Result<BattleRunningHistory>>
+    suspend fun deleteAllHistories(): Flow<Result<Unit>>
 
 }

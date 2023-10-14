@@ -32,6 +32,19 @@ fun calculateAveragePace(runnerStatus: RunnerStatus): String {
     return formatPace(pace)
 }
 
+fun calculatePaceInMinPerKm(speedInMetersPerSec: Double): String {
+    if (speedInMetersPerSec == 0.0) {
+        return "0'00''"
+    }
+
+    val paceInMinPerKm = (1 / speedInMetersPerSec) * (1000 / 60)
+    val minutes = paceInMinPerKm.toInt()
+    val seconds = ((paceInMinPerKm - minutes) * 60).roundToInt()
+
+    // %02d는 정수를 두 자리로 표현하는데, 만약 한 자리수면 앞에 0 추가
+    return "${minutes}'${String.format("%02d", seconds)}''"
+}
+
 fun calculateAverageAltitude(runnerStatus: RunnerStatus): Double {
     return if (runnerStatus.records.isNotEmpty()) {
         (runnerStatus.records.sumOf { it.altitude } / runnerStatus.records.size)

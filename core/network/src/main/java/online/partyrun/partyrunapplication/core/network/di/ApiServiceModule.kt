@@ -6,16 +6,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import online.partyrun.partyrunapplication.core.network.service.ResultApiService
-import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.BattleApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.PartyApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.SingleApiService
-import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import retrofit2.Retrofit
-import retrofit2.Retrofit.Builder
 import javax.inject.Singleton
 
 @Module
@@ -29,22 +26,6 @@ object ApiServiceModule {
         retrofit
             .build()
             .create(SignInApiService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideWaitingMatchApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Builder): WaitingMatchApiService =
-        retrofit
-            .client(okHttpClient)
-            .build()
-            .create(WaitingMatchApiService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideMatchDecisionApiService(@RESTOkHttpClient okHttpClient: OkHttpClient, retrofit: Builder): MatchDecisionApiService =
-        retrofit
-            .client(okHttpClient)
-            .build()
-            .create(MatchDecisionApiService::class.java)
 
     @Singleton
     @Provides

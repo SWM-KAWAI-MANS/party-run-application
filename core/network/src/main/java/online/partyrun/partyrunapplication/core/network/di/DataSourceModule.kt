@@ -23,12 +23,10 @@ import online.partyrun.partyrunapplication.core.network.datasource.SingleDataSou
 import online.partyrun.partyrunapplication.core.network.service.BattleApiService
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
 import online.partyrun.partyrunapplication.core.network.service.ResultApiService
-import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
 import online.partyrun.partyrunapplication.core.network.service.MemberApiService
 import online.partyrun.partyrunapplication.core.network.service.PartyApiService
 import online.partyrun.partyrunapplication.core.network.service.SignInApiService
 import online.partyrun.partyrunapplication.core.network.service.SingleApiService
-import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import javax.inject.Singleton
 
 @Module
@@ -40,15 +38,11 @@ object DataSourceModule {
     fun provideMatchDataSource(
         @SSEOkHttpClient okHttpClient: OkHttpClient,
         @SSERequestBuilder request: Request.Builder,
-        waitingMatchApiService: WaitingMatchApiService,
-        matchDecisionApiService: MatchDecisionApiService,
         matchApiService: MatchApiService
     ): MatchDataSource {
         return MatchDataSourceImpl(
             okHttpClient,
             request,
-            waitingMatchApiService,
-            matchDecisionApiService,
             matchApiService
         )
     }

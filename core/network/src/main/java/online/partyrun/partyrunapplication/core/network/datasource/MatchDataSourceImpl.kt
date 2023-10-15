@@ -15,29 +15,25 @@ import online.partyrun.partyrunapplication.core.network.model.request.RunningDis
 import online.partyrun.partyrunapplication.core.network.model.response.CancelMatchResponse
 import online.partyrun.partyrunapplication.core.network.model.response.MatchInfoResponse
 import online.partyrun.partyrunapplication.core.network.service.MatchApiService
-import online.partyrun.partyrunapplication.core.network.service.MatchDecisionApiService
-import online.partyrun.partyrunapplication.core.network.service.WaitingMatchApiService
 import timber.log.Timber
 import javax.inject.Inject
 
 class MatchDataSourceImpl @Inject constructor(
     @SSEOkHttpClient private val okHttpClient: OkHttpClient,
     @SSERequestBuilder private val request: Request.Builder,
-    private val waitingMatchApiService: WaitingMatchApiService,
-    private val matchDecisionApiService: MatchDecisionApiService,
     private val matchApiService: MatchApiService
 ) : MatchDataSource {
     private lateinit var matchEventSource: EventSource
     private lateinit var matchResultSource: EventSource
 
     override suspend fun registerMatch(runningDistanceRequest: RunningDistanceRequest): ApiResponse<MatchStatusResponse> =
-        waitingMatchApiService.registerMatch(runningDistanceRequest)
+        matchApiService.registerMatch(runningDistanceRequest)
 
     override suspend fun acceptMatch(matchDecisionRequest: MatchDecisionRequest): ApiResponse<MatchStatusResponse> =
-        matchDecisionApiService.acceptMatch(matchDecisionRequest)
+        matchApiService.acceptMatch(matchDecisionRequest)
 
     override suspend fun declineMatch(matchDecisionRequest: MatchDecisionRequest): ApiResponse<MatchStatusResponse> =
-        matchDecisionApiService.declineMatch(matchDecisionRequest)
+        matchApiService.declineMatch(matchDecisionRequest)
 
     override suspend fun getRunnerIds(): ApiResponse<MatchInfoResponse> =
         matchApiService.getRunnerIds()
@@ -45,12 +41,11 @@ class MatchDataSourceImpl @Inject constructor(
     override suspend fun cancelMatchWaitingEvent(): ApiResponse<CancelMatchResponse> =
         matchApiService.cancelMatchWaitingEvent()
 
-
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit,
         onFailure: () -> Unit
-    ) : EventSourceListener {
+    ): EventSourceListener {
         return createEventListener(onEvent, onClosed, onFailure)
     }
 

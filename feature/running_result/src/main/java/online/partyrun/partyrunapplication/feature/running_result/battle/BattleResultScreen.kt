@@ -45,6 +45,7 @@ import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleRe
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
 import online.partyrun.partyrunapplication.feature.running_result.R
 import online.partyrun.partyrunapplication.feature.running_result.component.ChartScreen
+import online.partyrun.partyrunapplication.feature.running_result.component.EmptyMapWidget
 import online.partyrun.partyrunapplication.feature.running_result.component.FixedBottomNavigationSheet
 import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadFailedBody
 import online.partyrun.partyrunapplication.feature.running_result.component.MapWidget
@@ -133,11 +134,15 @@ private fun BattleResultBody(
                     .fillMaxWidth()
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
-                MapWidget(
-                    isFromMyPage = isFromMyPage,
-                    targetDistanceFormatted = battleResult.targetDistanceFormatted,
-                    records = selectedRunner?.records
-                )
+                if (selectedRunner?.records.isNullOrEmpty()) {
+                    EmptyMapWidget()
+                } else {
+                    MapWidget(
+                        isFromMyPage = isFromMyPage,
+                        targetDistanceFormatted = battleResult.targetDistanceFormatted,
+                        records = selectedRunner?.records
+                    )
+                }
             }
 
             // 프레임 컴포넌트

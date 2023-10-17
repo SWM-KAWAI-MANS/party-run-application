@@ -55,6 +55,8 @@ fun calculateAverageAltitude(runnerStatus: RunnerStatus): Double {
 }
 
 fun calculateCumulativePacePerMinute(records: List<RunnerRecord>): List<Pair<String, Double>> {
+    if (records.isEmpty()) return emptyList()
+
     val startTime = records.first().time
     return records.drop(1).mapNotNull { record ->
         val timeElapsed = Duration.between(startTime, record.time)
@@ -74,8 +76,9 @@ fun calculateCumulativePacePerMinute(records: List<RunnerRecord>): List<Pair<Str
 }
 
 fun calculateDistanceOverTime(records: List<RunnerRecord>): List<Pair<String, Double>> {
-    val startTime = records.first().time
+    if (records.isEmpty()) return emptyList()
 
+    val startTime = records.first().time
     return records.map { record ->
         val timeElapsed = Duration.between(startTime, record.time)
         Pair(formatDurationToTimeString(timeElapsed), record.distance)
@@ -83,8 +86,9 @@ fun calculateDistanceOverTime(records: List<RunnerRecord>): List<Pair<String, Do
 }
 
 fun calculateAltitudeOverTime(records: List<RunnerRecord>): List<Pair<String, Double>> {
-    val startTime = records.first().time
+    if (records.isEmpty()) return emptyList()
 
+    val startTime = records.first().time
     return records.map { record ->
         val timeElapsed = Duration.between(startTime, record.time)
         Pair(formatDurationToTimeString(timeElapsed), record.altitude.roundToInt().toDouble())

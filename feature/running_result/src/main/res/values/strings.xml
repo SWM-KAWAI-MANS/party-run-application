@@ -10,6 +10,7 @@
     <string name="distance">거리</string>
     <string name="pace">페이스</string>
     <string name="altitude">고도</string>
+    <string name="empty_records">달린 기록이 없어요.</string>
 
     <string name="navigate_to_top_level">돌아가기</string>
 

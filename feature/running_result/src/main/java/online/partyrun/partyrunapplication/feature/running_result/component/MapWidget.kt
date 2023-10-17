@@ -2,8 +2,11 @@ package online.partyrun.partyrunapplication.feature.running_result.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,6 +26,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -37,6 +42,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import online.partyrun.partyrunapplication.core.designsystem.component.LottieImage
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerRecordUiModel
 import online.partyrun.partyrunapplication.feature.running_result.R
@@ -185,5 +191,31 @@ private fun DistanceBox(targetDistance: String) {
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimary
         )
+    }
+}
+
+@Composable
+fun EmptyMapWidget() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.onPrimary),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        LottieImage(
+            modifier = Modifier
+                .size(250.dp)
+                .padding(top = 70.dp),
+            rawAnimation = R.raw.no_records
+        )
+    }
+    Box(
+        modifier = Modifier
+            .padding(10.dp)
+            .clip(RoundedCornerShape(15.dp))
+            .background(color = MaterialTheme.colorScheme.primary)
+    ) {
+        DistanceBox(stringResource(id = R.string.empty_records))
     }
 }

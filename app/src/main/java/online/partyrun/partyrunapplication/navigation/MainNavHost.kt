@@ -96,7 +96,6 @@ fun SetUpMainNavGraph(
         )
 
         myPageRoute(
-            onSignOut = onSignOut,
             navigateToSettings = {
                 navController.navigate(MainNavRoutes.Settings.route)
             },
@@ -109,6 +108,20 @@ fun SetUpMainNavGraph(
             },
             navigateToProfile = {
                 navController.navigate(MainNavRoutes.Profile.route)
+            },
+            navigateToSingleResult = { isFromMyPage ->
+                navController.navigate("${MainNavRoutes.SingleResult.route}?isFromMyPage=$isFromMyPage") {
+                    popUpTo(MainNavRoutes.MyPage.route) {
+                        inclusive = false
+                    }
+                }
+            },
+            navigateToBattleResult = { isFromMyPage ->
+                navController.navigate("${MainNavRoutes.BattleResult.route}?isFromMyPage=$isFromMyPage") {
+                    popUpTo(MainNavRoutes.MyPage.route) {
+                        inclusive = false
+                    }
+                }
             },
             onShowSnackbar = onShowSnackbar
         )
@@ -124,7 +137,7 @@ fun SetUpMainNavGraph(
             navigateToBattleResult = {
                 navController.navigate(MainNavRoutes.BattleResult.route) {
                     popUpTo(MainNavRoutes.Battle.route) {
-                        inclusive = false
+                        inclusive = true
                     }
                 }
             },
@@ -135,7 +148,7 @@ fun SetUpMainNavGraph(
             navigateToSingleResult = {
                 navController.navigate(MainNavRoutes.SingleResult.route) {
                     popUpTo(MainNavRoutes.Single.route) {
-                        inclusive = false
+                        inclusive = true
                     }
                 }
             },
@@ -145,10 +158,13 @@ fun SetUpMainNavGraph(
         runningResultRoute(
             navigateToTopLevel = {
                 navController.navigate(MainNavRoutes.Battle.route) {
-                    popUpTo(MainNavRoutes.Battle.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
                         inclusive = true
                     }
                 }
+            },
+            navigateToBack = {
+                navController.popBackStack()
             }
         )
 

@@ -31,7 +31,7 @@ import online.partyrun.partyrunapplication.feature.running.single.SingleContentU
 import online.partyrun.partyrunapplication.feature.running.single.SingleContentViewModel
 import online.partyrun.partyrunapplication.feature.running.single.getDistanceInMeterString
 import online.partyrun.partyrunapplication.feature.running.single.getRunnerRecordUiModels
-import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.component.MapWidget
 
 @Composable
 fun SingleUserPausedScreen(

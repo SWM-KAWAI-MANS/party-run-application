@@ -62,7 +62,7 @@ fun MatchWaitingDialog(
                 modifier = Modifier.padding(1.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.elapsed_time),
+                    text = stringResource(id = R.string.elapsed_time) + ":  ",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

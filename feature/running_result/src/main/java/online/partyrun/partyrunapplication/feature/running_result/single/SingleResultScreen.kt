@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,35 +30,41 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.partyrun.partyrunapplication.core.model.running_result.ui.SingleResultUiModel
 import online.partyrun.partyrunapplication.feature.running_result.R
-import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
-import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
-import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadFailedBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadingBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
+import online.partyrun.partyrunapplication.feature.running_result.component.ChartScreen
+import online.partyrun.partyrunapplication.feature.running_result.component.FixedBottomNavigationSheet
+import online.partyrun.partyrunapplication.feature.running_result.component.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadFailedBody
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadingBody
+import online.partyrun.partyrunapplication.feature.running_result.component.SummaryInfo
 
 @Composable
 fun SingleResultScreen(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
     singleResultViewModel: SingleResultViewModel = hiltViewModel(),
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     val singleResultUiState by singleResultViewModel.singleResultUiState.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
+        isFromMyPage = isFromMyPage,
         singleResultUiState = singleResultUiState,
         singleResultViewModel = singleResultViewModel,
-        navigateToTopLevel = navigateToTopLevel
+        navigateToTopLevel = navigateToTopLevel,
+        navigateToBack = navigateToBack
     )
 }
 
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean,
     singleResultUiState: SingleResultUiState,
     singleResultViewModel: SingleResultViewModel,
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     Box(modifier = modifier) {
         when (singleResultUiState) {
@@ -65,7 +72,10 @@ private fun Content(
             is SingleResultUiState.Success ->
                 SingleResultBody(
                     singleResult = singleResultUiState.singleResult,
-                    navigateToTopLevel = navigateToTopLevel
+                    isFromMyPage = isFromMyPage,
+                    singleResultViewModel = singleResultViewModel,
+                    navigateToTopLevel = navigateToTopLevel,
+                    navigateToBack = navigateToBack
                 )
 
             is SingleResultUiState.LoadFailed ->
@@ -79,8 +89,17 @@ private fun Content(
 @Composable
 private fun SingleResultBody(
     singleResult: SingleResultUiModel,
-    navigateToTopLevel: () -> Unit
+    isFromMyPage: Boolean,
+    singleResultViewModel: SingleResultViewModel,
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        if (!isFromMyPage) { // 러닝이 끝난 후의 기록 조회 상황에서만 기록 최신화
+            singleResultViewModel.updateSingleHistory()
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -95,6 +114,7 @@ private fun SingleResultBody(
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
                 MapWidget(
+                    isFromMyPage = isFromMyPage,
                     targetDistanceFormatted = singleResult.targetDistanceFormatted,
                     records = singleResult.singleRunnerStatus.records
                 )
@@ -171,7 +191,11 @@ private fun SingleResultBody(
             color = MaterialTheme.colorScheme.background,
             shadowElevation = 5.dp
         ) {
-            FixedBottomNavigationSheet(navigateToTopLevel)
+            FixedBottomNavigationSheet(
+                isFromMyPage = isFromMyPage,
+                navigateToTopLevel = navigateToTopLevel,
+                navigateToBack = navigateToBack
+            )
         }
     }
 }

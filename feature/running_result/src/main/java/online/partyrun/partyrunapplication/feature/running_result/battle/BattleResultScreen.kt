@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,43 +44,53 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
 import online.partyrun.partyrunapplication.feature.running_result.R
-import online.partyrun.partyrunapplication.feature.running_result.ui.ChartScreen
-import online.partyrun.partyrunapplication.feature.running_result.ui.FixedBottomNavigationSheet
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadFailedBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.MapWidget
-import online.partyrun.partyrunapplication.feature.running_result.ui.ResultLoadingBody
-import online.partyrun.partyrunapplication.feature.running_result.ui.SummaryInfo
+import online.partyrun.partyrunapplication.feature.running_result.component.ChartScreen
+import online.partyrun.partyrunapplication.feature.running_result.component.EmptyMapWidget
+import online.partyrun.partyrunapplication.feature.running_result.component.FixedBottomNavigationSheet
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadFailedBody
+import online.partyrun.partyrunapplication.feature.running_result.component.MapWidget
+import online.partyrun.partyrunapplication.feature.running_result.component.ResultLoadingBody
+import online.partyrun.partyrunapplication.feature.running_result.component.SummaryInfo
 
 @Composable
 fun BattleResultScreen(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
     battleResultViewModel: BattleResultViewModel = hiltViewModel(),
-    navigateToTopLevel: () -> Unit
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     val battleResultUiState by battleResultViewModel.battleResultUiState.collectAsStateWithLifecycle()
 
     Content(
         modifier = modifier,
+        isFromMyPage = isFromMyPage,
         battleResultUiState = battleResultUiState,
         battleResultViewModel = battleResultViewModel,
-        navigateToTopLevel = navigateToTopLevel
+        navigateToTopLevel = navigateToTopLevel,
+        navigateToBack = navigateToBack
     )
 }
 
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
+    isFromMyPage: Boolean,
     battleResultUiState: BattleResultUiState,
     battleResultViewModel: BattleResultViewModel,
     navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     Box(modifier = modifier) {
         when (battleResultUiState) {
             is BattleResultUiState.Loading -> ResultLoadingBody()
             is BattleResultUiState.Success ->
                 BattleResultBody(
+                    isFromMyPage = isFromMyPage,
+                    battleResultViewModel = battleResultViewModel,
                     battleResult = battleResultUiState.battleResult,
-                    navigateToTopLevel = navigateToTopLevel
+                    navigateToTopLevel = navigateToTopLevel,
+                    navigateToBack = navigateToBack
                 )
 
             is BattleResultUiState.LoadFailed ->
@@ -93,8 +104,17 @@ private fun Content(
 @Composable
 private fun BattleResultBody(
     battleResult: BattleResultUiModel,
-    navigateToTopLevel: () -> Unit
+    isFromMyPage: Boolean,
+    battleResultViewModel: BattleResultViewModel,
+    navigateToTopLevel: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
+    LaunchedEffect(Unit) {
+        if (!isFromMyPage) { // 러닝이 끝난 후의 기록 조회 상황에서만 기록 최신화
+            battleResultViewModel.updateBattleHistory()
+        }
+    }
+
     // userID에 해당하는 러너 찾기
     val userStatus = battleResult.battleRunnerStatus.find { it.id == battleResult.userId }
 
@@ -114,10 +134,15 @@ private fun BattleResultBody(
                     .fillMaxWidth()
                     .heightIn(400.dp) // 지도의 높이는 400dp
             ) {
-                MapWidget(
-                    targetDistanceFormatted = battleResult.targetDistanceFormatted,
-                    records = selectedRunner?.records
-                )
+                if (selectedRunner?.records.isNullOrEmpty()) {
+                    EmptyMapWidget()
+                } else {
+                    MapWidget(
+                        isFromMyPage = isFromMyPage,
+                        targetDistanceFormatted = battleResult.targetDistanceFormatted,
+                        records = selectedRunner?.records
+                    )
+                }
             }
 
             // 프레임 컴포넌트
@@ -200,7 +225,11 @@ private fun BattleResultBody(
             color = MaterialTheme.colorScheme.background,
             shadowElevation = 5.dp
         ) {
-            FixedBottomNavigationSheet(navigateToTopLevel)
+            FixedBottomNavigationSheet(
+                isFromMyPage = isFromMyPage,
+                navigateToTopLevel = navigateToTopLevel,
+                navigateToBack = navigateToBack
+            )
         }
     }
 }

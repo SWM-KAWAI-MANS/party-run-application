@@ -53,8 +53,7 @@ fun UnsubscribeScreen(
 
     if (settingsUiState.isAccountDeletionSuccess) {
         val message = stringResource(id = R.string.unsubscribe_success_message)
-        val toast = Toast.makeText(context, message, Toast.LENGTH_SHORT)
-        toast.show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         onSignOut() // 파이어베이스 구글 로그아웃 -> 스플래시로 되돌아감.
     }
 
@@ -155,8 +154,7 @@ private fun ConfirmButton(
 ) {
     PartyRunGradientButton(
         onClick = {
-            settingsViewModel.saveAgreementState(isChecked = false)
-            settingsViewModel.deleteAccount()
+            settingsViewModel.deleteAccountProcess()
         },
         modifier = Modifier
             .shadow(5.dp, shape = CircleShape)

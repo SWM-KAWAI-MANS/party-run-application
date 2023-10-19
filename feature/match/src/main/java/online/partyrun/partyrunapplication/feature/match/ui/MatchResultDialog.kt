@@ -148,7 +148,7 @@ private fun MatchAcceptanceInfo() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = stringResource(id = R.string.time_remaining_acceptance),
+                text = stringResource(id = R.string.time_remaining_acceptance) + ":  ",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )

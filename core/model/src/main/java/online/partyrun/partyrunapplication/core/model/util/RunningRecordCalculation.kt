@@ -32,6 +32,19 @@ fun calculateAveragePace(runnerStatus: RunnerStatus): String {
     return formatPace(pace)
 }
 
+fun calculatePaceInMinPerKm(speedInMetersPerSec: Double): String {
+    if (speedInMetersPerSec == 0.0) {
+        return "0'00''"
+    }
+
+    val paceInMinPerKm = (1 / speedInMetersPerSec) * (1000 / 60)
+    val minutes = paceInMinPerKm.toInt()
+    val seconds = ((paceInMinPerKm - minutes) * 60).roundToInt()
+
+    // %02d는 정수를 두 자리로 표현하는데, 만약 한 자리수면 앞에 0 추가
+    return "${minutes}'${String.format("%02d", seconds)}''"
+}
+
 fun calculateAverageAltitude(runnerStatus: RunnerStatus): Double {
     return if (runnerStatus.records.isNotEmpty()) {
         (runnerStatus.records.sumOf { it.altitude } / runnerStatus.records.size)
@@ -42,6 +55,8 @@ fun calculateAverageAltitude(runnerStatus: RunnerStatus): Double {
 }
 
 fun calculateCumulativePacePerMinute(records: List<RunnerRecord>): List<Pair<String, Double>> {
+    if (records.isEmpty()) return emptyList()
+
     val startTime = records.first().time
     return records.drop(1).mapNotNull { record ->
         val timeElapsed = Duration.between(startTime, record.time)
@@ -61,8 +76,9 @@ fun calculateCumulativePacePerMinute(records: List<RunnerRecord>): List<Pair<Str
 }
 
 fun calculateDistanceOverTime(records: List<RunnerRecord>): List<Pair<String, Double>> {
-    val startTime = records.first().time
+    if (records.isEmpty()) return emptyList()
 
+    val startTime = records.first().time
     return records.map { record ->
         val timeElapsed = Duration.between(startTime, record.time)
         Pair(formatDurationToTimeString(timeElapsed), record.distance)
@@ -70,8 +86,9 @@ fun calculateDistanceOverTime(records: List<RunnerRecord>): List<Pair<String, Do
 }
 
 fun calculateAltitudeOverTime(records: List<RunnerRecord>): List<Pair<String, Double>> {
-    val startTime = records.first().time
+    if (records.isEmpty()) return emptyList()
 
+    val startTime = records.first().time
     return records.map { record ->
         val timeElapsed = Duration.between(startTime, record.time)
         Pair(formatDurationToTimeString(timeElapsed), record.altitude.roundToInt().toDouble())

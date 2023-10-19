@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
+import online.partyrun.partyrunapplication.core.domain.my_page.UpdateBattleRunningHistoryUseCase
 import online.partyrun.partyrunapplication.core.domain.running.battle.GetBattleStatusUseCase
 import online.partyrun.partyrunapplication.core.domain.running.battle.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class BattleResultViewModel @Inject constructor(
     private val getBattleResultUseCase: GetBattleResultUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
+    private val updateBattleRunningHistoryUseCase: UpdateBattleRunningHistoryUseCase,
     private val getBattleStatusUseCase: GetBattleStatusUseCase
 ) : ViewModel() {
 
@@ -30,6 +32,16 @@ class BattleResultViewModel @Inject constructor(
 
     init {
         getBattleResult()
+    }
+
+    fun updateBattleHistory() = viewModelScope.launch {
+        updateBattleRunningHistoryUseCase().collect { result ->
+            result.onSuccess {
+                Timber.d("getBattleHistory() 성공")
+            }.onFailure { errorMessage, code ->
+                Timber.e(errorMessage, code)
+            }
+        }
     }
 
     fun getBattleResult() {

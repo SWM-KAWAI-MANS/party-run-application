@@ -1,13 +1,13 @@
 import java.io.File
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     id("nohjunh.android.application")
     id("nohjunh.android.application.compose")
+    id("nohjunh.android.hilt")
     id("com.google.gms.google-services")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("nohjunh.android.hilt")
 }
 
 val keystoreProperties = Properties()
@@ -79,20 +79,9 @@ android {
             )
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = Configurations.COMPOSE
     }
     kapt {
         correctErrorTypes = true

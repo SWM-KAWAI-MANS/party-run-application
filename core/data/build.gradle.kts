@@ -20,14 +20,11 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:model"))
     implementation(project(":core:network"))
+    implementation(project(":core:database"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    kapt(libs.hilt.compiler)
 
     implementation(libs.google.location)
 

@@ -1,7 +1,5 @@
 package online.partyrun.partyrunapplication.feature.my_page.profile
 
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,10 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -42,7 +38,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -64,7 +59,7 @@ import online.partyrun.partyrunapplication.core.designsystem.component.RenderAsy
 import online.partyrun.partyrunapplication.core.designsystem.icon.PartyRunIcons
 import online.partyrun.partyrunapplication.core.model.user.User
 import online.partyrun.partyrunapplication.core.ui.ProfileSection
-import online.partyrun.partyrunapplication.feature.my_page.MyPageUiState
+import online.partyrun.partyrunapplication.feature.my_page.MyPageProfileState
 import online.partyrun.partyrunapplication.feature.my_page.MyPageViewModel
 import online.partyrun.partyrunapplication.feature.my_page.R
 
@@ -76,7 +71,7 @@ fun ProfileScreen(
     onShowSnackbar: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val myPageUiState by myPageViewModel.myPageUiState.collectAsStateWithLifecycle()
+    val myPageProfileState by myPageViewModel.myPageProfileState.collectAsStateWithLifecycle()
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
     val profileSnackbarMessage by profileViewModel.snackbarMessage.collectAsStateWithLifecycle()
     val photoPickerLauncher =
@@ -86,7 +81,7 @@ fun ProfileScreen(
 
     Content(
         profileViewModel = profileViewModel,
-        myPageUiState = myPageUiState,
+        myPageProfileState = myPageProfileState,
         profileUiState = profileUiState,
         photoPicker = {
             photoPickerLauncher.launch(
@@ -106,7 +101,7 @@ fun ProfileScreen(
 fun Content(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel,
-    myPageUiState: MyPageUiState,
+    myPageProfileState: MyPageProfileState,
     profileUiState: ProfileUiState,
     photoPicker: () -> Unit,
     navigateToMyPage: () -> Unit,
@@ -116,10 +111,6 @@ fun Content(
     val updateProgressState by profileViewModel.updateProgressState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-
-    ProfileBackNavigationHandler(
-        navigateToMyPage = navigateToMyPage
-    )
 
     LaunchedEffect(profileSnackbarMessage) {
         if (profileSnackbarMessage.isNotEmpty()) {
@@ -150,10 +141,10 @@ fun Content(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (myPageUiState is MyPageUiState.Success && keyboardController != null) {
+            if (myPageProfileState is MyPageProfileState.Success && keyboardController != null) {
                 ProfileBody(
                     profileViewModel = profileViewModel,
-                    userData = myPageUiState.user,
+                    userData = myPageProfileState.user,
                     photoPicker = photoPicker,
                     profileUiState = profileUiState,
                     keyboardController = keyboardController,
@@ -413,29 +404,6 @@ private fun NickNameSupportingText(profileUiState: ProfileUiState) {
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.error
             )
-        }
-    }
-}
-
-@Composable
-fun ProfileBackNavigationHandler(
-    navigateToMyPage: () -> Unit
-) {
-    val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val onBackPressedCallback = remember {
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigateToMyPage()
-            }
-        }
-    }
-
-    // lifecycleOwner와 backDispatcher가 변경될 때마다 실행
-    DisposableEffect(lifecycleOwner, onBackPressedDispatcher) {
-        onBackPressedDispatcher?.addCallback(lifecycleOwner, onBackPressedCallback)
-        onDispose {
-            onBackPressedCallback.remove()
         }
     }
 }

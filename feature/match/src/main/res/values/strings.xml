@@ -4,7 +4,7 @@
     <string name="cancel_button_title">취소</string>
 
    <!-- MatchWaitingDialog -->
-    <string name="elapsed_time">소요 대기 시간 : </string>
+    <string name="elapsed_time">소요 대기 시간</string>
     <string name="waiting_match_title">매칭 찾는 중</string>
     <string name="close_button_desc">취소</string>
 
@@ -22,7 +22,7 @@
     <string name="else_status">알 수 없는 상태</string>
     <string name="Determining_acceptance">수락 여부 파악 중...</string>
     <string name="completed_match">매칭 완료!</string>
-    <string name="time_remaining_acceptance">남은 수락 대기 시간 : </string>
+    <string name="time_remaining_acceptance">남은 수락 대기 시간</string>
 
 
     <!-- MatchCancelDialog -->

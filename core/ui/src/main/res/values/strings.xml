@@ -6,6 +6,7 @@
     <string name="arrow_forward_desc">앞으로 가기</string>
 
     <string name="google_signin_btn">구글 로그인</string>
+    <string name="confirm_btn">확인</string>
 
     <string name="settings">설정</string>
 </resources>

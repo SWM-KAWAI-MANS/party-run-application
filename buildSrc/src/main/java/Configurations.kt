@@ -7,6 +7,4 @@ object Configurations {
     private const val PATCH_VERSION = 0
     const val VERSION_NAME = "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
     const val VERSION_CODE = 22
-    // kotlinCompilerExtensionVersion
-    const val COMPOSE = "1.4.5"
 }

@@ -9,5 +9,5 @@ data class PartyCodeResponse(
 )
 
 fun PartyCodeResponse.toDomainModel() = PartyCode(
-    code = this.code ?: ""
+    code = this.code.orEmpty()
 )

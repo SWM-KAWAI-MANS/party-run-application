@@ -26,7 +26,7 @@ import javax.inject.Singleton
 class AuthAuthenticator @Inject constructor(
     private val tokenDataSource: TokenDataSource,
     private val context: Context,
-    private val tokenExpirationNotifier: TokenExpirationNotifier
+    private val tokenExpirationNotifier: TokenExpirationNotifier,
 ) : Authenticator {
 
     private val googleAuthUiClient by lazy {
@@ -51,13 +51,13 @@ class AuthAuthenticator @Inject constructor(
                 // Token 만료 알림 -> 이벤트 브로드캐스팅
                 tokenExpirationNotifier.notifyRefreshTokenExpired()
                 return@runBlocking null
-            }else {
+            } else {
                 /* 정상적으로 새로운 Token Set을 받아온 경우 */
                 newAccessToken.body()?.let {
-                    tokenDataSource.saveAccessToken(it.accessToken ?: "")
-                    tokenDataSource.saveRefreshToken(it.refreshToken ?: "")
+                    tokenDataSource.saveAccessToken(it.accessToken.orEmpty())
+                    tokenDataSource.saveRefreshToken(it.refreshToken.orEmpty())
                     response.request.newBuilder()
-                        .header("Authorization", it.accessToken ?: "")
+                        .header("Authorization", it.accessToken.orEmpty())
                         .build()
                 }
             }

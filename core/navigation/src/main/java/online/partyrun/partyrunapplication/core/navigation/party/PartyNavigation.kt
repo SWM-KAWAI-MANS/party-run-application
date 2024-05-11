@@ -38,7 +38,7 @@ fun NavGraphBuilder.partyRoute(
         val partyCode = backStackEntry.arguments?.getString("code")
         val hasManagerPrivileges = backStackEntry.arguments?.getBoolean("hasManagerPrivileges")
         PartyRoomScreen(
-            partyCode = partyCode ?: "",
+            partyCode = partyCode.orEmpty(),
             hasManagerPrivileges = hasManagerPrivileges ?: false,
             navigateToParty = navigateToParty,
             navigateToBattleRunningWithDistance = navigateToBattleRunningWithDistance,

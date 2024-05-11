@@ -48,11 +48,11 @@ fun BattleEventResponse.toDomainModel(): BattleEvent {
         )
         is BattleEventResponse.BattleBaseRunningResponse -> BattleEvent.BattleRunning(
             isFinished = this.data?.isFinished ?: false,
-            runnerId = this.data?.runnerId ?: "",
+            runnerId = this.data?.runnerId.orEmpty(),
             distance = this.data?.distance ?: 0.0
         )
         is BattleEventResponse.BattleBaseFinishedResponse -> BattleEvent.BattleFinished(
-            runnerId = this.data?.runnerId ?: ""
+            runnerId = this.data?.runnerId.orEmpty()
         )
         is BattleEventResponse.BattleDefaultResponse -> BattleEvent.BattleDefault(message = this.message)
     }

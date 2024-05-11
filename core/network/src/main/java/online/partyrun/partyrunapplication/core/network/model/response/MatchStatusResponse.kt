@@ -9,5 +9,5 @@ data class MatchStatusResponse(
 )
 
 fun MatchStatusResponse.toDomainModel() = MatchStatus(
-    message = this.message ?: ""
+    message = this.message.orEmpty()
 )

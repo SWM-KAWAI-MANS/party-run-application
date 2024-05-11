@@ -9,5 +9,5 @@ data class DeleteAccountResponse(
 )
 
 fun DeleteAccountResponse.toDomainModel() = DeleteAccount(
-    message = this.message ?: ""
+    message = this.message.orEmpty()
 )

@@ -9,6 +9,5 @@ data class TerminateBattleResponse(
 )
 
 fun TerminateBattleResponse.toDomainModel() = TerminateBattle(
-    message = this.message ?: ""
+    message = this.message.orEmpty()
 )
-

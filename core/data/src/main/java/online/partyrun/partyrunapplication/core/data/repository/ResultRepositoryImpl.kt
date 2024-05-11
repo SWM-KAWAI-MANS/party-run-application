@@ -42,7 +42,8 @@ class ResultRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSingleResults(): Result<SingleResult> {
-        val singleId = singlePreferencesDataSource.getSingleId().first() ?: ""
+        val singleId = singlePreferencesDataSource
+            .getSingleId().first().orEmpty()
         return resultDataSource
             .getSingleResults(singleId)
             .toResultModel { it.toDomainModel() }

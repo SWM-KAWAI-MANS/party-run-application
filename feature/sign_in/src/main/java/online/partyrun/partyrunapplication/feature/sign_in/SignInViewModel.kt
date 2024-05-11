@@ -107,8 +107,8 @@ class SignInViewModel @Inject constructor(
         getSignInTokenUseCase(idToken)
             .onSuccess { tokenData ->
                 saveTokensUseCase(
-                    accessToken = tokenData.accessToken ?: "",
-                    refreshToken = tokenData.refreshToken ?: ""
+                    accessToken = tokenData.accessToken.orEmpty(),
+                    refreshToken = tokenData.refreshToken.orEmpty()
                 )
                 updateSignInGoogleStateForSuccess() // 성공 시 상태 변경
             }.onFailure { errorMessage, code ->

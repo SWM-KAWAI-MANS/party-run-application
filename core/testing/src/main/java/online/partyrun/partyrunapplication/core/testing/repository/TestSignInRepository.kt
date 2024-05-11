@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.core.testing.repository
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
@@ -21,7 +22,7 @@ class TestSignInRepository : SignInRepository {
     }
 
     override suspend fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken): Result<SignInToken> {
-        TODO("Not yet implemented")
+        return tokenSet.first()
     }
 
 }

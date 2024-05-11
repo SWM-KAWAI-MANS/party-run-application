@@ -23,9 +23,9 @@ class TestMemberRepository : MemberRepository {
     override val userData: Flow<User>
         get() = flowOf(
             User(
-                id = userId ?: "",
-                nickName = userName ?: "",
-                profileImage = userProfile ?: ""
+                id = userId.orEmpty(),
+                nickName = userName.orEmpty(),
+                profileImage = userProfile.orEmpty()
             )
         )
 

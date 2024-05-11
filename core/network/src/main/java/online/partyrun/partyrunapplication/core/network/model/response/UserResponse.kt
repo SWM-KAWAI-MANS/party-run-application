@@ -14,7 +14,7 @@ data class UserResponse(
 )
 
 fun UserResponse.toDomainModel() = User(
-    id = this.userId ?: "",
-    nickName = this.nickName ?: "",
+    id = this.userId.orEmpty(),
+    nickName = this.nickName.orEmpty(),
     profileImage = S3_URL.plus("/" + this.profileImage)
 )

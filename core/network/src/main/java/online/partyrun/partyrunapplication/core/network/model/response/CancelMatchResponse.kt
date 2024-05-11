@@ -9,5 +9,5 @@ data class CancelMatchResponse(
 )
 
 fun CancelMatchResponse.toDomainModel() = CancelMatch(
-    message = this.message ?: ""
+    message = this.message.orEmpty()
 )

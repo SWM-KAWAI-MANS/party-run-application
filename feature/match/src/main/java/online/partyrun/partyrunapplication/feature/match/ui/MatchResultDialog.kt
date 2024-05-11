@@ -169,8 +169,8 @@ fun DisplayMatchStatus(
             val runnerInfo = matchUiState.runnerInfoData.runners.firstOrNull { it.id == item.id }
 
             // 일치하는 RunnerInfo가 있으면 해당 이름과 프로필을 사용하고, 없으면 디폴트 텍스트를 사용
-            val runnerName = runnerInfo?.name ?: "이름 없음"
-            val runnerProfile = runnerInfo?.profile ?: ""
+            val runnerName = runnerInfo?.name.orEmpty()
+            val runnerProfile = runnerInfo?.profile.orEmpty()
 
             MatchStatusItem(runnerName, runnerProfile, item.status)
         }

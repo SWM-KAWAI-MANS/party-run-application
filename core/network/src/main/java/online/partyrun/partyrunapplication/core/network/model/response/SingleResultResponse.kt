@@ -13,7 +13,7 @@ data class SingleResultResponse(
     @SerializedName("runningTime")
     val runningTime: RunningTimeResponse,
     @SerializedName("records")
-    val records: List<SingleRunnerRecordResponse>
+    val records: List<SingleRunnerRecordResponse>,
 )
 
 fun SingleResultResponse.toDomainModel(): SingleResult {
@@ -34,6 +34,8 @@ fun SingleResultResponse.toDomainModel(): SingleResult {
         targetDistance = targetDistance,
         targetDistanceFormatted = formatDistanceWithComma(targetDistance),
         targetDistanceInKm = formatDistanceInKm(targetDistance),
-        singleDate = parsedStartTime?.let { formatDate(it) } ?: "" // "x월 x일" format
+        singleDate = parsedStartTime?.let {
+            formatDate(it)
+        }.orEmpty() // "x월 x일" format
     )
 }

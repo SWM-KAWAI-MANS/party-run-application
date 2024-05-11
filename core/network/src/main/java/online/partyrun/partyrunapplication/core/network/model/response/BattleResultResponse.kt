@@ -15,7 +15,7 @@ data class BattleResultResponse(
     @SerializedName("startTime")
     val startTime: String?,
     @SerializedName("targetDistance")
-    val targetDistance: Int?
+    val targetDistance: Int?,
 )
 
 fun BattleResultResponse.toDomainModel(): BattleResult {
@@ -26,11 +26,24 @@ fun BattleResultResponse.toDomainModel(): BattleResult {
     val parsedStartTime = this.startTime?.let { LocalDateTime.parse(it, localDateTimeFormatter) }
 
     return BattleResult(
-        battleRunnerStatus = this.battleRunnerStatus?.map { it.toDomainModel(parsedStartTime) } ?: emptyList(),
-        startTime = parsedStartTime?.let { formatTime(it) } ?: "", // "xx:xx" 형식화
+        battleRunnerStatus = this.battleRunnerStatus?.map { it.toDomainModel(parsedStartTime) }
+            ?: emptyList(),
+        startTime = parsedStartTime?.let {
+            formatTime(it)
+        }
+            .orEmpty(), // "xx:xx" 형식화
         targetDistance = this.targetDistance ?: 0,
-        targetDistanceFormatted = this.targetDistance?.let { formatDistanceWithComma(it) } ?: "", // 쉼표로 형식화
-        targetDistanceInKm = this.targetDistance?.let { formatDistanceInKm(it) } ?: "",  // km 단위로 형식화
-        battleDate = parsedStartTime?.let { formatDate(it) } ?: "" // "x월 x일" 형식화
+        targetDistanceFormatted = this.targetDistance?.let {
+            formatDistanceWithComma(it)
+        }
+            .orEmpty(), // 쉼표로 형식화
+        targetDistanceInKm = this.targetDistance?.let {
+            formatDistanceInKm(it)
+        }
+            .orEmpty(),  // km 단위로 형식화
+        battleDate = parsedStartTime?.let {
+            formatDate(it)
+        }
+            .orEmpty() // "x월 x일" 형식화
     )
 }

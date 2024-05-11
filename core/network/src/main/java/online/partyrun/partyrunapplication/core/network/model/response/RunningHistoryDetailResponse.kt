@@ -36,12 +36,12 @@ fun RunningHistoryDetailResponse.getParsedDate(): LocalDateTime? {
 }
 
 fun RunningHistoryDetailResponse.getFormattedDate(): String {
-    return getParsedDate()?.let { formatDate(it) } ?: ""
+    return getParsedDate()?.let { formatDate(it) }.orEmpty()
 }
 
 fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
     return RunningHistoryDetail(
-        id = this.id ?: "",
+        id = this.id.orEmpty(),
         date = getFormattedDate(),
         runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
@@ -50,7 +50,7 @@ fun RunningHistoryDetailResponse.toDomainModel(): RunningHistoryDetail {
 
 fun RunningHistoryDetailResponse.toSingleRunningHistoryEntity(): SingleRunningHistoryEntity {
     return SingleRunningHistoryEntity(
-        id = this.id ?: "",
+        id = this.id.orEmpty(),
         date = getFormattedDate(),
         runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)
@@ -59,7 +59,7 @@ fun RunningHistoryDetailResponse.toSingleRunningHistoryEntity(): SingleRunningHi
 
 fun RunningHistoryDetailResponse.toBattleRunningHistoryEntity(): BattleRunningHistoryEntity {
     return BattleRunningHistoryEntity(
-        id = this.id ?: "",
+        id = this.id.orEmpty(),
         date = getFormattedDate(),
         runningTime = getFormattedRunningTime(),
         distanceFormatted = formatDistanceWithComma(this.distance?.toInt() ?: 0)

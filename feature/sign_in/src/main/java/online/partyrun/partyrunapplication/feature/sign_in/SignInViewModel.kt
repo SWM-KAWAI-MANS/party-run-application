@@ -34,7 +34,7 @@ class SignInViewModel @Inject constructor(
     private val saveTokensUseCase: SaveTokensUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
-    private val saveUserDataUseCase: SaveUserDataUseCase
+    private val saveUserDataUseCase: SaveUserDataUseCase,
 ) : ViewModel() {
 
     private val _signInGoogleState = MutableStateFlow(SignInGoogleState())
@@ -104,8 +104,8 @@ class SignInViewModel @Inject constructor(
         }
 
     fun signInWithGoogleTokenViaServer(idToken: GoogleIdToken) = viewModelScope.launch {
-        getSignInTokenUseCase(idToken).collect { result ->
-            result.onSuccess { tokenData ->
+        getSignInTokenUseCase(idToken)
+            .onSuccess { tokenData ->
                 saveTokensUseCase(
                     accessToken = tokenData.accessToken ?: "",
                     refreshToken = tokenData.refreshToken ?: ""
@@ -117,7 +117,6 @@ class SignInViewModel @Inject constructor(
                 updateSignInGoogleStateForFailure() // 실패 시 상태 변경
                 Timber.tag("SignInViewModel").e("$code $errorMessage")
             }
-        }
     }
 
     private fun updateSignInGoogleStateForSuccess() {
@@ -141,8 +140,8 @@ class SignInViewModel @Inject constructor(
 
     fun saveUserData() {
         viewModelScope.launch {
-            getUserDataUseCase().collect { result ->
-                result.onSuccess { userData ->
+            getUserDataUseCase()
+                .onSuccess { userData ->
                     saveUserDataUseCase(userData)
                     _signInGoogleState.update { state ->
                         state.copy(isUserDataSaved = true)
@@ -150,7 +149,6 @@ class SignInViewModel @Inject constructor(
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                 }
-            }
         }
     }
 

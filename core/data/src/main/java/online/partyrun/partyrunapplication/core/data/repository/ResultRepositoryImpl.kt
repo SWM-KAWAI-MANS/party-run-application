@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.common.network.onException
 import online.partyrun.partyrunapplication.core.common.network.onSuccess
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
@@ -12,7 +11,7 @@ import online.partyrun.partyrunapplication.core.model.running_result.battle.Batt
 import online.partyrun.partyrunapplication.core.network.datasource.ResultDataSource
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.common.result.toResultModel
 import online.partyrun.partyrunapplication.core.database.dao.BattleRunningHistoryDao
 import online.partyrun.partyrunapplication.core.database.dao.SingleRunningHistoryDao
 import online.partyrun.partyrunapplication.core.database.model.toDomainModel
@@ -29,33 +28,33 @@ class ResultRepositoryImpl @Inject constructor(
     private val singleRunningHistoryDao: SingleRunningHistoryDao,
     private val battleRunningHistoryDao: BattleRunningHistoryDao,
     private val battlePreferencesDataSource: BattlePreferencesDataSource,
-    private val singlePreferencesDataSource: SinglePreferencesDataSource
+    private val singlePreferencesDataSource: SinglePreferencesDataSource,
 ) : ResultRepository {
     companion object {
         const val UNKNOWN_ERROR = "Unknown Error"
     }
 
-    override suspend fun getBattleResults(): Flow<Result<BattleResult>> {
-        return apiRequestFlow {
-            val battleId = battlePreferencesDataSource.battleData.first().battleId
-            resultDataSource.getBattleResults(battleId)
-        }.mapResultModel { it.toDomainModel() }
+    override suspend fun getBattleResults(): Result<BattleResult> {
+        val battleId = battlePreferencesDataSource.battleData.first().battleId
+        return resultDataSource
+            .getBattleResults(battleId)
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun getSingleResults(): Flow<Result<SingleResult>> {
+    override suspend fun getSingleResults(): Result<SingleResult> {
         val singleId = singlePreferencesDataSource.getSingleId().first() ?: ""
-        return apiRequestFlow {
-            resultDataSource.getSingleResults(singleId)
-        }.mapResultModel { it.toDomainModel() }
+        return resultDataSource
+            .getSingleResults(singleId)
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun getComprehensiveRunRecord(): Flow<Result<ComprehensiveRunRecord>> {
-        return apiRequestFlow {
-            resultDataSource.getComprehensiveRunRecord()
-        }.mapResultModel { it.toDomainModel() }
+    override suspend fun getComprehensiveRunRecord(): Result<ComprehensiveRunRecord> {
+        return resultDataSource
+            .getComprehensiveRunRecord()
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun updateSingleHistory(): Flow<Result<Unit>> = flow {
+    override fun updateSingleHistory(): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         val response = resultDataSource.getSingleHistory()
         response.onSuccess { result ->
@@ -66,7 +65,7 @@ class ResultRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateBattleHistory(): Flow<Result<Unit>> = flow {
+    override fun updateBattleHistory(): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         val response = resultDataSource.getBattleHistory()
         response.onSuccess { result ->
@@ -77,7 +76,7 @@ class ResultRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>> {
+    override fun getSingleHistory(): Flow<Result<SingleRunningHistory>> {
         return singleRunningHistoryDao.getAllSingleRunningHistories()
             .map { entityList ->
                 try {
@@ -88,7 +87,7 @@ class ResultRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getBattleHistory(): Flow<Result<BattleRunningHistory>> {
+    override fun getBattleHistory(): Flow<Result<BattleRunningHistory>> {
         return battleRunningHistoryDao.getAllBattleRunningHistories()
             .map { entityList ->
                 try {
@@ -99,7 +98,7 @@ class ResultRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun deleteAllHistories(): Flow<Result<Unit>> = flow {
+    override fun deleteAllHistories(): Flow<Result<Unit>> = flow {
         emit(Result.Loading)
         try {
             singleRunningHistoryDao.deleteAllSingleRunningHistories()

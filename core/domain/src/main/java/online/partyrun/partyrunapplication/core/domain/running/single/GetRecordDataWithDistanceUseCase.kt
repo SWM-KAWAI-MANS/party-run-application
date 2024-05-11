@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetRecordDataWithDistanceUseCase @Inject constructor(
     private val singleRepository: SingleRepository
 ) {
-    suspend operator fun invoke(): Flow<RecordDataWithDistance> =
+    operator fun invoke(): Flow<RecordDataWithDistance> =
         singleRepository.getRecordData()
 
 }

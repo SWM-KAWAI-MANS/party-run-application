@@ -52,7 +52,7 @@ class MatchViewModel @Inject constructor(
     private val getRunnerIdsUseCase: GetRunnerIdsUseCase,
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
     private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
-    private val cancelMatchWaitingUseCase: CancelMatchWaitingUseCase
+    private val cancelMatchWaitingUseCase: CancelMatchWaitingUseCase,
 ) : ViewModel() {
 
     private val _matchUiState = MutableStateFlow(MatchUiState())
@@ -125,8 +125,8 @@ class MatchViewModel @Inject constructor(
         }
 
     private suspend fun getRunnerIds() =
-        getRunnerIdsUseCase().collect { result ->
-            result.onSuccess { data ->
+        getRunnerIdsUseCase()
+            .onSuccess { data ->
                 _matchUiState.update { state ->
                     state.copy(
                         runnerIds = data
@@ -136,7 +136,6 @@ class MatchViewModel @Inject constructor(
                 Timber.tag("MainViewModel getRunnerIds").e("$code $errorMessage")
                 cancelMatchingProcess()
             }
-        }
 
     private fun verifyMatchSuccess() {
         val matchStatus = matchUiState.value.matchResultEventState.status
@@ -173,8 +172,8 @@ class MatchViewModel @Inject constructor(
 
     /* REST */
     private suspend fun registerMatch(runningDistance: RunningDistance) =
-        sendRegisterMatchUseCase(runningDistance).collect { result ->
-            result.onSuccess { data ->
+        sendRegisterMatchUseCase(runningDistance)
+            .onSuccess { data ->
                 _matchUiState.update { state ->
                     state.copy(
                         waitingRestState = WaitingRestState(
@@ -186,11 +185,10 @@ class MatchViewModel @Inject constructor(
                 Timber.tag("MatchViewModel").e("$code $errorMessage")
                 cancelMatchingProcess()
             }
-        }
 
     private suspend fun acceptMatch(matchDecision: MatchDecision) =
-        sendAcceptMatchUseCase(matchDecision).collect { result ->
-            result.onSuccess { data ->
+        sendAcceptMatchUseCase(matchDecision)
+            .onSuccess { data ->
                 _matchUiState.update { state ->
                     state.copy(
                         matchProgress = MatchProgress.RESULT,
@@ -203,11 +201,10 @@ class MatchViewModel @Inject constructor(
                 Timber.tag("MatchViewModel").e("$code $errorMessage")
                 cancelMatchingProcess()
             }
-        }
 
     private suspend fun declineMatch(matchDecision: MatchDecision) =
-        sendDeclineMatchUseCase(matchDecision).collect { result ->
-            result.onSuccess { data ->
+        sendDeclineMatchUseCase(matchDecision)
+            .onSuccess { data ->
                 _matchUiState.update { state ->
                     state.copy(
                         matchProgress = MatchProgress.CANCEL,
@@ -220,8 +217,6 @@ class MatchViewModel @Inject constructor(
                 Timber.tag("MatchViewModel").e("$code $errorMessage")
                 cancelMatchingProcess()
             }
-        }
-
 
     private suspend fun waitForUserDecision(): Boolean {
         withTimeoutOrNull(TimeUnit.SECONDS.toMillis(10)) {
@@ -326,8 +321,8 @@ class MatchViewModel @Inject constructor(
     }
 
     private suspend fun saveRunnersInfo(runnerIds: RunnerIds) =
-        getRunnersInfoUseCase(runnerIds).collect { result ->
-            result.onSuccess { runnerInfoData ->
+        getRunnersInfoUseCase(runnerIds)
+            .onSuccess { runnerInfoData ->
                 saveRunnersInfoUseCase(runnerInfoData)
                 _matchUiState.update { state ->
                     state.copy(
@@ -338,17 +333,14 @@ class MatchViewModel @Inject constructor(
                 Timber.tag("MatchViewModel").e("$code $errorMessage")
                 cancelMatchingProcess()
             }
-        }
 
     fun cancelMatchWaitingEvent() = viewModelScope.launch {
-        cancelMatchWaitingUseCase().collect { result ->
-            result.onSuccess {
+        cancelMatchWaitingUseCase()
+            .onSuccess {
                 Timber.d("정상적으로 매칭 취소 완료")
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "매칭 취소 실패 \n잠시 후 다시 시도 해주세요."
                 Timber.tag("MatchViewModel").e("$code $errorMessage")
             }
-        }
     }
-
 }

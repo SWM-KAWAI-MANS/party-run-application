@@ -85,8 +85,8 @@ class BattleContentViewModel @Inject constructor(
     }
 
     private fun getBattleId() = viewModelScope.launch {
-        getBattleIdUseCase().collect { result ->
-            result.onSuccess { data ->
+        getBattleIdUseCase()
+            .onSuccess { data ->
                 saveBattleIdUseCase(data.id) // DataStore에 BattleId 저장
                 _battleId.value = data.id
             }.onFailure { errorMessage, code ->
@@ -98,12 +98,11 @@ class BattleContentViewModel @Inject constructor(
                     )
                 }
             }
-        }
     }
 
     suspend fun startBattleStream(
         battleId: String,
-        navigateToBattleOnWebSocketError: () -> Unit
+        navigateToBattleOnWebSocketError: () -> Unit,
     ) {
         runnersState = battleStreamUseCase
             .getBattleStream(battleId = battleId)
@@ -163,7 +162,7 @@ class BattleContentViewModel @Inject constructor(
 
     private fun handleBattleStreamError(
         t: Throwable,
-        navigateToBattleOnWebSocketError: () -> Unit
+        navigateToBattleOnWebSocketError: () -> Unit,
     ) {
         _battleContentUiState.update { state ->
             state.copy(showConnectionError = t is ConnectException)
@@ -309,7 +308,7 @@ class BattleContentViewModel @Inject constructor(
         totalTrackDistance: Double,
         distance: Double,
         trackWidth: Double,
-        trackHeight: Double
+        trackHeight: Double,
     ): Pair<Double, Double> {
         val currentDistance = distance.coerceAtMost(totalTrackDistance)
 

@@ -63,8 +63,8 @@ class PartyViewModel @Inject constructor(
 
     fun createParty(runningDistance: RunningDistance) {
         viewModelScope.launch {
-            sendCreatePartyUseCase(runningDistance).collect { result ->
-                result.onSuccess { data ->
+            sendCreatePartyUseCase(runningDistance)
+                .onSuccess { data ->
                     _partyUiState.update { state ->
                         state.copy(
                             partyCode = data.code
@@ -74,7 +74,6 @@ class PartyViewModel @Inject constructor(
                     Timber.tag("PartyViewModel").e("$code $errorMessage")
                     _snackbarMessage.value = "파티 생성에 실패하였습니다."
                 }
-            }
         }
     }
 

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BattleViewModel @Inject constructor(
-    private val terminateOngoingBattleUseCase: TerminateOngoingBattleUseCase
+    private val terminateOngoingBattleUseCase: TerminateOngoingBattleUseCase,
 ) : ViewModel() {
 
     private val _battleUiState = MutableStateFlow<BattleUiState>(BattleUiState.Success)
@@ -53,14 +53,13 @@ class BattleViewModel @Inject constructor(
      * 앱이 처음 시작될 때(MainActivity가 onCreate될 때) 진행 중인 배틀이 있다면 종료 요청 수행
      */
     fun terminateOngoingBattle() = viewModelScope.launch {
-        terminateOngoingBattleUseCase().collect { result ->
-            result.onSuccess {
+        terminateOngoingBattleUseCase()
+            .onSuccess {
                 Timber.tag("BattleViewModel").d("현재 진행 중인 배틀이 있다면 종료 요청 성공")
             }.onFailure { errorMessage, code ->
                 _snackbarMessage.value = "기존 대결을 종료할 수 없습니다."
                 Timber.tag("BattleViewModel").e("$code $errorMessage")
             }
-        }
     }
 
 }

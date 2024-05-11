@@ -17,11 +17,11 @@ interface MatchRepository {
 
 
     /* REST */
-    suspend fun registerMatch(runningDistance: RunningDistance): Flow<Result<MatchStatus>>
-    suspend fun acceptMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>>
-    suspend fun declineMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>>
-    suspend fun getRunnerIds(): Flow<Result<RunnerIds>>
-    suspend fun cancelMatchWaitingEvent(): Flow<Result<CancelMatch>>
+    suspend fun registerMatch(runningDistance: RunningDistance): Result<MatchStatus>
+    suspend fun acceptMatch(matchDecision: MatchDecision): Result<MatchStatus>
+    suspend fun declineMatch(matchDecision: MatchDecision): Result<MatchStatus>
+    suspend fun getRunnerIds(): Result<RunnerIds>
+    suspend fun cancelMatchWaitingEvent(): Result<CancelMatch>
 
     /* SSE */
     fun createMatchEventSourceListener(onEvent: (data: String) -> Unit, onClosed: () -> Unit, onFailure: () -> Unit): EventSourceListener

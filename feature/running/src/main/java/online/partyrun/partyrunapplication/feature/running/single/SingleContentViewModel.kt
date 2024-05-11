@@ -36,7 +36,7 @@ class SingleContentViewModel @Inject constructor(
     private val saveSingleIdUseCase: SaveSingleIdUseCase,
     private val getRecordDataWithDistanceUseCase: GetRecordDataWithDistanceUseCase,
     private val initializeSingleUseCase: InitializeSingleUseCase,
-    private val getMyPageDataUseCase: GetMyPageDataUseCase
+    private val getMyPageDataUseCase: GetMyPageDataUseCase,
 ) : ViewModel() {
 
     private val _singleContentUiState = MutableStateFlow(SingleContentUiState())
@@ -231,14 +231,13 @@ class SingleContentViewModel @Inject constructor(
         viewModelScope.launch {
             val runningTime =
                 RunningTime.fromSeconds(_singleContentUiState.value.elapsedSecondsTime)
-            sendRecordDataWithDistanceUseCase(runningTime).collect { result ->
-                result.onSuccess { data ->
+            sendRecordDataWithDistanceUseCase(runningTime)
+                .onSuccess { data ->
                     saveSingleIdUseCase(data.id)
                 }.onFailure { errorMessage, code ->
                     _snackbarMessage.value = "싱글 결과 전송 실패"
                     Timber.e("$code $errorMessage")
                 }
-            }
         }
     }
 
@@ -256,7 +255,7 @@ class SingleContentViewModel @Inject constructor(
         totalTrackDistance: Double,
         distance: Double,
         trackWidth: Double,
-        trackHeight: Double
+        trackHeight: Double,
     ): Pair<Double, Double> {
         val currentDistance =
             distance.coerceAtMost(totalTrackDistance) // distance와 totalTrackDistance 중 더 작은 값을 currentDistance에 저장

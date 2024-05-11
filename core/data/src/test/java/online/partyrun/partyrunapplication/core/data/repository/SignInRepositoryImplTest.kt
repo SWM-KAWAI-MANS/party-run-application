@@ -1,7 +1,6 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
@@ -33,7 +32,8 @@ class SignInRepositoryImplTest {
             .baseUrl(mockWebServer.url("/"))
             .client(
                 OkHttpClient.Builder()
-                    .build())
+                    .build()
+            )
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
@@ -58,7 +58,7 @@ class SignInRepositoryImplTest {
         mockWebServer.enqueue(mockResponse)
 
 
-        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
+        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken)
         assertEquals(Result.Success(tokenSet), actualResponse)
     }
 
@@ -71,7 +71,7 @@ class SignInRepositoryImplTest {
             .setResponseCode(400)
         mockWebServer.enqueue(mockResponse)
 
-        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
+        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken)
         assertTrue(actualResponse is Result.Failure && actualResponse.code == 400)
     }
 
@@ -84,7 +84,7 @@ class SignInRepositoryImplTest {
             .setResponseCode(401)
         mockWebServer.enqueue(mockResponse)
 
-        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
+        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken)
         assertTrue(actualResponse is Result.Failure && actualResponse.code == 401)
     }
 
@@ -97,7 +97,7 @@ class SignInRepositoryImplTest {
             .setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
         mockWebServer.enqueue(mockResponse)
 
-        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken).last()
+        val actualResponse = repository.signInWithGoogleTokenViaServer(idToken)
         assertTrue(actualResponse is Result.Failure && actualResponse.code == HttpURLConnection.HTTP_INTERNAL_ERROR)
     }
 }

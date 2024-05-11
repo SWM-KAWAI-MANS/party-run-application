@@ -1,12 +1,10 @@
 package online.partyrun.partyrunapplication.core.data.repository
 
-import kotlinx.coroutines.flow.Flow
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import online.partyrun.partyrunapplication.core.common.Constants.BASE_URL
-import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.common.result.toResultModel
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.match.CancelMatch
 import online.partyrun.partyrunapplication.core.model.match.MatchDecision
@@ -29,36 +27,40 @@ class MatchRepositoryImpl @Inject constructor(
     }
 
     /* REST */
-    override suspend fun registerMatch(runningDistance: RunningDistance): Flow<Result<MatchStatus>> {
-        return apiRequestFlow {
-            matchDataSource.registerMatch(runningDistance.toRequestModel())
-        }.mapResultModel { it.toDomainModel() }
+    override suspend fun registerMatch(runningDistance: RunningDistance): Result<MatchStatus> {
+        return matchDataSource
+            .registerMatch(runningDistance.toRequestModel())
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun acceptMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
-        return apiRequestFlow { matchDataSource.acceptMatch(matchDecision.toRequestModel()) }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun acceptMatch(matchDecision: MatchDecision): Result<MatchStatus> {
+        return matchDataSource
+            .acceptMatch(matchDecision.toRequestModel())
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun declineMatch(matchDecision: MatchDecision): Flow<Result<MatchStatus>> {
-        return apiRequestFlow { matchDataSource.declineMatch(matchDecision.toRequestModel()) }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun declineMatch(matchDecision: MatchDecision): Result<MatchStatus> {
+        return matchDataSource
+            .declineMatch(matchDecision.toRequestModel())
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun getRunnerIds(): Flow<Result<RunnerIds>> {
-        return apiRequestFlow { matchDataSource.getRunnerIds() }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun getRunnerIds(): Result<RunnerIds> {
+        return matchDataSource
+            .getRunnerIds()
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun cancelMatchWaitingEvent(): Flow<Result<CancelMatch>> {
-        return apiRequestFlow { matchDataSource.cancelMatchWaitingEvent() }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun cancelMatchWaitingEvent(): Result<CancelMatch> {
+        return matchDataSource
+            .cancelMatchWaitingEvent()
+            .toResultModel { it.toDomainModel() }
     }
 
     override fun createMatchEventSourceListener(
         onEvent: (data: String) -> Unit,
         onClosed: () -> Unit,
-        onFailure: () -> Unit
+        onFailure: () -> Unit,
     ): EventSourceListener {
         return matchDataSource.createMatchEventSourceListener(onEvent, onClosed, onFailure)
     }

@@ -9,13 +9,13 @@ import online.partyrun.partyrunapplication.core.model.my_page.SingleRunningHisto
 import online.partyrun.partyrunapplication.core.model.running_result.single.SingleResult
 
 interface ResultRepository {
-    suspend fun getBattleResults(): Flow<Result<BattleResult>>
-    suspend fun getSingleResults(): Flow<Result<SingleResult>>
-    suspend fun getComprehensiveRunRecord(): Flow<Result<ComprehensiveRunRecord>>
-    suspend fun updateSingleHistory(): Flow<Result<Unit>>
-    suspend fun updateBattleHistory(): Flow<Result<Unit>>
-    suspend fun getSingleHistory(): Flow<Result<SingleRunningHistory>>
-    suspend fun getBattleHistory(): Flow<Result<BattleRunningHistory>>
-    suspend fun deleteAllHistories(): Flow<Result<Unit>>
+    suspend fun getBattleResults(): Result<BattleResult>
+    suspend fun getSingleResults(): Result<SingleResult>
+    suspend fun getComprehensiveRunRecord(): Result<ComprehensiveRunRecord>
+    fun updateSingleHistory(): Flow<Result<Unit>>
+    fun updateBattleHistory(): Flow<Result<Unit>>
+    fun getSingleHistory(): Flow<Result<SingleRunningHistory>>
+    fun getBattleHistory(): Flow<Result<BattleRunningHistory>>
+    fun deleteAllHistories(): Flow<Result<Unit>>
 
 }

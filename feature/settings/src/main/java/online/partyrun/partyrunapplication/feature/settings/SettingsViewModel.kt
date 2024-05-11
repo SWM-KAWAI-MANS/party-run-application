@@ -21,7 +21,7 @@ class SettingsViewModel @Inject constructor(
     private val deleteAccountUseCase: DeleteAccountUseCase,
     private val googleSignOutUseCase: GoogleSignOutUseCase,
     private val deleteRunningHistoryUseCase: DeleteRunningHistoryUseCase,
-    private val saveAgreementStateUseCase: SaveAgreementStateUseCase
+    private val saveAgreementStateUseCase: SaveAgreementStateUseCase,
 ) : ViewModel() {
     private val _settingsUiState = MutableStateFlow(SettingsUiState())
     val settingsUiState: StateFlow<SettingsUiState> = _settingsUiState
@@ -47,8 +47,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun deleteAccount() = viewModelScope.launch {
-        deleteAccountUseCase().collect { result ->
-            result.onSuccess {
+        deleteAccountUseCase()
+            .onSuccess {
                 _settingsUiState.update { state ->
                     state.copy(
                         isAccountDeletionSuccess = true
@@ -57,7 +57,6 @@ class SettingsViewModel @Inject constructor(
             }.onFailure { errorMessage, code ->
                 Timber.e("$code $errorMessage")
             }
-        }
     }
 
     private fun deleteAllHistories() = viewModelScope.launch {

@@ -13,6 +13,7 @@ import online.partyrun.partyrunapplication.core.domain.running.battle.GetBattleS
 import online.partyrun.partyrunapplication.core.domain.running.battle.GetUserIdUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetBattleResultUseCase
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
+import online.partyrun.partyrunapplication.core.model.running_result.battle.toUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.BattleResultUiModel
 import online.partyrun.partyrunapplication.core.model.running_result.ui.RunnerStatusUiModel
 import timber.log.Timber
@@ -23,7 +24,7 @@ class BattleResultViewModel @Inject constructor(
     private val getBattleResultUseCase: GetBattleResultUseCase,
     private val getUserIdUseCase: GetUserIdUseCase,
     private val updateBattleRunningHistoryUseCase: UpdateBattleRunningHistoryUseCase,
-    private val getBattleStatusUseCase: GetBattleStatusUseCase
+    private val getBattleStatusUseCase: GetBattleStatusUseCase,
 ) : ViewModel() {
 
     private val _battleResultUiState =
@@ -49,16 +50,16 @@ class BattleResultViewModel @Inject constructor(
             val battleData = getBattleStatusUseCase()
             val userId = getUserIdUseCase()
 
-            getBattleResultUseCase().collect { result ->
-                result.onSuccess { data ->
+            getBattleResultUseCase()
+                .onSuccess { data ->
                     // 여기서 battleData의 runnerId와 battleResult의 id를 비교하여 name과 profile을 매핑
                     val battleResultStatus = mappingRunnerInfo(
-                        data = data,
+                        data = data.toUiModel(),
                         battleData = battleData
                     )
 
                     _battleResultUiState.value = BattleResultUiState.Success(
-                        battleResult = data.copy(
+                        battleResult = data.toUiModel().copy(
                             userId = userId,
                             battleRunnerStatus = battleResultStatus
                         )
@@ -68,13 +69,12 @@ class BattleResultViewModel @Inject constructor(
                     _battleResultUiState.value =
                         BattleResultUiState.LoadFailed
                 }
-            }
         }
     }
 
     private fun mappingRunnerInfo(
         data: BattleResultUiModel,
-        battleData: BattleStatus
+        battleData: BattleStatus,
     ): List<RunnerStatusUiModel> {
         val battleResultStatusUiModel = data.battleRunnerStatus.map { battleRunnerStatus ->
             val runnerStatus =

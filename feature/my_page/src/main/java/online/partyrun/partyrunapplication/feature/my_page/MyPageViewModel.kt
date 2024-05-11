@@ -28,7 +28,7 @@ class MyPageViewModel @Inject constructor(
     private val updateSingleRunningHistoryUseCase: UpdateSingleRunningHistoryUseCase,
     private val updateBattleRunningHistoryUseCase: UpdateBattleRunningHistoryUseCase,
     private val saveSingleIdUseCase: SaveSingleIdUseCase,
-    private val saveBattleIdUseCase: SaveBattleIdUseCase
+    private val saveBattleIdUseCase: SaveBattleIdUseCase,
 ) : ViewModel() {
     private val _myPageProfileState =
         MutableStateFlow<MyPageProfileState>(MyPageProfileState.Loading)
@@ -70,8 +70,8 @@ class MyPageViewModel @Inject constructor(
         _myPageComprehensiveRunRecordState.value =
             MyPageComprehensiveRunRecordState.Loading
 
-        getComprehensiveRunRecordUseCase().collect { result ->
-            result.onSuccess {
+        getComprehensiveRunRecordUseCase()
+            .onSuccess {
                 _myPageComprehensiveRunRecordState.value =
                     MyPageComprehensiveRunRecordState.Success(
                         comprehensiveRunRecord = it
@@ -82,7 +82,6 @@ class MyPageViewModel @Inject constructor(
                 _myPageComprehensiveRunRecordState.value =
                     MyPageComprehensiveRunRecordState.LoadFailed
             }
-        }
     }
 
     private fun updateSingleHistory() = viewModelScope.launch {

@@ -1,6 +1,5 @@
 package online.partyrun.partyrunapplication.core.domain.auth
 
-import kotlinx.coroutines.flow.Flow
 import online.partyrun.partyrunapplication.core.common.result.Result
 import online.partyrun.partyrunapplication.core.model.auth.GoogleIdToken
 import online.partyrun.partyrunapplication.core.data.repository.SignInRepository
@@ -10,6 +9,6 @@ import javax.inject.Inject
 class GetSignInTokenUseCase @Inject constructor(
     private val signInRepository: SignInRepository
 ) {
-    suspend operator fun invoke(idToken: GoogleIdToken): Flow<Result<SignInToken>> =
+    suspend operator fun invoke(idToken: GoogleIdToken): Result<SignInToken> =
         signInRepository.signInWithGoogleTokenViaServer(idToken)
 }

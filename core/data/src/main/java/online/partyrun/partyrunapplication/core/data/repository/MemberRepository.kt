@@ -12,11 +12,11 @@ interface MemberRepository {
 
     val userData: Flow<User>
 
-    suspend fun getRunnersInfo(runnerIds: RunnerIds): Flow<Result<RunnerInfoData>>
+    suspend fun getRunnersInfo(runnerIds: RunnerIds): Result<RunnerInfoData>
 
-    suspend fun getUserData(): Flow<Result<User>>
+    suspend fun getUserData(): Result<User>
 
-    suspend fun deleteAccount(): Flow<Result<DeleteAccount>>
+    suspend fun deleteAccount(): Result<DeleteAccount>
 
     suspend fun setUserName(userName: String)
 
@@ -24,7 +24,7 @@ interface MemberRepository {
 
     suspend fun setUserId(userId: String)
 
-    suspend fun updateUserData(userData: User): Flow<Result<Unit>>
+    suspend fun updateUserData(userData: User): Result<Unit>
 
-    suspend fun updateProfileImage(requestBody: RequestBody, fileName: String?): Flow<Result<Unit>>
+    suspend fun updateProfileImage(requestBody: RequestBody, fileName: String?): Result<Unit>
 }

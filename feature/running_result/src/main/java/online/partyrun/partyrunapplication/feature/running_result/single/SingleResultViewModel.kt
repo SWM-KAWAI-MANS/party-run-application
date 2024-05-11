@@ -10,13 +10,14 @@ import online.partyrun.partyrunapplication.core.common.result.onFailure
 import online.partyrun.partyrunapplication.core.common.result.onSuccess
 import online.partyrun.partyrunapplication.core.domain.my_page.UpdateSingleRunningHistoryUseCase
 import online.partyrun.partyrunapplication.core.domain.running_result.GetSingleResultUseCase
+import online.partyrun.partyrunapplication.core.model.running_result.single.toUiModel
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SingleResultViewModel @Inject constructor(
     private val getsSingleResultUseCase: GetSingleResultUseCase,
-    private val updateSingleRunningHistoryUseCase: UpdateSingleRunningHistoryUseCase
+    private val updateSingleRunningHistoryUseCase: UpdateSingleRunningHistoryUseCase,
 ) : ViewModel() {
     private val _singleResultUiState =
         MutableStateFlow<SingleResultUiState>(SingleResultUiState.Loading)
@@ -38,17 +39,16 @@ class SingleResultViewModel @Inject constructor(
 
     fun getSingleResult() {
         viewModelScope.launch {
-            getsSingleResultUseCase().collect { result ->
-                result.onSuccess { data ->
+            getsSingleResultUseCase()
+                .onSuccess { data ->
                     _singleResultUiState.value = SingleResultUiState.Success(
-                        singleResult = data
+                        singleResult = data.toUiModel()
                     )
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                     _singleResultUiState.value =
                         SingleResultUiState.LoadFailed
                 }
-            }
         }
     }
 

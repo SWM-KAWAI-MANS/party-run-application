@@ -37,7 +37,7 @@ class PartyRoomViewModel @Inject constructor(
     private val getRunnersInfoUseCase: GetRunnersInfoUseCase,
     private val saveRunnersInfoUseCase: SaveRunnersInfoUseCase,
     private val startPartyBattleUseCase: StartPartyBattleUseCase,
-    private val quitPartyUseCase: QuitPartyUseCase
+    private val quitPartyUseCase: QuitPartyUseCase,
 ) : ViewModel() {
 
     private val _partyRoomUiState = MutableStateFlow<PartyRoomUiState>(PartyRoomUiState.Loading)
@@ -130,11 +130,11 @@ class PartyRoomViewModel @Inject constructor(
 
     private fun waitingEventProcess(
         allRunnerIds: RunnerIds,
-        eventData: PartyEvent
+        eventData: PartyEvent,
     ) {
         viewModelScope.launch {
-            getRunnersInfoUseCase(allRunnerIds).collect { result ->
-                result.onSuccess { runnerInfoList ->
+            getRunnersInfoUseCase(allRunnerIds)
+                .onSuccess { runnerInfoList ->
                     runnerInfoData = runnerInfoList
                     updatedPartyRoomState = updatePartyRoomState(runnerInfoData, eventData)
 
@@ -147,13 +147,12 @@ class PartyRoomViewModel @Inject constructor(
                             _partyRoomUiState.value.updateState(updatedPartyRoomState)
                     }
                 }
-            }
         }
     }
 
     private fun updatePartyRoomState(
         runnerInfoList: RunnerInfoData,
-        eventData: PartyEvent
+        eventData: PartyEvent,
     ): PartyRoomState {
         // 여기서 runnerInfoList는 RunnerInfo의 List라고 가정합니다.
         val managerInfo = runnerInfoList.runners.find { it.id == eventData.managerId }
@@ -176,14 +175,13 @@ class PartyRoomViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            startPartyBattleUseCase(partyCode).collect { result ->
-                result.onEmpty {
+            startPartyBattleUseCase(partyCode)
+                .onEmpty {
                     Timber.tag("파티 배틀").d("startPartyBattle 성공")
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                     disconnectPartyEventSourceUseCase()
                 }
-            }
         }
     }
 
@@ -197,15 +195,14 @@ class PartyRoomViewModel @Inject constructor(
 
     fun quitPartyRoom(partyCode: String) {
         viewModelScope.launch {
-            quitPartyUseCase(partyCode).collect { result ->
-                result.onEmpty {
+            quitPartyUseCase(partyCode)
+                .onEmpty {
                     Timber.tag("파티 배틀").d("나가기 성공")
                     quitProcess()
                 }.onFailure { errorMessage, code ->
                     Timber.e("$code $errorMessage")
                     _snackbarMessage.value = "파티 나가기 실패 \n잠시 후 다시 시도 해주세요."
                 }
-            }
         }
     }
 

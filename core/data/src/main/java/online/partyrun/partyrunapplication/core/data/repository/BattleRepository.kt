@@ -14,8 +14,8 @@ interface BattleRepository {
 
     suspend fun setBattleId(battleId: String)
 
-    suspend fun getBattleId(): Flow<Result<BattleId>>
-    suspend fun terminateOngoingBattle(): Flow<Result<TerminateBattle>>
+    suspend fun getBattleId(): Result<BattleId>
+    suspend fun terminateOngoingBattle(): Result<TerminateBattle>
     fun getBattleStream(battleId: String): Flow<BattleEvent>
     suspend fun sendRecordData(battleId: String, recordData: RecordData)
     suspend fun disposeSocketResources()

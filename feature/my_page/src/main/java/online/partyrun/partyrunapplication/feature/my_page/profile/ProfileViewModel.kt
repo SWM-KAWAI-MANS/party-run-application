@@ -35,7 +35,7 @@ class ProfileViewModel @Inject constructor(
     private val updateUserDataUseCase: UpdateUserDataUseCase,
     private val updateProfileImageUseCase: UpdateProfileImageUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
-    private val saveUserDataUseCase: SaveUserDataUseCase
+    private val saveUserDataUseCase: SaveUserDataUseCase,
 ) : ViewModel() {
     companion object {
         const val COMPRESS_BITMAP_QUALITY = 80
@@ -127,7 +127,7 @@ class ProfileViewModel @Inject constructor(
         context: Context,
         uri: Uri,
         width: Int,
-        height: Int
+        height: Int,
     ): Bitmap {
         val source = ImageDecoder.createSource(context.contentResolver, uri)
         return ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
@@ -165,8 +165,8 @@ class ProfileViewModel @Inject constructor(
 
         updateUserDataUseCase(
             nickName = _profileUiState.value.newNickName
-        ).collect { result ->
-            result.onEmpty {
+        )
+            .onEmpty {
                 saveUserData()
                 _profileUiState.update { state ->
                     state.copy(
@@ -180,7 +180,6 @@ class ProfileViewModel @Inject constructor(
                 _updateProgressState.value = false
                 _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
             }
-        }
     }
 
     private fun updateProfileImage(requestBody: RequestBody, fileName: String?) =
@@ -188,8 +187,8 @@ class ProfileViewModel @Inject constructor(
             updateProfileImageUseCase(
                 requestBody = requestBody,
                 fileName = fileName
-            ).collect { result ->
-                result.onEmpty {
+            )
+                .onEmpty {
                     saveUserData()
                     _updateProgressState.value = false
                     _snackbarMessage.value = "프로필 사진이 변경되었습니다."
@@ -198,12 +197,11 @@ class ProfileViewModel @Inject constructor(
                     _updateProgressState.value = false
                     _snackbarMessage.value = "변경에 실패하였습니다.\n다시 시도해주세요."
                 }
-            }
         }
 
     private suspend fun saveUserData() {
-        getUserDataUseCase().collect { result ->
-            result.onSuccess { userData ->
+        getUserDataUseCase()
+            .onSuccess { userData ->
                 saveUserDataUseCase(userData)
                 _profileUiState.update { state ->
                     state.copy(
@@ -214,6 +212,6 @@ class ProfileViewModel @Inject constructor(
             }.onFailure { errorMessage, code ->
                 Timber.e("$code $errorMessage")
             }
-        }
     }
+
 }

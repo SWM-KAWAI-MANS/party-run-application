@@ -7,8 +7,8 @@ import online.partyrun.partyrunapplication.core.model.match.RunnerIds
 import javax.inject.Inject
 
 class GetRunnerIdsUseCase @Inject constructor(
-    private val matchRepository: MatchRepository
+    private val matchRepository: MatchRepository,
 ) {
-    suspend operator fun invoke(): Flow<Result<RunnerIds>> =
+    suspend operator fun invoke(): Result<RunnerIds> =
         matchRepository.getRunnerIds()
 }

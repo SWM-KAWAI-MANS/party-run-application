@@ -8,12 +8,11 @@ import online.partyrun.partyrunapplication.core.model.running.GpsDataWithDistanc
 import online.partyrun.partyrunapplication.core.model.running.RunningTime
 
 interface SingleRepository {
-    val recordData: Flow<RecordDataWithDistance>
 
     fun initialize()
     suspend fun addGpsData(gpsData: GpsDataWithDistance)
-    suspend fun getRecordData(): Flow<RecordDataWithDistance>
-    suspend fun sendRecordData(runningTime: RunningTime): Flow<Result<SingleId>>
+    fun getRecordData(): Flow<RecordDataWithDistance>
+    suspend fun sendRecordData(runningTime: RunningTime): Result<SingleId>
 
     suspend fun saveSingleId(singleId: String)
 

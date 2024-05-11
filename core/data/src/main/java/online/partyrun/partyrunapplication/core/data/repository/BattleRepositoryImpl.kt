@@ -2,7 +2,6 @@ package online.partyrun.partyrunapplication.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import online.partyrun.partyrunapplication.core.common.network.apiRequestFlow
 import online.partyrun.partyrunapplication.core.datastore.datasource.BattlePreferencesDataSource
 import online.partyrun.partyrunapplication.core.model.battle.BattleId
 import online.partyrun.partyrunapplication.core.model.battle.BattleStatus
@@ -15,13 +14,13 @@ import online.partyrun.partyrunapplication.core.network.model.request.toRequestM
 import online.partyrun.partyrunapplication.core.network.model.response.toDomainModel
 import online.partyrun.partyrunapplication.core.network.model.toDomainModel
 import online.partyrun.partyrunapplication.core.common.result.Result
-import online.partyrun.partyrunapplication.core.common.result.mapResultModel
+import online.partyrun.partyrunapplication.core.common.result.toResultModel
 import javax.inject.Inject
 
 class BattleRepositoryImpl @Inject constructor(
     private val realtimeBattleClient: RealtimeBattleClient,
     private val battleDataSource: BattleDataSource,
-    private val battlePreferencesDataSource: BattlePreferencesDataSource
+    private val battlePreferencesDataSource: BattlePreferencesDataSource,
 ) : BattleRepository {
 
     override val battleData: Flow<BattleStatus> =
@@ -31,14 +30,16 @@ class BattleRepositoryImpl @Inject constructor(
         battlePreferencesDataSource.setBattleId(battleId)
     }
 
-    override suspend fun getBattleId(): Flow<Result<BattleId>> {
-        return apiRequestFlow { battleDataSource.getBattleId() }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun getBattleId(): Result<BattleId> {
+        return battleDataSource
+            .getBattleId()
+            .toResultModel { it.toDomainModel() }
     }
 
-    override suspend fun terminateOngoingBattle(): Flow<Result<TerminateBattle>> {
-        return apiRequestFlow { battleDataSource.terminateOngoingBattle() }
-            .mapResultModel { it.toDomainModel() }
+    override suspend fun terminateOngoingBattle(): Result<TerminateBattle> {
+        return battleDataSource
+            .terminateOngoingBattle()
+            .toResultModel { it.toDomainModel() }
     }
 
 

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class QuitPartyUseCase @Inject constructor(
     private val partyRepository: PartyRepository
 ) {
-    suspend operator fun invoke(partyCode: String): Flow<Result<Unit>> {
+    suspend operator fun invoke(partyCode: String): Result<Unit> {
         return partyRepository.quitParty(partyCode)
     }
 

@@ -2,6 +2,7 @@ package online.partyrun.partyrunapplication.core.common.result
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import online.partyrun.partyrunapplication.core.common.network.ApiResponse
 
 sealed interface Result<out T> {
     data class Success<T>(val data: T) : Result<T>
@@ -52,5 +53,21 @@ inline fun <reified R, reified D> Flow<Result<R>>.mapResultModel(crossinline tra
             is Result.Failure -> Result.Failure(apiResponse.errorMessage, apiResponse.code)
             is Result.Empty -> Result.Empty
         }
+    }
+}
+
+suspend fun <T : Any, R> ApiResponse<T>.toResultModel(transform: suspend (T) -> R?): Result<R> {
+    return when (this) {
+        is ApiResponse.Success -> {
+            val transformedResult = runCatching { transform(data) }.getOrNull()
+            if (transformedResult != null) {
+                Result.Success(transformedResult)
+            } else {
+                Result.Failure("Transformation resulted in null", -1)
+            }
+        }
+
+        is ApiResponse.Error -> Result.Failure(message ?: "Error", code)
+        is ApiResponse.Exception -> Result.Failure("Api Exception: ${e.message}", -1)
     }
 }
